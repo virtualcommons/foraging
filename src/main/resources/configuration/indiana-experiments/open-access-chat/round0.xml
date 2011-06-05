@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="resource-width">13</entry>
+<entry key="resource-depth">13</entry>
+<entry key="practice-round">true</entry>
+<entry key="private-property">true</entry>
+<entry key="duration">240</entry>
+
+<entry key='regrowth-rate'>.01</entry>
+<entry key='initial-distribution'>.25</entry>
+<entry key='always-explicit'>true</entry>
+
+<entry key="quiz">true</entry>
+<entry key="q1">C</entry>
+<entry key="q2">B</entry>
+
+<entry key="instructions">
+<![CDATA[
+<h3>General Instructions</h3>
+<p>
+You appear on the screen as a yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif">, 
+and your other group members appear as blue dots <img src="@CODEBASE_URL@/images/gem-other.gif">.
+You move by pressing the four arrow keys to the right of your keyboard.  You
+can move either up, down, left, or right.  You have to press a key for every
+move of your yellow dot.  In this experiment you can collect green diamond
+shaped tokens 
+<img src="@CODEBASE_URL@/images/gem-token.gif"> and you will
+earn two cents for each collected token.  To collect a token, simply move your
+yellow dot over a green token and press the <b>space bar</b>.  If you move
+over a token without pressing the <b>space bar</> you will NOT collect that
+token.
+</p>
+
+<p>
+The tokens that you collect have the potential to regenerate.  After you have
+collected a green token, a new token can once again appear on that empty cell.
+However, the rate at which new tokens will appear depends on the number of
+adjacent cells that still have tokens.  The more tokens in the 8 cells around
+an empty cel, the faster a new token will appear on that empty cell.  Tokens
+generate new tokens.  Thus the middle cell in Image 1 denoted with X will be
+regenerated at a faster rate than the middle cell in Image 2.  When all
+neighboring cells are empty, there is no renewal.
+
+<table width="100%">
+<tr>
+<td align="center"><b>Image 1</b></td>
+<td align="center"><b>Image 2</b></td>
+</tr>
+<tr>
+<td align="center">
+<img src="@CODEBASE_URL@/images/8neighbors.jpg" alt="image 1">
+</td>
+<td align="center">
+<img src="@CODEBASE_URL@/images/5neighbors.jpg" alt="image 2">
+</td>
+</tr>
+</table>
+<hr>
+<h3>Practice Round Instructions</h3>
+<hr>
+<p>
+You will now have four minutes to practice with the experimental environment.
+The decisions you make in this round will NOT influence your earnings.  At the
+At the beginning of the practice round half of the cells are occupied
+with green tokens.  The environment is a 13 x 13 grid of cells.
+</p>
+<p>
+When you push the <b>R</b> key you will reset the distribution of
+the tokens to randomly occupying half of the cells with green tokens.
+</p>
+
+<p><center><b>Please do not communicate with any other participant.</b></center></p>
+<p>If you have any questions please raise your hand. <b>Do you have any
+questions so far?</b></p>
+]]>
+</entry>
+
+<entry key="quiz-instructions">
+<![CDATA[
+<p>
+Before we begin the practice round you need to answer the following questions
+correctly. You can only continue when you have answered all questions
+correctly.  If an error is made you will need to answer the questions again.
+</p>
+<br>
+<form>
+Which of the statements is incorrect? <br>
+<input type="radio" name="q1" value="A">Your decisions of where to collect tokens affect the regeneration of tokens.<br>
+<input type="radio" name="q1" value="B">When you have collected all tokens on
+the screen, no new tokens will appear.<br>
+<input type="radio" name="q1" value="C">Tokens grow from the middle of the
+screen.<br>
+<input type="radio" name="q1" value="D">In order to collect a token you need
+to press the space bar while your avatar is on a cell with a token.<br>
+<br><br>
+
+Which sequence of situations is not possible? <br>
+<img src="@CODEBASE_URL@/images/question2.jpg"><br>
+<input type="radio" name="q2" value="A">A<br>
+<input type="radio" name="q2" value="B">B<br>
+<input type="radio" name="q2" value="C">C<br>
+<br>
+<input type="submit" name="submit" value="Submit">
+</form>
+]]>
+</entry>
+<entry key="welcome-instructions">
+<![CDATA[
+<h3>Welcome</h3>
+<p>
+Welcome. You have already earned 5 dollars for showing up at this experiment.
+You can earn more, up to a maximum of 40 dollars, by participating in this
+experiment, which will take about an hour.  The amount of money you earn
+depends on your decisions as well as the decisions of your group members
+during the four rounds of the experiment.
+</p>
+]]>
+</entry>
+
+</properties>

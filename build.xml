@@ -1,0 +1,358 @@
+<!-- $Id: build.xml 330 2008-02-13 05:31:26Z alllee $
+     vim:sts=2:sw=2:
+     Version: $Revision: 330 $
+ -->
+<project xmlns:ivy='antlib:org.apache.ivy.ant' name="foraging" default="build-all" basedir="."> 
+
+  <!-- ensure ivy availability -->
+    <!--
+    <path id='ivy.lib.path'>
+      <fileset dir='lib/ivy' includes='*.jar'/>
+    </path>
+    <taskdef resource='org/apache/ivy/ant/antlib.xml' 
+             uri='antlib:org.apache.ivy.ant' 
+             classpathref='ivy.lib.path'/>
+    -->
+    <property name="ivy.install.version" value="2.1.0" />
+    <condition property="ivy.home" value="${env.IVY_HOME}">
+      <isset property="env.IVY_HOME" />
+    </condition>
+    <property name="ivy.home" value="${user.home}/.ant" />
+    <property name="ivy.jar.dir" value="${ivy.home}/lib" />
+    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+
+    <target name="download-ivy" unless="offline">
+      <mkdir dir="${ivy.jar.dir}"/>
+      <!-- download Ivy from web site so that it can be used even without any special installation -->
+      <get src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" 
+           dest="${ivy.jar.file}" usetimestamp="true"/>
+    </target>
+
+    <target name="init-ivy" depends="download-ivy">
+      <!-- try to load ivy here from ivy home, in case the user has not already dropped
+              it into ant's lib dir (note that the latter copy will always take precedence).
+              We will not fail as long as local lib dir exists (it may be empty) and
+              ivy is in at least one of ant's lib dir or the local lib dir. -->
+      <path id="ivy.lib.path">
+        <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+      </path>
+      <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
+
+    <target name='resolve' depends='init-ivy' description='--> retrieve dependencies with ivy'>
+      <ivy:retrieve pattern='${lib.dir}/[artifact].[ext]'/> 
+    </target>
+
+  <!-- Load all properties from the build.properties file,
+       then try to define defaults for all the properties.
+       The property definitions in the build.properties file
+       will have precedence.
+    --> 
+  <property file="build.properties" />
+  <!-- default compilation properties -->
+  <property name='src.dir' value='src/main/java'/>
+  <property name='build.dir' value='target/classes'/>
+
+  <!-- default web & deployment properties -->
+  <property name='web.dir' value='src/main/webapp'/>
+  <property name='server.port' value='16001'/>
+  <property name='server.xml' value='server.xml'/>
+  <property name='codebase.url' value='http://${server.address}/${ant.project.name}'/>
+  <property name='client.class' value='edu.asu.commons.foraging.client.ForagingClient'/>
+  <property name='facilitator.class' value='edu.asu.commons.foraging.facilitator.Facilitator'/>
+  <property name='server.class' value='edu.asu.commons.foraging.server.ForagingServer'/>
+  <property name='framework.jar' value='csidex.jar'/>
+
+  <property name='dist.dir' value='.' />
+
+  <property name='resources.dir' value='src/main/resources'/>
+  <property name='conf.dir' value='${resources.dir}/configuration'/>
+
+  <!-- test properties -->
+  <property name="test.src.dir" value="src/test/java"/>
+  <property name="test.build.dir" value="target/test-classes"/>
+  <property name="test.results.dir" value="target/surefire-reports" />
+
+  <property name="javadoc.dir" value="docs/javadoc"/>
+  <property name="javadoc.private.dir" value="docs/private"/>
+  <property name='lib.dir' value='lib'/>
+
+  <!-- Set up the CLASSPATH, includes all jars in the lib
+       directory and all built files for both the main project
+       and the tests -->
+  <path id="project.classpath">
+    <pathelement location="." />
+    <fileset dir="${lib.dir}">
+       <include name="**/*.jar" />
+    </fileset>
+    <pathelement location="${build.dir}" />
+    <pathelement location="${test.build.dir}" />
+    <pathelement location='${resources.dir}' />
+  </path>
+
+  <target name="help">
+    <echo>
+    NOTE: At minimum you will need to modify the default web.dir and
+    server.address properties in the build.properties file before invoking deploy
+    or build-all.  
+
+    Currently deploying to ${web.dir} with a web address of ${codebase.url}.
+
+    Experiment server will start on ${server.address}, listening on port ${server.port}.
+            
+    Available targets:
+      compile   - Compile all the source code and tests.
+      clean     - Remove all compiled source and test classes.
+      docs      - Create JavaDoc documentation for all source code.
+      test      - Run all JUnit in the test source tree.
+      build-all - builds the client, server, and facilitator jars.
+      deploy    - invokes build-all and then copies the client and facilitator jars to ${web.dir}
+      convert   - invokes the ForagingSaveFileConverter to process the savefiles in the raw-data directory or as specified by -Dsavefile.dir=foo
+    </echo>
+  </target>
+	
+  <target name='build-all' depends='facilitator-jar, client-jar, server-jar, compile'/>
+
+<!-- deploys the client + facilitator + csidex jarfiles to the appropriate
+     webapps directory. -->
+  <target name='deploy-to' depends='build-all'>
+    <mkdir dir='${deploy.dir}'/>
+    <!-- 
+    copy client jar, facilitator jar, and csidex.jar to web deployment
+    directory 
+    -->
+    <copy todir='${deploy.dir}' overwrite='true'>
+      <fileset dir='${dist.dir}'>
+        <include name='client.jar'/>
+        <include name='facilitator.jar'/>
+      </fileset>
+      <fileset dir='${lib.dir}'>
+        <include name='${framework.jar}'/>
+      </fileset>
+      <fileset dir='${resources.dir}/web'>
+        <include name='index.html'/>
+        <include name='WEB-INF/**'/>
+      </fileset>
+    </copy>
+    <!-- copy images -->
+    <copy todir='${deploy.dir}/images' overwrite='true'>
+      <fileset dir='${resources.dir}/images'/>
+    </copy>
+    <!-- 
+    copy client and facilitator JNLP descriptor files, replacing
+    url/main class tokens.
+    -->
+    <copy file='${resources.dir}/web/client.jnlp' todir='${deploy.dir}' overwrite='true'>
+      <filterset>
+        <filter token='CODEBASE_URL' value='${codebase.url}'/>
+        <filter token='MAIN_CLASS' value='${client.class}'/>
+        <filter token='FRAMEWORK_JAR' value='${framework.jar}'/>
+      </filterset>
+    </copy>
+    <copy file='${resources.dir}/web/facilitator.jnlp' todir='${deploy.dir}' overwrite='true'>
+      <filterset>
+        <filter token='CODEBASE_URL' value='${codebase.url}'/>
+        <filter token='MAIN_CLASS' value='${facilitator.class}'/>
+        <filter token='FRAMEWORK_JAR' value='${framework.jar}'/>
+      </filterset>
+    </copy>
+    <chmod dir='${deploy.dir}' perm='664' type='file' includes='**'/>
+    <chmod dir='${deploy.dir}' perm='775' type='dir' includes='**'/>
+  </target>
+
+  <target name='deploy'>
+    <antcall target='deploy-to'>
+      <param name='deploy.dir' value='${web.dir}'/>
+    </antcall>
+  </target>
+
+  <target name='client-jar' depends='server-jar'>
+    <antcall target='build-jar'>
+      <param name='main.class' value='${client.class}'/>
+      <param name='jar.name' value='client.jar'/>
+    </antcall>
+  </target>
+
+  <target name='facilitator-jar' depends='client-jar'>
+    <antcall target='build-jar'>
+      <param name='main.class' value='${facilitator.class}'/>
+      <param name='jar.name' value='facilitator.jar'/>
+    </antcall>
+  </target>
+
+
+  <target name='server-jar' depends='compile, configure'>
+    <antcall target='build-jar'>
+      <param name='main.class' value='${server.class}'/>
+      <param name='jar.name' value='server.jar'/>
+    </antcall>
+    <move file='${dist.dir}/server.jar' tofile='server.jar'/>
+  </target>
+
+  <target name='build-jar'>
+    <manifestclasspath property='manifest.classpath' jarfile='${jar.name}'>
+      <classpath refid='project.classpath'/>
+    </manifestclasspath>
+    <chmod dir='${build.dir}' perm='a+rx' type='dir' includes='**'/>
+    <chmod dir='${build.dir}' perm='a+r' type='file' includes='**'/>
+    <manifest file='manifest.mf'>
+      <attribute name="Main-Class" value="${main.class}"/>
+      <attribute name='Class-Path' value='${manifest.classpath}'/>
+    </manifest>
+    <jar destfile='${dist.dir}/${jar.name}' manifest='manifest.mf'>
+      <fileset dir='${build.dir}'>
+        <include name='edu/asu/commons/**'/>
+        <include name='data/**'/>
+        <include name='conf/**'/>
+        <include name='images/**'/>
+      </fileset>
+    </jar>
+    <chmod file='${dist.dir}/${jar.name}' perm='664'/>
+  </target>
+  <!-- Prepare for a build by creating appropriate directories -->
+  <target name="prepare" depends='resolve'>
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${test.build.dir}"/>
+    <mkdir dir='${dist.dir}'/>
+  </target>
+
+  <!-- Clean up build by deleting build directories -->
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+    <delete dir="${test.build.dir}"/>
+    <delete dir='${lib.dir}'/>
+    <delete file='server.jar'/>
+    <delete file='client.jar'/>
+    <delete file='facilitator.jar'/>
+  </target>
+
+  <!-- Compile project source files -->
+  <target name='compile' depends="prepare">
+    <javac srcdir="${src.dir}"
+           destdir="${build.dir}"
+           debug="on"
+           optimize="off"
+           deprecation="on"
+           source="1.6"
+           includeAntRuntime="false"
+           >
+      <compilerarg value='-Xlint:unchecked'/> 
+      <classpath refid="project.classpath" />
+    </javac>
+    <copy todir='${build.dir}/data'>
+      <fileset dir='${resources.dir}/data'/>
+    </copy>
+    <copy todir='${build.dir}/images'>
+      <fileset dir='${resources.dir}/images'/>
+    </copy>
+  </target>
+
+  <target name='configure'>
+    <copy todir='${build.dir}/conf'>
+      <fileset dir='${conf.dir}'/>
+      <filterset>
+        <filter token='SERVER_ADDRESS' value='${server.address}'/>
+        <filter token='PORT_NUMBER' value='${server.port}'/>
+        <filter token='CODEBASE_URL' value='${codebase.url}'/>
+      </filterset>
+    </copy>
+  </target>
+
+  <target name='profile' depends='test'>
+    <java jar='${project.profiler}' classpathref='project.classpath' fork='true'>
+      <arg value='${hprof.file}'/>
+    </java>
+    <!-- do something like java -jar PerfAnal.jar <hprof.txt> -->
+  </target>
+
+  <!-- Build project documentation -->
+  <target name="docs">
+    <javadoc sourcepath="${src.dir}"
+             destdir="${javadoc.dir}"
+             packagenames="*"
+             source="1.6"
+             classpathref='project.classpath'
+             link='http://java.sun.com/javase/6/docs/api/
+             http://commons.asu.edu/src/csidex/api'
+             overview="${src.dir}/overview.html" />
+  </target>
+
+  <!-- RUN TARGETS -->
+  <target name='client' depends='compile'>
+    <java classname='${client.class}'
+          classpathref='project.classpath'
+          fork='yes'/>
+  </target>
+
+  <target name='fac' depends='compile'>
+    <java classname='${facilitator.class}'
+          classpathref='project.classpath'
+          fork='yes'/>
+  </target>
+
+  <target name='deploy-server' depends='deploy, server' />
+
+  <target name='server' depends='compile'>
+    <!-- make sure we update the configuration -->
+    <copy todir='${build.dir}/conf' overwrite='true'>
+      <fileset dir='${conf.dir}'/>
+      <filterset>
+        <filter token='SERVER_ADDRESS' value='${server.address}'/>
+        <filter token='PORT_NUMBER' value='${server.port}'/>
+        <filter token='CODEBASE_URL' value='${codebase.url}'/>
+      </filterset>
+    </copy>
+    <java classname='${server.class}' classpathref='project.classpath' fork='yes'>
+      <jvmarg value="-server"/>
+    </java>
+  </target>
+
+
+  <!-- Compile Tests -->
+  <target name="compile-tests" depends="compile">
+    <javac srcdir="${test.src.dir}"
+           destdir="${test.build.dir}"
+           source="1.6"
+           debug="on">
+      <!-- <compilerarg value='-Xlint:unchecked'/> -->
+      <classpath refid="project.classpath" />
+    </javac>
+  </target>
+
+  <!-- Run Tests -->
+   <target name="test" depends="compile-tests">
+     <delete dir="${test.results.dir}"/>
+     <mkdir dir="${test.results.dir}"/>
+     <junit fork="yes" haltonfailure="yes" printsummary="yes">
+       <classpath refid="project.classpath" />
+       <batchtest todir="${test.results.dir}" >
+         <formatter usefile="no" type="plain" />
+         <formatter type="xml" />
+         <fileset dir="${test.build.dir}">
+           <include name="**/*Test.class" />
+         </fileset>
+       </batchtest>
+     </junit>
+   </target>
+
+  <property name='savefile.converter.class' value='edu.asu.commons.foraging.data.ForagingSaveFileConverter'/>
+  <!-- default savefile directory is the raw-data directory -->
+  <property name='savefile.dir' value='raw-data'/>
+  <target name='convert' depends='compile'>
+    <java classname='${savefile.converter.class}' classpathref='project.classpath' fork='yes'>
+      <arg value='${savefile.dir}'/>
+    </java>
+  </target>
+
+  <!-- Run Test on GUI -->
+  <target name="guitest" depends="compile-tests">
+    <java fork="yes" classname="junit.swingui.TestRunner" taskname="JUnit" failonerror="true" dir="${basedir}">
+        <jvmarg value="-Djunit.test.path=${test.build.dir}" /> 
+        <sysproperty key="basedir" value="${basedir}" />
+        <classpath>
+          <path refid="project.classpath" />
+        </classpath>
+    </java>
+  </target>
+
+</project>

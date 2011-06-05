@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML experiment round configuration</comment>
+<entry key="hostname">@SERVER_ADDRESS@</entry>
+<entry key="port">@PORT_NUMBER@</entry>
+<entry key="round0">round0.xml</entry>
+<entry key="round1">round1.xml</entry>
+<entry key="round2">round2.xml</entry>
+<entry key="round3">round3.xml</entry>
+<entry key="round4">round4.xml</entry>
+<entry key="round5">round5.xml</entry>
+<entry key="round6">round6.xml</entry>
+<entry key="wait-for-participants">true</entry>
+<entry key="number-of-rounds">7</entry>
+<entry key="facilitator-instructions">
+<![CDATA[
+<h3>Facilitator Instructions</h3>
+<p>
+Welcome to the facilitator interface.  This interface allows you to control
+the experiment.  You may only modify configuration parameters <b>before</b>
+you start the experiment by selecting the Configuration menu.  When all the
+participants are ready to begin the experiment, you can start the experiment
+by selecting Experiment -&gt; Start.  After a round has been completed you
+will be able to view the statistics for all of the participants.  You can
+begin the next round by selecting Round -&gt; Start.
+</p>
+]]>
+</entry>
+</properties>

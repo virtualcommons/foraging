@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="practice-round">false</entry>
+<entry key='resource-width'>8</entry>
+<entry key='resource-depth'>8</entry>
+<entry key='resource-scale'>32</entry>
+<entry key="duration">900</entry>
+<entry key="initial-distribution">.25</entry>
+<entry key="private-property">false</entry>
+<entry key="clients-per-group">4</entry>
+<entry key="quiz-enabled">false</entry>
+<entry key="chat-radius">64</entry>
+<entry key="seconds-per-year">30</entry>
+<entry key="regrowth-rate">.01</entry>
+<entry key="tokens-per-fruits">10</entry>
+<entry key="experiment-type">forestry</entry>
+<entry key="maximum-resource-age">10</entry>
+
+<entry key="instructions">
+<![CDATA[
+<h3>Round 2 Instructions</h3>
+<hr>
+<p>
+The actual round will now begin. The duration of this round is 15 minutes.
+For review, here is a list of important actions and respective keys:
+</p>
+<p>
+<b>Moving your avatar:</b> You can move your avatar by pressing the <b>W</b>,
+<b>A</b>, <b>S</b>, <b>D</b> keys or via the arrow keys. <b>W</b> or the
+<b>Up</b> arrow key will move your avatar forward while <b>S</b> or the
+<b>Down</b> arrow key will move it backward. <b>A</b> or the <b>Left</b> arrow
+key will rotate the avatar to its left while <b>D</b> or the <b>Right</b>
+arrow key will rotate it to its right.
+</p>
+<p>
+<b>Cutting a tree:</b> Cutting a tree is a two step process.
+First you need to select the tree you wish to cut. You can do this by standing
+next to the tree and pressing the <b>Q</b> key. You will see the selected tree
+changing its color to blue. Then you can cut the selected tree by pressing the
+<b>E</b> key. You will see that the avatar moves its axe to cut the tree. The
+bigger the tree the move effort the avatar needs to make to cut the tree. When
+the tree is cut, you will see tokens added to your total at the top of the
+screen. 
+</p>
+<p>
+<b>Collecting fruits:</b> Collecting fruits is also a two step process. 
+First you need to select the tree you wish collect fruits from. You can do
+this by standing next to the tree and pressing the key <b>Q</b>. You will see
+the selected tree changing its color to blue. Then you can collect the fruits
+by pressing the key <b>X</b>. You will see that the fruits are falling down,
+representing the fruit harvest. On the top of the screen you will see that
+tokens are added to your total.
+</p>
+<p>
+<b>Chatting with other players:</b> A chat box is present at the bottom of the
+screen. When another player is in the neighborhood, you can click on that
+avatar using the left mouse button to start a chat. You will see the character
+associated with the selected avatar (<i>A</i>, <i>B</i>, <i>C</i> or <i>D</i>)
+appearing in the chat box indicating that you can send messages to that
+player.
+</p>
+
+]]>
+</entry>
+
+
+</properties>

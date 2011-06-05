@@ -1,0 +1,784 @@
+package edu.asu.commons.foraging.model;
+
+import java.awt.Point;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Logger;
+
+import edu.asu.commons.experiment.DataModel;
+import edu.asu.commons.foraging.conf.RoundConfiguration;
+import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
+import edu.asu.commons.foraging.event.EnforcementRankingRequest;
+import edu.asu.commons.foraging.event.LockResourceRequest;
+import edu.asu.commons.foraging.event.MonitorTaxEvent;
+import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
+import edu.asu.commons.foraging.event.RegulationRankingRequest;
+import edu.asu.commons.foraging.event.SubmitRegulationRequest;
+import edu.asu.commons.foraging.event.SynchronizeClientEvent;
+import edu.asu.commons.foraging.event.TokenCollectedEvent;
+import edu.asu.commons.foraging.event.UnlockResourceRequest;
+import edu.asu.commons.net.Identifier;
+
+
+/**
+ * $Id: GroupDataModel.java 497 2010-03-29 20:10:49Z alllee $
+ * 
+ * Represents a collection of Clients and associates them with a token distribution.  In the
+ * case of a shared resource model where all clients share the same world space, there will
+ * be a single group and hence a single token distribution for all clients.
+ * 
+ * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
+ * @author Deepali Bhagvat
+ * @version $Revision: 497 $
+ */
+
+public class GroupDataModel implements Serializable, Comparable<GroupDataModel>, DataModel<RoundConfiguration> {
+
+    private static final long serialVersionUID = -4756267788191037505L;
+
+    private transient Logger logger = Logger.getLogger(getClass().getName());
+
+    // a subset of the clients listed in the  
+    private final Map<Identifier, ClientData> clients = new HashMap<Identifier, ClientData>();
+    // FIXME: making this transient causes a NPE in the facilitator, should be transient however.
+    private final Map<Point, Resource> resourceDistribution = new HashMap<Point, Resource>();
+    
+    private final transient Map<Identifier, Resource> resourceOwners = new HashMap<Identifier, Resource>();
+    private transient Set<Resource> removedResources;
+    private transient Set<Resource> addedResources;
+    
+    private transient ServerDataModel serverDataModel;
+    
+    private final long groupId;
+    private volatile static long nextGroupId = 0;
+    
+    private volatile int receivedEnforcementRankings = 0;
+    private volatile int receivedRegulationRankings = 0;
+    private volatile int receivedSanctionRankings = 0;
+    private EnforcementMechanism activeEnforcementMechanism = EnforcementMechanism.NONE;
+    private SanctionMechanism activeSanctionMechanism = SanctionMechanism.NONE;
+    private RegulationData activeRegulation;
+    
+    private List<ClientData> waitingMonitors;
+    
+    private ClientData activeMonitor;
+    
+    private int tokensCollectedDuringInterval = 0;
+
+    private ArrayList<RegulationData> submittedRegulations = new ArrayList<RegulationData>();
+
+    public GroupDataModel(ServerDataModel serverDataModel) {
+        this(serverDataModel, nextGroupId++);
+    }
+
+    public GroupDataModel(ServerDataModel serverDataModel, long groupId) {
+        this.serverDataModel = serverDataModel;
+        this.groupId = groupId;
+        this.removedResources = new HashSet<Resource>();
+        this.addedResources = new HashSet<Resource>();
+    }
+    
+    public void handleSanctionRequest(PostRoundSanctionRequest sanctionRequest) {
+        Map<Identifier, Integer> sanctions = sanctionRequest.getSanctions();
+        for (Map.Entry<Identifier, Integer> entry : sanctions.entrySet()) {
+            Identifier id = entry.getKey();
+            int change = entry.getValue();
+            if (id.equals(sanctionRequest.getId())) {
+                // this is a sanction cost
+                clients.get(id).postRoundSanctionCost(change);
+            }
+            else {
+                clients.get(id).postRoundSanctionPenalty(change);
+            }
+        }
+    }
+    
+    public int getNumberOfNeighboringTokens(Point referencePoint) {
+    	int numberOfNeighboringTokens = 0;
+        int currentX = referencePoint.x;
+        int currentY = referencePoint.y;
+        int endX = currentX + 2;
+        int endY = currentY + 2;
+        for (int x = currentX - 1; x < endX; x++) {
+            for (int y = currentY - 1; y < endY; y++) {
+                Point point = new Point(x, y);
+            	if (point.equals(referencePoint)) continue;
+                // only add a point to the neighborhood set if it doesn't already have a resource.
+                if (serverDataModel.isValidPosition(point) && resourceDistribution.containsKey(point)) {
+                    numberOfNeighboringTokens++;
+                }
+            }
+        }
+        return numberOfNeighboringTokens;
+    	
+    }
+    
+    private double rankToValue(int rank) {
+        switch (rank) {
+        case 0: return 1.0d;
+        case 1: return 0.5d;
+        case 2: return 0.33d;
+        case 3: return 0.25d;
+        case 4: return 0.2d;
+        default:
+            System.err.println("Trying to convert invalid rank to value: " + rank);
+            return 0;
+        }
+    }
+    
+    public int size() {
+        return clients.size();
+    }
+    
+    public boolean rotateMonitorIfNecessary() {
+        if (activeEnforcementMechanism.isRotatingMonitor() && ! waitingMonitors.isEmpty()) {
+        	applyMonitorTax();
+        	// set active monitor back to harvest
+        	activeMonitor.setForagingRole(ForagingRole.HARVEST);
+        	if (waitingMonitors.isEmpty()) {
+        		logger.warning("no waiting monitors left but still trying to rotate: " + activeMonitor);
+        		return false;
+        	}
+        	else {
+        		activeMonitor = waitingMonitors.remove(0);
+        		activeMonitor.setForagingRole(ForagingRole.MONITOR);
+        		return true;
+        	}
+        }
+        return false;
+    }
+    
+    public RegulationData generateRegulationRankings() {
+    	resetRegulationRankingCount();
+    	int numberOfRegulations = submittedRegulations.size();
+    	double[] regulationVotingTally = new double[numberOfRegulations];
+    	Arrays.fill(regulationVotingTally, 0.0d);
+    	int maxRankingIndex = 0;
+    	double maxRankingValue = 0.0d;
+    	for (ClientData clientData : clients.values()) {
+    		int[] regulationRankings = clientData.getRegulationRankings();
+    		logger.info("client: " + clientData.getId() + " ranked regulations: "+ regulationRankings);
+    		for (int rank = 0; rank < numberOfRegulations; rank++) {
+    		    int actualRegulationIndex = regulationRankings[rank];
+    		    if (actualRegulationIndex == -1) {
+    		        continue;
+    		    }
+    			regulationVotingTally[actualRegulationIndex] += rankToValue(rank);
+    			submittedRegulations.get(actualRegulationIndex).setRank(regulationVotingTally[actualRegulationIndex]);
+    			if (regulationVotingTally[actualRegulationIndex] > maxRankingValue) {
+    				maxRankingValue = regulationVotingTally[actualRegulationIndex];
+    				maxRankingIndex = actualRegulationIndex;
+    			}
+    		}
+    	}
+    	activeRegulation = submittedRegulations.get(maxRankingIndex);
+    	logger.info("active regulation: " + activeRegulation.getText() + " max ranking value: " + maxRankingValue);
+    	return activeRegulation;
+    }
+
+    public RegulationData getActiveRegulation() {
+		return activeRegulation;
+	}
+
+	public void setActiveRegulation(RegulationData activeRegulation) {
+		this.activeRegulation = activeRegulation;
+	}
+	
+	public void setActiveEnforcementMechanism(EnforcementMechanism enforcementMechanism) {
+		this.activeEnforcementMechanism = enforcementMechanism;
+	}
+
+	// FIXME: this algorithm is very similar to generateRegulationRankings, extract to other method.
+	public EnforcementMechanism generateEnforcementRankings() {
+        resetEnforcementRankingCount();
+        // FIXME: change to round config parameter instead?
+        double[] enforcementVotingTally = new double[EnforcementMechanism.values().length];
+        Arrays.fill(enforcementVotingTally, 0.0d);
+        int maxRankingIndex = 0;
+        double maxRankingValue = 0.0d;
+        for (ClientData clientData: clients.values()) {
+            int[] enforcementRankings = clientData.getEnforcementRankings();
+            logger.info("XXX: enforcement rankings: " + enforcementRankings);
+            for (int rank = 0; rank < enforcementRankings.length; rank++) {
+                // 0 is top choice
+                int actualEnforcementIndex = enforcementRankings[rank];
+                if (actualEnforcementIndex == -1) {
+                    // nothing selected for this rank
+                    continue;
+                }
+                enforcementVotingTally[actualEnforcementIndex] += rankToValue(rank);
+                // keep a tally of the max index so we don't have to make another pass.
+                if (enforcementVotingTally[actualEnforcementIndex] > maxRankingValue) {
+                    maxRankingValue = enforcementVotingTally[actualEnforcementIndex];
+                    maxRankingIndex = actualEnforcementIndex;
+                }
+            }
+        }
+        activeEnforcementMechanism = EnforcementMechanism.get(maxRankingIndex);
+        logger.info("Active enforcement mechanism: " + activeEnforcementMechanism + " with rank " + maxRankingValue);
+        if (activeEnforcementMechanism.hasMonitor()) {
+            // pick a random person from the clients
+            ArrayList<ClientData> clientDataList = new ArrayList<ClientData>(clients.values());
+            Collections.shuffle(clientDataList);
+            // pick the first client from the shuffled list and set their role to MONITOR
+            activeMonitor = clientDataList.remove(0);
+            activeMonitor.setForagingRole(ForagingRole.MONITOR);
+            // set the rest of the clients to the HARVEST role
+            for (ClientData clientData : clientDataList) {
+                clientData.setForagingRole(ForagingRole.HARVEST);
+            }
+            if (activeEnforcementMechanism.isRotatingMonitor()) {
+                waitingMonitors = clientDataList;
+            }
+        }
+        else if (activeEnforcementMechanism.isSanctioningEnabled()) {
+            for (ClientData clientData : clients.values()) {
+                clientData.setForagingRole(ForagingRole.SANCTION_AND_HARVEST);
+            }
+        }
+        return activeEnforcementMechanism;
+    }
+	
+	public SanctionMechanism generateSanctionRankings() {
+        resetSanctionRankingCount();
+        // FIXME: change to round config parameter instead?
+        double[] sanctionVotingTally = new double[SanctionMechanism.values().length];
+        Arrays.fill(sanctionVotingTally, 0.0d);
+        int maxRankingIndex = 0;
+        double maxRankingValue = 0.0d;
+        for (ClientData clientData: clients.values()) {
+            int[] sanctionRankings = clientData.getEnforcementRankings();
+            System.out.println("Server ranks: "+sanctionRankings[0]+" "+sanctionRankings[1]);
+            logger.info("XXX: sanction rankings: " + Arrays.asList(sanctionRankings));
+            for (int rank = 0; rank < sanctionRankings.length; rank++) {
+                // 0 is top choice
+                int actualSanctionIndex = sanctionRankings[rank];
+                if (actualSanctionIndex == -1) {
+                    // nothing selected for this rank
+                    continue;
+                }
+                sanctionVotingTally[actualSanctionIndex] += rankToValue(rank);
+                //sanctionVotingTally[actualSanctionIndex] += rankToValue(actualSanctionIndex);
+                // keep a tally of the max index so we don't have to make another pass.
+                if (sanctionVotingTally[actualSanctionIndex] > maxRankingValue) {
+                    maxRankingValue = sanctionVotingTally[actualSanctionIndex];
+                    maxRankingIndex = actualSanctionIndex;
+                }
+            }
+        }
+        activeSanctionMechanism = SanctionMechanism.get(maxRankingIndex);
+        logger.info("Active sanction mechanism: " + activeSanctionMechanism.getTitle() + " with rank " + maxRankingValue);
+        
+        setActiveEnforcementMechanism(EnforcementMechanism.get(maxRankingIndex));
+
+        logger.info("Active enforcement mechanism: " + activeEnforcementMechanism.getTitle() + " with rank " + maxRankingValue);
+
+        return activeSanctionMechanism;
+    }
+
+    private void resetEnforcementRankingCount() {
+        receivedEnforcementRankings = 0;
+    }
+    
+    private void resetSanctionRankingCount() {
+        receivedSanctionRankings = 0;
+    }
+    
+    private void resetRegulationRankingCount() {
+    	receivedRegulationRankings = 0;
+    }
+    
+    public boolean hasReceivedAllEnforcementRankings() {
+        return receivedEnforcementRankings >= clients.size();
+    }
+    
+    public void submitRegulationRequest(SubmitRegulationRequest request) {
+        Identifier id = request.getId();
+        ClientData clientData = clients.get(id);
+        RegulationData submittedRegulation = new RegulationData(id, request.getMessage());
+        clientData.setRegulationData(submittedRegulation);
+        submittedRegulations.add(submittedRegulation);
+        submittedRegulation.setIndex(submittedRegulations.size() - 1);
+        System.err.println("submitted regulation: " + submittedRegulation);
+    }
+    
+    public boolean hasReceivedAllRegulations() {
+        return submittedRegulations.size() >= clients.size(); 
+    }
+
+    /**
+     * Used to reset the food distribution for a client during a practice
+     * round.
+     */
+    public void resetResourceDistribution() {
+        for (ClientData clientState : clients.values()) {
+            clientState.reset();
+        }
+        getRemovedResources().addAll(resourceDistribution.values());
+        getAddedResources().clear();
+        resourceDistribution.clear();
+    }
+    
+    /**
+     * Perform all cleanup.
+     */
+    public void cleanupRound() {
+        clearResourceDistribution();
+        tokensCollectedDuringInterval = 0;
+        activeEnforcementMechanism = EnforcementMechanism.NONE;
+        activeSanctionMechanism = SanctionMechanism.NONE;
+        submittedRegulations.clear();
+        activeMonitor = null;
+    }
+    
+    public void clearResourceDistribution() {
+        resourceDistribution.clear();
+        clearDiffLists();
+    }
+    
+    public boolean isResourceAt(Point position) {
+        return resourceDistribution.containsKey(position);
+    }
+
+    public void addResource(Point position) {
+        addResource(position, 0);
+    }
+    public void addResource(Point position, int age) {
+        addResource(new Resource(position, age));
+    }
+    
+    public void addResource(Resource resource) {
+        Point position = resource.getPosition();
+        synchronized (resourceDistribution) {
+            resourceDistribution.put(position, resource);
+        }
+        getAddedResources().add(resource);
+    }
+    
+    void addResources(Collection<Point> locations) {
+        synchronized (resourceDistribution) {
+            for (Point point : locations) {
+                Resource resource = new Resource(point);
+                resourceDistribution.put(point, resource);
+                getAddedResources().add(resource);
+            }
+        }
+    }
+    
+    public void addResources(Set<Resource> resources) {
+        synchronized (resourceDistribution) {
+            for (Resource resource: resources) {
+                Point position = resource.getPosition();
+                resourceDistribution.put(position, resource);
+                getAddedResources().add(resource);
+            }
+        }
+    }
+    
+    void moveResources(Collection<Point> removedResources, Collection<Point> addedResources) {
+        synchronized (resourceDistribution) {
+            for (Point oldLocation: removedResources) {
+                Resource oldResource = resourceDistribution.remove(oldLocation);
+                getRemovedResources().add(oldResource);
+            }
+            for (Point newLocation : addedResources) {
+                Resource newResource = new Resource(newLocation);
+                resourceDistribution.put(newLocation, newResource);
+                getAddedResources().add(newResource);
+            }
+        }
+    }
+    
+    /**
+     * Currently only invoked when replaying a round and stepping backwards.
+     * @param position
+     */
+    public void removeResource(Point position) {
+        synchronized (resourceDistribution) {
+            resourceDistribution.remove(position);
+        }
+    }
+
+    public Set<Identifier> getClientIdentifiers() {
+        return Collections.unmodifiableSet(clients.keySet());
+    }
+    
+    public Set<Identifier> getOrderedClientIdentifiers() {
+        return new TreeSet<Identifier>(clients.keySet());
+    }
+
+    public Point getClientPosition(Identifier id) {
+        ClientData clientData = clients.get(id);
+        if (clientData == null) {
+            getLogger().severe("getClientPosition on an id with no ClientData mapping: " + id + " clients: " + clients);
+            return new Point(0,0);
+        }
+        return clientData.getPoint();
+    }
+
+    public Map<Identifier, Point> getClientPositions() {
+        Map<Identifier, Point> positions = new HashMap<Identifier, Point>();
+        for (ClientData clientData : clients.values()) {
+            positions.put(clientData.getId(), clientData.getPoint());
+        }
+        return positions;
+    }
+
+    public ClientData getClientData(Identifier id) {
+        return clients.get(id);
+    }
+
+    public int getCurrentTokens(Identifier id) {
+        ClientData state = clients.get(id);
+        if (state == null) {
+            // FIXME: perhaps we should just return 0 instead.
+            getLogger().severe("no client state available for: " + id);
+            return 0;
+        }
+        return state.getCurrentTokens();
+    }
+
+    public Map<Identifier, Integer> getClientTokens() {
+        Map<Identifier, Integer> clientTokensMap = new HashMap<Identifier, Integer>();
+        for (ClientData data: clients.values()) {
+            clientTokensMap.put(data.getId(), data.getCurrentTokens());
+        }
+        return clientTokensMap;
+    }
+    
+    public int getResourceDistributionSize() {
+        return resourceDistribution.size();
+    }
+
+    /**
+     *
+     * Moves the client corresponding to id in direction d.
+     * 
+     * @param id
+     * @param direction
+     * @return
+     */
+    public void moveClient(Identifier id, Direction direction) {
+        ClientData clientData = clients.get(id);
+        Point newPosition = direction.apply(clientData.getPoint());
+        if (serverDataModel.isValidPosition(newPosition)) {
+            // check occupancy
+            if ( isCellAvailable(newPosition) ) {
+                clientData.setPosition(newPosition);
+                // if the client is explicitly collecting, then movement does not automatically
+                // collect a token.
+                if (clientData.isExplicitCollectionMode()) {
+                    return;
+                }
+                collectToken(clientData);
+            }
+        }
+    }
+
+    private int getOccupancy(Point position) {
+        int occupancy = 0;
+        for (ClientData data: clients.values()) {
+            if (data.getPosition().equals(position)) {
+                occupancy++;
+            }
+        }
+        return occupancy;
+    }
+
+    
+    private boolean isCellAvailable(Point position) {
+        if (serverDataModel.getRoundConfiguration().shouldCheckOccupancy()) {
+            return getOccupancy(position) < serverDataModel.getRoundConfiguration().getMaximumOccupancyPerCell();
+        }
+        return true;
+    }
+    
+    public void collectToken(ClientData clientData) {
+        Point position = clientData.getPoint();
+        if (resourceDistribution.containsKey(position)) {
+            getRemovedResources().add( resourceDistribution.remove(position) );
+            tokensCollectedDuringInterval++;
+            clientData.addToken();
+            serverDataModel.getEventChannel().handle(new TokenCollectedEvent(clientData.getId(), position));
+        }
+    }
+    
+    public void clearDiffLists() {
+        if (removedResources != null) {
+            removedResources.clear();
+        }
+        if (addedResources != null) {
+            addedResources.clear();
+        }
+    }
+
+    public void addClient(ClientData clientData) {
+        clients.put(clientData.getId(), clientData);
+        clientData.setAssignedNumber(clients.size());
+        clientData.setGroupDataModel(this);
+        clientData.initializePosition();
+    }
+    
+    public void removeClient(Identifier id) {
+        clients.remove(id);
+    }
+
+    public boolean isFull() {
+        return clients.size() == serverDataModel.getRoundConfiguration().getClientsPerGroup();
+    }
+    
+    public void clear() {
+        clients.clear();
+        cleanupRound();
+    }
+    
+    public boolean isResourceDistributionEmpty() {
+        return resourceDistribution.isEmpty();
+    }
+
+    public void setServerDataModel(ServerDataModel state) {
+        resourceDistribution.clear();
+        this.serverDataModel = state;
+    }
+
+    public Map<Identifier, ClientData> getClientDataMap() {
+        return new HashMap<Identifier, ClientData>(clients);
+    }
+
+    public void resetSanctionCounts() {
+        for (ClientData data: clients.values()) {
+            data.resetLatestSanctions();
+        }
+    }
+    
+    public RoundConfiguration getRoundConfiguration() {
+        return serverDataModel.getRoundConfiguration();
+    }
+
+    private boolean isResourceOwner(Identifier id, Resource resource) {
+        Resource lockedResource = resourceOwners.get(id);
+        if (lockedResource == null) {
+            getLogger().severe(String.format("%s harvesting fruits for resource [%s] it doesn't own",  id, resource));
+            return false;
+        }
+        if (! lockedResource.equals(resource)) {
+            getLogger().severe(String.format("%s harvesting fruits for resource [%s] it doesn't own - it actually owns [%s]", id, resource, lockedResource));
+            return false;
+        }
+        return true;
+    }
+
+    public void harvestResource(Identifier id, Resource resource) {
+        if ( isResourceOwner(id, resource) ) {
+            ClientData clientData = clients.get(id);
+            clientData.addTokens( getRoundConfiguration().ageToTokens(resource.getAge()) );
+            Point position = resource.getPosition();
+            getRemovedResources().add(resourceDistribution.remove(position));
+            resourceOwners.remove(id);
+        }
+    }
+    
+    public void harvestFruits(Identifier id, Resource resource) {
+        if ( isResourceOwner(id, resource) ) {
+            ClientData clientData = clients.get(id);
+            clientData.addTokens(getRoundConfiguration().getTokensPerFruits());
+            getResourceFromDistribution(resource).harvestFruits();
+            resourceOwners.remove(id);
+        }
+    }
+    
+    private Resource getResourceFromDistribution(Resource remoteResource) {
+        return resourceDistribution.get(remoteResource.getPosition());
+    }
+
+    /**
+     * Returns true if the resource is in the resource distribution and is not
+     * already owned by a different resource owner.
+     * @param resource
+     * @return
+     */
+    public boolean lockResource(LockResourceRequest request) {
+        Identifier id = request.getId();
+        Resource remoteResource = request.getResource();
+        Resource localResource = getResourceFromDistribution(remoteResource);
+        if (! resourceDistribution.containsKey(remoteResource.getPosition())) {
+            getLogger().warning(String.format("Trying to lock a resource [%s] that is no longer present.", remoteResource));
+            return false;
+        }
+        Resource ownedResource = resourceOwners.get(id);
+        if (ownedResource != null && ownedResource.equals(localResource)) {
+            getLogger().warning("Resource is already owned by the same owner: " + localResource + id);
+            return true;
+        }
+        if ( resourceOwners.containsValue(localResource) ) {
+            getLogger().warning("Resource is already owned by another owner: " + localResource + id);
+            return false;
+        }
+        resourceOwners.put(id, localResource);
+        return true;
+    }
+    
+    public void unlockResource(UnlockResourceRequest request) {
+        resourceOwners.remove(request.getId());
+    }
+
+    public Set<Point> getResourcePositions() {
+        synchronized (resourceDistribution) {
+            return new HashSet<Point>(resourceDistribution.keySet());
+        }
+    }
+    
+    public Map<Point, Resource> getResourceDistribution() {
+        synchronized (resourceDistribution) {
+            return Collections.unmodifiableMap(resourceDistribution);
+        }
+    }
+    
+    /**
+     * Only invoked by the client side.
+     * @param event
+     */
+    public void updateDiffs(ClientPositionUpdateEvent event) {
+        for (ClientData clientData : clients.values()) {
+            Identifier id = clientData.getId();
+            clientData.setCurrentTokens(event.getCurrentTokens(id));
+            clientData.setPosition(event.getClientPosition(id));
+        }
+        synchronized (resourceDistribution) {
+            for (Resource resource : event.getRemovedTokens()) {
+                resourceDistribution.remove(resource.getPosition());
+            }
+            for (Resource resource : event.getAddedTokens()) {
+                resourceDistribution.put(resource.getPosition(), resource);
+            }
+        }
+    }
+
+    /**
+     * Only invoked by the client for bulk update synchronization of the game world (as opposed to the server's incremental updates). 
+     * @param event
+     */
+    public void update(SynchronizeClientEvent event) {
+        clients.putAll(event.getClientDataMap());
+        synchronized (resourceDistribution) {
+            resourceDistribution.clear();
+            for (Point point : event.getTokenPositions()) {
+                resourceDistribution.put(point, null);
+            }
+        }
+    }
+
+    private Logger getLogger() {
+        if (logger == null) {
+            logger = Logger.getLogger(getClass().getName());
+        }
+        return logger;
+    }
+
+
+    public Set<Resource> getRemovedResources() {
+        if (removedResources == null) {
+            removedResources = new HashSet<Resource>();
+        }
+        return removedResources;
+    }
+    
+    public Set<Resource> getAddedResources() {
+        if (addedResources == null) {
+            addedResources = new HashSet<Resource>();
+        }
+        return addedResources;
+    }
+    
+    public long getGroupId() {
+        return groupId;
+    }
+    
+    public String toString() {
+        return "Group #" + groupId;
+    }
+    
+    @Override
+    public int compareTo(GroupDataModel other) {
+        return Long.valueOf(groupId).compareTo(other.groupId);
+    }
+
+    public EnforcementMechanism getActiveEnforcementMechanism() {
+        return activeEnforcementMechanism;
+    }
+    
+    public SanctionMechanism getActiveSanctionMechanism() {
+        return activeSanctionMechanism;
+    }
+    
+    public ClientData getActiveMonitor() {
+    	return activeMonitor;
+    }
+
+    public void submitEnforcementRanking(EnforcementRankingRequest request) {
+        ClientData clientData = clients.get(request.getId());
+        clientData.setEnforcementRankings(request.getRankings());
+        receivedEnforcementRankings++;
+    }
+
+    public void submitRegulationRanking(RegulationRankingRequest request) {
+        clients.get(request.getId()).setRegulationRankings(request.getRankings());
+        receivedRegulationRankings++;
+    }
+    
+    public void submitSanctionRanking(EnforcementRankingRequest request) {
+        clients.get(request.getId()).setEnforcementRankings(request.getRankings());
+        receivedSanctionRankings++;
+    }
+    
+    public boolean isRotatingMonitor() {
+    	return activeEnforcementMechanism != null && activeEnforcementMechanism.isRotatingMonitor();
+    }
+
+    public boolean hasReceivedAllRegulationRankings() {
+        return receivedRegulationRankings >= clients.size();
+    }
+    
+    public boolean hasReceivedAllSanctionRankings() {
+        return receivedSanctionRankings >= clients.size();
+    }
+
+    public List<RegulationData> getSubmittedRegulations() {
+        return submittedRegulations;
+    }
+    
+    public void applyMonitorTax() {
+    	if (activeMonitor == null) {
+    		logger.severe("Trying to apply monitor tax for null monitor.");
+    		return;
+    	}
+    	if (activeMonitor.isTaxReceived()) {
+    		logger.severe("active monitor: " + activeMonitor + " already received tax.");
+    		return;
+    	}
+    	ArrayList<ClientData> clientDataList = new ArrayList<ClientData>(clients.values());
+    	clientDataList.remove(activeMonitor);
+    	Map<Identifier, Integer> monitorTaxes = new HashMap<Identifier, Integer>();
+    	int totalTax = 0;
+    	for (ClientData clientData : clientDataList) {
+    		int monitorTax = clientData.applyMonitorTax();
+    		totalTax += monitorTax;
+    		activeMonitor.addTokens(monitorTax);
+    		monitorTaxes.put(clientData.getId(), monitorTax);
+    	}
+    	logger.info("active monitor: " + activeMonitor + " received tax: " + totalTax);
+    	activeMonitor.setTaxReceived();
+    	// persist monitor tax
+		serverDataModel.getEventChannel().handle(new MonitorTaxEvent(activeMonitor.getId(), monitorTaxes, totalTax));
+    }
+
+}

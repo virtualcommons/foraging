@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+vim:sts=2:sw=2
+-->
+<web-app>
+
+  <display-name>The Virtual Commons Foraging Experiment</display-name>
+
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+
+</web-app>

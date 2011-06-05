@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="display-group-tokens">true</entry>
+<entry key="clients-per-group">5</entry>
+<entry key="resource-depth">29</entry>
+<entry key="resource-width">29</entry>
+<entry key="duration">240</entry>
+
+<!-- enable field of vision for tokens and subjects -->
+<entry key='tokens-field-of-vision'>true</entry>
+<entry key='subjects-field-of-vision'>true</entry>
+
+<!-- enable sanctioning -->
+<entry key="sanction-type">real-time</entry>
+<entry key="sanction-cost">1</entry>
+<entry key="sanction-multiplier">2</entry>
+
+<entry key="initial-distribution">.25</entry>
+
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+
+<!-- before this round begins, we have a chat session -->
+<entry key="chat-enabled">true</entry>
+
+<entry key="instructions">
+<![CDATA[
+<h3>Round 2 Instructions</h3>
+<hr>
+<p>
+Round 2 is the same as round 1.</p>
+<p>
+The length of this round is again four minutes.
+</p>
+<p>
+If you have any questions please raise your hand.  <b>Do you have any
+questions so far?</b>
+</p>
+]]>
+</entry>
+
+<entry key="chat-instructions">
+<![CDATA[
+<p>
+You can now chat with the other participants in your group for 4 minutes
+total. During the chat round, you may communicate about any aspect of the
+experiment that you would like to discuss with other participants with whom
+you have been matched. You may not promise them side-payments after the
+experiment is completed or threaten them with any consequence after the
+experiment is finished. We are monitoring the chat traffic while you chat. If
+we see that somebody reveals his or her identity, we have to stop the
+experiment and remove the whole group from which this person is a member out
+of this room.
+</p>
+<p>
+You will see other participants labeled as "1", "2","3", "4", or "5" in the
+chat box.  You can send a chat message by typing into the textfield at the
+bottom of the screen and pressing the "enter" key on your keyboard.  
+</p>
+]]>
+</entry>
+
+<entry key='private-chat-instructions'>
+<![CDATA[
+You may send private messages to a specific participant by clicking on the
+appropriately labeled button (1, 2, 3, 4, or 5) before typing your message in
+the chat box and sending it.  By default you are communicating with all
+members of your group. 
+]]>
+</entry>
+
+</properties>

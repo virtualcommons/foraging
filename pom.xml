@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+vim:sts=2:sw=2
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <organization>
+    <name>The Virtual Commons</name>
+    <url>http://commons.asu.edu</url>
+  </organization>
+  <developers>
+    <developer>
+      <id>allen</id>
+      <name>Allen Lee</name>
+      <email>allen.lee@asu.edu</email>
+      <url>http://libai.la.asu.edu/allen.lee</url>
+      <organization>Center for the Study of Institutional Diversity</organization>
+      <organizationUrl>http://csid.asu.edu</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+        <role>manager</role>
+      </roles>
+      <timezone>-7</timezone>
+    </developer>
+  </developers>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.asu.commons</groupId>
+  <artifactId>foraging</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>foraging</name>
+  <url>http://commons.asu.edu/foraging</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <licenses>
+    <license>
+      <name>GNU General Public License, Version 3.0</name>
+      <url>http://www.gnu.org/copyleft/gpl.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <url>https://virtualcommons.svn.sourceforge.net/svnroot/virtualcommons/foraging</url>
+  </scm>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://opensource.asu.edu/jira/browse/COMMONS</url>
+  </issueManagement>
+  <repositories>
+    <repository>
+      <id>dev.commons.asu.edu</id>
+      <name>dev.commons Maven2 repository</name>
+      <url>http://dev.commons.asu.edu/archiva/repository/internal</url>
+      <releases><enabled>true</enabled></releases>
+      <snapshots><enabled>false</enabled></snapshots>
+    </repository>
+    <repository>
+      <id>snapshot.dev.commons.asu.edu</id>
+      <name>dev.commons Maven2 snapshot repository</name>
+      <url>http://dev.commons.asu.edu/archiva/repository/snapshots</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+    <repository>
+      <id>dev.tdar.org</id>
+      <name>tDAR Maven2 repository</name>
+      <url>http://dev.tdar.org/archiva/repository/internal</url>
+      <releases><enabled>true</enabled></releases>
+      <snapshots><enabled>false</enabled></snapshots>
+    </repository>
+  </repositories>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.5</version>
+    </dependency>
+    <dependency>
+      <groupId>edu.asu.commons</groupId>
+      <artifactId>csidex</artifactId>
+      <version>0.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>net.java.dev.jogl</groupId>
+      <artifactId>jogl</artifactId>
+      <version>1.1.1-rc6</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jmf</artifactId>
+      <version>2.1.1e</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <finalName>foraging</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.6.1</version>
+        <configuration>
+          <links>
+            <link>http://commons.asu.edu/api/csidex/</link>
+          </links>
+          <detectLinks>true</detectLinks>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.22</version>
+        <configuration>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>8080</port>
+              <maxIdleTime>60000</maxIdleTime>
+            </connector>
+          </connectors>
+          <contextPath>/</contextPath>
+          <webDefaultXml>src/main/resources/web/webdefault.xml</webDefaultXml>
+          <scanIntervalSeconds>10</scanIntervalSeconds>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>ant</id>
+      <build>
+        <defaultGoal>antrun:run</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <goals>
+              <goal>load</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <!-- 
+                can be invoked via 
+                mvn -P ant -D target=deploy
+                -->
+                <property name="compile.classpath" refid="maven.compile.classpath"/>
+                <property name="runtime.classpath" refid="maven.runtime.classpath"/>
+                <property name="test.classpath" refid="maven.test.classpath"/>
+                <property name="plugin.classpath" refid="maven.plugin.classpath"/>
+                <ant antfile="${basedir}/build.xml" inheritRefs="true" inheritAll="true">
+                  <target name="${target}"/>
+                </ant>
+              </tasks>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>ant-contrib</groupId>
+          <artifactId>ant-contrib</artifactId>
+          <version>1.0b2</version>
+        </dependency>
+      </dependencies>
+    </profile>
+
+  </profiles>
+</project>

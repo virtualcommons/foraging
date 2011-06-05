@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="practice-round">true</entry>
+<entry key='resource-width'>8</entry>
+<entry key='resource-depth'>8</entry>
+<entry key='resource-scale'>32</entry>
+<entry key="duration">240</entry>
+<entry key="initial-distribution">.25</entry>
+<entry key="private-property">false</entry>
+<entry key="clients-per-group">4</entry>
+<entry key="quiz-enabled">false</entry>
+<entry key="chat-radius">64</entry>
+<entry key="seconds-per-year">30</entry>
+<entry key="regrowth-rate">.01</entry>
+<entry key="tokens-per-fruits">10</entry>
+<entry key="experiment-type">forestry</entry>
+<entry key="maximum-resource-age">10</entry>
+
+<entry key="instructions">
+<![CDATA[
+<h3>Round 3 Instructions</h3>
+<p>
+Round 3 is another practice round where you will be able to collect tokens by
+harvesting trees and fruit in a 3D representation of a forest.
+</p>
+<p>
+The forest consists of trees which are growing slowly over time. When a tree
+is big enough it will generate fruit. You can collect fruit from a tree and
+you can cut down a tree. The older the tree the more tokens you collect by
+harvesting it. A tree which is one minute old leads to 5 tokens, while a tree
+that is four minutes old gives you 25 tokens. After 4 minutes the tree will
+not grow any further. If a tree is cut down, it takes some time before a new
+seedling generates a new start for a tree to grow. A tree will generate fruits
+at age of 5 minutes. You can collect fruits, which generates 10 tokens per
+harvest. When you have harvested fruit, new fruit will be added as illustrated
+in the figure below. The tree can generate fruit indefinitely.
+<table width="100%">
+<tr>
+<td align="center">
+<img src="@CODEBASE_URL@/images/trees.jpg"></td>
+</tr>
+</table> 
+You will share the forest with three other participants. You will appear on
+the screen as an avatar.
+</p>
+<p>
+<b>Moving your avatar:</b> You can move your avatar by pressing the <b>W</b>,
+<b>A</b>, <b>S</b>, <b>D</b> keys or via the arrow keys. <b>W</b> or the
+<b>Up</b> arrow key will move your avatar forward while <b>S</b> or the
+<b>Down</b> arrow key will move it backward. <b>A</b> or the <b>Left</b> arrow
+key will rotate the avatar to its left while <b>D</b> or the <b>Right</b>
+arrow key will rotate it to its right.
+</p>
+<p>
+<b>Cutting a tree:</b> Cutting a tree is a two step process.
+First you need to select the tree you wish to cut. You can do this by standing
+next to the tree and pressing the <b>Q</b> key. You will see the selected tree
+changing its color to blue. Then you can cut the selected tree by pressing the
+<b>E</b> key. You will see that the avatar moves its axe to cut the tree. The
+bigger the tree the more effort the avatar needs to make to cut the tree. When
+the tree is cut, you will see tokens added to your total at the top of the
+screen. 
+</p>
+<p>
+<b>Collecting fruits:</b> Collecting fruits is also a two step process. 
+First you need to select the tree you wish collect fruits from. You can do
+this by standing next to the tree and pressing the key <b>Q</b>. You will see
+the selected tree changing its color to blue. Then you can collect the fruits
+by pressing the key <b>X</b>. You will see that the fruits are falling down,
+representing the fruit harvest. On the top of the screen you will see that
+tokens are added to your total.
+</p>
+<p>
+<b>Chatting with other players:</b> A chat box is present at the bottom of the
+screen. When another player is in the neighborhood, you can click on that
+avatar using the left mouse button to start a chat. You will see the character
+associated with the selected avatar (<i>A</i>, <i>B</i>, <i>C</i> or <i>D</i>)
+appearing in the chat box indicating that you can send messages to that
+player.
+</p>
+<hr>
+<h3>Practice Round Instructions</h3>
+<hr>
+<p>
+You will now have four minutes to practice with the experimental environment.
+You will share the environment with three other participants. Make sure you
+try out the chat option, the cutting of a tree and the collection of fruit.
+<p><center><b>Please do not communicate with any other participant.</b></center></p>
+<p>If you have any questions please raise your hand. <b>Do you have any
+questions so far?</b></p>
+]]>
+</entry>
+</properties>

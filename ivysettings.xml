@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+vim:sts=2:sw=2:
+-->
+<ivysettings>
+  <settings defaultResolver="chain-resolver" />
+  <property name='local-m2-pattern' value='${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision]'/>
+  <resolvers>
+    <chain name='chain-resolver' returnFirst='true'>
+      <filesystem name='m2' m2compatible='true'>
+        <ivy pattern='${local-m2-pattern}.pom' />
+        <artifact pattern='${local-m2-pattern}.[ext]'/>
+      </filesystem>
+      <ibiblio name='commons.snapshots' m2compatible='true' root='http://dev.commons.asu.edu/archiva/repository/snapshots'/>
+      <ibiblio name='commons.internal' m2compatible='true' root='http://dev.commons.asu.edu/archiva/repository/internal'/>
+      <ibiblio name='tdar-archiva' m2compatible='true' root='http://dev.tdar.org/archiva/repository/internal'/>
+    </chain>
+  </resolvers>
+</ivysettings>

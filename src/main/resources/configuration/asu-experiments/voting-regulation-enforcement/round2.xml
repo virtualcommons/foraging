@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="display-group-tokens">true</entry>
+<entry key="clients-per-group">5</entry>
+<entry key="duration">240</entry>
+<entry key="resource-depth">29</entry>
+<entry key="resource-width">29</entry>
+
+<entry key='tokens-field-of-vision'>true</entry>
+<entry key='subjects-field-of-vision'>true</entry>
+
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+
+<entry key="initial-distribution">.25</entry>
+<entry key="regrowth-rate">0.01</entry>
+
+<entry key="chat-enabled">true</entry>
+<entry key='voting-and-regulation-enabled'>true</entry>
+
+<entry key="instructions">
+<![CDATA[
+<h3>Round 2 Instructions</h3>
+<hr>
+<p>
+This round is the same as the previous round with two exceptions:
+</p>
+<ol>
+<li>
+Before the next round starts you can anonymously communicate by text messages
+for four minutes with the other participants in your group. You can use this
+opportunity to discuss the experiment and coordinate your actions to improve
+your earnings. You may not promise side-payments after the experiment is
+completed or make any threats. You are also not allowed to reveal your real
+identity. We are monitoring the chat traffic while you chat.
+</li>
+<li>
+During the next round you will have the option to reduce the earnings of another
+participant at a cost to your own earnings with constraints depending on the type
+of enforcement mechanism used. Below are the 4 types of enforcement mechanisms that 
+you have to vote later in the round.
+<ol>
+<li><b> Everyone can harvest but no sanctioning </b>
+<p>In this type all players can harvest but no can sanction or reduce any other
+player's tokens</p>
+<li><b> Everyone can harvest as well as sanction </b> 
+<p>Each time you press the numeric keys between 1-5 the number of tokens of the
+corresponding participant is reduced by <b>2</b> with a penalty of <b>1</b> to
+yourself.</p>
+<p>When you reduce the number of tokens of another participant, they will
+receive a message stating that you have reduced their tokens. Likewise, if
+another participant reduces your number of tokens, you will also receive a
+message. These messages will be displayed on the bottom of your screen.</p>
+
+<li><b> Randomly picked monitoring </b>
+<p>Randomly one of the participants is selected to be the monitoring agent
+This participant can not harvest, but can force another participant to pay 
+<b>1</b> token to the monitoring participant by pressing the responding 
+numeric key</p>
+<p>At the end of the round each participant who could harvest pays 25% of 
+the earning to the monitoring participant.</p>
+
+<li><b> Round Robin monitoring </b>
+<p>One participant is assigned the role of the monitor for a period of 48 secs
+and others can only harvest. So same rules apply as for the mechanism two. </p>
+<p> This continues with each participant getting the chance to be a monitor for 
+48 secs </p>
+</ol>
+</li>
+</ol>
+<p>
+If you have any questions please raise your hand.  <b>Do you have any
+questions so far?</b>
+</p>
+]]>
+</entry>
+<entry key="regulation-instructions">
+<![CDATA[
+<h3>Regulation Instructions</h3>
+<hr>
+<p>
+You may now propose a regulation that you wish to have in place during the
+round.  After all participants in your group have submitted a regulation you
+will be able to vote for a regulation by ranking it from 1 to 5, where 1 is
+the most favorable and 5 is the least favorable.
+</p>
+<ul>
+<li>You have 60 seconds to propose a regulation.</li>
+<li>Enter your regulation in the text area below.  It will be submitted
+automatically once the time ends.</li>
+</ul>
+]]>
+</entry>
+
+<entry key="chat-instructions">
+<![CDATA[
+<p>
+You can now chat with the other participants in your group for 4 minutes
+total. During the chat round, you may communicate about any aspect of the
+experiment that you would like to discuss with other participants with whom
+you have been matched. You may not promise them side-payments after the
+experiment is completed or threaten them with any consequence after the
+experiment is finished. We are monitoring the chat traffic while you chat. If
+we see that somebody reveals his or her identity, we have to stop the
+experiment and remove the whole group from which this person is a member out
+of this room.
+</p>
+<p>
+You will see other participants labeled as "1", "2","3", "4", or "5" in the
+chat box.  You can send a chat message by typing into the textfield at the
+bottom of the screen and clicking the "send" button with your mouse or
+pressing the "enter" key on your keyboard.  
+</p>
+]]>
+</entry>
+</properties>
