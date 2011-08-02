@@ -1,0 +1,11 @@
+syntax:glob
+
+*~
+target
+*.jar
+experiment-data/*
+build.properties
+*.log
+*.log.lck
+.classpath
+.project

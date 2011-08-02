@@ -73,11 +73,15 @@ public abstract class GridView extends JPanel {
         dw = (availableWidth / boardSize.getWidth());
         dh = (availableHeight / boardSize.getHeight());
         // ensure square proportions
-        dw = Math.floor(Math.min(dw, dh));
-        dh = dw;
+        dh = dw = Math.min(dw, dh);
+//        dh = dw;
 
         xoffset = (int) Math.floor((availableWidth - (dw * boardSize.getWidth())) / 2);
         yoffset = (int) Math.floor((availableHeight - (dh * boardSize.getHeight())) / 2);
+//        System.err.println("x offset: " + xoffset);
+//        System.err.println("y offset: " + yoffset);
+//        System.err.println("dw : " + dw);
+//        System.err.println("dh: " + dh);
 
         fontSize = (int)(0.85 * dh);
         font = new Font("sansserif", Font.BOLD, fontSize);
@@ -165,6 +169,7 @@ public abstract class GridView extends JPanel {
         // this super call to let the UI delegate some paintage as well.
         // super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
+//        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // FIXME: can be made more efficient.  
         // Could just update the parts that have changed (tokens removed, subjects moved) 
         // paint the background
@@ -182,8 +187,8 @@ public abstract class GridView extends JPanel {
     protected void paintCollection(Collection<Point> collection, Graphics2D graphics2D, Image image, ImageObserver observer) {
         synchronized (collection) {
             for (Point point: collection) {
-                int x = scaleX(point.getX());
-                int y = scaleY(point.getY());
+                int x = scaleX(point.x);
+                int y = scaleY(point.y);
                 graphics2D.drawImage(image, x, y, observer);                    
             }
         }
@@ -193,8 +198,8 @@ public abstract class GridView extends JPanel {
         synchronized (collection) {
             for (Point point: collection) {
                 if (fieldOfView.contains(point)) {
-                    int x = scaleX(point.getX());
-                    int y = scaleY(point.getY());
+                    int x = scaleX(point.x);
+                    int y = scaleY(point.y);
                     graphics2D.drawImage(image, x, y, observer);                    
                 }
             }
@@ -208,22 +213,22 @@ public abstract class GridView extends JPanel {
         return (int) dh;
     }
 
-    // FIXME: both scaleX and scaleY are called quite often in the course of
-    // running, should see if we can optimize them further.
+    // FIXME: profiling shows that both scaleX and scaleY are called a lot at runtime, 
+    // should see if we can optimize them further.
     protected int scaleX(int x) {
         return (int) ((dw * x) + xoffset);
     }
 
-    protected int scaleX(double x) {
-        return (int) ((dw * x) + xoffset);
+    protected double scaleXDouble(double x) {
+        return ((dw * x) + xoffset);
     }
 
     protected int scaleY(int y) {
         return (int) ((dh * y) + yoffset);
     }
 
-    protected int scaleY(double y) {
-        return (int) ((dh * y) + yoffset);
+    protected double scaleYDouble(double y) {
+        return ((dh * y) + yoffset);
     }
 
 

@@ -122,7 +122,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return ( isPracticeRound() && isPrivateProperty() ) 
             || getBooleanProperty("randomize-group", false);
     }
-    
+
     /**
      * Returns the number of seconds that the flashing visualization of
      * sanctioning should occur.
@@ -149,9 +149,9 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getBooleanProperty("subjects-field-of-vision", false);
     }
     
-    public double getViewSubjectsRadius() {
+    public int getViewSubjectsRadius() {
         if (isSubjectsFieldOfVisionEnabled()) {
-            return getDoubleProperty("view-subjects-radius", 6.0d);
+            return getIntProperty("view-subjects-radius", 6);
         }
         throw new UnsupportedOperationException("subject field of vision is not enabled.");
     }

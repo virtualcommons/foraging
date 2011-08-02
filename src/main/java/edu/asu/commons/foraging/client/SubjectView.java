@@ -3,7 +3,6 @@ package edu.asu.commons.foraging.client;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Point;
@@ -127,20 +126,20 @@ public class SubjectView extends GridView {
         Point currentPosition = dataModel.getCurrentPosition();
         RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
         if (roundConfiguration.isSubjectsFieldOfVisionEnabled()) {
-            double radius = roundConfiguration.getViewSubjectsRadius();
+            // paint a transparent circle centered on the current position of the subject.
+            int radius = roundConfiguration.getViewSubjectsRadius();
             fieldOfVision = new Circle(currentPosition, radius);
-            // paint field of vision
-            Paint originalPaint = graphics2D.getPaint();
-            graphics2D.setPaint(FIELD_OF_VISION_COLOR);
-            Point topLeftCorner = new Point(currentPosition.x - (int) radius, currentPosition.y - (int) radius);
-            int x = scaleX(topLeftCorner.x);
-            int y = scaleY(topLeftCorner.y);
-            int diameter = (int) radius * 2;
-            diameter = Math.min(scaleX(diameter), scaleY(diameter));
-            Ellipse2D.Double circle = new Ellipse2D.Double(x, y, diameter, diameter);      
+            Point topLeftCorner = new Point(currentPosition.x - radius, currentPosition.y - radius);
+            double x = scaleXDouble(topLeftCorner.x) + (dw / 3);
+            double y = scaleYDouble(topLeftCorner.y) + (dh / 3);
+            double diameter = radius * 2.0d;
+            diameter = Math.min(scaleXDouble(diameter), scaleYDouble(diameter)) + (dw / 2);
+            Ellipse2D.Double circle = new Ellipse2D.Double(x, y, diameter, diameter);
             //graphics2D.fillOval(x, y, diameter, diameter);
             // clip the rendered part of the Field of vision circle that crosses the playing boundary 
             graphics2D.setClip(circle);
+            Paint originalPaint = graphics2D.getPaint();
+            graphics2D.setPaint(FIELD_OF_VISION_COLOR);
             graphics2D.fill(circle);
             graphics2D.setPaint(originalPaint);
         }
