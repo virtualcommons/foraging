@@ -42,11 +42,11 @@ vim:sts=2:sw=2
     </license>
   </licenses>
   <scm>
-    <url>https://virtualcommons.svn.sourceforge.net/svnroot/virtualcommons/foraging</url>
+    <url>https://bitbucket.org/virtualcommons/foraging</url>
   </scm>
   <issueManagement>
-    <system>JIRA</system>
-    <url>http://opensource.asu.edu/jira/browse/COMMONS</url>
+    <system>Bitbucket</system>
+    <url>https://bitbucket.org/virtualcommons/foraging/issues</url>
   </issueManagement>
   <repositories>
     <repository>
