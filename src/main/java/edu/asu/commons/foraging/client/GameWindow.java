@@ -17,6 +17,5 @@ public interface GameWindow {
     public void init();
     public void update(long millisecondsLeft);
     public void showInstructions();
-    public void resetPanels();
 
 }

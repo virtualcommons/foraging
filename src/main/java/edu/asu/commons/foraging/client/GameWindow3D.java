@@ -117,10 +117,6 @@ public class GameWindow3D implements GameWindow {
         
     }
     
-    public void resetPanels() {
-    	
-    }
-    
     private void initializeChatPanel() {
         getChatPanel().initialize();
     }

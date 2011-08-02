@@ -2,7 +2,6 @@ package edu.asu.commons.foraging.event;
 
 
 import edu.asu.commons.event.AbstractPersistableEvent;
-import edu.asu.commons.foraging.model.SanctionMechanism;
 import edu.asu.commons.net.Identifier;
 
 /**

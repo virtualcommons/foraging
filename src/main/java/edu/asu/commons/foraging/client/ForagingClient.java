@@ -25,16 +25,12 @@ import edu.asu.commons.foraging.event.ClientMovementRequest;
 import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
 import edu.asu.commons.foraging.event.CollectTokenRequest;
 import edu.asu.commons.foraging.event.EndRoundEvent;
-import edu.asu.commons.foraging.event.EnforcementMechanismUpdateEvent;
 import edu.asu.commons.foraging.event.LockResourceEvent;
 import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
 import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
-import edu.asu.commons.foraging.event.RegulationSubmissionUpdateEvent;
-import edu.asu.commons.foraging.event.RegulationUpdateEvent;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
-import edu.asu.commons.foraging.event.SanctionUpdateEvent;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.net.SocketIdentifier;
@@ -181,7 +177,6 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                 if (state == ClientState.RUNNING) {
                     dataModel.setGroupDataModel(event.getGroupDataModel());
                     getGameWindow().endRound(event);
-                    getGameWindow().resetPanels();
                     if (dataModel.is2dExperiment()) {
                         messageQueue.stop();
                     }
@@ -237,31 +232,31 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                 gameWindow2D.displayMessage(event.toString());
             }
         });
-        addEventProcessor(new EventTypeProcessor<EnforcementMechanismUpdateEvent>(EnforcementMechanismUpdateEvent.class) {
-            public void handle(final EnforcementMechanismUpdateEvent event) {
-            	dataModel.setGroupDataModel(event.getGroupDataModel());
-                gameWindow2D.displayActiveEnforcementMechanism();
-            }
-        });
-        addEventProcessor(new EventTypeProcessor<RegulationSubmissionUpdateEvent>(RegulationSubmissionUpdateEvent.class) {
-            public void handle(final RegulationSubmissionUpdateEvent event) {
-            	dataModel.setGroupDataModel(event.getGroupDataModel());
-                gameWindow2D.initializeRegulationVotingPanel();
-            }
-        });
-        addEventProcessor(new EventTypeProcessor<RegulationUpdateEvent>(RegulationUpdateEvent.class) {
-            public void handle(final RegulationUpdateEvent event) {
-            	dataModel.setActiveRegulation(event.getRegulationData());
-            	gameWindow2D.displayActiveRegulation();
-            }
-        });
-        
-        addEventProcessor(new EventTypeProcessor<SanctionUpdateEvent>(SanctionUpdateEvent.class) {
-            public void handle(final SanctionUpdateEvent event) {
-            	dataModel.setGroupDataModel(event.getGroupDataModel());
-            	gameWindow2D.displaySanctionMechanism();
-            }
-        });
+//        addEventProcessor(new EventTypeProcessor<EnforcementMechanismUpdateEvent>(EnforcementMechanismUpdateEvent.class) {
+//            public void handle(final EnforcementMechanismUpdateEvent event) {
+//            	dataModel.setGroupDataModel(event.getGroupDataModel());
+//                gameWindow2D.displayActiveEnforcementMechanism();
+//            }
+//        });
+//        addEventProcessor(new EventTypeProcessor<RegulationSubmissionUpdateEvent>(RegulationSubmissionUpdateEvent.class) {
+//            public void handle(final RegulationSubmissionUpdateEvent event) {
+//            	dataModel.setGroupDataModel(event.getGroupDataModel());
+//                gameWindow2D.initializeRegulationVotingPanel();
+//            }
+//        });
+//        addEventProcessor(new EventTypeProcessor<RegulationUpdateEvent>(RegulationUpdateEvent.class) {
+//            public void handle(final RegulationUpdateEvent event) {
+//            	dataModel.setActiveRegulation(event.getRegulationData());
+//            	gameWindow2D.displayActiveRegulation();
+//            }
+//        });
+//        
+//        addEventProcessor(new EventTypeProcessor<SanctionUpdateEvent>(SanctionUpdateEvent.class) {
+//            public void handle(final SanctionUpdateEvent event) {
+//            	dataModel.setGroupDataModel(event.getGroupDataModel());
+//            	gameWindow2D.displaySanctionMechanism();
+//            }
+//        });
     }
 
     public boolean canPerformRealTimeSanction() {
@@ -292,9 +287,6 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         private int messagesPerSecond = DEFAULT_MESSAGES_PER_SECOND;
         private int messagesSent;
         
-        // samples are collected over 3 seconds.
-//        private final static int SAMPLE_TIME = 3;
-        private int totalMessagesPerSample;
         private int averageMessagesPerSecond;
         
         private Duration secondTick = Duration.create(1);        
@@ -362,7 +354,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
 //                    moveClient(request);
                     transmit(request);
                 }
-                Utils.sleep(50);
+                Utils.sleep(30);
             }
         }
         
@@ -383,7 +375,6 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         private void tick() {
             if (secondTick.hasExpired()) {
                 secondTick.restart();
-                totalMessagesPerSample += messagesSent;
                 messagesSent = 0;
             }
         }

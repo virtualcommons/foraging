@@ -21,8 +21,6 @@ import edu.asu.commons.foraging.event.EnforcementRankingRequest;
 import edu.asu.commons.foraging.event.LockResourceRequest;
 import edu.asu.commons.foraging.event.MonitorTaxEvent;
 import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
-import edu.asu.commons.foraging.event.RegulationRankingRequest;
-import edu.asu.commons.foraging.event.SubmitRegulationRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
@@ -158,7 +156,6 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
     }
     
     public RegulationData generateRegulationRankings() {
-    	resetRegulationRankingCount();
     	int numberOfRegulations = submittedRegulations.size();
     	double[] regulationVotingTally = new double[numberOfRegulations];
     	Arrays.fill(regulationVotingTally, 0.0d);
@@ -199,7 +196,7 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
 
 	// FIXME: this algorithm is very similar to generateRegulationRankings, extract to other method.
 	public EnforcementMechanism generateEnforcementRankings() {
-        resetEnforcementRankingCount();
+//        resetEnforcementRankingCount();
         // FIXME: change to round config parameter instead?
         double[] enforcementVotingTally = new double[EnforcementMechanism.values().length];
         Arrays.fill(enforcementVotingTally, 0.0d);
@@ -249,7 +246,7 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
     }
 	
 	public SanctionMechanism generateSanctionRankings() {
-        resetSanctionRankingCount();
+//        resetSanctionRankingCount();
         // FIXME: change to round config parameter instead?
         double[] sanctionVotingTally = new double[SanctionMechanism.values().length];
         Arrays.fill(sanctionVotingTally, 0.0d);
@@ -285,30 +282,8 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
         return activeSanctionMechanism;
     }
 
-    private void resetEnforcementRankingCount() {
-        receivedEnforcementRankings = 0;
-    }
-    
-    private void resetSanctionRankingCount() {
-        receivedSanctionRankings = 0;
-    }
-    
-    private void resetRegulationRankingCount() {
-    	receivedRegulationRankings = 0;
-    }
-    
     public boolean hasReceivedAllEnforcementRankings() {
         return receivedEnforcementRankings >= clients.size();
-    }
-    
-    public void submitRegulationRequest(SubmitRegulationRequest request) {
-        Identifier id = request.getId();
-        ClientData clientData = clients.get(id);
-        RegulationData submittedRegulation = new RegulationData(id, request.getMessage());
-        clientData.setRegulationData(submittedRegulation);
-        submittedRegulations.add(submittedRegulation);
-        submittedRegulation.setIndex(submittedRegulations.size() - 1);
-        System.err.println("submitted regulation: " + submittedRegulation);
     }
     
     public boolean hasReceivedAllRegulations() {
@@ -728,16 +703,6 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
         ClientData clientData = clients.get(request.getId());
         clientData.setEnforcementRankings(request.getRankings());
         receivedEnforcementRankings++;
-    }
-
-    public void submitRegulationRanking(RegulationRankingRequest request) {
-        clients.get(request.getId()).setRegulationRankings(request.getRankings());
-        receivedRegulationRankings++;
-    }
-    
-    public void submitSanctionRanking(EnforcementRankingRequest request) {
-        clients.get(request.getId()).setEnforcementRankings(request.getRankings());
-        receivedSanctionRankings++;
     }
     
     public boolean isRotatingMonitor() {

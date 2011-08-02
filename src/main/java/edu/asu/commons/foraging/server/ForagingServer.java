@@ -3,7 +3,6 @@ package edu.asu.commons.foraging.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,8 +36,6 @@ import edu.asu.commons.foraging.event.ClientPoseUpdate;
 import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
 import edu.asu.commons.foraging.event.CollectTokenRequest;
 import edu.asu.commons.foraging.event.EndRoundEvent;
-import edu.asu.commons.foraging.event.EnforcementMechanismUpdateEvent;
-import edu.asu.commons.foraging.event.EnforcementRankingRequest;
 import edu.asu.commons.foraging.event.ExplicitCollectionModeRequest;
 import edu.asu.commons.foraging.event.FacilitatorCensoredChatRequest;
 import edu.asu.commons.foraging.event.FacilitatorEndRoundEvent;
@@ -53,22 +50,16 @@ import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.QuizCompletedEvent;
 import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
-import edu.asu.commons.foraging.event.RegulationRankingRequest;
-import edu.asu.commons.foraging.event.RegulationSubmissionUpdateEvent;
-import edu.asu.commons.foraging.event.RegulationUpdateEvent;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
-import edu.asu.commons.foraging.event.SanctionUpdateEvent;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
-import edu.asu.commons.foraging.event.SubmitRegulationRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
 import edu.asu.commons.foraging.model.GroupDataModel;
-import edu.asu.commons.foraging.model.RegulationData;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.SanctionMechanism;
 import edu.asu.commons.foraging.model.ServerDataModel;
@@ -296,22 +287,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 }
             });
 
-            addEventProcessor(new EventTypeProcessor<EnforcementRankingRequest>(EnforcementRankingRequest.class) {
-                public void handle(final EnforcementRankingRequest request) {
-                    logger.info("received enforcement ranking request: " + Arrays.asList(request.getRankings()));
-                    GroupDataModel group = serverDataModel.getGroup(request.getId());
-//                    group.submitEnforcementRanking(request);
-//                    if (group.hasReceivedAllEnforcementRankings()) {
-//                        sendEnforcementUpdate(group);
-//                    }
-                    // FIXME: this is duplicated with above logic, fix later
-                    group.submitSanctionRanking(request);
-                    if (group.hasReceivedAllSanctionRankings()) {
-                        sendSanctionRankingUpdate(group);
-                    }
-                }
-            });
-            
             addEventProcessor(new EventTypeProcessor<QuizResponseEvent>(QuizResponseEvent.class) {
                 public void handle(final QuizResponseEvent event) {
                     // XXX: can get rid of this event processor once we verify that the persister is storing it properly
@@ -319,26 +294,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 }
             });
             
-            addEventProcessor(new EventTypeProcessor<RegulationRankingRequest>(RegulationRankingRequest.class) {
-                public void handle(final RegulationRankingRequest request) {
-                    GroupDataModel group = serverDataModel.getGroup(request.getId());
-                    group.submitRegulationRanking(request);
-                    if (group.hasReceivedAllRegulationRankings()) {
-                        sendRegulationRankingUpdate(group);
-                    }
-                }
-            });
-            
-            addEventProcessor(new EventTypeProcessor<SubmitRegulationRequest>(SubmitRegulationRequest.class) {
-                public void handle(final SubmitRegulationRequest request) {
-                    GroupDataModel group = serverDataModel.getGroup(request.getId());
-                    group.submitRegulationRequest(request);
-                    if (group.hasReceivedAllRegulations()) {
-                        sendRegulationUpdate(group);
-                    }
-                }
-            });
-
             addEventProcessor(new EventTypeProcessor<QuizCompletedEvent>(QuizCompletedEvent.class) {
                 public void handle(QuizCompletedEvent event) {
                     numberOfCompletedQuizzes++;
@@ -473,35 +428,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 }
             });
         }
-        
-        private void sendRegulationUpdate(GroupDataModel group) {
-        	for (Identifier id: group.getClientIdentifiers()) {
-        		transmit(new RegulationSubmissionUpdateEvent(id, group));
-        	}
-        }
-        
-        private void sendRegulationRankingUpdate(GroupDataModel group) {
-        	RegulationData regulationData = group.generateRegulationRankings();
-            for (Identifier id: group.getClientIdentifiers()) {
-                transmit(new RegulationUpdateEvent(id, regulationData));
-            }
-        }
-        
-        // FIXME: get rid of sanction ranking in favor of enforcement mechanism update
-        private void sendSanctionRankingUpdate(GroupDataModel group) {
-            group.generateSanctionRankings();
-            for (Identifier id: group.getClientIdentifiers()) {
-                transmit(new SanctionUpdateEvent(id, group));
-            }
-        }
-        
-        private void sendEnforcementMechanismUpdate(GroupDataModel group) {
-            group.generateEnforcementRankings();
-            for (Identifier id: group.getClientIdentifiers()) {
-                transmit(new EnforcementMechanismUpdateEvent(id, group));
-            }
-        }
-        
+
         private void handleEnforcementSanctionRequest(RealTimeSanctionRequest request) {
             ClientData sourceClient = clients.get(request.getSource());
             ClientData targetClient = clients.get(request.getTarget());
