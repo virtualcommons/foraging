@@ -95,8 +95,7 @@ public class ChatPanel extends JPanel {
                 }
             });
             JPanel targetHandlePanel = new JPanel();
-            targetHandlePanel.setLayout(new BoxLayout(targetHandlePanel,
-                    BoxLayout.LINE_AXIS));
+            targetHandlePanel.setLayout(new BoxLayout(targetHandlePanel, BoxLayout.LINE_AXIS));
             targetHandleLabel = new JLabel("everyone");
             targetHandleLabel.setFont(new Font("Arial", Font.BOLD, 14));
             targetHandleLabel.setForeground(new Color(0x0000dd));
@@ -121,14 +120,11 @@ public class ChatPanel extends JPanel {
             }
             RoundConfiguration roundConfiguration = client.getCurrentRoundConfiguration();
             if (roundConfiguration.isCensoredChat()) {
-                // FIXME: perform extra checks to see if we are able to send this message 
+                // FIXME: get rid of duplication, add a censored boolean to ChatRequest instead?
                 client.transmit(new CensoredChatRequest(clientId, message, targetIdentifier));
             }
             else {
                 client.transmit(new ChatRequest(clientId, message, targetIdentifier));
-//                displayMessage(getChatHandle(clientId) 
-////                      + " -> " + getChatHandle(targetIdentifier)
-//                      , message);
             }
             chatField.requestFocusInWindow();
             chatField.setText("");
@@ -148,19 +144,6 @@ public class ChatPanel extends JPanel {
     private final static String HANDLE_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     
     private static String[] HANDLES;
-
-//    public static void main(String[] args) {
-//        JFrame frame = new JFrame();
-//        ChatPanel chatPanel = new ChatPanel();
-//        Identifier selfId = new Identifier.Base();
-//        chatPanel.setClientId(selfId);
-//        chatPanel.initialize(Arrays.asList(new Identifier[] {
-//                new Identifier.Base(), new Identifier.Base(),
-//                new Identifier.Base(), selfId }));
-//        frame.add(chatPanel);
-//        frame.setSize(new Dimension(400, 400));
-//        frame.setVisible(true);
-//    }
 
     private Identifier clientId;
 
@@ -270,6 +253,14 @@ public class ChatPanel extends JPanel {
         add(textEntryPanel, BorderLayout.SOUTH);
         textEntryPanel.setChatFieldFocus();
     }
+    
+    public TextEntryPanel getTextEntryPanel() {
+        return textEntryPanel;
+    }
+    
+    public JScrollPane getMessageScrollPane() {
+        return messageScrollPane;
+    }
 
     public void clear() {
         participants.clear();
@@ -311,9 +302,6 @@ public class ChatPanel extends JPanel {
                 HANDLES[i] = client.getDataModel().getAssignedNumber(participants.get(i)) + "";
             }
         }
-        
-//        Collections.shuffle(Arrays.asList(HANDLES));
-//        System.err.println("handles: " + HANDLES);
         initGuiComponents();
     }
 

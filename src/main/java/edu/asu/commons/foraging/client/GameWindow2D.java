@@ -627,12 +627,20 @@ public class GameWindow2D extends JPanel implements GameWindow {
                 // by the server no new clients can connect because the round
                 // has begun.
                 update(configuration.getRoundDuration().getTimeLeft());
-                add(messagePanel, BorderLayout.SOUTH);
                 if (configuration.isInRoundChatEnabled()) {
                     ChatPanel chatPanel = getChatPanel();
                     chatPanel.initialize();
+//                    Dimension subjectWindowSize = subjectView.getSize();
+//                    Dimension totalSize = getParent().getSize();
+//                    System.err.println("subject window size: " + subjectWindowSize);
+//                    System.err.println("total size: " + totalSize);
+//                    Dimension chatPanelSize = new Dimension((totalSize.width - subjectWindowSize.width) / 2, (totalSize.height - subjectWindowSize.height) / 2);
+//                    System.err.println("chat panel size: " + chatPanelSize);
+                    Dimension chatPanelSize = new Dimension(100, getSize().height);
+                    chatPanel.setPreferredSize(chatPanelSize);
                     add(chatPanel, BorderLayout.EAST);
                 }
+                add(messagePanel, BorderLayout.SOUTH);
                 addCenterComponent(subjectWindow);
 
                 requestFocusInWindow();
@@ -738,7 +746,6 @@ public class GameWindow2D extends JPanel implements GameWindow {
 
     private ChatPanel getChatPanel() {
         if (chatPanel == null) {
-            //System.out.println("Chat panel is null");
             chatPanel = new ChatPanel(client);
         }
         return chatPanel;

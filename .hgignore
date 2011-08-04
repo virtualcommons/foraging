@@ -6,6 +6,6 @@ target
 experiment-data/*
 build.properties
 *.log
-*.log.lck
+*.log.*
 .classpath
 .project

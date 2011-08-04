@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -15,7 +16,6 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.GroupLayout.Alignment;
 
 import edu.asu.commons.event.EventTypeProcessor;
 import edu.asu.commons.foraging.event.CensoredChatRequest;
@@ -114,8 +114,6 @@ public class FacilitatorChatPanel {
      */
     public class CensoredChatRequestView {
 
-        private static final long serialVersionUID = -5819416143717776775L;
-        
         private JButton approveButton;
         private JButton denyButton;
         private JLabel statusLabel;
