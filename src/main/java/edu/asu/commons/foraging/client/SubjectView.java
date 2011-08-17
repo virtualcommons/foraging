@@ -70,6 +70,8 @@ public class SubjectView extends GridView {
      * prior to invocation of this method.
      */
     public void setup(RoundConfiguration configuration) {
+        viewSubjectsField = null;
+        viewTokensField = null;
         synchronized (collectedTokens) {
             collectedTokens.clear();
             tokenFieldOfVision = configuration.isTokensFieldOfVisionEnabled();
@@ -150,6 +152,7 @@ public class SubjectView extends GridView {
         int verticalCharacterSpacing = (int) ( (dh - characterHeight) / 2);
         Point currentPosition = dataModel.getCurrentPosition();
         if (subjectFieldOfVision) {
+            System.err.println("field of vision is set");
             // paint a transparent circle centered on the current position of the subject.
             int radius = viewSubjectsRadius;
             viewSubjectsField.setCenter(currentPosition);
@@ -169,6 +172,7 @@ public class SubjectView extends GridView {
         for (Map.Entry<Identifier, ClientData> entry : positions.entrySet()) {
             Identifier id = entry.getKey();
             Point subjectLocation = entry.getValue().getPosition();
+            System.err.println("view subjects field: " + viewSubjectsField);
             // optimized conditional
             if (viewSubjectsField == null || id.equals(dataModel.getId()) || viewSubjectsField.contains(subjectLocation)) {
                 // only draw if:

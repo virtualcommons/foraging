@@ -1,5 +1,6 @@
 package edu.asu.commons.foraging.event;
 
+import java.util.List;
 import java.util.Map;
 
 import edu.asu.commons.event.AbstractEvent;
@@ -53,6 +54,10 @@ public class EndRoundEvent extends AbstractEvent {
 
     public int getTotalNumberOfTokens() {
         return clientData.getTotalTokens();
+    }
+    
+    public List<String> getTrustGameLog() {
+        return clientData.getTrustGameLog();
     }
 
     public boolean isLastRound() {

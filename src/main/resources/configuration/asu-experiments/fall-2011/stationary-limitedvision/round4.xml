@@ -15,13 +15,14 @@
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
 
-<!-- before this round begins, we have a chat session -->
-<entry key="chat-enabled">true</entry>
+<entry key='in-round-chat-enabled'>true</entry>
 
 <!-- enable sanctioning -->
 <entry key="sanction-type">real-time</entry>
 <entry key="sanction-cost">1</entry>
 <entry key="sanction-multiplier">2</entry>
+
+<entry key='resource-generator'>top-bottom-patchy</entry>
 
 
 <entry key="initial-distribution">.25</entry>
@@ -41,12 +42,8 @@
 Round 4 is the same as the previous two rounds with two exceptions.  
 </p>
 <p>
-Before the next round starts you can anonymously communicate by text messages
-for four minutes with the other participants in your group. You can use this
-opportunity to discuss the experiment and coordinate your actions to improve
-your earnings. You may not promise side-payments after the experiment is
-completed or make any threats. You are also not allowed to reveal your real
-identity. We are monitoring the chat traffic while you chat.
+The resource dynamics have changed.  One section of the resource has a high growth
+rate, and another section has a low growth rate.
 </p>
 <p>
 During the next round you will have the option to reduce the earnings of another

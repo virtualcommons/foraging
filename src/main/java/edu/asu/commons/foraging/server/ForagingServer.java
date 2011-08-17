@@ -283,13 +283,12 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             addEventProcessor(new EventTypeProcessor<ChatRequest>(ChatRequest.class) {
                 public void handle(final ChatRequest request) {
                     RoundConfiguration configuration = getCurrentRoundConfiguration();
+                    if (! configuration.isChatEnabled()) {
+                        logger.warning("configuration doesn't allow for chat but received " + request);
+                        return;
+                    }
                     if (configuration.isCensoredChat()) {
                         transmit(new FacilitatorCensoredChatRequest(facilitatorId, request));
-                    }
-                    else if (configuration.isInRoundChatEnabled()) {
-                        // FIXME: add configuration parameter for chat in field of vision
-                        
-                        
                     }
                     else {
                         relayChatRequest(request);
@@ -692,6 +691,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                                 if (iter.hasNext()) {
                                     playerTwo = iter.next();                                    
                                 }
+                                logger.info(String.format("Pairing %s with %s for trust game", playerOne, playerTwo));
                                 serverDataModel.calculateTrustGame(playerOne, playerTwo);                                
                             }                                                                                   
                         }
@@ -746,6 +746,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 // check for field of vision
                 RoundConfiguration currentConfiguration = getCurrentRoundConfiguration();
                 if (currentConfiguration.isFieldOfVisionEnabled()) {
+                    // FIXME: replace with clientData.getFieldOfVision?                    
+
                     Circle circle = new Circle(clientData.getPosition(), currentConfiguration.getViewSubjectsRadius());
                     sendChatEvent(request, clientData.getGroupDataModel().getClientIdentifiersWithin(circle));                    
                 }
@@ -785,6 +787,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 }
                 
                 roundProcessor.execute();
+//                Thread.yield();
                 Utils.sleep(SERVER_SLEEP_INTERVAL);
                 break;
             case WAITING:

@@ -283,7 +283,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
      * 
      */
     private class MessageQueue implements Runnable {
-        private final static int DEFAULT_MESSAGES_PER_SECOND = 8;
+        private final static int DEFAULT_MESSAGES_PER_SECOND = 10;
 
         private final LinkedList<Event> actions =
             new LinkedList<Event>();
@@ -360,6 +360,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
 //                    moveClient(request);
                     transmit(request);
                 }
+//                Utils.sleep(100);
                 Thread.yield();
             }
         }

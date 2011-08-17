@@ -112,7 +112,7 @@ public class ChatPanel extends JPanel {
 
         private void sendMessage() {
             String message = chatField.getText();
-            // System.err.println("message: " + message);
+            System.err.println("sending message: " + message);
             if (message == null || "".equals(message) || targetIdentifier == null) {
                 return;
             }
@@ -134,7 +134,7 @@ public class ChatPanel extends JPanel {
 
     private final static String HANDLE_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     
-    private static String[] HANDLES;
+    private String[] HANDLES;
 
     private Identifier clientId;
 
@@ -239,9 +239,14 @@ public class ChatPanel extends JPanel {
         JScrollPane chatInstructionsScrollPane = new JScrollPane(chatInstructionsPane);
         chatInstructionsPane.setText(client.getCurrentRoundConfiguration().getChatInstructions());
 
-        add(chatInstructionsScrollPane, BorderLayout.NORTH);
+//        add(chatInstructionsScrollPane, BorderLayout.NORTH);
+        add(new JLabel("In round chat"), BorderLayout.NORTH);
         add(messageScrollPane, BorderLayout.CENTER);
         add(textEntryPanel, BorderLayout.SOUTH);
+        textEntryPanel.setChatFieldFocus();
+    }
+    
+    public void setTextFieldFocus() {
         textEntryPanel.setChatFieldFocus();
     }
     

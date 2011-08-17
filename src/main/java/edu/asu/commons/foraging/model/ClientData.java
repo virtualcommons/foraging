@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
@@ -589,5 +590,9 @@ public class ClientData implements Serializable {
 
     public void logTrustGameEarnings(String log) {
         trustGameLog.add(log);
+    }
+
+    public List<String> getTrustGameLog() {
+        return trustGameLog;
     }
 }

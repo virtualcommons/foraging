@@ -411,7 +411,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     
     //Should always return true for 3d experiments 
     public boolean isChatEnabled() {
-        return ! isPrivateProperty() && getBooleanProperty("chat-enabled");
+        return ! isPrivateProperty() && (getBooleanProperty("chat-enabled") || isInRoundChatEnabled());
     }
     
     public int getMaximumResourceAge() {
@@ -557,15 +557,26 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
             instructionsBuilder.append("<hr><b>");
             instructionsBuilder.append(getFieldOfVisionInstructions()).append("</b>");
         }
-        if (isChatEnabled()) {
+        if (isCensoredChat()) {
+            instructionsBuilder.append("<hr><b>");
+            instructionsBuilder.append(getCensoredChatInstructions()).append("</b>");
+        }
+        else if (isInRoundChatEnabled()) {
+            instructionsBuilder.append("<hr><b>");
+            instructionsBuilder.append(getInRoundChatInstructions()).append("</b>");
+        }
+        else if (isChatEnabled()) {
             instructionsBuilder.append("<hr><b>");
             // FIXME: hard-coded, need to make instructions template-able, perhaps
             // via FreeMarker or Velocity.
             instructionsBuilder.append("Before the beginning of this round you will be able to chat with the other members of your group for ").append(getChatDuration()).append(" seconds.</b>");
         }
-        if (isCensoredChat()) {
-        	instructionsBuilder.append("<hr><b>");
-        	instructionsBuilder.append(getCensoredChatInstructions()).append("</b>");
+        String resourceGeneratorType = getResourceGeneratorType();
+        if (resourceGeneratorType.equals("mobile")) {
+            instructionsBuilder.append("<hr>").append(getMobileResourceInstructions());
+        }
+        else if (resourceGeneratorType.equals("top-bottom-patchy")) {
+            instructionsBuilder.append("<hr>").append(getPatchyResourceInstructions());
         }
 
         // and add the quiz instructions if the quiz is enabled.
@@ -575,9 +586,21 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         }
         return instructionsBuilder;
     }
+    
+    private String getMobileResourceInstructions() {
+        return getProperty("mobile-resource-instructions", "The resource can move around in a semblance of free will / agency.");
+    }
+    
+    private String getPatchyResourceInstructions() {
+        return getProperty("patch-resource-instructiosn", "The resource is not uniformly distributed.  There are patches of high growth and low growth.");
+    }
+
+    private String getInRoundChatInstructions() {
+        return getProperty("in-round-chat-instructions", "You can chat during this round with all players visible on the screen.");
+    }
 
     public String getTrustGameInstructions() {
-        return getProperty("trust-game-instructions", "Instructions: You will be randomly matched with another person in your group.");
+        return getProperty("trust-game-instructions", "You will be randomly matched with another person in your group.");
     }
 
 }

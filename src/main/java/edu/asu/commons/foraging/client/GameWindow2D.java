@@ -25,13 +25,13 @@ import java.util.Properties;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -55,7 +55,6 @@ import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.HtmlEditorPane;
-import javax.swing.JEditorPane;
 
 
 
@@ -123,8 +122,8 @@ public class GameWindow2D extends JPanel implements GameWindow {
         this.channel = client.getEventChannel();
         // feed subject view the available screen size so that
         // it can adjust appropriately when given a board size
-        Dimension subjectViewSize = new Dimension((int) Math.floor(size.getWidth()),
-                (int) Math.floor(size.getHeight() * 0.85)); 
+//        int width = (int) Math.min(Math.floor(size.getWidth()), Math.floor(size.getHeight() * 0.85));
+        Dimension subjectViewSize = new Dimension((int) size.getWidth(), (int) (size.getHeight() * 0.85)); 
         subjectView = new SubjectView(subjectViewSize, dataModel);
         initGuiComponents();
     }
@@ -405,8 +404,9 @@ public class GameWindow2D extends JPanel implements GameWindow {
     private void setInstructions(String s) {
         instructionsEditorPane.setText(s);
         instructionsEditorPane.setCaretPosition(0);
-        repaint();
+        instructionsScrollPane.repaint();
         instructionsScrollPane.requestFocusInWindow();
+//        repaint();
     }
 
     private HtmlEditorPane createInstructionsEditorPane() {
@@ -449,24 +449,24 @@ public class GameWindow2D extends JPanel implements GameWindow {
         labelPanel.add(informationLabel);
         add(labelPanel, BorderLayout.NORTH);
 
-        // add message window.
-        messagePanel = new JPanel(new BorderLayout());
-        //        messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
-        messagePanel.add(new JLabel("Messages"), BorderLayout.NORTH);
-        messageTextPane = new JTextPane();
-        messageTextPane.setEditable(false);
-        messageTextPane.setFont(new Font("arial", Font.BOLD, 12));
-        messageTextPane.setBackground(Color.WHITE);
-
-
-        addStyles(messageTextPane.getStyledDocument());
-        messageScrollPane = new JScrollPane(messageTextPane);
-        Dimension scrollPaneSize = new Dimension(getPreferredSize().width, 50);
-        messageScrollPane.setMinimumSize(scrollPaneSize);
-        messageScrollPane.setPreferredSize(scrollPaneSize);
-        messageScrollPane.setMaximumSize(scrollPaneSize);
-        messagePanel.add(messageScrollPane, BorderLayout.CENTER);
-        add(messagePanel, BorderLayout.SOUTH);
+//        // add message window.
+//        messagePanel = new JPanel(new BorderLayout());
+//        //        messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
+//        messagePanel.add(new JLabel("Messages"), BorderLayout.NORTH);
+//        messageTextPane = new JTextPane();
+//        messageTextPane.setEditable(false);
+//        messageTextPane.setFont(new Font("arial", Font.BOLD, 12));
+//        messageTextPane.setBackground(Color.WHITE);
+//
+//
+//        addStyles(messageTextPane.getStyledDocument());
+//        messageScrollPane = new JScrollPane(messageTextPane);
+//        Dimension scrollPaneSize = new Dimension(getPreferredSize().width, 50);
+//        messageScrollPane.setMinimumSize(scrollPaneSize);
+//        messageScrollPane.setPreferredSize(scrollPaneSize);
+//        messageScrollPane.setMaximumSize(scrollPaneSize);
+//        messagePanel.add(messageScrollPane, BorderLayout.CENTER);
+//        add(messagePanel, BorderLayout.SOUTH);
         
         addKeyListener( createGameWindowKeyListener() );
         addMouseListener(new MouseAdapter() {
@@ -479,13 +479,14 @@ public class GameWindow2D extends JPanel implements GameWindow {
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent event) {
                 Component component = event.getComponent();
-                // offset by 35 to allow for chat message box
+                // offset by 35 to allow for message box
                 int subjectViewHeight = component.getHeight() - 35;
                 Dimension size = new Dimension(component.getWidth(), subjectViewHeight);
                 subjectView.setScreenSize(size);
                 subjectView.setImageSizes();
                 GameWindow2D.this.revalidate();
-                GameWindow2D.this.repaint();
+                currentCenterComponent.repaint();
+//                GameWindow2D.this.repaint();
             }
         });
         // add component listeners, chat panel, and sanctioning window IF chat/sanctioning are enabled, and after the end of the round...
@@ -557,6 +558,10 @@ public class GameWindow2D extends JPanel implements GameWindow {
                         }
                         break;
                         // reset token distribution request handling
+                    case KeyEvent.VK_ENTER:
+                        if (dataModel.getRoundConfiguration().isInRoundChatEnabled()) {
+                            getChatPanel().setTextFieldFocus();
+                        }
                     case KeyEvent.VK_R:
                         if (canResetTokenDistribution()) {
                             event = new ResetTokenDistributionRequest(client.getId());
@@ -608,6 +613,7 @@ public class GameWindow2D extends JPanel implements GameWindow {
         }
         currentCenterComponent = newCenterComponent;
         revalidate();
+        repaint();
     }
 
     public void startRound() {
@@ -629,11 +635,11 @@ public class GameWindow2D extends JPanel implements GameWindow {
                 if (configuration.isInRoundChatEnabled()) {
                     ChatPanel chatPanel = getChatPanel();
                     chatPanel.initialize();
-                    Dimension chatPanelSize = new Dimension(200, getSize().height);
+                    Dimension chatPanelSize = new Dimension(250, getSize().height);
                     chatPanel.setPreferredSize(chatPanelSize);
                     add(chatPanel, BorderLayout.EAST);
                 }
-                add(messagePanel, BorderLayout.SOUTH);
+//                add(messagePanel, BorderLayout.SOUTH);
                 addCenterComponent(subjectWindow);
 
                 requestFocusInWindow();
@@ -652,16 +658,16 @@ public class GameWindow2D extends JPanel implements GameWindow {
 
     public void displayMessage(String errorMessage, Color color) {
         //     String chatHandle = getChatHandle(source);
-    	messageTextPane.setForeground(color);
-        StyledDocument document = messageTextPane.getStyledDocument();
-        try {        	
-            document.insertString(document.getLength(), errorMessage + "\n", document.getStyle("bold"));
-            messageTextPane.setCaretPosition(document.getLength());
-        } 
-        catch (BadLocationException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+//    	messageTextPane.setForeground(color);
+//        StyledDocument document = messageTextPane.getStyledDocument();
+//        try {        	
+//            document.insertString(document.getLength(), errorMessage + "\n", document.getStyle("bold"));
+//            messageTextPane.setCaretPosition(document.getLength());
+//        } 
+//        catch (BadLocationException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException(e);
+//        }
     }
 
     // FIXME: add to some common GUI package?
@@ -701,6 +707,10 @@ public class GameWindow2D extends JPanel implements GameWindow {
         double showUpFee = dataModel.getRoundConfiguration().getParentConfiguration().getShowUpPayment();
         instructionsBuilder.append(String.format("Your <b>total income</b> so far (including a $%3.2f bonus for showing up) is : $%3.2f<hr>",
                 showUpFee, dataModel.getTotalIncome() + showUpFee));
+        for (String trustGameLog: event.getTrustGameLog()) {
+            instructionsBuilder.append(trustGameLog);
+        }
+        
         if (event.isLastRound()) {
             instructionsBuilder.append(client.getDataModel().getRoundConfiguration().getLastRoundDebriefing());
             timeLeftLabel.setText("The experiment is now over.");
@@ -749,18 +759,21 @@ public class GameWindow2D extends JPanel implements GameWindow {
         if (roundConfiguration.isTrustGameEnabled()) {
             JPanel panel = new JPanel();
             panel.setLayout(new BorderLayout());
-            JEditorPane instructionEditorPane = new JEditorPane();
-            instructionEditorPane.setContentType("text/html");
-            instructionEditorPane.setEditorKit(new HTMLEditorKit());
-            instructionEditorPane.setEditable(false);
-            instructionEditorPane.setBackground(Color.WHITE);
-            JScrollPane scrollPane = new JScrollPane(instructionEditorPane);
-            instructionEditorPane.setText(client.getCurrentRoundConfiguration().getTrustGameInstructions());
+            JEditorPane trustGameInstructionsEditorPane = new JEditorPane();
+            trustGameInstructionsEditorPane.setContentType("text/html");
+            trustGameInstructionsEditorPane.setEditorKit(new HTMLEditorKit());
+            trustGameInstructionsEditorPane.setEditable(false);
+            trustGameInstructionsEditorPane.setBackground(Color.WHITE);
+            JScrollPane scrollPane = new JScrollPane(trustGameInstructionsEditorPane);
+            trustGameInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getTrustGameInstructions());
             panel.add(scrollPane, BorderLayout.NORTH);
             
             TrustGamePanel trustGamePanel = new TrustGamePanel(client);
+            trustGamePanel.setPreferredSize(new Dimension(300, 400));
             panel.add(trustGamePanel, BorderLayout.CENTER);                        
             addCenterComponent(panel);
+            panel.revalidate();
+            panel.repaint();
         }
     }
 
@@ -786,10 +799,13 @@ public class GameWindow2D extends JPanel implements GameWindow {
         }
 
         setInstructions(instructionsBuilder.toString());
+        switchInstructionsPane();
     }
     public void switchInstructionsPane() {
 //        instructionsEditorPane.setText("<b>Please wait while we compute your new token totals.</b>");
         addCenterComponent(instructionsScrollPane);
+        revalidate();
+        repaint();
     }
 
     public void displayActiveEnforcementMechanism() {    	
@@ -861,9 +877,13 @@ public class GameWindow2D extends JPanel implements GameWindow {
                     instructionsEditorPane.setText("Waiting for updated round totals from the server...");
                     addCenterComponent(instructionsScrollPane);
                 }
+                if (chatPanel != null) {
+                    remove(chatPanel);
+                    chatPanel = null;
+                }
                 // generate debriefing text from data culled from the Event
                 addDebriefingText(event);
-                messageTextPane.setText("");
+//                messageTextPane.setText("");
             }
         };
         try {
@@ -880,7 +900,7 @@ public class GameWindow2D extends JPanel implements GameWindow {
             public void run() {
                 ChatPanel chatPanel = getChatPanel();
                 chatPanel.initialize();
-                remove( messagePanel );
+//                remove( messagePanel );
                 addCenterComponent( chatPanel );
                 startChatTimer();
             }

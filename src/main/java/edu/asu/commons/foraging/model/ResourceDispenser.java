@@ -90,7 +90,7 @@ public class ResourceDispenser {
     }
     
     public void initialize(RoundConfiguration roundConfiguration) {
-        Type resourceGeneratorType = Type.find( roundConfiguration.getResourceGeneratorType() );
+        ResourceDispenser.Type resourceGeneratorType = ResourceDispenser.Type.find( roundConfiguration.getResourceGeneratorType() );
         currentResourceGenerator = getResourceGenerator( resourceGeneratorType );
         currentResourceGenerator.initialize(roundConfiguration);
     }

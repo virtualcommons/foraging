@@ -397,10 +397,15 @@ public class ServerDataModel extends ForagingDataModel {
     }
 
     public void calculateTrustGame(ClientData playerOne, ClientData playerTwo) {
+        if (playerOne.getId().equals(playerTwo.getId())) {
+            logger.warning("Tried to calculate trust game with self, aborting");
+            return;
+        }
         double p1AmountToKeep = playerOne.getTrustGamePlayerOneAmountToKeep();
         double[] p2AmountsToKeep = playerTwo.getTrustGamePlayerTwoAmountsToKeep();
         
-        double amountSent = 1.0d - p1AmountToKeep;                       
+        double amountSent = 1.0d - p1AmountToKeep;
+        logger.info(String.format("Player one (%s) sent %s", playerOne, amountSent));
         if (amountSent > 0) {
             double p2AmountToKeep = 0.0d;
             int index = 0;
@@ -424,6 +429,12 @@ public class ServerDataModel extends ForagingDataModel {
             logger.info(playerTwoLog);
             playerTwo.logTrustGameEarnings(playerTwoLog);
             playerTwo.addTrustGameEarnings(p2AmountToKeep);
-        }                                        
+        }
+        else {
+            String playerOneLog = "Player one " + playerOne + " didn't send any money and kept: " + p1AmountToKeep;
+            playerOne.logTrustGameEarnings(playerOneLog);
+            playerOne.addTrustGameEarnings(p1AmountToKeep);
+            playerTwo.logTrustGameEarnings(playerOneLog + " - you were player two and didn't receive anything.");
+        }
     }
 }

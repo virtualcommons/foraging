@@ -16,8 +16,12 @@
 <entry key="sanction-type">real-time</entry>
 <entry key="sanction-cost">1</entry>
 <entry key="sanction-multiplier">2</entry>
+<!-- before this round begins, we have a chat session -->
+<entry key="chat-enabled">true</entry>
+
 
 <entry key="initial-distribution">.25</entry>
+<entry key='resource-generator'>top-bottom-patchy</entry>
 
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
