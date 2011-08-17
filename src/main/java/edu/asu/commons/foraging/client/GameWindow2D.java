@@ -745,8 +745,10 @@ public class GameWindow2D extends JPanel implements GameWindow {
 
     public void showTrustGame() {
         RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
-        if (roundConfiguration.isTrustGameEnabled()) {
-            addCenterComponent(new TrustGameWindow(client));
+        if (roundConfiguration.isTrustGameEnabled()) {            
+            TrustGamePanel trustGamePanel = new TrustGamePanel(client);
+            
+            addCenterComponent(new TrustGamePanel(client));
         }
     }
 
