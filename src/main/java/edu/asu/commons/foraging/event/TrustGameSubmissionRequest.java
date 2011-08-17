@@ -5,19 +5,21 @@ import edu.asu.commons.net.Identifier;
 
 public class TrustGameSubmissionRequest extends AbstractPersistableEvent {
     
-    private int playerOneAmountToKeep;
-    
-    private int[] playerTwoAmountsToKeep;
+    private static final long serialVersionUID = -4962852585789164775L;
 
-    public int getPlayerOneAmountToKeep() {
+    private Double playerOneAmountToKeep;
+    
+    private Double[] playerTwoAmountsToKeep;
+
+    public Double getPlayerOneAmountToKeep() {
         return playerOneAmountToKeep;
     }
 
-    public int[] getPlayerTwoAmountsToKeep() {
+    public Double[] getPlayerTwoAmountsToKeep() {
         return playerTwoAmountsToKeep;
     }
 
-    public TrustGameSubmissionRequest(Identifier id, int playerOneAmountToKeep, int[] playerTwoAmountsToKeep) {
+    public TrustGameSubmissionRequest(Identifier id, Double playerOneAmountToKeep, Double[] playerTwoAmountsToKeep) {
         super(id);
         this.playerOneAmountToKeep = playerOneAmountToKeep;
         this.playerTwoAmountsToKeep = playerTwoAmountsToKeep;

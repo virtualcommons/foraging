@@ -34,6 +34,7 @@ import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
+import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
 import edu.asu.commons.net.SocketIdentifier;
 import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.Utils;
@@ -441,5 +442,9 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
             }
         };
         SwingUtilities.invokeLater(createGuiRunnable);
+    }
+
+    public void sendTrustGameSubmissionRequest(Double playerOneAmountToKeep, Double[] playerTwoAmountsToKeep) {
+        transmit(new TrustGameSubmissionRequest(getId(), playerOneAmountToKeep, playerTwoAmountsToKeep));
     }
 }

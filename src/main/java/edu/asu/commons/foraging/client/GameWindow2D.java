@@ -100,8 +100,6 @@ public class GameWindow2D extends JPanel implements GameWindow {
 
     private JPanel subjectWindow;
 
-    private TrustGamePanel trustGamePanel;
-
     private ForagingClient client;
 
     private SubjectView subjectView;
@@ -748,16 +746,8 @@ public class GameWindow2D extends JPanel implements GameWindow {
     public void showTrustGame() {
         RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
         if (roundConfiguration.isTrustGameEnabled()) {
-            addCenterComponent(new TrustGameWindow(roundConfiguration));
+            addCenterComponent(new TrustGameWindow(client));
         }
-    }
-
-    public TrustGamePanel getTrustGamePanel() {
-        if (trustGamePanel == null) {
-            // initialize
-            trustGamePanel = new TrustGamePanel();
-        }
-        return trustGamePanel;
     }
 
     public void showInstructions() {

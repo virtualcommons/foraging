@@ -1,43 +1,46 @@
-/*
- * TrustGameWindow.java
- *
- * Created on Aug 16, 2011, 2:28:14 PM
- */
 package edu.asu.commons.foraging.client;
 
-import edu.asu.commons.foraging.conf.RoundConfiguration;
 import java.awt.Component;
+import java.util.Arrays;
+
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
+import edu.asu.commons.foraging.conf.RoundConfiguration;
+
 /**
- *
+ * $Id:$
+ * 
  * @author alllee
  */
-public class TrustGameWindow extends javax.swing.JPanel {
+public class TrustGameWindow extends JPanel {
 
+    private static final long serialVersionUID = 4780102066737046088L;
     private RoundConfiguration roundConfiguration;
-    
-    private class PlayerTwoTableModel extends AbstractTableModel {        
-        private String[] columnNames = {"Amount sent by P1", "Total amount received", "Amount to keep", "Amount to return to P1" };
-        private Object[][] columnDataTable = { 
-            
-            {"0 cents", "(3 x 0) = 0 cents", "0", "0"},
-            {"25 cents", "(3 x 0.25) = 75 cents", "", ""},
-            {"50 cents", "(3 x 0.5) = 1.5 dollars", "", ""},
-            {"75 cents", "(3 x 0.75) = 2.25 dollars", "", ""},
-            {"1 dollar", "(3 x 1) = 3 dollars", "", ""}
+    private ForagingClient client;
+
+    private class PlayerTwoTableModel extends AbstractTableModel {
+
+        private static final long serialVersionUID = 8044821545875471685L;
+        private String[] columnNames = { "Amount sent by P1", "Total amount received", "Amount to keep", "Amount to return to P1" };
+        private Object[][] columnDataTable = {
+
+                { "0 cents", "(3 x 0) = 0 cents", "0", "0" },
+                { "25 cents", "(3 x 0.25) = 75 cents", "", "" },
+                { "50 cents", "(3 x 0.5) = 1.5 dollars", "", "" },
+                { "75 cents", "(3 x 0.75) = 2.25 dollars", "", "" },
+                { "1 dollar", "(3 x 1) = 3 dollars", "", "" }
         };
-        
+
         @Override
         public int getColumnCount() {
             return columnNames.length;
-        }        
+        }
 
         @Override
         public String getColumnName(int col) {
@@ -56,10 +59,11 @@ public class TrustGameWindow extends javax.swing.JPanel {
 
         @Override
         public boolean isCellEditable(int row, int col) {
-            //Note that the data/cell address is constant,
-            //no matter where the cell appears onscreen.
+            // Note that the data/cell address is constant,
+            // no matter where the cell appears onscreen.
             return (col == 2) && (row != 0);
         }
+
         @Override
         public void setValueAt(Object value, int row, int col) {
             if (value == null) {
@@ -69,22 +73,22 @@ public class TrustGameWindow extends javax.swing.JPanel {
                 Double amount = Double.parseDouble(value.toString());
                 columnDataTable[row][col] = amount;
                 Double totalAmount = row * 3 * roundConfiguration.getTrustGamePayoffIncrement();
-                columnDataTable[row][col+1] = totalAmount - amount;
-                fireTableCellUpdated(row, col+1);
-            }
-            catch (NumberFormatException exception) {
+                columnDataTable[row][col + 1] = totalAmount - amount;
+                fireTableCellUpdated(row, col + 1);
+            } catch (NumberFormatException exception) {
                 JOptionPane.showMessageDialog(TrustGameWindow.this, "Please enter a valid number.");
                 return;
             }
         }
     }
-    
+
     private class PlayerTwoInputColumnCellEditor extends DefaultCellEditor {
-        
+        private static final long serialVersionUID = -981239232309467766L;
+
         public PlayerTwoInputColumnCellEditor() {
             super(new JComboBox());
         }
-        
+
         public Component getTableCellEditorComponent(JTable table, Object value, boolean selected, int row, int column) {
             JComboBox combo = (JComboBox) super.getTableCellEditorComponent(table, value, selected, row, column);
             combo.removeAllItems();
@@ -92,34 +96,36 @@ public class TrustGameWindow extends javax.swing.JPanel {
             for (int i = 0; i <= numberOfQuarters; i++) {
                 combo.addItem(Double.valueOf(i * roundConfiguration.getTrustGamePayoffIncrement()));
             }
-            return combo;         
+            return combo;
         }
     }
-    
+
     private TableModel playerTwoTableModel;
-    
+
     private TableModel getPlayerTwoTableModel() {
         if (playerTwoTableModel == null) {
             playerTwoTableModel = new PlayerTwoTableModel();
         }
         return playerTwoTableModel;
     }
-    
+
     /** Creates new form TrustGameWindow */
     public TrustGameWindow() {
-        this(new RoundConfiguration());
-    }
-    
-    public TrustGameWindow(RoundConfiguration configuration) {
         initComponents();
-        setRoundConfiguration(configuration);
     }
-    
+
+    public TrustGameWindow(ForagingClient client) {
+        this();
+        this.client = client;
+        setRoundConfiguration(client.getCurrentRoundConfiguration());
+    }
+
     public void setRoundConfiguration(RoundConfiguration configuration) {
         this.roundConfiguration = configuration;
     }
 
-    /** This method is called from within the constructor to
+    /**
+     * This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
@@ -273,147 +279,266 @@ public class TrustGameWindow extends javax.swing.JPanel {
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel16)
-                        .addContainerGap(156, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(submitButton)
-                        .addGap(62, 62, 62))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(playerOneTableLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(playerOneAmountKeptLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        jPanel1Layout
+                .setHorizontalGroup(
+                jPanel1Layout
+                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                jPanel1Layout
+                                        .createSequentialGroup()
+                                        .addContainerGap()
+                                        .addGroup(
+                                                jPanel1Layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                                .addComponent(jLabel16)
+                                                                .addContainerGap(156, Short.MAX_VALUE))
+                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                                                .addComponent(submitButton)
+                                                                .addGap(62, 62, 62))
+                                                        .addGroup(
+                                                                jPanel1Layout
+                                                                        .createSequentialGroup()
+                                                                        .addGroup(
+                                                                                jPanel1Layout
+                                                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                                        .addComponent(playerOneTableLabel,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 483,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                        .addGroup(
+                                                                                                jPanel1Layout
+                                                                                                        .createSequentialGroup()
+                                                                                                        .addGroup(
+                                                                                                                jPanel1Layout
+                                                                                                                        .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                                                false)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel13,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel10,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel7,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel6,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel1,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                playerOneAmountKeptLabel,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE))
+                                                                                                        .addPreferredGap(
+                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                                        .addGroup(
+                                                                                                                jPanel1Layout
+                                                                                                                        .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                                                false)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel14,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel11,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel8,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel3,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel2,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                playerOneAmountSentLabel,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE))
+                                                                                                        .addPreferredGap(
+                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                                        .addGroup(
+                                                                                                                jPanel1Layout
+                                                                                                                        .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                                                false)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel15,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel9,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel12,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel5,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                jLabel4,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                        .addComponent(
+                                                                                                                                playerOneAmountReceived,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                Short.MAX_VALUE))))
+                                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addGroup(
+                                                                                jPanel1Layout
+                                                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                        .addComponent(playerOneAction)
+                                                                                        .addGroup(
+                                                                                                jPanel1Layout
+                                                                                                        .createSequentialGroup()
+                                                                                                        .addGap(12, 12, 12)
+                                                                                                        .addGroup(
+                                                                                                                jPanel1Layout
+                                                                                                                        .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                                                                        .addComponent(playerOneRadioButton2)
+                                                                                                                        .addComponent(playerOneRadioButton1)
+                                                                                                                        .addComponent(playerOneRadioButton4)
+                                                                                                                        .addComponent(playerOneRadioButton5)
+                                                                                                                        .addComponent(playerOneRadioButton3))))
+                                                                        .addGap(208, 208, 208))
+                                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                                .addComponent(playerTwoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 698, Short.MAX_VALUE)
+                                                                .addGap(50, 50, 50))
+                                                        .addGroup(
+                                                                jPanel1Layout
+                                                                        .createSequentialGroup()
+                                                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 672,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addContainerGap(42, Short.MAX_VALUE))))
+                );
+        jPanel1Layout.setVerticalGroup(
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(playerOneTableLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(playerOneAmountSentLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(playerOneAmountKeptLabel)
+                                        .addComponent(playerOneAmountSentLabel)
+                                        .addComponent(playerOneAmountReceived)
+                                        .addComponent(playerOneAction))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(jLabel1)
+                                                .addComponent(jLabel2)
+                                                .addComponent(jLabel4))
+                                        .addComponent(playerOneRadioButton1))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(playerOneAmountReceived, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(playerOneAction)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(jLabel6)
+                                                .addComponent(jLabel3)
+                                                .addComponent(jLabel5))
+                                        .addComponent(playerOneRadioButton2))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(jLabel7)
+                                                .addComponent(jLabel8)
+                                                .addComponent(jLabel9))
+                                        .addComponent(playerOneRadioButton3))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(jLabel10)
+                                                .addComponent(jLabel12)
+                                                .addComponent(jLabel11))
+                                        .addComponent(playerOneRadioButton4))
                                 .addGap(12, 12, 12)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(playerOneRadioButton2)
-                                    .addComponent(playerOneRadioButton1)
-                                    .addComponent(playerOneRadioButton4)
-                                    .addComponent(playerOneRadioButton5)
-                                    .addComponent(playerOneRadioButton3))))
-                        .addGap(208, 208, 208))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(playerTwoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 698, Short.MAX_VALUE)
-                        .addGap(50, 50, 50))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 672, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(42, Short.MAX_VALUE))))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(playerOneTableLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(playerOneAmountKeptLabel)
-                    .addComponent(playerOneAmountSentLabel)
-                    .addComponent(playerOneAmountReceived)
-                    .addComponent(playerOneAction))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(jLabel2)
-                        .addComponent(jLabel4))
-                    .addComponent(playerOneRadioButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel6)
-                        .addComponent(jLabel3)
-                        .addComponent(jLabel5))
-                    .addComponent(playerOneRadioButton2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel7)
-                        .addComponent(jLabel8)
-                        .addComponent(jLabel9))
-                    .addComponent(playerOneRadioButton3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel10)
-                        .addComponent(jLabel12)
-                        .addComponent(jLabel11))
-                    .addComponent(playerOneRadioButton4))
-                .addGap(12, 12, 12)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel13)
-                        .addComponent(jLabel14)
-                        .addComponent(jLabel15))
-                    .addComponent(playerOneRadioButton5))
-                .addGap(18, 18, 18)
-                .addComponent(playerTwoLabel)
-                .addGap(12, 12, 12)
-                .addComponent(jLabel16)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7)
-                .addComponent(submitButton)
-                .addContainerGap(27, Short.MAX_VALUE))
-        );
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(jLabel13)
+                                                .addComponent(jLabel14)
+                                                .addComponent(jLabel15))
+                                        .addComponent(playerOneRadioButton5))
+                                .addGap(18, 18, 18)
+                                .addComponent(playerTwoLabel)
+                                .addGap(12, 12, 12)
+                                .addComponent(jLabel16)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(7, 7, 7)
+                                .addComponent(submitButton)
+                                .addContainerGap(27, Short.MAX_VALUE))
+                );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 726, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1333, Short.MAX_VALUE))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 726, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(1333, Short.MAX_VALUE))
+                );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(335, Short.MAX_VALUE))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addContainerGap(335, Short.MAX_VALUE))
+                );
     }// </editor-fold>//GEN-END:initComponents
 
-private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
-// TODO add your handling code here:
-    String selectedPlayerOneAction = playerOneActionButtonGroup.getSelection().getActionCommand();
-    if (selectedPlayerOneAction == null || "".equals(selectedPlayerOneAction.trim())) {
-        selectedPlayerOneAction = "4";
-    }
-    int amountToKeep = (int) (Integer.parseInt(selectedPlayerOneAction) * roundConfiguration.getTrustGamePayoffIncrement());
-    
-    
-}//GEN-LAST:event_submitButtonActionPerformed
+    private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_submitButtonActionPerformed
+    // TODO add your handling code here:
+        String selectedPlayerOneAction = playerOneActionButtonGroup.getSelection().getActionCommand();
+        if (selectedPlayerOneAction == null || "".equals(selectedPlayerOneAction.trim())) {
+            selectedPlayerOneAction = "4";
+        }
+        Double playerOneAmountToKeep = (Integer.parseInt(selectedPlayerOneAction) * roundConfiguration.getTrustGamePayoffIncrement());
+        Double[] playerTwoAmountsToKeep = new Double[4];
+        Arrays.fill(playerTwoAmountsToKeep, 0.0d);
+        for (int i = 1; i <= 4; i++) {
+            playerTwoAmountsToKeep[i - 1] = (Double) playerTwoTable.getValueAt(i, 2);
+        }
+        client.sendTrustGameSubmissionRequest(playerOneAmountToKeep, playerTwoAmountsToKeep);
+        
+        
+
+    }// GEN-LAST:event_submitButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
