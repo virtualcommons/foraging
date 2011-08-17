@@ -76,6 +76,7 @@ public class FacilitatorWindow extends JPanel {
     private int completedQuizzes;
 
     private JMenuItem startChatMenuItem;
+    private JMenuItem showTrustGameMenuItem;
 
     public FacilitatorWindow(Dimension dimension, Facilitator facilitator) {
         this.facilitator = facilitator;
@@ -169,6 +170,14 @@ public class FacilitatorWindow extends JPanel {
             }
         });
         menu.add(showInstructionsMenuItem);
+        
+        showTrustGameMenuItem = new JMenuItem("Show Trust Game");
+        showTrustGameMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                facilitator.sendShowTrustGameRequest();                
+            }
+        });
+        menu.add(showTrustGameMenuItem);
         
         startRoundMenuItem = new JMenuItem("Start");
         startRoundMenuItem.setMnemonic(KeyEvent.VK_T);

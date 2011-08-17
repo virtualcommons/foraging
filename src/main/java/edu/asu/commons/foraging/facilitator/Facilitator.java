@@ -22,9 +22,8 @@ import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.FacilitatorUpdateEvent;
 import edu.asu.commons.foraging.event.QuizCompletedEvent;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
+import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.model.ServerDataModel;
-
-
 
 /**
  * $Id: Facilitator.java 529 2010-08-17 00:08:01Z alllee $
@@ -32,17 +31,13 @@ import edu.asu.commons.foraging.model.ServerDataModel;
  * @author <a href='anonymouslee@gmail.com'>Allen Lee</a>, Deepali Bhagvat
  * @version $Revision: 529 $
  */
-
 public class Facilitator extends BaseFacilitator<ServerConfiguration> {
 
     private final static Facilitator INSTANCE = new Facilitator();
-
     private ServerDataModel serverDataModel;
-
     private FacilitatorWindow facilitatorWindow;
-
     private boolean experimentRunning = false;
-    
+
     private Facilitator() {
         this(new ServerConfiguration());
     }
@@ -51,35 +46,39 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
     public Facilitator(ServerConfiguration configuration) {
         super(configuration);
         addEventProcessor(new EventTypeProcessor<SetConfigurationEvent>(SetConfigurationEvent.class) {
+
             public void handle(SetConfigurationEvent event) {
                 RoundConfiguration configuration = (RoundConfiguration) event.getParameters();
                 setServerConfiguration(configuration.getParentConfiguration());
             }
         });
         addEventProcessor(new EventTypeProcessor<FacilitatorUpdateEvent>(FacilitatorUpdateEvent.class) {
+
             public void handle(FacilitatorUpdateEvent event) {
                 if (serverDataModel == null) {
                     experimentRunning = true;
                     serverDataModel = event.getServerDataModel();
                     facilitatorWindow.displayGame();
-                }
-                else {
+                } else {
                     serverDataModel = event.getServerDataModel();
                 }
             }
         });
         addEventProcessor(new EventTypeProcessor<FacilitatorEndRoundEvent>(FacilitatorEndRoundEvent.class) {
+
             public void handle(FacilitatorEndRoundEvent event) {
                 serverDataModel = null;
                 facilitatorWindow.endRound(event);
             }
         });
         addEventProcessor(new EventTypeProcessor<FacilitatorSanctionUpdateEvent>(FacilitatorSanctionUpdateEvent.class) {
+
             public void handle(FacilitatorSanctionUpdateEvent event) {
                 facilitatorWindow.updateDebriefing(event);
             }
         });
         addEventProcessor(new EventTypeProcessor<QuizCompletedEvent>(QuizCompletedEvent.class) {
+
             public void handle(QuizCompletedEvent event) {
                 facilitatorWindow.quizCompleted();
             }
@@ -90,12 +89,12 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
     public static Facilitator getInstance() {
         return INSTANCE;
     }
-    
+
     void createFacilitatorWindow(Dimension dimension) {
         facilitatorWindow = new FacilitatorWindow(dimension, this);
         if (getId() == null) {
             // configure for unconnected functionality
-            facilitatorWindow.configureForReplay();            
+            facilitatorWindow.configureForReplay();
         }
     }
 
@@ -148,21 +147,25 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
     /**
      * Sends a request to show round instructions
      */
-    public void sendShowInstructionsRequest()
-    {
-    	transmit(new ShowInstructionsRequest(getId()));
+    public void sendShowInstructionsRequest() {
+        transmit(new ShowInstructionsRequest(getId()));
+    }    
+    
+    void sendShowTrustGameRequest() {
+        transmit(new ShowTrustGameRequest(getId()));
     }
     /*
      * Send a request to start a round
      */
+
     public void sendBeginRoundRequest() {
         transmit(new BeginRoundRequest(getId()));
     }
-    
-	public void sendBeginChatRoundRequest() {
-		transmit(new BeginChatRoundRequest(getId()));
-	}
-	
+
+    public void sendBeginChatRoundRequest() {
+        transmit(new BeginChatRoundRequest(getId()));
+    }
+
     public void endExperiment() {
 //        configuration.resetRoundConfiguration();
 //        serverGameState = null;
@@ -189,8 +192,6 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
         return facilitatorWindow;
     }
 
-
-
     public ServerDataModel getServerGameState() {
         return serverDataModel;
     }
@@ -203,13 +204,14 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
     public boolean isExperimentRunning() {
         return experimentRunning;
     }
-    
+
     public boolean isReplaying() {
         return getId() == null;
     }
 
     public static void main(String[] args) {
         Runnable createGuiRunnable = new Runnable() {
+
             public void run() {
                 Dimension dimension = new Dimension(700, 700);
                 Facilitator facilitator = Facilitator.getInstance();
@@ -231,10 +233,8 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
     public RoundConfiguration getCurrentRoundConfiguration() {
         return getServerConfiguration().getCurrentParameters();
     }
-    
+
     public void setServerGameState(ServerDataModel serverGameState) {
         this.serverDataModel = serverGameState;
     }
-
-
 }

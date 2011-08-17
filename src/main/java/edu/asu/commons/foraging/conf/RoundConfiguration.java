@@ -42,6 +42,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     private static final double DEFAULT_TOKEN_MOVEMENT_PROBABILITY = 0.2d;
     
     private static final double DEFAULT_TOKEN_BIRTH_PROBABILITY = 0.01d;
+
+    public double getTrustGamePayoffIncrement() {
+        return getDoubleProperty("trust-game-payoff", 0.25d);
+    }
     
     public enum SanctionType {
         REAL_TIME, POST_ROUND, NONE;
@@ -505,7 +509,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
     
     public boolean isTrustGameEnabled() {
-        return getBooleanProperty("trust-game", false);
+        return getBooleanProperty("trust-game", true);
     }
     
     public boolean isInRoundChatEnabled() {
@@ -570,6 +574,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
             instructionsBuilder.append(getQuizInstructions()).append("</b>");
         }
         return instructionsBuilder;
+    }
+
+    public String getTrustGameInstructions() {
+        return getProperty("trust-game-instructions", "Instructions: You will be randomly matched with another person in your group.");
     }
 
 }

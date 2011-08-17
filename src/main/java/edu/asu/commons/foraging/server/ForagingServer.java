@@ -54,6 +54,7 @@ import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
+import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
 import edu.asu.commons.foraging.model.ClientData;
@@ -609,6 +610,19 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                         logger.info("Show Instructions request from facilitator - showing round instructions.");
                         for (Identifier id: clients.keySet()) {
                             transmit(new ShowInstructionsRequest(id));
+                        }
+                    }
+                    else {
+                        logger.warning("Ignoring show instructions request from id: " + event.getId());
+                    }
+                }
+            });
+            addEventProcessor(new EventTypeProcessor<ShowTrustGameRequest>(ShowTrustGameRequest.class) {
+                public void handle(ShowTrustGameRequest event) {
+                    if (event.getId().equals(facilitatorId)) {
+                        logger.info("Showing trust game.");
+                        for (Identifier id: clients.keySet()) {
+                            transmit(new ShowTrustGameRequest(id));
                         }
                     }
                     else {

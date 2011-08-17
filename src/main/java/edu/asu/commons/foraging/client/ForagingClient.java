@@ -32,6 +32,7 @@ import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
+import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.net.SocketIdentifier;
 import edu.asu.commons.util.Duration;
@@ -73,7 +74,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
     private JPanel clientPanel = new JPanel();
     
     public ForagingClient(ServerConfiguration configuration) {
-        this(configuration, new Dimension(800, 600));
+        this(configuration, new Dimension(900, 800));
     }
     
     public ForagingClient(ServerConfiguration configuration, Dimension screenSize) {
@@ -159,7 +160,11 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                 getGameWindow().showInstructions();
             }
         });
-        
+        addEventProcessor(new EventTypeProcessor<ShowTrustGameRequest>(ShowTrustGameRequest.class) {
+            public void handle(ShowTrustGameRequest request) {
+                getGameWindow().showTrustGame();
+            }
+        });
         addEventProcessor(new EventTypeProcessor<RoundStartedEvent>(RoundStartedEvent.class) {
             public void handle(RoundStartedEvent event) {
                 System.err.println("client starting round: " + dataModel.is2dExperiment());

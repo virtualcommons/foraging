@@ -45,6 +45,11 @@ public class GameWindow3D implements GameWindow {
     private JPanel gameInformationPanel;
     
     private EmbeddedChatPanel chatPanel;
+
+    @Override
+    public void showTrustGame() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
     public static enum VideoCardSupport{SHADER_SUPPORT, VBO_SUPPORT, VERTEX_ARRAY_SUPPORT};
 	public static VideoCardSupport featureSupported;

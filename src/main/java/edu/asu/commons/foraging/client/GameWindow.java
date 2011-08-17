@@ -18,4 +18,6 @@ public interface GameWindow {
     public void update(long millisecondsLeft);
     public void showInstructions();
 
+    public void showTrustGame();
+
 }

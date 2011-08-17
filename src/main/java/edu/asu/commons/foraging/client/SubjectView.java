@@ -39,11 +39,26 @@ public class SubjectView extends GridView {
 
     private final ClientDataModel dataModel;
     
+    private boolean tokenFieldOfVision;
+    private boolean subjectFieldOfVision;
+    
     public final static Color FIELD_OF_VISION_COLOR = new Color(255, 255, 255, 150);
 
     // associates a Duration with a piece of token consumed at the given Point -
     // the duration is used to render the token as shrinking.
     private Map<Point, Duration> collectedTokens = new HashMap<Point, Duration>();
+
+    private int viewSubjectsRadius;
+
+    private double viewTokensRadius;
+
+    private Circle viewTokensField;
+
+    private Circle viewSubjectsField;
+
+    private double fieldOfVisionYOffset;
+
+    private double fieldOfVisionXOffset;
 
     public SubjectView(Dimension screenSize, ClientDataModel dataModel) {
         super(screenSize);
@@ -57,24 +72,35 @@ public class SubjectView extends GridView {
     public void setup(RoundConfiguration configuration) {
         synchronized (collectedTokens) {
             collectedTokens.clear();
+            tokenFieldOfVision = configuration.isTokensFieldOfVisionEnabled();
+            if (tokenFieldOfVision) {
+                viewTokensRadius = configuration.getViewTokensRadius();
+                Point location = dataModel.getCurrentPosition();
+                viewTokensField = new Circle(location, viewTokensRadius);
+            }
+            subjectFieldOfVision = configuration.isSubjectsFieldOfVisionEnabled();
+            if (subjectFieldOfVision) {
+                viewSubjectsRadius = configuration.getViewSubjectsRadius();
+                viewSubjectsField = new Circle(dataModel.getCurrentPosition(), viewSubjectsRadius);
+                fieldOfVisionXOffset = (dw / 3.0);
+                fieldOfVisionYOffset = (dh / 3.0);
+            }
         }
         super.setup(configuration);
     }
 
     public void collectToken(Point p) {
         synchronized (collectedTokens) {
-            collectedTokens.put(p, Duration.create(1000L));
+            collectedTokens.put(p, Duration.create(3000L));
         }
     }
 
     protected void paintTokens(Graphics2D graphics2D) {
         // three cases - show all food on the game board, show all food within
         // visible radius of the current player, or don't show any food.
-        if (dataModel.getRoundConfiguration().isTokensFieldOfVisionEnabled()) {
-            Point location = dataModel.getCurrentPosition();
-            Circle viewTokensField = new Circle(location, dataModel.getRoundConfiguration().getViewTokensRadius());
+        if (tokenFieldOfVision) {
+            viewTokensField.setCenter(dataModel.getCurrentPosition());
             paintCollection(dataModel.getResourcePositions(), graphics2D, scaledTokenImage, this, viewTokensField);
-
         }
         else {
             paintCollection(dataModel.getResourcePositions(), graphics2D, scaledTokenImage);
@@ -122,20 +148,17 @@ public class SubjectView extends GridView {
         FontMetrics fontMetrics = graphics2D.getFontMetrics(font); 
         int characterHeight = fontMetrics.getAscent();
         int verticalCharacterSpacing = (int) ( (dh - characterHeight) / 2);
-        Circle fieldOfVision = null;
         Point currentPosition = dataModel.getCurrentPosition();
-        RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
-        if (roundConfiguration.isSubjectsFieldOfVisionEnabled()) {
+        if (subjectFieldOfVision) {
             // paint a transparent circle centered on the current position of the subject.
-            int radius = roundConfiguration.getViewSubjectsRadius();
-            fieldOfVision = new Circle(currentPosition, radius);
+            int radius = viewSubjectsRadius;
+            viewSubjectsField.setCenter(currentPosition);
             Point topLeftCorner = new Point(currentPosition.x - radius, currentPosition.y - radius);
-            double x = scaleXDouble(topLeftCorner.x) + (dw / 3);
-            double y = scaleYDouble(topLeftCorner.y) + (dh / 3);
+            double x = scaleXDouble(topLeftCorner.x) + fieldOfVisionXOffset;
+            double y = scaleYDouble(topLeftCorner.y) + fieldOfVisionYOffset;
             double diameter = radius * 2.0d;
             diameter = Math.min(scaleXDouble(diameter), scaleYDouble(diameter)) + (dw / 2);
             Ellipse2D.Double circle = new Ellipse2D.Double(x, y, diameter, diameter);
-            //graphics2D.fillOval(x, y, diameter, diameter);
             // clip the rendered part of the Field of vision circle that crosses the playing boundary 
             graphics2D.setClip(circle);
             Paint originalPaint = graphics2D.getPaint();
@@ -147,7 +170,7 @@ public class SubjectView extends GridView {
             Identifier id = entry.getKey();
             Point subjectLocation = entry.getValue().getPosition();
             // optimized conditional
-            if (fieldOfVision == null || id.equals(dataModel.getId()) || fieldOfVision.contains(subjectLocation)) {
+            if (viewSubjectsField == null || id.equals(dataModel.getId()) || viewSubjectsField.contains(subjectLocation)) {
                 // only draw if:
                 // 1. field of vision is not enabled for subjects
                 // 2. subject being drawn is this participant (i.e., id == dataModel.id)

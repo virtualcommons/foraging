@@ -165,9 +165,6 @@ public abstract class GridView extends JPanel {
     }
 
     protected void paintComponent(Graphics graphics) {
-        // XXX: if this guy didn't fill the entire component we'd have to do
-        // this super call to let the UI delegate some paintage as well.
-        // super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
 //        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // FIXME: can be made more efficient.  

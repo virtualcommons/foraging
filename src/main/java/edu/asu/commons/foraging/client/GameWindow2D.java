@@ -100,6 +100,8 @@ public class GameWindow2D extends JPanel implements GameWindow {
 
     private JPanel subjectWindow;
 
+    private TrustGamePanel trustGamePanel;
+
     private ForagingClient client;
 
     private SubjectView subjectView;
@@ -428,12 +430,10 @@ public class GameWindow2D extends JPanel implements GameWindow {
         instructionsScrollPane = new JScrollPane(instructionsEditorPane);
         add(instructionsScrollPane, BorderLayout.CENTER);
         currentCenterComponent = instructionsScrollPane;
-        // setup the Subject Window, add the experiment view
-        subjectWindow = new JPanel(new BorderLayout(4, 4));
+        subjectWindow = new JPanel(new BorderLayout());
         subjectWindow.setBackground(Color.WHITE);
         subjectWindow.setForeground(Color.BLACK);
         subjectWindow.add(subjectView, BorderLayout.CENTER);
-        //        setBackground(SubjectView.FIELD_OF_VISION_COLOR);
         setBackground(Color.WHITE);
         // replace with progress bar.
         timeLeftLabel = new JLabel("Connecting ...");
@@ -630,13 +630,7 @@ public class GameWindow2D extends JPanel implements GameWindow {
                 if (configuration.isInRoundChatEnabled()) {
                     ChatPanel chatPanel = getChatPanel();
                     chatPanel.initialize();
-//                    Dimension subjectWindowSize = subjectView.getSize();
-//                    Dimension totalSize = getParent().getSize();
-//                    System.err.println("subject window size: " + subjectWindowSize);
-//                    System.err.println("total size: " + totalSize);
-//                    Dimension chatPanelSize = new Dimension((totalSize.width - subjectWindowSize.width) / 2, (totalSize.height - subjectWindowSize.height) / 2);
-//                    System.err.println("chat panel size: " + chatPanelSize);
-                    Dimension chatPanelSize = new Dimension(100, getSize().height);
+                    Dimension chatPanelSize = new Dimension(200, getSize().height);
                     chatPanel.setPreferredSize(chatPanelSize);
                     add(chatPanel, BorderLayout.EAST);
                 }
@@ -749,6 +743,21 @@ public class GameWindow2D extends JPanel implements GameWindow {
             chatPanel = new ChatPanel(client);
         }
         return chatPanel;
+    }
+
+    public void showTrustGame() {
+        RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
+        if (roundConfiguration.isTrustGameEnabled()) {
+            addCenterComponent(new TrustGameWindow(roundConfiguration));
+        }
+    }
+
+    public TrustGamePanel getTrustGamePanel() {
+        if (trustGamePanel == null) {
+            // initialize
+            trustGamePanel = new TrustGamePanel();
+        }
+        return trustGamePanel;
     }
 
     public void showInstructions() {
