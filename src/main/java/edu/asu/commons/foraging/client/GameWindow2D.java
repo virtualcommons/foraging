@@ -55,6 +55,7 @@ import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.HtmlEditorPane;
+import javax.swing.JEditorPane;
 
 
 
@@ -745,10 +746,23 @@ public class GameWindow2D extends JPanel implements GameWindow {
 
     public void showTrustGame() {
         RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
-        if (roundConfiguration.isTrustGameEnabled()) {            
-            TrustGamePanel trustGamePanel = new TrustGamePanel(client);
+        if (roundConfiguration.isTrustGameEnabled()) {
+            JPanel panel = new JPanel();
+            panel.setLayout(new BorderLayout());
+            JEditorPane instructionEditorPane = new JEditorPane();
+            instructionEditorPane.setContentType("text/html");
+            instructionEditorPane.setEditorKit(new HTMLEditorKit());
+            instructionEditorPane.setEditable(false);
+            instructionEditorPane.setBackground(Color.WHITE);
+            JScrollPane scrollPane = new JScrollPane(instructionEditorPane);
+            instructionEditorPane.setText(client.getCurrentRoundConfiguration().getTrustGameInstructions());
+            panel.add(scrollPane, BorderLayout.NORTH);
             
-            addCenterComponent(new TrustGamePanel(client));
+            TrustGamePanel trustGamePanel = new TrustGamePanel(client);
+            panel.add(trustGamePanel, BorderLayout.CENTER);
+            
+            
+            addCenterComponent(panel);
         }
     }
 
