@@ -3,6 +3,7 @@ package edu.asu.commons.foraging.model;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
@@ -64,6 +65,8 @@ public class ClientData implements Serializable {
     
     private double trustGamePlayerOneAmountToKeep;
     private double[] trustGamePlayerTwoAmountsToKeep;
+    
+    private ArrayList<String> trustGameLog = new ArrayList<String>();
     
     private double trustGameEarnings = 0.0d;    
 
@@ -582,5 +585,9 @@ public class ClientData implements Serializable {
     
     public double getTrustGameEarnings() {
         return trustGameEarnings;
+    }
+
+    public void logTrustGameEarnings(String log) {
+        trustGameLog.add(log);
     }
 }

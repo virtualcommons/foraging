@@ -33,8 +33,6 @@ import javax.swing.text.html.HTMLEditorKit;
 import edu.asu.commons.event.ChatEvent;
 import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.EventTypeProcessor;
-import edu.asu.commons.foraging.conf.RoundConfiguration;
-import edu.asu.commons.foraging.event.CensoredChatRequest;
 import edu.asu.commons.net.Identifier;
 
 
@@ -182,7 +180,7 @@ public class ChatPanel extends JPanel {
     }
     
     private void initGuiComponents() {
-        setLayout(new BorderLayout(4, 4));
+        setLayout(new BorderLayout(3, 3));
         setName("Chat panel");
         messageWindow = new JTextPane();
         messageWindow.setEditable(false);

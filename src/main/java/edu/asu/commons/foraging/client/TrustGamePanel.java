@@ -501,8 +501,7 @@ public class TrustGamePanel extends JPanel {
                 return;
             }
             playerTwoAmountsToKeep[rowIndex - 1] = (Double) value;            
-        }
-        System.err.println("P1 keeping " + playerOneAmountToKeep + " and P2 data: " + Arrays.asList(playerTwoAmountsToKeep));
+        }        
         client.sendTrustGameSubmissionRequest(playerOneAmountToKeep, playerTwoAmountsToKeep);
         client.getGameWindow2D().switchInstructionsPane();
         

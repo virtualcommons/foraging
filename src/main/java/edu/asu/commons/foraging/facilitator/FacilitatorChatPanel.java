@@ -17,8 +17,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
+import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.EventTypeProcessor;
-import edu.asu.commons.foraging.event.CensoredChatRequest;
 import edu.asu.commons.foraging.event.FacilitatorCensoredChatRequest;
 import edu.asu.commons.util.ResourceLoader;
 
@@ -124,8 +124,15 @@ public class FacilitatorChatPanel {
             return chatMessageTextArea;
         }
         
+        public ChatRequest toApprovedChatRequest(ChatRequest request) {
+            return new ChatRequest(request.getId(), request.getMessage(), request.getTarget());
+        }
+        
+        public ChatRequest toDeniedChatRequest(ChatRequest request) {
+            return new ChatRequest(request.getId(), String.format("Your message: [%s] was not approved.", request.getMessage()), request.getId());
+        }
 
-        public CensoredChatRequestView(final CensoredChatRequest request) {
+        public CensoredChatRequestView(final ChatRequest request) {
             chatMessageTextArea = createTextArea(request);
 
             approveButton = new JButton();
@@ -136,14 +143,14 @@ public class FacilitatorChatPanel {
 
             approveButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                    facilitator.transmit(request.toApprovedChatRequest());
+                    facilitator.transmit(toApprovedChatRequest(request));
                     updateChatStatus(" approved ");
 
                 }
             });
             denyButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                    facilitator.transmit(request.toDeniedChatRequest());
+                    facilitator.transmit(toDeniedChatRequest(request));
                     updateChatStatus(" denied ");
                 }
             });
@@ -167,14 +174,14 @@ public class FacilitatorChatPanel {
             statusLabel.setText(message);
         }
         
-        private JTextArea createTextArea(CensoredChatRequest request) {
+        private JTextArea createTextArea(ChatRequest request) {
             JTextArea textArea = new JTextArea( toString( request ) );
             textArea.setLineWrap(true);
             textArea.setEditable(false);
             return textArea;
         }
         
-        private String toString(CensoredChatRequest request) {
+        private String toString(ChatRequest request) {
             return String.format("%s: %s", request.getId(), request.getMessage());
         }
 

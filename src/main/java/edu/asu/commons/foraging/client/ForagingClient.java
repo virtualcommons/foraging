@@ -360,23 +360,9 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
 //                    moveClient(request);
                     transmit(request);
                 }
-                Utils.sleep(30);
+                Thread.yield();
             }
         }
-        
-//        private void moveClient(ClientRequest request) {
-//            if (request instanceof ClientMovementRequest) {
-//                ClientMovementRequest cmr = (ClientMovementRequest) request;
-//                Direction d = cmr.getDirection();
-//                Point point = clientGameState.moveClient(id, d);
-//                cmr.setPosition(point);
-//                SwingUtilities.invokeLater(new Runnable() {
-//                    public void run() {
-//                        foragerGameWindow.repaint();        
-//                    }
-//                });
-//            }
-//        }
 
         private void tick() {
             if (secondTick.hasExpired()) {
@@ -387,16 +373,11 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
 
         public Event get() {
             tick();
-            if (shouldSendMessage()) {
-                messagesSent++;
-                return actions.removeFirst();
+            if (actions.isEmpty()) {
+                return null;
             }
-            return null;
-        }
-
-        private boolean shouldSendMessage() {
-            return ! actions.isEmpty();
-            // return secondTick.getElapsedTime() > getNextMessageTime();
+            messagesSent++;
+            return actions.removeFirst();
         }
         
         public int getEnergyLevel() {

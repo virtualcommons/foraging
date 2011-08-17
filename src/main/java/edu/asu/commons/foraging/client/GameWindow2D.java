@@ -405,7 +405,7 @@ public class GameWindow2D extends JPanel implements GameWindow {
     private void setInstructions(String s) {
         instructionsEditorPane.setText(s);
         instructionsEditorPane.setCaretPosition(0);
-        instructionsEditorPane.repaint();
+        repaint();
         instructionsScrollPane.requestFocusInWindow();
     }
 

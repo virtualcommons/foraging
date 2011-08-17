@@ -416,9 +416,13 @@ public class ServerDataModel extends ForagingDataModel {
             p2AmountToKeep = p2AmountsToKeep[index];
             double totalAmountSent = 3 * amountSent;
             double amountReturnedToP1 = totalAmountSent - p2AmountToKeep;
-            logger.info(String.format("player one %s earned %d + %d = %d", playerOne, p1AmountToKeep, amountReturnedToP1, p1AmountToKeep + amountReturnedToP1));
+            String playerOneLog = String.format("Player one (%s) earned %s + %s = %s", playerOne, p1AmountToKeep, amountReturnedToP1, p1AmountToKeep + amountReturnedToP1);
+            logger.info(playerOneLog);
+            playerOne.logTrustGameEarnings(playerOneLog);
             playerOne.addTrustGameEarnings(p1AmountToKeep + amountReturnedToP1);
-            logger.info(String.format("player two %s earned %d", p2AmountToKeep));
+            String playerTwoLog = String.format("Player two (%s) earned %s", playerTwo, p2AmountToKeep);
+            logger.info(playerTwoLog);
+            playerTwo.logTrustGameEarnings(playerTwoLog);
             playerTwo.addTrustGameEarnings(p2AmountToKeep);
         }                                        
     }

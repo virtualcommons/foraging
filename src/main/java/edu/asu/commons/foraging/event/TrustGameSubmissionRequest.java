@@ -1,12 +1,14 @@
 package edu.asu.commons.foraging.event;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.asu.commons.event.AbstractPersistableEvent;
 import edu.asu.commons.net.Identifier;
-import java.util.Arrays;
 
 public class TrustGameSubmissionRequest extends AbstractPersistableEvent {
     
-    private static final long serialVersionUID = -4962852585789164775L;
+    private static final long serialVersionUID = -3516907265559144744L;
 
     private double playerOneAmountToKeep;
     
@@ -27,6 +29,10 @@ public class TrustGameSubmissionRequest extends AbstractPersistableEvent {
     }
     
     public String toString() {
-        return String.format("%s (P1: %d) (P2: %s)", getId(), playerOneAmountToKeep, Arrays.asList(playerTwoAmountsToKeep));
+        List<Double> list = new ArrayList<Double>();
+        for (double amount: playerTwoAmountsToKeep) {
+            list.add(amount);
+        }
+        return String.format("%s (P1: %s) (P2: %s)", getId(), playerOneAmountToKeep, list);
     }
 }
