@@ -1,6 +1,7 @@
 package edu.asu.commons.foraging.event;
 
 import edu.asu.commons.event.AbstractPersistableEvent;
+import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.ClientRequest;
 import edu.asu.commons.net.Identifier;
 
@@ -16,14 +17,14 @@ public class FacilitatorCensoredChatRequest extends AbstractPersistableEvent imp
 
     private static final long serialVersionUID = -120847705184240264L;
 
-    private CensoredChatRequest censoredChatRequest;
+    private ChatRequest censoredChatRequest;
     
-    public FacilitatorCensoredChatRequest(Identifier facilitatorId, CensoredChatRequest request) {
+    public FacilitatorCensoredChatRequest(Identifier facilitatorId, ChatRequest request) {
         super(facilitatorId);
         this.censoredChatRequest = request;
     }
     
-    public CensoredChatRequest getCensoredChatRequest() {
+    public ChatRequest getCensoredChatRequest() {
         return censoredChatRequest;
     }
     

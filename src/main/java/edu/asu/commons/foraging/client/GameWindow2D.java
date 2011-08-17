@@ -82,7 +82,7 @@ public class GameWindow2D extends JPanel implements GameWindow {
 
     private JScrollPane instructionsScrollPane;
 
-    private  HtmlEditorPane instructionsEditorPane;
+    private HtmlEditorPane instructionsEditorPane;
 
     private JPanel messagePanel;
     private JScrollPane messageScrollPane;
@@ -599,7 +599,7 @@ public class GameWindow2D extends JPanel implements GameWindow {
         return configuration.isPracticeRound() && configuration.isPrivateProperty();
     }
 
-    private void addCenterComponent(Component newCenterComponent) {
+    public void addCenterComponent(Component newCenterComponent) {
         if (currentCenterComponent != null) {
             currentCenterComponent.setVisible(false);
             remove(currentCenterComponent);
@@ -759,9 +759,7 @@ public class GameWindow2D extends JPanel implements GameWindow {
             panel.add(scrollPane, BorderLayout.NORTH);
             
             TrustGamePanel trustGamePanel = new TrustGamePanel(client);
-            panel.add(trustGamePanel, BorderLayout.CENTER);
-            
-            
+            panel.add(trustGamePanel, BorderLayout.CENTER);                        
             addCenterComponent(panel);
         }
     }
@@ -790,7 +788,7 @@ public class GameWindow2D extends JPanel implements GameWindow {
         setInstructions(instructionsBuilder.toString());
     }
     public void switchInstructionsPane() {
-        instructionsEditorPane.setText("<b>Please wait while we compute your new token totals.</b>");
+//        instructionsEditorPane.setText("<b>Please wait while we compute your new token totals.</b>");
         addCenterComponent(instructionsScrollPane);
     }
 

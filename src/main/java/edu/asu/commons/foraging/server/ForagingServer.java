@@ -25,12 +25,12 @@ import edu.asu.commons.event.SetConfigurationEvent;
 import edu.asu.commons.event.SocketIdentifierUpdateRequest;
 import edu.asu.commons.experiment.AbstractExperiment;
 import edu.asu.commons.experiment.StateMachine;
+import edu.asu.commons.foraging.client.Circle;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.data.ForagingSaveFileConverter;
 import edu.asu.commons.foraging.event.AgentInfoRequest;
 import edu.asu.commons.foraging.event.BeginChatRoundRequest;
-import edu.asu.commons.foraging.event.CensoredChatRequest;
 import edu.asu.commons.foraging.event.ClientMovementRequest;
 import edu.asu.commons.foraging.event.ClientPoseUpdate;
 import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
@@ -56,6 +56,7 @@ import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
+import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
@@ -71,6 +72,9 @@ import edu.asu.commons.net.event.ConnectionEvent;
 import edu.asu.commons.net.event.DisconnectionRequest;
 import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.Utils;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * $Id: ForagingServer.java 529 2010-08-17 00:08:01Z alllee $
@@ -276,15 +280,20 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                     }
                 }
             });
-            addEventProcessor(new EventTypeProcessor<CensoredChatRequest>(CensoredChatRequest.class) {
-                public void handle(final CensoredChatRequest request) {
-                    // send to facilitator immediately for approval
-                    transmit(new FacilitatorCensoredChatRequest(facilitatorId, request));
-                }
-            });
             addEventProcessor(new EventTypeProcessor<ChatRequest>(ChatRequest.class) {
                 public void handle(final ChatRequest request) {
-                    new Thread () { public void run() { relayChatRequest(request); } }.start();
+                    RoundConfiguration configuration = getCurrentRoundConfiguration();
+                    if (configuration.isCensoredChat()) {
+                        transmit(new FacilitatorCensoredChatRequest(facilitatorId, request));
+                    }
+                    else if (configuration.isInRoundChatEnabled()) {
+                        // FIXME: add configuration parameter for chat in field of vision
+                        
+                        
+                    }
+                    else {
+                        relayChatRequest(request);
+                    }
                 }
             });
 
@@ -658,13 +667,39 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                     }
                 }
             });
-            //            addEventProcessor(new EventTypeProcessor<BeginVotingRequest>(BeginVotingRequest.class) {
-            //                public void handle(BeginVotingRequest request) {
-            //                    if (getConfiguration().getCurrentParameters().isVotingEnabled()) {
-            //                        
-            //                    }
-            //                }
-            //            });
+            addEventProcessor(new EventTypeProcessor<TrustGameSubmissionRequest>(TrustGameSubmissionRequest.class) {
+                int numberOfSubmissions = 0;
+                public void handle(TrustGameSubmissionRequest request) {
+                    if (getCurrentRoundConfiguration().isTrustGameEnabled()) {
+                        logger.info("trust game submission: " + request);
+                        // basic sanity check
+                        ClientData clientData = clients.get(request.getId());
+                        clientData.setTrustGamePlayerOneAmountToKeep(request.getPlayerOneAmountToKeep());
+                        clientData.setTrustGamePlayerTwoAmountsToKeep(request.getPlayerTwoAmountsToKeep());                        
+                        persister.store(request);
+                        numberOfSubmissions++;
+                    }
+                    if (numberOfSubmissions >= clients.size()) {
+                        // once all clients have submitted their decisions, execute the trust game.
+                        for (GroupDataModel group: serverDataModel.getGroups()) {
+                            LinkedList<ClientData> clientList = new LinkedList<ClientData>(group.getClientDataMap().values());
+                            Collections.shuffle(clientList);
+                            // FIXME: arbitrary choice to save the first one to pair up with the last one as well.
+                            ClientData first = clientList.getFirst();                            
+                            for (Iterator<ClientData> iter = clientList.iterator(); iter.hasNext(); ) {
+                                ClientData playerOne = iter.next();
+                                ClientData playerTwo = first;
+                                if (iter.hasNext()) {
+                                    playerTwo = iter.next();                                    
+                                }
+                                serverDataModel.calculateTrustGame(playerOne, playerTwo);                                
+                            }                                                                                   
+                        }
+                        numberOfSubmissions = 0;                        
+                    }                                        
+                }                
+            });            
+
             addEventProcessor(new EventTypeProcessor<BeginChatRoundRequest>(BeginChatRoundRequest.class) {
                 public void handle(BeginChatRoundRequest request) {
                     if (getCurrentRoundConfiguration().isChatEnabled()) {
@@ -708,9 +743,14 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 // relay to all clients in this client's group.
                 ClientData clientData = clients.get(source);
                 getLogger().info(String.format("chat from %s: [ %s ]", clientData.toString(), request));
-                for (Identifier targetId : clientData.getGroupDataModel().getClientIdentifiers()) {
-                    ChatEvent chatEvent = new ChatEvent(targetId, request.toString(), source, true);
-                    transmit(chatEvent);
+                // check for field of vision
+                RoundConfiguration currentConfiguration = getCurrentRoundConfiguration();
+                if (currentConfiguration.isFieldOfVisionEnabled()) {
+                    Circle circle = new Circle(clientData.getPosition(), currentConfiguration.getViewSubjectsRadius());
+                    sendChatEvent(request, clientData.getGroupDataModel().getClientIdentifiersWithin(circle));                    
+                }
+                else {
+                    sendChatEvent(request, clientData.getGroupDataModel().getClientIdentifiers());
                 }
             }
             else {
@@ -719,6 +759,13 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 transmit(chatEvent);
             }
             persister.store(request);
+        }
+        
+        private void sendChatEvent(ChatRequest request, Collection<Identifier> identifiers) {
+            for (Identifier targetId : identifiers) {
+                ChatEvent chatEvent = new ChatEvent(targetId, request.toString(), request.getSource(), true);
+                transmit(chatEvent);
+            }
         }
 
          // FIXME: remove Dispatcher reference if it's unused.

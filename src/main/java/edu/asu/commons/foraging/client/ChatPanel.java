@@ -118,14 +118,7 @@ public class ChatPanel extends JPanel {
             if (message == null || "".equals(message) || targetIdentifier == null) {
                 return;
             }
-            RoundConfiguration roundConfiguration = client.getCurrentRoundConfiguration();
-            if (roundConfiguration.isCensoredChat()) {
-                // FIXME: get rid of duplication, add a censored boolean to ChatRequest instead?
-                client.transmit(new CensoredChatRequest(clientId, message, targetIdentifier));
-            }
-            else {
-                client.transmit(new ChatRequest(clientId, message, targetIdentifier));
-            }
+            client.transmit(new ChatRequest(clientId, message, targetIdentifier));            
             chatField.requestFocusInWindow();
             chatField.setText("");
         }

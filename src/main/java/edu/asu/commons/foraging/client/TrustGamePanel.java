@@ -489,9 +489,8 @@ public class TrustGamePanel extends JPanel {
         }
         String selectedPlayerOneAction = model.getActionCommand();
         System.err.println("player one action: " + selectedPlayerOneAction);               
-        Double playerOneAmountToKeep = (Integer.parseInt(selectedPlayerOneAction) * roundConfiguration.getTrustGamePayoffIncrement());
-        Double[] playerTwoAmountsToKeep = new Double[4];
-        Arrays.fill(playerTwoAmountsToKeep, 0.0d);
+        double playerOneAmountToKeep = (Integer.parseInt(selectedPlayerOneAction) * roundConfiguration.getTrustGamePayoffIncrement());
+        double[] playerTwoAmountsToKeep = new double[4];        
         for (int rowIndex = 1; rowIndex <= 4; rowIndex++) {
             Object value = playerTwoTable.getValueAt(rowIndex, 2);
             System.err.println("value is: " + value);
@@ -505,6 +504,8 @@ public class TrustGamePanel extends JPanel {
         }
         System.err.println("P1 keeping " + playerOneAmountToKeep + " and P2 data: " + Arrays.asList(playerTwoAmountsToKeep));
         client.sendTrustGameSubmissionRequest(playerOneAmountToKeep, playerTwoAmountsToKeep);
+        client.getGameWindow2D().switchInstructionsPane();
+        
         
         
 

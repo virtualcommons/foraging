@@ -395,4 +395,31 @@ public class ServerDataModel extends ForagingDataModel {
     public void unapply(PersistableEvent persistableEvent) {
         logger.warning("unapply() not implemented yet: " + persistableEvent);
     }
+
+    public void calculateTrustGame(ClientData playerOne, ClientData playerTwo) {
+        double p1AmountToKeep = playerOne.getTrustGamePlayerOneAmountToKeep();
+        double[] p2AmountsToKeep = playerTwo.getTrustGamePlayerTwoAmountsToKeep();
+        
+        double amountSent = 1.0d - p1AmountToKeep;                       
+        if (amountSent > 0) {
+            double p2AmountToKeep = 0.0d;
+            int index = 0;
+            if (amountSent == 0.25d) {
+                index = 0;
+            } else if (amountSent == 0.50d) {
+                index = 1;
+            } else if (amountSent == 0.75d) {
+                index = 2;
+            } else if (amountSent == 1.0d) {
+                index = 3;
+            }
+            p2AmountToKeep = p2AmountsToKeep[index];
+            double totalAmountSent = 3 * amountSent;
+            double amountReturnedToP1 = totalAmountSent - p2AmountToKeep;
+            logger.info(String.format("player one %s earned %d + %d = %d", playerOne, p1AmountToKeep, amountReturnedToP1, p1AmountToKeep + amountReturnedToP1));
+            playerOne.addTrustGameEarnings(p1AmountToKeep + amountReturnedToP1);
+            logger.info(String.format("player two %s earned %d", p2AmountToKeep));
+            playerTwo.addTrustGameEarnings(p2AmountToKeep);
+        }                                        
+    }
 }

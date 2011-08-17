@@ -444,7 +444,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         SwingUtilities.invokeLater(createGuiRunnable);
     }
 
-    public void sendTrustGameSubmissionRequest(Double playerOneAmountToKeep, Double[] playerTwoAmountsToKeep) {
+    public void sendTrustGameSubmissionRequest(double playerOneAmountToKeep, double[] playerTwoAmountsToKeep) {
         transmit(new TrustGameSubmissionRequest(getId(), playerOneAmountToKeep, playerTwoAmountsToKeep));
     }
 }

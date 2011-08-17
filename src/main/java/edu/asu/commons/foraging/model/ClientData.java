@@ -62,6 +62,27 @@ public class ClientData implements Serializable {
     // only needed if this client has already received a tax.
     private boolean taxReceived = false;
     
+    private double trustGamePlayerOneAmountToKeep;
+    private double[] trustGamePlayerTwoAmountsToKeep;
+    
+    private double trustGameEarnings = 0.0d;    
+
+    public void setTrustGamePlayerOneAmountToKeep(double trustGamePlayerOneAmountToKeep) {
+        this.trustGamePlayerOneAmountToKeep = trustGamePlayerOneAmountToKeep;
+    }
+
+    public void setTrustGamePlayerTwoAmountsToKeep(double[] trustGamePlayerTwoAmountsToKeep) {
+        this.trustGamePlayerTwoAmountsToKeep = trustGamePlayerTwoAmountsToKeep;
+    }
+
+    public double getTrustGamePlayerOneAmountToKeep() {
+        return trustGamePlayerOneAmountToKeep;
+    }
+
+    public double[] getTrustGamePlayerTwoAmountsToKeep() {
+        return trustGamePlayerTwoAmountsToKeep;
+    }
+    
 
 	// this is only used in the Rotating Monitor enforcement mechanism.
     private int tokensCollectedDuringInterval = 0;
@@ -553,5 +574,13 @@ public class ClientData implements Serializable {
 
     public String toString() {
         return String.format("id (%s) number (%d)", id, assignedNumber);
+    }
+
+    public void addTrustGameEarnings(double trustGameEarnings) {
+        this.trustGameEarnings += trustGameEarnings;
+    }
+    
+    public double getTrustGameEarnings() {
+        return trustGameEarnings;
     }
 }

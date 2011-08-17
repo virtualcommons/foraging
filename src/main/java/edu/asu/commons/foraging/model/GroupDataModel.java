@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import edu.asu.commons.experiment.DataModel;
+import edu.asu.commons.foraging.client.Circle;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
 import edu.asu.commons.foraging.event.EnforcementRankingRequest;
@@ -432,6 +433,16 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
     
     public int getResourceDistributionSize() {
         return resourceDistribution.size();
+    }
+    
+    public Set<Identifier> getClientIdentifiersWithin(Circle circle) {
+        HashSet<Identifier> ids = new HashSet<Identifier>();
+        for (ClientData data: clients.values()) {
+            if (circle.contains(data.getPosition())) {
+                ids.add(data.getId());
+            }
+        }
+        return ids;
     }
 
     /**
