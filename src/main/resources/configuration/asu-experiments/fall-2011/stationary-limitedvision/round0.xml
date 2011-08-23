@@ -40,9 +40,7 @@ questions so far?</b></p>
 <entry key="quiz-instructions">
 <![CDATA[
 <p>
-Before we begin the practice round you need to answer the following questions
-correctly. You can only continue when you have answered all questions
-correctly.  If an error is made you will need to answer the questions again.
+Before we begin the practice round please answer the following questions.
 </p>
 <br>
 <form>
@@ -93,11 +91,11 @@ you.
 </p>
 
 <p>
-Player 2 has the following decision to make. You have to chose for each of the 4
+Player 2 has the following decision to make. You have to choose for each of the 4
 possible cases how much to receive from player 1 how much to keep and how much to
-send back to player 1.
-We ask you to fill in the tables for player 1 as well as for player 2, and we will
-drawn whether you are player 1 or 2 after you have made the decisions.
+send back to player 1. We ask you to fill in the tables for player 1 as well as for
+player 2, and we will drawn whether you are player 1 or 2 after you have made the
+decisions.
 </p>
 
 <p>

@@ -62,7 +62,7 @@ left, or right.  You have to press a key for each and every move of your yellow 
 In this experiment you can collect green diamond shaped tokens 
 <img src="@CODEBASE_URL@/images/gem-token.gif"> and earn two cents for each collected token.  
 To collect a token, move your yellow dot over a green token and press the <b>space
-bar</b>.  If you move over a token without pressing the <b>space bar</> you do NOT
+bar</b>.  If you move over a token without pressing the <b>space bar</b> you do NOT
 collect that token.
 </p>
 
