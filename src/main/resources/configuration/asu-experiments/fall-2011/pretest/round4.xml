@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="display-group-tokens">true</entry>
+<entry key="clients-per-group">5</entry>
+<entry key="resource-depth">29</entry>
+<entry key="resource-width">29</entry>
+<entry key="duration">240</entry>
+
+<!-- enable field of vision for tokens and subjects -->
+<entry key='tokens-field-of-vision'>true</entry>
+<entry key='subjects-field-of-vision'>true</entry>
+
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+
+<entry key='in-round-chat-enabled'>true</entry>
+
+<!-- enable sanctioning -->
+<entry key="sanction-type">real-time</entry>
+<entry key="sanction-cost">1</entry>
+<entry key="sanction-multiplier">2</entry>
+
+<entry key='resource-generator'>top-bottom-patchy</entry>
+
+
+<entry key="initial-distribution">.25</entry>
+
+<!-- enable quiz -->
+<entry key='quiz'>true</entry>
+<entry key='q1'>B</entry>
+<entry key='q2'>C</entry>
+<entry key='q3'>B</entry>
+<entry key='q4'>B</entry>
+
+<entry key="instructions">
+<![CDATA[
+<h3>Round 4 Instructions</h3>
+<hr>
+<p>
+Round 4 is the same as the previous two rounds with two exceptions.  
+</p>
+<p>
+The resource dynamics have changed.  One section of the resource has a high growth
+rate, and another section has a low growth rate.
+</p>
+<p>
+During the next round you will have the option to reduce the earnings of another
+participant at a cost to your own earnings.
+</p>
+<ul>
+<li>If you press the numeric key 1-5 corresponding to another participant, you
+will reduce the number of tokens they have collected in this round by two
+tokens. This will also reduce your own token amount by one token. The decision
+whether or when to use this option is up to you. 
+<li>When you reduce the number of tokens of another participant, they will
+receive a message stating that you have reduced their tokens. Likewise, if
+another participant reduces your number of tokens, you will also receive a
+message. These messages will be displayed on the bottom of your screen.
+<li>If your tokens are being reduced or you are reducing another participant's
+tokens, you will receive some visual cues.  When you are sanctioned your yellow dot will turn red briefly with a blue background.  The participant sanctioning you will turn purple with a white background.
+<li>You may sanction other participants as long as there are
+tokens remaining on the screen and while both you and the other participant
+have a positive number of tokens collected during the round.  <b>Each time</b>
+you press the numeric key corresponding to another participant your token
+amount is reduced by <b>one</b>, and their token amount is reduced by
+<b>two</b>.  <b>Note:</b> You can only remove tokens from a participant that is
+visible to you.
+</ul>
+<p>
+
+<p>
+The length of this round is four minutes.
+</p>
+<p>
+If you have any questions please raise your hand.  <b>Do you have any
+questions so far?</b>
+</p>
+]]>
+</entry>
+
+<entry key="chat-instructions">
+<![CDATA[
+<p>
+You can chat with the other participants in your group during this round.
+You may communicate about any aspect of the experiment that you would like to
+discuss with other participants with whom you have been matched. You may not promise
+them side-payments after the experiment is completed or threaten them with any
+consequence after the experiment is finished. We are monitoring the chat traffic
+while you chat. If we see that somebody reveals his or her identity, we have to stop
+the experiment and remove the whole group from which this person is a member out of
+this room.
+</p>
+<p>
+You will see other participants labeled as "1", "2","3", "4", or "5" in the chat
+box.  You can send a chat message by typing into the textfield and pressing the
+enter key.
+</p>
+]]>
+</entry>
+<entry key="quiz-instructions">                       
+<![CDATA[                                             
+<p>Before the next round begins you must complete the quiz below.  You can
+only continue when you have answered all questions correctly.  If an error is
+made you will need to answer the questions again.
+</p>
+
+<form>
+<span class='q1'>Q1. Each time I press the numeric keys between 1-5 my tokens will be reduced
+by:</span><br>
+<input type="radio" name="q1" value="A">A. 0 tokens<br>
+<input type="radio" name="q1" value="B">B. 1 token<br>
+<input type="radio" name="q1" value="C">C. 2 tokens<br>
+<input type="radio" name="q1" value="D">D. 4 tokens<br>
+<br><br>
+
+<span class='q2'>Q2. Each time I press the numeric keys between 1-5 the number of tokens of the
+corresponding participant is reduced by:</span><br>
+<input type="radio" name="q2" value="A">A. 0 tokens<br>
+<input type="radio" name="q2" value="B">B. 1 token<br>
+<input type="radio" name="q2" value="C">C. 2 tokens<br>
+<input type="radio" name="q2" value="D">D. 4 tokens<br>
+<br><br>
+
+<span class='q3'>Q3. The background of your yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif"> turns blue.  What does this represent?</span><br>
+<input type="radio" name="q3" value="A">A. You collected a token<br>
+<input type="radio" name="q3" value="B">B. Another participant is subtracting two
+tokens from you<br>
+<input type="radio" name="q3" value="C">C. You are subtracting two tokens from another
+participant<br>
+<input type="radio" name="q3" value="D">D. You are moving too fast<br>
+<br><br>
+
+<span class='q4'>Q4. Every time I press the numeric keys between 1-5:</span><br>
+<input type="radio" name="q4" value="A">A. Two tokens are subtracted from my tokens
+collected this round<br>
+<input type="radio" name="q4" value="B">B. One token is subtracted from my tokens
+collected this round<br>
+<input type="radio" name="q4" value="C">C. The background of my yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif"> turns blue
+momentarily<br>                                                                                                                             
+<input type="radio" name="q4" value="D">D. My yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif"> is paused for two seconds<br>
+
+<input type="submit" name="submit" value="Submit">
+</form>
+]]>
+</entry>
+<entry key='trust-game-instructions'>
+<![CDATA[
+<h3>Task</h3>
+<p>
+You will be matched with another person in your group, but you will not know who
+that person is.  And that person will not know who you are.  You make decisions for
+the case you are drawn to be player 1 and the case you will be player 2.  The
+results of the decisions are given to you at the end of the whole experiment.
+</p>
+
+<p>
+The person drawn to be player 1 has the following decision to make. You will receive
+an endowment of one dollar and decide how much to keep and how much to send to
+another person in your group. 
+</p>
+
+<p>
+The amount you send to the other person will be tripled and then given to the person
+in your group with whom you have been matched.  That person will decide how much to
+keep and how much to send back to you.  For example, if you send 0 extra credit
+points to the other person, 0 extra credit points will be sent to the other person.
+However, if you write 3 extra credit points on the form, 9 extra credit points will
+be sent to the person.  The other person would then decide how much to return to
+you.
+</p>
+
+<p>
+Player 2 has the following decision to make. You have to chose for each of the 4
+possible cases how much to receive from player 1 how much to keep and how much to
+send back to player 1.
+We ask you to fill in the tables for player 1 as well as for player 2, and we will
+drawn whether you are player 1 or 2 after you have made the decisions.
+</p>
+
+<p>
+Are there any questions?  If you have a question, raise your hand and I will try to
+answer it.                                              
+</p>
+]]>
+</entry>
+<entry key='trust-game-instructions'>
+<![CDATA[
+<h3>Task</h3>
+<p>
+You will be matched with another person in your group, but you will not know who
+that person is.  And that person will not know who you are.  You make decisions for
+the case you are drawn to be player 1 and the case you will be player 2.  The
+results of the decisions are given to you at the end of the whole experiment.
+</p>
+
+<p>
+The person drawn to be player 1 has the following decision to make. You will receive
+an endowment of one dollar and decide how much to keep and how much to send to
+another person in your group. 
+</p>
+
+<p>
+The amount you send to the other person will be tripled and then given to the person
+in your group with whom you have been matched.  That person will decide how much to
+keep and how much to send back to you.  For example, if you send 0 extra credit
+points to the other person, 0 extra credit points will be sent to the other person.
+However, if you write 3 extra credit points on the form, 9 extra credit points will
+be sent to the person.  The other person would then decide how much to return to
+you.
+</p>
+
+<p>
+Player 2 has the following decision to make. You have to chose for each of the 4
+possible cases how much to receive from player 1 how much to keep and how much to
+send back to player 1.
+We ask you to fill in the tables for player 1 as well as for player 2, and we will
+drawn whether you are player 1 or 2 after you have made the decisions.
+</p>
+
+<p>
+Are there any questions?  If you have a question, raise your hand and I will try to
+answer it.                                              
+</p>
+]]>
+</entry>
+</properties>
