@@ -86,7 +86,7 @@ public abstract class GridView extends JPanel {
         fontSize = (int)(0.85 * dh);
         font = new Font("sansserif", Font.BOLD, fontSize);
         // make sure we've got enough room
-        setSize(availableWidth, availableHeight);
+        setPreferredSize(new Dimension(availableWidth, availableHeight));
 
         //FIXME: reduce code duplication
         // get scaled instances of the originals

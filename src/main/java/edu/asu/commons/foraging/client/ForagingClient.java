@@ -411,16 +411,16 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                     e.printStackTrace();
                     System.err.println("Couldn't set native look and feel: "+ e);
                 }
-                Dimension defaultDimension = new Dimension(600, 600);
+                Dimension defaultDimension = new Dimension(1024, 768);
             	JFrame frame = new JFrame();
                 ForagingClient client = new ForagingClient(new ServerConfiguration(), defaultDimension);
                 client.connect();
                 frame.setTitle("Client Window: " + client.getId());
-                frame.setSize(defaultDimension);
                 frame.add(client.clientPanel);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setPreferredSize(defaultDimension);
                 frame.setVisible(true);
-
+                frame.pack();
             }
         };
         SwingUtilities.invokeLater(createGuiRunnable);
