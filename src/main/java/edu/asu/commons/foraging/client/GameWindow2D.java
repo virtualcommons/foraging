@@ -211,8 +211,8 @@ public class GameWindow2D implements GameWindow {
                 }
                 else {
                     String currentInstructions = instructionsBuilder.toString();
-                    // remove submit button, this is expensive but ah well.
-                    currentInstructions = currentInstructions.replaceAll("<input type=\"submit\".*>", "");
+                    // remove all inputs.
+                    currentInstructions = currentInstructions.replaceAll("<input.*value=\"[\\w]+\">", "");
                     System.err.println("new instructions: " + currentInstructions);
                     builder.append(currentInstructions);
                     Collections.sort(incorrectAnswers);
@@ -248,7 +248,6 @@ public class GameWindow2D implements GameWindow {
                     builder.append(correctString);
                     setInstructions(builder.toString());
                 }
-                getPanel().repaint();
             }
         };
     }
@@ -331,11 +330,10 @@ public class GameWindow2D implements GameWindow {
     }
 
     private void setInstructions(String s) {
+        System.err.println("Setting instructions to " + s);
         instructionsEditorPane.setText(s);
-        instructionsEditorPane.setCaretPosition(0);
-//        instructionsScrollPane.repaint();
-//        instructionsScrollPane.requestFocusInWindow();
-//        repaint();
+        instructionsEditorPane.repaint();
+        getPanel().repaint();
     }
 
     private HtmlEditorPane createInstructionsEditorPane() {
@@ -343,6 +341,7 @@ public class GameWindow2D implements GameWindow {
         //       "Costly Sanctioning Experiment");        
         final HtmlEditorPane htmlPane = new HtmlEditorPane();
         htmlPane.setEditable(false);
+        htmlPane.setDoubleBuffered(true);
         htmlPane.setBackground(Color.WHITE);
         htmlPane.setFont(new Font("sansserif", Font.PLAIN, 12));
         return htmlPane;
@@ -359,6 +358,7 @@ public class GameWindow2D implements GameWindow {
         // add instructions panel card
         instructionsEditorPane = createInstructionsEditorPane();
         instructionsScrollPane = new JScrollPane(instructionsEditorPane);
+        instructionsScrollPane.setDoubleBuffered(true);
         instructionsScrollPane.setName(INSTRUCTIONS_PANEL_NAME);
         add(instructionsScrollPane);
 
@@ -418,6 +418,7 @@ public class GameWindow2D implements GameWindow {
                 Dimension screenSize = new Dimension(component.getWidth(), component.getHeight() - 50);
                 subjectView.setScreenSize(screenSize);
                 subjectView.setImageSizes();
+                getPanel().revalidate();
                 showPanel(currentCardPanel);
             }
         });
@@ -712,17 +713,21 @@ public class GameWindow2D implements GameWindow {
     }
 
     public void showInstructions() {
-        RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
+        final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
         instructionsBuilder.delete(0, instructionsBuilder.length());
         roundConfiguration.buildInstructions(instructionsBuilder);
         // and add the quiz instructions if the quiz is enabled.
-        if (roundConfiguration.isQuizEnabled()) {
-            instructionsEditorPane.setActionListener(null);
-            instructionsEditorPane.setActionListener(createQuizListener(roundConfiguration));
-        }
-
-        setInstructions(instructionsBuilder.toString());
-        switchInstructionsPane();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (roundConfiguration.isQuizEnabled()) {
+                    instructionsEditorPane.setActionListener(null);
+                    instructionsEditorPane.setActionListener(createQuizListener(roundConfiguration));
+                }
+                setInstructions(instructionsBuilder.toString());
+                switchInstructionsPane();
+                instructionsEditorPane.setCaretPosition(0);
+            }
+        });
     }
     public void switchInstructionsPane() {
         showPanel(INSTRUCTIONS_PANEL_NAME);

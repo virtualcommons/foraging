@@ -327,8 +327,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public double getQuizCorrectAnswerReward() {
         return getDoubleProperty("quiz-correct-answer-reward", 0.50d);
     }
-    
-    
 
     /**
      * Possible values, freeze, fine?
@@ -561,25 +559,26 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         }
         instructionsBuilder.append(getInstructions());
         if (isFieldOfVisionEnabled()) {
-            instructionsBuilder.append(getFieldOfVisionInstructions());
+            addSpecialInstructions(instructionsBuilder,getFieldOfVisionInstructions());
         }
         if (isCensoredChat()) {
-            instructionsBuilder.append(getCensoredChatInstructions());
+            addSpecialInstructions(instructionsBuilder,getCensoredChatInstructions());
         }
         else if (isInRoundChatEnabled()) {
-            instructionsBuilder.append(getInRoundChatInstructions());
+            addSpecialInstructions(instructionsBuilder,getInRoundChatInstructions());
         }
         else if (isChatEnabled()) {
             // FIXME: hard-coded, need to make instructions template-able, perhaps
             // via FreeMarker or Velocity.
-            instructionsBuilder.append("Before the beginning of this round you will be able to chat with the other members of your group for ").append(getChatDuration()).append(" seconds.");
+            addSpecialInstructions(instructionsBuilder, 
+                    "Before the beginning of this round you will be able to chat with the other members of your group for " + getChatDuration() + " seconds.");
         }
         String resourceGeneratorType = getResourceGeneratorType();
         if (resourceGeneratorType.equals("mobile")) {
-            instructionsBuilder.append(getMobileResourceInstructions());
+            addSpecialInstructions(instructionsBuilder,getMobileResourceInstructions());
         }
         else if (resourceGeneratorType.equals("top-bottom-patchy")) {
-            instructionsBuilder.append(getPatchyResourceInstructions());
+            addSpecialInstructions(instructionsBuilder,getPatchyResourceInstructions());
         }
 
         // and add the quiz instructions if the quiz is enabled.
@@ -587,6 +586,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
             instructionsBuilder.append(getQuizInstructions());
         }
         return instructionsBuilder;
+    }
+    
+    private void addSpecialInstructions(StringBuilder builder, String instructions) {
+        builder.append("<p>").append(instructions).append("</p>");
     }
     
     private String getMobileResourceInstructions() {

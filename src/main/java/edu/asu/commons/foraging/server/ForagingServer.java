@@ -299,14 +299,16 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             addEventProcessor(new EventTypeProcessor<QuizResponseEvent>(QuizResponseEvent.class) {
                 public void handle(final QuizResponseEvent event) {
                     numberOfSubmittedQuizzes++;
+                    transmit(new QuizCompletedEvent(facilitatorId));
+                    ClientData clientData = clients.get(event.getId());
+                    clientData.addCorrectQuizAnswers(event.getNumberOfCorrectAnswers());
                     if (numberOfSubmittedQuizzes >= clients.size()) {
                         // we're done, notify the sleeping queue.
                         logger.info("Received all quizzes, notifying quiz signal");
                         Utils.notify(quizSignal);
                         numberOfSubmittedQuizzes = 0;
                     }
-                    // FIXME: pass in the id of the client completing the quiz? 
-                    transmit(new QuizCompletedEvent(facilitatorId));
+
                 }
             });
             addEventProcessor(new EventTypeProcessor<PostRoundSanctionRequest>(PostRoundSanctionRequest.class) {

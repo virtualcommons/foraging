@@ -12,7 +12,7 @@ import edu.asu.commons.net.Identifier;
  * 
  * A client's quiz responses for a given quiz page.
  * 
- *
+ * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  * @version $Rev: 522 $
  */
@@ -41,5 +41,16 @@ public class QuizResponseEvent extends AbstractPersistableEvent implements Clien
     @Override
     public String toString() {
         return String.format("%s, responses: %s, incorrect answers: %s", id, responses, incorrectAnswers);
+    }
+
+    public int getNumberOfCorrectAnswers() {
+        int correctAnswers = responses.size() - incorrectAnswers.size();
+        if (correctAnswers < 0) {
+            // FIXME: replace with proper logging?
+            System.err.println("Somehow the number of responses was less than the number of incorrect answers: "
+                    + responses + " -- " + incorrectAnswers);
+            return 0;
+        }
+        return correctAnswers;
     }
 }

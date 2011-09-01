@@ -271,7 +271,11 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
     public void transmit(PostRoundSanctionRequest request) {
         if (state == ClientState.WAITING) {
         	//System.out.println("Sending post round sanction request");
-            gameWindow2D.switchInstructionsPane();
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    gameWindow2D.switchInstructionsPane();        
+                }
+            });
             super.transmit(request);
         }
     }

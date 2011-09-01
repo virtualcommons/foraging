@@ -69,7 +69,8 @@ public class ClientData implements Serializable {
     
     private ArrayList<String> trustGameLog = new ArrayList<String>();
     
-    private double trustGameEarnings = 0.0d;    
+    private double trustGameEarnings = 0.0d;
+    private int correctQuizAnswers = 0;
 
     public void setTrustGamePlayerOneAmountToKeep(double trustGamePlayerOneAmountToKeep) {
         this.trustGamePlayerOneAmountToKeep = trustGamePlayerOneAmountToKeep;
@@ -595,4 +596,13 @@ public class ClientData implements Serializable {
     public List<String> getTrustGameLog() {
         return trustGameLog;
     }
+
+    public int getCorrectQuizAnswers() {
+        return correctQuizAnswers;
+    }
+
+    public void addCorrectQuizAnswers(int numberOfCorrectAnswers) {
+        correctQuizAnswers += numberOfCorrectAnswers;
+    }
+    
 }
