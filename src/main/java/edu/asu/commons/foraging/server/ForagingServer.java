@@ -298,7 +298,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
 
             addEventProcessor(new EventTypeProcessor<QuizResponseEvent>(QuizResponseEvent.class) {
                 public void handle(final QuizResponseEvent event) {
-                    logger.debug("Received quiz response: " + event);
+                    logger.info("Received quiz response: " + event);
                     numberOfSubmittedQuizzes++;
                     transmit(new QuizCompletedEvent(facilitatorId));
                     ClientData clientData = clients.get(event.getId());
@@ -685,6 +685,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                                 if (iter.hasNext()) {
                                     playerTwo = iter.next();                                    
                                 }
+
                                 logger.info(String.format("Pairing %s with %s for trust game", playerOne, playerTwo));
                                 serverDataModel.calculateTrustGame(playerOne, playerTwo);                                
                             }                                                                                   

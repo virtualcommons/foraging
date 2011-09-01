@@ -113,7 +113,7 @@ public class ChatPanel extends JPanel {
             }
             client.transmit(new ChatRequest(clientId, message, targetIdentifier));
             if (inRoundChat) {
-                getParent().requestFocusInWindow();
+                client.getGameWindow().getPanel().requestFocusInWindow();
             }
             else {
                 chatField.requestFocusInWindow();

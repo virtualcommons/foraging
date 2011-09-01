@@ -202,6 +202,7 @@ public class GameWindow2D implements GameWindow {
                 setQuestionColors(incorrectAnswers, "red");
                 if (incorrectAnswers.isEmpty()) {
                     builder.append(configuration.getInstructions());
+                    configuration.addAllSpecialInstructions(builder);
                     // notify the server and also notify the participant.
                     builder.append("<br><b>Congratulations!</b> You have answered all questions correctly.");
                     setInstructions(builder.toString());
