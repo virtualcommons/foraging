@@ -280,14 +280,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public boolean isQuizEnabled() {
         return getBooleanProperty("quiz");
     }
-    
-    /**
-     * FIXME: quiz instructions and quiz enabled should be tightly coupled..
-     * @return
-     */
-    public String getQuizInstructions() {
-        return getProperty("quiz-instructions");
-    }
+
     
     public String getChatInstructions() {
         return getProperty("chat-instructions");
@@ -303,6 +296,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     
     public String getLastRoundDebriefing() {
         return getProperty("last-round-debriefing");
+    }
+    
+    /**
+     * FIXME: quiz instructions and quiz enabled should be tightly coupled..
+     * @return
+     */
+    public String getQuizInstructions() {
+        return getProperty("quiz-instructions");
     }
     
     public Map<String, String> getQuizAnswers() {
@@ -322,6 +323,12 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String getQuizExplanation(String questionNumber) {
         return getProperty(questionNumber + "-explanation");
     }
+    
+    public double getQuizCorrectAnswerReward() {
+        return getDoubleProperty("quiz-correct-answer-reward", 0.50d);
+    }
+    
+    
 
     /**
      * Possible values, freeze, fine?

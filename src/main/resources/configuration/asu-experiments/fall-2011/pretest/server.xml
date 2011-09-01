@@ -50,32 +50,31 @@ Please <b>wait quietly</b> and <b>do not close this window or open any other app
 <h3>General Instructions</h3>
 <p>
 Welcome. You have already earned 5 dollars by showing up at this experiment. You can
-earn more, up to a maximum of 40 dollars, by participating in this experiment, which
+earn more, up to a maximum of about 40 dollars, by participating in this experiment, which
 will take about an hour to an hour and a half. The amount of money you earn depends
 on your decisions as well as the decisions of other people in this room during the
 six rounds of the experiment. 
 </p>
 <p>
-You appear on the screen as a yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif">. 
-You move by pressing the four arrow keys on your keyboard.  You can move up, down,
-left, or right.  You have to press a key for each and every move of your yellow dot.  
-In this experiment you can collect green diamond shaped tokens 
+You will appear on the screen as a yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif">. 
+You can move by pressing the four arrow keys on your keyboard.  You can move up,
+down, left, or right.  You have to press a key for each and every move of your
+yellow dot.  In this experiment you can collect green diamond shaped tokens 
 <img src="@CODEBASE_URL@/images/gem-token.gif"> and earn two cents for each collected token.  
-To collect a token, move your yellow dot over a green token and press the <b>space
-bar</b>.  If you move over a token without pressing the <b>space bar</b> you do NOT
-collect that token.
+To collect a token, move your yellow dot over a green token and <b>press the space
+bar</b>.  Simply moving your avatar over a token does NOT collect that token.
 </p>
 
 <p>
 The tokens that you collect have the potential to regenerate.  After you have
-collected a green token, a new token can re-appear on that empty cell.
-However, the rate at which new tokens will appear depends on the number of
-adjacent cells with tokens.  The more tokens in the eight cells around
-an empty cell, the faster a new token will appear on that empty cell.  In other
-words, <b>existing tokens can generate new tokens</b>.  To illustrate this, please
-refer to Image 1 and Image 2.  The middle cell in Image 1 denoted with an X has
-a greater chance of regeneration than the middle cell in Image 2.  When all
-neighboring cells are empty, there is <b>no chance for regeneration</b>.
+collected a green token, a new token can re-appear on that empty cell. The rate at
+which new tokens appear is dependent on the number of adjacent cells with tokens.
+The more tokens in the eight cells that surround an empty cell, the faster a new
+token will appear on that empty cell.  In other words, <b>existing tokens can
+generate new tokens</b>.  To illustrate this, please refer to Image 1 and Image 2.
+The middle cell in Image 1 denoted with an X has a greater chance of regeneration
+than the middle cell in Image 2.  When all neighboring cells are empty, there is
+<b>no chance for regeneration</b>.
 
 <table width="100%">
 <tr>
@@ -91,8 +90,52 @@ neighboring cells are empty, there is <b>no chance for regeneration</b>.
 </td>
 </tr>
 </table>
+<h3>Best Strategy</h3>
+<p>
+The chance that a token will regenerate on an empty cell increases as there are
+more tokens surrounding it.  Therefore, you want to have as many tokens around an
+empty cell as possible.  However, you also need empty cells to benefit from this
+regrowth.  The optimal spatial pattern of tokens on the screen is the checkerboard
+diagram shown below, where half of the cells are empty and arranged in a way that
+maximizes regrowth.
+<img src="@CODEBASE_URL@/images/optimal-strategy.jpg" alt="Checkerboard Resource">
+</p>
 ]]>
 </entry>
 
+<entry key='trust-game-instructions'>
+<![CDATA[
+<h3>Trust Game Instructions</h3>
+<p>
+    You will now play a mini-game where you will be matched with a random person in
+    your group. In this game there are two roles, Player 1 and Player 2.  Your job
+    is to design strategies for both Player 1 and Player 2 roles.  When you are
+    randomly paired with another member of your group you may be selected as Player
+    1 <b>or</b> Player 2.  The results of your strategies will be shown to you at
+    the <b>end of the experiment</b>.
+</p>
 
+<h3>Game Mechanics</h3>
+The game works as follows:
+<ol>
+    <li>Player 1 first receives an endowment of one dollar and has to decide <b>how much to keep</b> and <b>how much to send to Player 2</b>.
+    <li>The amount Player 1 decides to send to Player 2 is tripled by
+        the system and then given to Player 2.  Player 2 then has to decide <b>how
+            much to keep</b> and <b>how much to send back to Player 1</b>.
+</ol>
+
+For example, if Player 1 sends 0 cents to Player 2, Player 1 earns 1 dollar and
+Player 2 earns 0 cents. However, if Player 1 sends 1 dollar to Player 2, 3 dollars
+would be sent to Player 2.  Player 2 then decides to return $1.75 back to Player 1.
+In this case, Player 1 earns $1.75, and Player 2 earns $1.25.
+
+<p>
+    To design your strategies, please fill in the following form by selecting the
+    <b>Amount to Keep</b> column.
+</p>
+<p>
+    <b>Are there any questions?</b>
+</p>
+]]>
+</entry>
 </properties>
