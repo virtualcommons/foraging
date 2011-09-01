@@ -503,6 +503,7 @@ public class GameWindow2D implements GameWindow {
                             if (dataModel.getRoundConfiguration().isInRoundChatEnabled()) {
                                 getChatPanel().setTextFieldFocus();
                             }
+                            break;
                         case KeyEvent.VK_R:
                             if (canResetTokenDistribution()) {
                                 event = new ResetTokenDistributionRequest(client.getId());
