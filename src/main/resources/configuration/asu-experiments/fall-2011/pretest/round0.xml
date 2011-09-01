@@ -62,4 +62,15 @@ Before we begin the practice round please answer the following questions.
 </form>
 ]]>
 </entry>
+<entry key='q1-explanation'>
+    <![CDATA[
+    Tokens can only grow when there are other tokens around them.  They cannot
+    spontaneously generate from the middle of the screen.
+    ]]>
+</entry>
+<entry key='q2-explanation'>
+    <![CDATA[
+    There are no neighboring tokens next to the tokens that appeared in B.  
+    ]]>
+</entry>
 </properties>
