@@ -1,6 +1,5 @@
 package edu.asu.commons.foraging.client;
 
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -56,9 +55,6 @@ import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.HtmlEditorPane;
 
-
-
-
 /**
  * $Id: GameWindow2D.java 529 2010-08-17 00:08:01Z alllee $
  * 
@@ -71,7 +67,7 @@ import edu.asu.commons.util.HtmlEditorPane;
 public class GameWindow2D implements GameWindow {
 
     private final ClientDataModel dataModel;
-    
+
     private final static String INSTRUCTIONS_PANEL_NAME = "Foraging instructions panel";
     private final static String GAME_PANEL_NAME = "Game panel";
     private final static String TRUST_GAME_PANEL_NAME = "Trust game panel";
@@ -79,14 +75,14 @@ public class GameWindow2D implements GameWindow {
     private final static String CHAT_PANEL_NAME = "Chat panel";
 
     protected static final String POST_ROUND_SANCTIONING_PANEL_NAME = null;
-    
+
     private String currentCardPanel = INSTRUCTIONS_PANEL_NAME;
-    
-//    private Component currentCenterComponent;
-    
+
+    // private Component currentCenterComponent;
+
     private JPanel mainPanel;
-    
- // instructions components. 
+
+    // instructions components.
     private JScrollPane instructionsScrollPane;
     private HtmlEditorPane instructionsEditorPane;
 
@@ -111,7 +107,7 @@ public class GameWindow2D implements GameWindow {
 
     private SubjectView subjectView;
 
-    public  Timer timer;
+    public Timer timer;
 
     private final StringBuilder instructionsBuilder = new StringBuilder();
 
@@ -124,18 +120,18 @@ public class GameWindow2D implements GameWindow {
     public GameWindow2D(ForagingClient client, Dimension size) {
         this.client = client;
         this.dataModel = client.getDataModel();
-        // FIXME: set the actual screen size dimensions after this JPanel has been initialized... 
+        // FIXME: set the actual screen size dimensions after this JPanel has been initialized...
         this.channel = client.getEventChannel();
         // feed subject view the available screen size so that
         // it can adjust appropriately when given a board size
-//        int width = (int) Math.min(Math.floor(size.getWidth()), Math.floor(size.getHeight() * 0.85));
+        // int width = (int) Math.min(Math.floor(size.getWidth()), Math.floor(size.getHeight() * 0.85));
 
         initGuiComponents(size);
     }
 
     /**
      * Instead of invoking specific update methods we invoke just a single
-     * method, update() after we're done changing state. 
+     * method, update() after we're done changing state.
      */
     public void update(final long roundTimeLeft) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -143,15 +139,16 @@ public class GameWindow2D implements GameWindow {
                 informationLabel.setText(getInformationLabelText());
                 timeLeftLabel.setText(getTimeLeftLabelText(roundTimeLeft));
                 // FIXME: subjectView.repaint() causes graphical glitches here
-                // only when we transition from 3D -> 2D experiment.  Find out why.
+                // only when we transition from 3D -> 2D experiment. Find out why.
                 subjectView.repaint();
             }
         });
     }
 
-    /** 
-     * In certain cases, init() _can_ be called before endRound() is finished.  Need to lock
+    /**
+     * In certain cases, init() _can_ be called before endRound() is finished. Need to lock
      * access!
+     * 
      * @param event
      */
     public void init() {
@@ -166,7 +163,6 @@ public class GameWindow2D implements GameWindow {
         // add the next round instructions to the existing debriefing text set by the previous
         // EndRoundEvent.
     }
-
 
     private void setQuestionColors(List<String> questionNumbers, String color) {
         HTMLEditorKit editorKit = (HTMLEditorKit) instructionsEditorPane.getEditorKit();
@@ -190,7 +186,7 @@ public class GameWindow2D implements GameWindow {
                 for (Map.Entry<String, String> entry : quizAnswers.entrySet()) {
                     String questionNumber = entry.getKey();
                     String expectedAnswer = entry.getValue();
-                    if (expectedAnswer.equals(actualAnswers.getProperty(questionNumber)) ) {
+                    if (expectedAnswer.equals(actualAnswers.getProperty(questionNumber))) {
                         correctAnswers.add(questionNumber);
                     }
                     else {
@@ -198,7 +194,7 @@ public class GameWindow2D implements GameWindow {
                         incorrectAnswers.add(questionNumber);
                     }
                 }
-                
+
                 client.transmit(new QuizResponseEvent(client.getId(), actualAnswers, incorrectAnswers));
                 StringBuilder builder = new StringBuilder();
                 setQuestionColors(correctAnswers, "black");
@@ -220,24 +216,24 @@ public class GameWindow2D implements GameWindow {
                     HTMLEditorKit editorKit = (HTMLEditorKit) instructionsEditorPane.getEditorKit();
                     StyleSheet styleSheet = editorKit.getStyleSheet();
                     StringBuilder correctString = new StringBuilder();
-                    if (! correctAnswers.isEmpty()) {
+                    if (!correctAnswers.isEmpty()) {
                         correctString.append("<h3>Correctly answered questions</h3><ul>");
                         // FIXME: extract style modifications to method
                         for (String correctQuestionNumber : correctAnswers) {
                             String styleString = String.format(".%s { color: black; }", correctQuestionNumber);
                             styleSheet.addRule(styleString);
-                            correctString.append(String.format("<li>Your answer [ %s ] was correct for question %s.", 
-                                        actualAnswers.get(correctQuestionNumber),
-                                        correctQuestionNumber));
+                            correctString.append(String.format("<li>Your answer [ %s ] was correct for question %s.",
+                                    actualAnswers.get(correctQuestionNumber),
+                                    correctQuestionNumber));
                         }
                         correctString.append("</ul>");
                     }
-                    
+
                     correctString.append("<h3>Incorrectly answered questions</h3><ul>");
                     for (String incorrectQuestionNumber : incorrectAnswers) {
                         String styleString = String.format(".%s { color: red; }", incorrectQuestionNumber);
                         styleSheet.addRule(styleString);
-                        correctString.append(String.format("<li>Your answer [ %s ] was incorrect for question %s.  The correct answer was [ %s ].  %s", 
+                        correctString.append(String.format("<li>Your answer [ %s ] was incorrect for question %s.  The correct answer was [ %s ].  %s",
                                 actualAnswers.get(incorrectQuestionNumber),
                                 incorrectQuestionNumber,
                                 quizAnswers.get(incorrectQuestionNumber),
@@ -251,7 +247,7 @@ public class GameWindow2D implements GameWindow {
             }
         };
     }
-    
+
     /**
      * Invoked when a subject collected a token at Point p.
      * 
@@ -263,7 +259,7 @@ public class GameWindow2D implements GameWindow {
 
     private void startChatTimer() {
         if (timer == null) {
-        	final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
+            final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
             final Duration duration = Duration.create(roundConfiguration.getChatDuration());
             timer = new Timer(1000, new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
@@ -273,7 +269,7 @@ public class GameWindow2D implements GameWindow {
                         timer = null;
                     }
                     else {
-                        timeLeftLabel.setText( String.format("Chat will end in %d seconds.", duration.getTimeLeft() / 1000L) );
+                        timeLeftLabel.setText(String.format("Chat will end in %d seconds.", duration.getTimeLeft() / 1000L));
                     }
                 }
             });
@@ -287,31 +283,31 @@ public class GameWindow2D implements GameWindow {
             // XXX: use this method so that we get the proper ordering of client ids/assigned numbers..
             Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();
             Point clientPosition = dataModel.getCurrentPosition();
-            
-            for (Identifier id: dataModel.getAllClientIdentifiers()) {
+
+            for (Identifier id : dataModel.getAllClientIdentifiers()) {
                 ClientData clientData = clientDataMap.get(id);
                 String formatString = "";
                 if (id.equals(dataModel.getId())) {
                     formatString = " [%d (you) : %d] ";
-                    builder.append(String.format(formatString, clientData.getAssignedNumber(), clientData.getCurrentTokens()));   
+                    builder.append(String.format(formatString, clientData.getAssignedNumber(), clientData.getCurrentTokens()));
                 }
-                else {                	 
-                	if(!dataModel.getRoundConfiguration().isFieldOfVisionEnabled()){
-                		formatString = " [%d : %d] ";
-                        builder.append(String.format(formatString, clientData.getAssignedNumber(), clientData.getCurrentTokens()));   
-                	}
-                	else {
-                    	double radius = dataModel.getRoundConfiguration().getViewSubjectsRadius();
-                    	Circle fieldOfVision = new Circle(clientPosition, radius);                	
-                		if(fieldOfVision.contains(clientData.getPosition())) {                	
-                			formatString = " [%d : %d] ";
-                            builder.append(String.format(formatString, clientData.getAssignedNumber(), clientData.getCurrentTokens()));   
-                		}
-                		else {
-                			formatString = " [%d : XX] ";
-                            builder.append(String.format(formatString, clientData.getAssignedNumber()));   
-                		}
-               		}
+                else {
+                    if (!dataModel.getRoundConfiguration().isFieldOfVisionEnabled()) {
+                        formatString = " [%d : %d] ";
+                        builder.append(String.format(formatString, clientData.getAssignedNumber(), clientData.getCurrentTokens()));
+                    }
+                    else {
+                        double radius = dataModel.getRoundConfiguration().getViewSubjectsRadius();
+                        Circle fieldOfVision = new Circle(clientPosition, radius);
+                        if (fieldOfVision.contains(clientData.getPosition())) {
+                            formatString = " [%d : %d] ";
+                            builder.append(String.format(formatString, clientData.getAssignedNumber(), clientData.getCurrentTokens()));
+                        }
+                        else {
+                            formatString = " [%d : XX] ";
+                            builder.append(String.format(formatString, clientData.getAssignedNumber()));
+                        }
+                    }
                 }
             }
             return builder.toString();
@@ -338,7 +334,7 @@ public class GameWindow2D implements GameWindow {
 
     private HtmlEditorPane createInstructionsEditorPane() {
         // JEditorPane pane = new JEditorPane("text/html",
-        //       "Costly Sanctioning Experiment");        
+        // "Costly Sanctioning Experiment");
         final HtmlEditorPane htmlPane = new HtmlEditorPane();
         htmlPane.setEditable(false);
         htmlPane.setDoubleBuffered(true);
@@ -351,8 +347,8 @@ public class GameWindow2D implements GameWindow {
         // FIXME: replace with CardLayout for easier switching between panels
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
-        
-        Dimension subjectViewSize = new Dimension((int) size.getWidth(), (int) (size.getHeight() * 0.85)); 
+
+        Dimension subjectViewSize = new Dimension((int) size.getWidth(), (int) (size.getHeight() * 0.85));
         subjectView = new SubjectView(subjectViewSize, dataModel);
 
         // add instructions panel card
@@ -375,7 +371,7 @@ public class GameWindow2D implements GameWindow {
         // latencyLabel = new JLabel("Latency: 0");
         informationLabel.setBackground(Color.YELLOW);
         informationLabel.setForeground(Color.BLUE);
-        
+
         labelPanel = new JPanel();
         labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.LINE_AXIS));
         labelPanel.setBackground(Color.WHITE);
@@ -386,7 +382,7 @@ public class GameWindow2D implements GameWindow {
 
         // add message window.
         messagePanel = new JPanel(new BorderLayout());
-        //        messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
+        // messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
         messagePanel.add(new JLabel("Messages"), BorderLayout.NORTH);
         messageTextPane = new JTextPane();
         messageTextPane.setEditable(false);
@@ -394,16 +390,16 @@ public class GameWindow2D implements GameWindow {
         messageTextPane.setBackground(Color.WHITE);
         addStyles(messageTextPane.getStyledDocument());
         messageScrollPane = new JScrollPane(messageTextPane);
-//        Dimension scrollPaneSize = new Dimension(getPreferredSize().width, 50);
-//        messageScrollPane.setMinimumSize(scrollPaneSize);
-//        messageScrollPane.setPreferredSize(scrollPaneSize);
-//        messageScrollPane.setMaximumSize(scrollPaneSize);
+        // Dimension scrollPaneSize = new Dimension(getPreferredSize().width, 50);
+        // messageScrollPane.setMinimumSize(scrollPaneSize);
+        // messageScrollPane.setPreferredSize(scrollPaneSize);
+        // messageScrollPane.setMaximumSize(scrollPaneSize);
         messagePanel.add(messageScrollPane, BorderLayout.CENTER);
         gamePanel.add(messagePanel, BorderLayout.SOUTH);
-        
+
         add(gamePanel);
-        
-        mainPanel.addKeyListener( createGameWindowKeyListener() );
+
+        mainPanel.addKeyListener(createGameWindowKeyListener());
         mainPanel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 mainPanel.requestFocusInWindow();
@@ -426,12 +422,14 @@ public class GameWindow2D implements GameWindow {
     }
 
     /**
-     * IMPORTANT: this method handles client keyboard inputs within the game.  
+     * IMPORTANT: this method handles client keyboard inputs within the game.
+     * 
      * @return
      */
     private KeyAdapter createGameWindowKeyListener() {
         return new KeyAdapter() {
             private volatile boolean keyReleased;
+
             // FIXME: the keyReleased/keyPressed stuff here only seems to work on Windows.
             // Linux keyboards generate pairs of keyPressed/keyReleased events in tandem even
             // when you are keeping the key down the whole time!
@@ -439,6 +437,7 @@ public class GameWindow2D implements GameWindow {
             public void keyReleased(KeyEvent keyEvent) {
                 keyReleased = true;
             }
+
             // FIXME: refactor this method if possible.
             @Override
             public void keyPressed(KeyEvent keyEvent) {
@@ -451,78 +450,85 @@ public class GameWindow2D implements GameWindow {
                     // check to see if the key is something else.
                     switch (keyCode) {
                     // token request handling
-                    case KeyEvent.VK_SPACE:
-                        if(dataModel.isHarvestingAllowed()) {
-                            event = new CollectTokenRequest(client.getId());
-                        }
-                        else {
-                            displayErrorMessage("You cannot harvest at this time.");
-                        }
-                        break;
-                        // real-time sanctioning keycode handling
-                    case KeyEvent.VK_1: case KeyEvent.VK_2: case KeyEvent.VK_3: 
-                    case KeyEvent.VK_4: case KeyEvent.VK_5: case KeyEvent.VK_6: 
-                    case KeyEvent.VK_7: case KeyEvent.VK_8: case KeyEvent.VK_9:
-                        if (! dataModel.isSanctioningAllowed()) {
-                            // get rid of magic constants
-                            displayErrorMessage("You may not reduce other participants tokens at this time.");
-                            return;
-                        }
-                        if (client.canPerformRealTimeSanction()) {
-                            //System.out.println("Can do sanctioning");
-                            int assignedNumber = keyChar - 48;
-                            Identifier sanctionee = dataModel.getClientId(assignedNumber);
-                            if (sanctionee == null || sanctionee.equals(dataModel.getId())) {
-                                // don't allow self-flagellation :-).
-                                return;
+                        case KeyEvent.VK_SPACE:
+                            if (dataModel.isHarvestingAllowed()) {
+                                event = new CollectTokenRequest(client.getId());
                             }
-                            // only allow sanctions for subjects within this subject's field of vision
-                            Point subjectPosition = dataModel.getClientDataMap().get(sanctionee).getPoint();
-                            if (dataModel.getClientData().isSubjectInFieldOfVision(subjectPosition)) {
-                                //	System.out.println("sanctioning event sent");
-                                event = new RealTimeSanctionRequest(dataModel.getId(), sanctionee);
-                                // below function must be used for enforcement type4
-//                                dataModel.sanction(dataModel.getId(), sanctionee);                            	
-                            }                            
                             else {
-                                displayErrorMessage("The participant is out of range.");
+                                displayErrorMessage("You cannot harvest at this time.");
+                            }
+                            break;
+                        // real-time sanctioning keycode handling
+                        case KeyEvent.VK_1:
+                        case KeyEvent.VK_2:
+                        case KeyEvent.VK_3:
+                        case KeyEvent.VK_4:
+                        case KeyEvent.VK_5:
+                        case KeyEvent.VK_6:
+                        case KeyEvent.VK_7:
+                        case KeyEvent.VK_8:
+                        case KeyEvent.VK_9:
+                            if (!dataModel.isSanctioningAllowed()) {
+                                // get rid of magic constants
+                                displayErrorMessage("You may not reduce other participants tokens at this time.");
                                 return;
                             }
-                        }
-                        break;
+                            if (client.canPerformRealTimeSanction()) {
+                                // System.out.println("Can do sanctioning");
+                                int assignedNumber = keyChar - 48;
+                                Identifier sanctionee = dataModel.getClientId(assignedNumber);
+                                if (sanctionee == null || sanctionee.equals(dataModel.getId())) {
+                                    // don't allow self-flagellation :-).
+                                    return;
+                                }
+                                // only allow sanctions for subjects within this subject's field of vision
+                                Point subjectPosition = dataModel.getClientDataMap().get(sanctionee).getPoint();
+                                if (dataModel.getClientData().isSubjectInFieldOfVision(subjectPosition)) {
+                                    // System.out.println("sanctioning event sent");
+                                    event = new RealTimeSanctionRequest(dataModel.getId(), sanctionee);
+                                    // below function must be used for enforcement type4
+                                    // dataModel.sanction(dataModel.getId(), sanctionee);
+                                }
+                                else {
+                                    displayErrorMessage("The participant is out of range.");
+                                    return;
+                                }
+                            }
+                            break;
                         // reset token distribution request handling
-                    case KeyEvent.VK_ENTER:
-                        if (dataModel.getRoundConfiguration().isInRoundChatEnabled()) {
-                            getChatPanel().setTextFieldFocus();
-                        }
-                    case KeyEvent.VK_R:
-                        if (canResetTokenDistribution()) {
-                            event = new ResetTokenDistributionRequest(client.getId());
-                        }
-                        else return;
-                        break;
-                    case KeyEvent.VK_M:
-                        if (! dataModel.getRoundConfiguration().isAlwaysInExplicitCollectionMode()) {
-                            dataModel.toggleExplicitCollectionMode();
-                        }
-                        return;
-                    default:
-                        System.err.println("Invalid input:" + KeyEvent.getKeyText(keyCode));
+                        case KeyEvent.VK_ENTER:
+                            if (dataModel.getRoundConfiguration().isInRoundChatEnabled()) {
+                                getChatPanel().setTextFieldFocus();
+                            }
+                        case KeyEvent.VK_R:
+                            if (canResetTokenDistribution()) {
+                                event = new ResetTokenDistributionRequest(client.getId());
+                            }
+                            else
+                                return;
+                            break;
+                        case KeyEvent.VK_M:
+                            if (!dataModel.getRoundConfiguration().isAlwaysInExplicitCollectionMode()) {
+                                dataModel.toggleExplicitCollectionMode();
+                            }
+                            return;
+                        default:
+                            System.err.println("Invalid input:" + KeyEvent.getKeyText(keyCode));
                     }
                 }
                 else {
                     event = new ClientMovementRequest(client.getId(), direction);
                     // move the client directly, this may get overridden later by a client update.
                     /*
-                    if (dataModel.getRoundConfiguration().isAlwaysInExplicitCollectionMode()) {
-                    	Point newPosition = direction.apply(dataModel.getCurrentPosition());
-                    	dataModel.getClientData().setPosition(newPosition);
-                    	subjectView.repaint();
-                    }
+                     * if (dataModel.getRoundConfiguration().isAlwaysInExplicitCollectionMode()) {
+                     * Point newPosition = direction.apply(dataModel.getCurrentPosition());
+                     * dataModel.getClientData().setPosition(newPosition);
+                     * subjectView.repaint();
+                     * }
                      */
                 }
                 if (keyReleased) {
-                    // FIXME: have client directly render these requests?  Would
+                    // FIXME: have client directly render these requests? Would
                     // make the app more "responsive" and less tied to server latency.
                     channel.handle(event);
                     keyReleased = false;
@@ -537,17 +543,17 @@ public class GameWindow2D implements GameWindow {
         return configuration.isPracticeRound() && configuration.isPrivateProperty();
     }
 
-//    public void addCenterComponent(Component newCenterComponent) {
-//        if (currentCenterComponent != null) {
-//            currentCenterComponent.setVisible(false);
-//            getPanel().remove(currentCenterComponent);
-//            getPanel().add(newCenterComponent, BorderLayout.CENTER);
-//            newCenterComponent.setVisible(true);
-//        }
-//        currentCenterComponent = newCenterComponent;
-//        getPanel().revalidate();
-//        getPanel().repaint();
-//    }
+    // public void addCenterComponent(Component newCenterComponent) {
+    // if (currentCenterComponent != null) {
+    // currentCenterComponent.setVisible(false);
+    // getPanel().remove(currentCenterComponent);
+    // getPanel().add(newCenterComponent, BorderLayout.CENTER);
+    // newCenterComponent.setVisible(true);
+    // }
+    // currentCenterComponent = newCenterComponent;
+    // getPanel().revalidate();
+    // getPanel().repaint();
+    // }
 
     public void startRound() {
         final RoundConfiguration configuration = dataModel.getRoundConfiguration();
@@ -578,27 +584,27 @@ public class GameWindow2D implements GameWindow {
         };
         SwingUtilities.invokeLater(runnable);
     }
-    
+
     public void displayErrorMessage(String errorMessage) {
-    	displayMessage(errorMessage, Color.RED);
+        displayMessage(errorMessage, Color.RED);
     }
-    
+
     public void displayMessage(String message) {
-    	displayMessage(message, Color.BLACK);
+        displayMessage(message, Color.BLACK);
     }
 
     public void displayMessage(String errorMessage, Color color) {
-        //     String chatHandle = getChatHandle(source);
-//    	messageTextPane.setForeground(color);
-//        StyledDocument document = messageTextPane.getStyledDocument();
-//        try {        	
-//            document.insertString(document.getLength(), errorMessage + "\n", document.getStyle("bold"));
-//            messageTextPane.setCaretPosition(document.getLength());
-//        } 
-//        catch (BadLocationException e) {
-//            e.printStackTrace();
-//            throw new RuntimeException(e);
-//        }
+        // String chatHandle = getChatHandle(source);
+        // messageTextPane.setForeground(color);
+        // StyledDocument document = messageTextPane.getStyledDocument();
+        // try {
+        // document.insertString(document.getLength(), errorMessage + "\n", document.getStyle("bold"));
+        // messageTextPane.setCaretPosition(document.getLength());
+        // }
+        // catch (BadLocationException e) {
+        // e.printStackTrace();
+        // throw new RuntimeException(e);
+        // }
     }
 
     // FIXME: add to some common GUI package?
@@ -616,7 +622,6 @@ public class GameWindow2D implements GameWindow {
                 .addStyle("italic", defaultStyle), true);
     }
 
-
     private double getIncome(float numTokens) {
         if (dataModel.getRoundConfiguration().isPracticeRound()) {
             return 0.0f;
@@ -626,23 +631,26 @@ public class GameWindow2D implements GameWindow {
 
     private void addDebriefingText(EndRoundEvent event) {
         instructionsBuilder.delete(0, instructionsBuilder.length());
+        // FIXME: should be round-specific? We're not resetting correct quiz answers either.
+        int correctQuizAnswers = event.getClientData().getCorrectQuizAnswers();
+        double quizReward = correctQuizAnswers * dataModel.getRoundConfiguration().getQuizCorrectAnswerReward();
         instructionsBuilder.append(
                 String.format("<h3>Your stats in this round:</h3>" +
                         "<ul>" +
                         "<li>Tokens collected: %d</li>" +
                         "<li>Income: $%3.2f</li>" +
-                        "</ul>", 
-                        event.getCurrentTokens(),
-                        getIncome(event.getCurrentTokens()))
-        );
-        double showUpFee = dataModel.getRoundConfiguration().getParentConfiguration().getShowUpPayment();
+                        "<li>Quiz questions answered correctly: %d (%3.2f)</li>" +
+                        "</ul>",
+                        event.getCurrentTokens(), getIncome(event.getCurrentTokens()), correctQuizAnswers, quizReward)
+                );
+        double showUpPayment = dataModel.getRoundConfiguration().getParentConfiguration().getShowUpPayment();
         instructionsBuilder.append(String.format("Your <b>total income</b> so far (including a $%3.2f bonus for showing up) is : $%3.2f<hr>",
-                showUpFee, dataModel.getTotalIncome() + showUpFee));
-        for (String trustGameLog: event.getTrustGameLog()) {
-            instructionsBuilder.append(trustGameLog);
-        }
-        
+                showUpPayment, dataModel.getTotalIncome() + showUpPayment));
+
         if (event.isLastRound()) {
+            for (String trustGameLog : event.getTrustGameLog()) {
+                instructionsBuilder.append(trustGameLog);
+            }
             instructionsBuilder.append(client.getDataModel().getRoundConfiguration().getLastRoundDebriefing());
             timeLeftLabel.setText("The experiment is now over.");
         }
@@ -657,7 +665,7 @@ public class GameWindow2D implements GameWindow {
         instructionsBuilder.append(
                 String.format("<h3>Your statistics from the last round have been updated as follows:</h3>" +
                         "<ul>" +
-                        "<li>Tokens collected last round: %d</li>" + 
+                        "<li>Tokens collected last round: %d</li>" +
                         "<li>Tokens subtracted by other players: %d</li>" +
                         "<li>Tokens used to subtract tokens from other players: %d</li>" +
                         "<li>Net earned tokens in the last round: %d</li>" +
@@ -668,7 +676,7 @@ public class GameWindow2D implements GameWindow {
                         clientData.getSanctionCosts(),
                         clientData.getCurrentTokens(),
                         getIncome(clientData.getCurrentTokens()))
-        );
+                );
         instructionsBuilder.append(String.format("Your <b>total income</b> so far is: $%3.2f<hr>",
                 getIncome(clientData.getTotalTokens())));
         if (event.isLastRound()) {
@@ -698,15 +706,15 @@ public class GameWindow2D implements GameWindow {
             JScrollPane scrollPane = new JScrollPane(trustGameInstructionsEditorPane);
             trustGameInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getTrustGameInstructions());
             panel.add(scrollPane);
-            
+
             TrustGamePanel trustGamePanel = new TrustGamePanel(client);
-//            trustGamePanel.setPreferredSize(new Dimension(300, 400));
+            // trustGamePanel.setPreferredSize(new Dimension(300, 400));
             JScrollPane trustGameScrollPane = new JScrollPane(trustGamePanel);
             panel.add(trustGameScrollPane);
             panel.setName(TRUST_GAME_PANEL_NAME);
-//            addCenterComponent(panel);
-//            panel.revalidate();
-//            panel.repaint();
+            // addCenterComponent(panel);
+            // panel.revalidate();
+            // panel.repaint();
             add(panel);
             showPanel(TRUST_GAME_PANEL_NAME);
         }
@@ -729,10 +737,11 @@ public class GameWindow2D implements GameWindow {
             }
         });
     }
+
     public void switchInstructionsPane() {
         showPanel(INSTRUCTIONS_PANEL_NAME);
     }
-    
+
     private void showPanel(final String panelName) {
         this.currentCardPanel = panelName;
         JPanel panel = getPanel();
@@ -771,14 +780,14 @@ public class GameWindow2D implements GameWindow {
                 }
                 // generate debriefing text from data culled from the Event
                 addDebriefingText(event);
-//                messageTextPane.setText("");
+                // messageTextPane.setText("");
             }
         };
         try {
             SwingUtilities.invokeAndWait(runnable);
-        } 
-        catch (InterruptedException ignored) { ignored.printStackTrace(); } 
-        catch (InvocationTargetException e) {
+        } catch (InterruptedException ignored) {
+            ignored.printStackTrace();
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
     }
@@ -793,7 +802,7 @@ public class GameWindow2D implements GameWindow {
             }
         });
     }
-    
+
     public void add(JComponent component) {
         getPanel().add(component, component.getName());
     }

@@ -59,6 +59,10 @@ public class EndRoundEvent extends AbstractEvent {
     public List<String> getTrustGameLog() {
         return clientData.getTrustGameLog();
     }
+    
+    public ClientData getClientData() {
+        return clientData;
+    }
 
     public boolean isLastRound() {
         return lastRound;
