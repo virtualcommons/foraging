@@ -30,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.text.Style;
@@ -326,7 +327,7 @@ public class GameWindow2D implements GameWindow {
     }
 
     private void setInstructions(String s) {
-        System.err.println("Setting instructions to " + s);
+//        System.err.println("Setting instructions to " + s);
         instructionsEditorPane.setText(s);
         instructionsEditorPane.repaint();
         getPanel().repaint();
@@ -355,6 +356,7 @@ public class GameWindow2D implements GameWindow {
         instructionsEditorPane = createInstructionsEditorPane();
         instructionsScrollPane = new JScrollPane(instructionsEditorPane);
         instructionsScrollPane.setDoubleBuffered(true);
+        instructionsScrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
         instructionsScrollPane.setName(INSTRUCTIONS_PANEL_NAME);
         add(instructionsScrollPane);
 

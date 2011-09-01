@@ -120,36 +120,9 @@ public class FacilitatorWindow extends JPanel {
     }
 
     private JMenuBar createMenu() {
-        JMenu menu = new JMenu("Experiment");
         menuBar = new JMenuBar();
-
-        menu.setMnemonic(KeyEvent.VK_E);
-
-        startExperimentMenuItem = new JMenuItem("Start");
-        startExperimentMenuItem.setMnemonic(KeyEvent.VK_S);
-        startExperimentMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendBeginExperimentRequest();
-            }
-        });
-        menu.add(startExperimentMenuItem);
-
-        stopExperimentMenuItem = new JMenuItem("Stop");
-        stopExperimentMenuItem.setMnemonic(KeyEvent.VK_O);
-        stopExperimentMenuItem.setEnabled(false);
-        stopExperimentMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                throw new UnsupportedOperationException("FIXME: Cannot stop experiments right now");
-//                facilitator.sendStopExperimentRequest();
-                //loadConfigurationMenu.setEnabled(true);
-//                displayInstructions();
-            }
-        });
-        menu.add(stopExperimentMenuItem);
-        menuBar.add(menu);
-
         //Round menu
-        menu = new JMenu("Round");
+        JMenu menu = new JMenu("Round");
         menu.setMnemonic(KeyEvent.VK_R);
 
         startChatMenuItem = new JMenuItem("Start chat");
@@ -208,19 +181,10 @@ public class FacilitatorWindow extends JPanel {
         menuItem.setMnemonic(KeyEvent.VK_L);
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new ConfigurationDialog(facilitator, (facilitator
-                        .isExperimentRunning() || facilitator.isReplaying()));
+                new ConfigurationDialog(facilitator, (facilitator.isExperimentRunning() || facilitator.isReplaying()));
             }
         });
         menu.add(menuItem);
-        
-       /* JMenuItem treatment = new JMenuItem("Treatment");
-        treatmnet.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		new 
-        	}
-        })*/
-
         menuBar.add(menu);
 
         return menuBar;
