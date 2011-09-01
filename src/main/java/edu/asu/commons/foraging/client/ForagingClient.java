@@ -37,7 +37,6 @@ import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
 import edu.asu.commons.net.SocketIdentifier;
 import edu.asu.commons.util.Duration;
-import edu.asu.commons.util.Utils;
 
 
 
@@ -81,15 +80,15 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
     public ForagingClient(ServerConfiguration configuration, Dimension screenSize) {
         super(configuration);
         dataModel = new ClientDataModel(this);
+        clientPanel.setLayout(new BorderLayout());
         if (configuration.shouldInitialize2D()) {
             gameWindow2D = new GameWindow2D(this, screenSize);
+            clientPanel.add(gameWindow2D.getPanel(), BorderLayout.CENTER);    
         }
         else if (configuration.shouldInitialize3D()) {
             gameWindow3D = new GameWindow3D(this);
+            clientPanel.add(gameWindow3D.getPanel(), BorderLayout.CENTER);    
         }
-        clientPanel.setLayout(new BorderLayout());
-        clientPanel.add(configuration.getCurrentParameters().is2dExperiment() ? gameWindow2D : gameWindow3D.getPanel(), 
-                BorderLayout.CENTER);    
     }
     
 
@@ -137,9 +136,8 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         clientPanel.removeAll();
-                        clientPanel.invalidate();
                         if (dataModel.is2dExperiment()) {
-                            clientPanel.add(gameWindow2D, BorderLayout.CENTER);
+                            clientPanel.add(gameWindow2D.getPanel(), BorderLayout.CENTER);
                             if (gameWindow3D != null) {
                                 gameWindow3D.dispose();
                             }
@@ -147,7 +145,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                         else {
                             clientPanel.add(gameWindow3D.getPanel(), BorderLayout.CENTER);
                         }
-                        clientPanel.validate();
+                        clientPanel.revalidate();
                         clientPanel.repaint();
                         getGameWindow().init();
                     }

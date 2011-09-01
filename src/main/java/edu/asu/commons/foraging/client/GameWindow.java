@@ -1,5 +1,7 @@
 package edu.asu.commons.foraging.client;
 
+import javax.swing.JPanel;
+
 import edu.asu.commons.foraging.event.EndRoundEvent;
 
 /**
@@ -17,7 +19,7 @@ public interface GameWindow {
     public void init();
     public void update(long millisecondsLeft);
     public void showInstructions();
-
     public void showTrustGame();
+    public JPanel getPanel();
 
 }

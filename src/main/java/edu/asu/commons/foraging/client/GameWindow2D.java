@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,7 +47,6 @@ import edu.asu.commons.foraging.event.ClientMovementRequest;
 import edu.asu.commons.foraging.event.CollectTokenRequest;
 import edu.asu.commons.foraging.event.EndRoundEvent;
 import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
-import edu.asu.commons.foraging.event.QuizCompletedEvent;
 import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
@@ -68,19 +68,26 @@ import edu.asu.commons.util.HtmlEditorPane;
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  * @version $Revision: 529 $
  */
-public class GameWindow2D extends JPanel implements GameWindow {
+public class GameWindow2D implements GameWindow {
 
-    private static final long serialVersionUID = -7733523846114902166L;
-
-    // the data model
     private final ClientDataModel dataModel;
+    
+    private final static String INSTRUCTIONS_PANEL_NAME = "Foraging instructions panel";
+    private final static String GAME_PANEL_NAME = "Game panel";
+    private final static String TRUST_GAME_PANEL_NAME = "Trust game panel";
+    // standalone chat panel
+    private final static String CHAT_PANEL_NAME = "Chat panel";
 
-    // instructions components. 
-
-    private Component currentCenterComponent;
-
+    protected static final String POST_ROUND_SANCTIONING_PANEL_NAME = null;
+    
+    private String currentCardPanel = INSTRUCTIONS_PANEL_NAME;
+    
+//    private Component currentCenterComponent;
+    
+    private JPanel mainPanel;
+    
+ // instructions components. 
     private JScrollPane instructionsScrollPane;
-
     private HtmlEditorPane instructionsEditorPane;
 
     private JPanel messagePanel;
@@ -98,7 +105,7 @@ public class GameWindow2D extends JPanel implements GameWindow {
 
     private JLabel timeLeftLabel;
 
-    private JPanel subjectWindow;
+    private JPanel gamePanel;
 
     private ForagingClient client;
 
@@ -110,7 +117,6 @@ public class GameWindow2D extends JPanel implements GameWindow {
 
     private EventChannel channel;
 
-    // FIXME: replace switchXXXPanel with CardLayout switching.
     private CardLayout cardLayout;
 
     // private EnergyLevel energyLevel;
@@ -123,9 +129,8 @@ public class GameWindow2D extends JPanel implements GameWindow {
         // feed subject view the available screen size so that
         // it can adjust appropriately when given a board size
 //        int width = (int) Math.min(Math.floor(size.getWidth()), Math.floor(size.getHeight() * 0.85));
-        Dimension subjectViewSize = new Dimension((int) size.getWidth(), (int) (size.getHeight() * 0.85)); 
-        subjectView = new SubjectView(subjectViewSize, dataModel);
-        initGuiComponents();
+
+        initGuiComponents(size);
     }
 
     /**
@@ -175,43 +180,43 @@ public class GameWindow2D extends JPanel implements GameWindow {
     private ActionListener createQuizListener(final RoundConfiguration configuration) {
         return new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // System.err.println("In action performed with event: " + e);
                 HtmlEditorPane.FormActionEvent formEvent = (HtmlEditorPane.FormActionEvent) e;
                 Properties actualAnswers = formEvent.getData();
-                //                actualAnswers.list(System.err);
                 List<String> incorrectAnswers = new ArrayList<String>();
                 List<String> correctAnswers = new ArrayList<String>();
 
                 // iterate through expected answers
-                for (Map.Entry<String, String> entry : configuration.getQuizAnswers().entrySet()) {
+                Map<String, String> quizAnswers = configuration.getQuizAnswers();
+                for (Map.Entry<String, String> entry : quizAnswers.entrySet()) {
                     String questionNumber = entry.getKey();
                     String expectedAnswer = entry.getValue();
-                    System.out.println(expectedAnswer);
-                    if (! expectedAnswer.equals(actualAnswers.getProperty(questionNumber)) ) {
-                        // flag the incorrect response
-                        incorrectAnswers.add(questionNumber);
+                    if (expectedAnswer.equals(actualAnswers.getProperty(questionNumber)) ) {
+                        correctAnswers.add(questionNumber);
                     }
                     else {
-                    	correctAnswers.add(questionNumber);
+                        // flag the incorrect response
+                        incorrectAnswers.add(questionNumber);
                     }
                 }
                 
                 client.transmit(new QuizResponseEvent(client.getId(), actualAnswers, incorrectAnswers));
-                
+                StringBuilder builder = new StringBuilder();
+                setQuestionColors(correctAnswers, "black");
+                setQuestionColors(incorrectAnswers, "red");
                 if (incorrectAnswers.isEmpty()) {
+                    builder.append(configuration.getInstructions());
                     // notify the server and also notify the participant.
-                    StringBuilder builder = new StringBuilder(configuration.getInstructions());
                     builder.append("<br><b>Congratulations!</b> You have answered all questions correctly.");
                     setInstructions(builder.toString());
-                    client.transmit(new QuizCompletedEvent(client.getId()));
-                    setQuestionColors(correctAnswers, "black");
                 }
                 else {
-                    // FIXME: highlight the incorrect answers?
+                    String currentInstructions = instructionsBuilder.toString();
+                    // remove submit button, this is expensive but ah well.
+                    currentInstructions = currentInstructions.replaceAll("<input type=\"submit\".*>", "");
+                    System.err.println("new instructions: " + currentInstructions);
+                    builder.append(currentInstructions);
                     Collections.sort(incorrectAnswers);
                     Collections.sort(correctAnswers);
-                    StringBuilder builder = new StringBuilder().append(instructionsBuilder);
-                    
                     HTMLEditorKit editorKit = (HTMLEditorKit) instructionsEditorPane.getEditorKit();
                     StyleSheet styleSheet = editorKit.getStyleSheet();
                     StringBuilder correctString = new StringBuilder();
@@ -232,14 +237,18 @@ public class GameWindow2D extends JPanel implements GameWindow {
                     for (String incorrectQuestionNumber : incorrectAnswers) {
                         String styleString = String.format(".%s { color: red; }", incorrectQuestionNumber);
                         styleSheet.addRule(styleString);
-                        correctString.append(String.format("<li>Your answer [ %s ] was incorrect for question %s.", 
+                        correctString.append(String.format("<li>Your answer [ %s ] was incorrect for question %s.  The correct answer was [ %s ].  %s", 
                                 actualAnswers.get(incorrectQuestionNumber),
-                                incorrectQuestionNumber));
+                                incorrectQuestionNumber,
+                                quizAnswers.get(incorrectQuestionNumber),
+                                configuration.getQuizExplanation(incorrectQuestionNumber)
+                                ));
                     }
                     correctString.append("</ul>");
                     builder.append(correctString);
                     setInstructions(builder.toString());
                 }
+                getPanel().repaint();
             }
         };
     }
@@ -253,79 +262,6 @@ public class GameWindow2D extends JPanel implements GameWindow {
         subjectView.collectToken(position);
     }
 
-//    private void startEnforcementVotingTimer() {
-//        if (timer == null) {
-//            //FIXME: Need to fetch this value from the round4.xml
-//            duration = Duration.create(dataModel.getRoundConfiguration().getEnforcementVotingDuration());
-//            timer = new Timer(1000, new ActionListener() {
-//                public void actionPerformed(ActionEvent event) {
-//                    if (duration.hasExpired()) {
-//                        timeLeftLabel.setText("Voting is now disabled.");
-//                        timer.stop();
-//                        timer = null;
-//                        getEnforcementPanel().sendEnforcementVotes();
-//                        displayVotingWaitMessage();
-//                    }
-//                    else {
-//                        timeLeftLabel.setText( String.format("Voting period will end in %d seconds.", duration.getTimeLeft() / 1000L) );
-//                    }
-//                }
-//            });
-//            timer.start();
-//        }
-//    }
-
-
-//    private void startRegulationVotingTimer() {
-//
-//        if (timer == null) {
-//            duration = Duration.create(dataModel.getRoundConfiguration().getRegulationVotingDuration());
-//
-//            timer = new Timer(1000, new ActionListener() {
-//                public void actionPerformed(ActionEvent event) {
-//                    if (duration.hasExpired()) {
-//                        timeLeftLabel.setText("Voting is now disabled. Next round begins shortly.");
-//
-//                        //new code
-//                        //Need to add the enforcementVotingPane over here
-//                        //instead of the instructionsScrollPane                       
-//                        timer.stop();
-//                        timer = null;
-//                        //remove(sanctioningPanel);
-//                        //getSanctioningPanel().stopTimer();
-//                        getRegulationPanel().sendRegulationVotes();
-//                        displayVotingWaitMessage();
-//                    }
-//                    else {
-//                        timeLeftLabel.setText( String.format("Voting period will end in %d seconds.", duration.getTimeLeft() / 1000L) );
-//                    }
-//                }
-//            });
-//            timer.start();
-//        }
-//    }
-//
-//    private void startSanctionVotingTimer() { 
-//    	if (timer == null) {
-//    		 duration = Duration.create(dataModel.getRoundConfiguration().getSanctionVotingDuration());
-//             timer = new Timer(1000, new ActionListener() {
-//                public void actionPerformed(ActionEvent event) {
-//                    if (duration.hasExpired()) {
-//                        timeLeftLabel.setText("Voting is now disabled. Next round begins shortly.");
-//                        timer.stop();                 
-//                        timer = null;
-//                        sendSanctionDecisionVotes();
-//                        displayVotingWaitMessage();
-//                    }
-//                    else {
-//                        timeLeftLabel.setText( String.format("Voting period will now end in %d seconds.", duration.getTimeLeft() / 1000L) );
-//                    }
-//                }
-//            });
-//            timer.start();
-//    	}
-//     }
-
     private void startChatTimer() {
         if (timer == null) {
         	final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
@@ -336,9 +272,6 @@ public class GameWindow2D extends JPanel implements GameWindow {
                         timeLeftLabel.setText("Chat is now disabled.");
                         timer.stop();
                         timer = null;
-//                        if (roundConfiguration.isVotingAndRegulationEnabled()) {
-//                        	initializeSanctionDecisionPanel();
-//                        }
                     }
                     else {
                         timeLeftLabel.setText( String.format("Chat will end in %d seconds.", duration.getTimeLeft() / 1000L) );
@@ -354,10 +287,6 @@ public class GameWindow2D extends JPanel implements GameWindow {
             StringBuilder builder = new StringBuilder("Tokens collected:");
             // XXX: use this method so that we get the proper ordering of client ids/assigned numbers..
             Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();
-            
-            // To display the token artifacts only if the player lies in the 
-            // field of vision
-            
             Point clientPosition = dataModel.getCurrentPosition();
             
             for (Identifier id: dataModel.getAllClientIdentifiers()) {
@@ -404,8 +333,8 @@ public class GameWindow2D extends JPanel implements GameWindow {
     private void setInstructions(String s) {
         instructionsEditorPane.setText(s);
         instructionsEditorPane.setCaretPosition(0);
-        instructionsScrollPane.repaint();
-        instructionsScrollPane.requestFocusInWindow();
+//        instructionsScrollPane.repaint();
+//        instructionsScrollPane.requestFocusInWindow();
 //        repaint();
     }
 
@@ -413,80 +342,83 @@ public class GameWindow2D extends JPanel implements GameWindow {
         // JEditorPane pane = new JEditorPane("text/html",
         //       "Costly Sanctioning Experiment");        
         final HtmlEditorPane htmlPane = new HtmlEditorPane();
-        htmlPane.setPreferredSize(new Dimension(400, 400));
         htmlPane.setEditable(false);
         htmlPane.setBackground(Color.WHITE);
         htmlPane.setFont(new Font("sansserif", Font.PLAIN, 12));
         return htmlPane;
     }
 
-    private void initGuiComponents() {
+    private void initGuiComponents(Dimension size) {
         // FIXME: replace with CardLayout for easier switching between panels
-        //        cardLayout = new CardLayout();
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
+        
+        Dimension subjectViewSize = new Dimension((int) size.getWidth(), (int) (size.getHeight() * 0.85)); 
+        subjectView = new SubjectView(subjectViewSize, dataModel);
 
-        setLayout(new BorderLayout(4, 4));
+        // add instructions panel card
         instructionsEditorPane = createInstructionsEditorPane();
         instructionsScrollPane = new JScrollPane(instructionsEditorPane);
-        add(instructionsScrollPane, BorderLayout.CENTER);
-        currentCenterComponent = instructionsScrollPane;
-        subjectWindow = new JPanel(new BorderLayout());
-        subjectWindow.setBackground(Color.WHITE);
-        subjectWindow.setForeground(Color.BLACK);
-        subjectWindow.add(subjectView, BorderLayout.CENTER);
-        setBackground(Color.WHITE);
-        // replace with progress bar.
+        instructionsScrollPane.setName(INSTRUCTIONS_PANEL_NAME);
+        add(instructionsScrollPane);
+
+        // add game panel card
+        // FIXME: use a more flexible LayoutManager so that in-round chat isn't so fubared.
+        gamePanel = new JPanel(new BorderLayout());
+        gamePanel.setBackground(Color.WHITE);
+        gamePanel.setName(GAME_PANEL_NAME);
+        gamePanel.add(subjectView, BorderLayout.CENTER);
+        // add labels to game panel
+        // FIXME: replace with progress bar.
         timeLeftLabel = new JLabel("Connecting ...");
         informationLabel = new JLabel("Tokens collected: 0     ");
         // latencyLabel = new JLabel("Latency: 0");
         informationLabel.setBackground(Color.YELLOW);
         informationLabel.setForeground(Color.BLUE);
-
+        
         labelPanel = new JPanel();
         labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.LINE_AXIS));
         labelPanel.setBackground(Color.WHITE);
         labelPanel.add(timeLeftLabel);
         labelPanel.add(Box.createHorizontalGlue());
         labelPanel.add(informationLabel);
-        add(labelPanel, BorderLayout.NORTH);
+        gamePanel.add(labelPanel, BorderLayout.NORTH);
 
-//        // add message window.
-//        messagePanel = new JPanel(new BorderLayout());
-//        //        messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
-//        messagePanel.add(new JLabel("Messages"), BorderLayout.NORTH);
-//        messageTextPane = new JTextPane();
-//        messageTextPane.setEditable(false);
-//        messageTextPane.setFont(new Font("arial", Font.BOLD, 12));
-//        messageTextPane.setBackground(Color.WHITE);
-//
-//
-//        addStyles(messageTextPane.getStyledDocument());
-//        messageScrollPane = new JScrollPane(messageTextPane);
+        // add message window.
+        messagePanel = new JPanel(new BorderLayout());
+        //        messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
+        messagePanel.add(new JLabel("Messages"), BorderLayout.NORTH);
+        messageTextPane = new JTextPane();
+        messageTextPane.setEditable(false);
+        messageTextPane.setFont(new Font("arial", Font.BOLD, 12));
+        messageTextPane.setBackground(Color.WHITE);
+        addStyles(messageTextPane.getStyledDocument());
+        messageScrollPane = new JScrollPane(messageTextPane);
 //        Dimension scrollPaneSize = new Dimension(getPreferredSize().width, 50);
 //        messageScrollPane.setMinimumSize(scrollPaneSize);
 //        messageScrollPane.setPreferredSize(scrollPaneSize);
 //        messageScrollPane.setMaximumSize(scrollPaneSize);
-//        messagePanel.add(messageScrollPane, BorderLayout.CENTER);
-//        add(messagePanel, BorderLayout.SOUTH);
+        messagePanel.add(messageScrollPane, BorderLayout.CENTER);
+        gamePanel.add(messagePanel, BorderLayout.SOUTH);
         
-        addKeyListener( createGameWindowKeyListener() );
-        addMouseListener(new MouseAdapter() {
+        add(gamePanel);
+        
+        mainPanel.addKeyListener( createGameWindowKeyListener() );
+        mainPanel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                requestFocusInWindow();
+                mainPanel.requestFocusInWindow();
             }
         });
 
         // resize listener
-        addComponentListener(new ComponentAdapter() {
+        mainPanel.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent event) {
                 Component component = event.getComponent();
-                // offset by 35 to allow for message box
-                int subjectViewHeight = component.getHeight() - 35;
-                Dimension size = new Dimension(component.getWidth(), subjectViewHeight);
-                subjectView.setScreenSize(size);
+                // offset by 35 pixels to allow for message box
+                Dimension screenSize = new Dimension(component.getWidth(), component.getHeight() - 50);
+                subjectView.setScreenSize(screenSize);
                 subjectView.setImageSizes();
-                GameWindow2D.this.revalidate();
-                currentCenterComponent.repaint();
-//                GameWindow2D.this.repaint();
+                showPanel(currentCardPanel);
             }
         });
         // add component listeners, chat panel, and sanctioning window IF chat/sanctioning are enabled, and after the end of the round...
@@ -604,17 +536,17 @@ public class GameWindow2D extends JPanel implements GameWindow {
         return configuration.isPracticeRound() && configuration.isPrivateProperty();
     }
 
-    public void addCenterComponent(Component newCenterComponent) {
-        if (currentCenterComponent != null) {
-            currentCenterComponent.setVisible(false);
-            remove(currentCenterComponent);
-            add(newCenterComponent, BorderLayout.CENTER);
-            newCenterComponent.setVisible(true);
-        }
-        currentCenterComponent = newCenterComponent;
-        revalidate();
-        repaint();
-    }
+//    public void addCenterComponent(Component newCenterComponent) {
+//        if (currentCenterComponent != null) {
+//            currentCenterComponent.setVisible(false);
+//            getPanel().remove(currentCenterComponent);
+//            getPanel().add(newCenterComponent, BorderLayout.CENTER);
+//            newCenterComponent.setVisible(true);
+//        }
+//        currentCenterComponent = newCenterComponent;
+//        getPanel().revalidate();
+//        getPanel().repaint();
+//    }
 
     public void startRound() {
         final RoundConfiguration configuration = dataModel.getRoundConfiguration();
@@ -635,14 +567,12 @@ public class GameWindow2D extends JPanel implements GameWindow {
                 if (configuration.isInRoundChatEnabled()) {
                     ChatPanel chatPanel = getChatPanel();
                     chatPanel.initialize();
-                    Dimension chatPanelSize = new Dimension(250, getSize().height);
+                    Dimension chatPanelSize = new Dimension(250, getPanel().getSize().height);
                     chatPanel.setPreferredSize(chatPanelSize);
-                    add(chatPanel, BorderLayout.EAST);
+                    // FIXME: switch to different layout manager
+                    gamePanel.add(chatPanel, BorderLayout.EAST);
                 }
-//                add(messagePanel, BorderLayout.SOUTH);
-                addCenterComponent(subjectWindow);
-
-                requestFocusInWindow();
+                showPanel(GAME_PANEL_NAME);
             }
         };
         SwingUtilities.invokeLater(runnable);
@@ -758,7 +688,7 @@ public class GameWindow2D extends JPanel implements GameWindow {
         RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
         if (roundConfiguration.isTrustGameEnabled()) {
             JPanel panel = new JPanel();
-            panel.setLayout(new BorderLayout());
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             JEditorPane trustGameInstructionsEditorPane = new JEditorPane();
             trustGameInstructionsEditorPane.setContentType("text/html");
             trustGameInstructionsEditorPane.setEditorKit(new HTMLEditorKit());
@@ -766,32 +696,25 @@ public class GameWindow2D extends JPanel implements GameWindow {
             trustGameInstructionsEditorPane.setBackground(Color.WHITE);
             JScrollPane scrollPane = new JScrollPane(trustGameInstructionsEditorPane);
             trustGameInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getTrustGameInstructions());
-            panel.add(scrollPane, BorderLayout.NORTH);
+            panel.add(scrollPane);
             
             TrustGamePanel trustGamePanel = new TrustGamePanel(client);
-            trustGamePanel.setPreferredSize(new Dimension(300, 400));
-            panel.add(trustGamePanel, BorderLayout.CENTER);                        
-            addCenterComponent(panel);
-            panel.revalidate();
-            panel.repaint();
+//            trustGamePanel.setPreferredSize(new Dimension(300, 400));
+            JScrollPane trustGameScrollPane = new JScrollPane(trustGamePanel);
+            panel.add(trustGameScrollPane);
+            panel.setName(TRUST_GAME_PANEL_NAME);
+//            addCenterComponent(panel);
+//            panel.revalidate();
+//            panel.repaint();
+            add(panel);
+            showPanel(TRUST_GAME_PANEL_NAME);
         }
     }
 
     public void showInstructions() {
         RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
         instructionsBuilder.delete(0, instructionsBuilder.length());
-
         roundConfiguration.buildInstructions(instructionsBuilder);
-
-//        if (roundConfiguration.isFirstRound()) {
-//            instructionsBuilder.append(roundConfiguration.getGeneralInstructions());
-//        }
-//        if (roundConfiguration.isFieldOfVisionEnabled()) {
-//            instructionsBuilder.append(roundConfiguration.getFieldOfVisionInstructions());
-//        }
-//        instructionsBuilder.append(roundConfiguration.getInstructions());
-//        
-
         // and add the quiz instructions if the quiz is enabled.
         if (roundConfiguration.isQuizEnabled()) {
             instructionsEditorPane.setActionListener(null);
@@ -802,64 +725,21 @@ public class GameWindow2D extends JPanel implements GameWindow {
         switchInstructionsPane();
     }
     public void switchInstructionsPane() {
-//        instructionsEditorPane.setText("<b>Please wait while we compute your new token totals.</b>");
-        addCenterComponent(instructionsScrollPane);
-        revalidate();
-        repaint();
-    }
-
-    public void displayActiveEnforcementMechanism() {    	
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                String activeRegulation = dataModel.getActiveRegulation().getText();
-                if (activeRegulation == null || activeRegulation.trim().isEmpty()) {
-                    activeRegulation = "No regulation specified.";
-                }
-                instructionsBuilder.append("<hr/><h2>Active regulation</h2><hr/><p>").append(activeRegulation).append("</p>");
-                instructionsBuilder.append("<hr/><h2>Active enforcement mechanism</h2><hr/><p>").append(dataModel.getActiveEnforcementMechanism().getDescription()).append("</p>");
-                setInstructions(instructionsBuilder.toString());
-                addCenterComponent(instructionsScrollPane);
-            }
-        });    	
+        showPanel(INSTRUCTIONS_PANEL_NAME);
     }
     
-    public void displaySanctionMechanism() {    	
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-            	instructionsBuilder.delete(0, instructionsBuilder.length());
-                instructionsBuilder.append("<h2>Your group voted for the following enforcement mechanism: </h2><hr/><p>").append(dataModel.getActiveSanctionMechanism().getDescription()).append("</p>");
-//                instructionsBuilder.append("<hr/><h2>Active enforcement mechanism</h2><hr/><p>").append(dataModel.getActiveEnforcementMechanism().getDescription()).append("</p>");
-                setInstructions(instructionsBuilder.toString());
-                addCenterComponent(instructionsScrollPane);
-            }
-        });    	
+    private void showPanel(final String panelName) {
+        this.currentCardPanel = panelName;
+        JPanel panel = getPanel();
+        cardLayout.show(panel, panelName);
+        panel.repaint();
     }
-
-    private void displayVotingWaitMessage() {    	
-        setInstructions("<h3>Please wait while we finish collecting information from all the participants.</h3>");
-        addCenterComponent(instructionsScrollPane);
-    }
-
-//    public void displayActiveRegulation() {    	
-//        SwingUtilities.invokeLater(new Runnable() {
-//            public void run() {
-//                String activeRegulation = dataModel.getActiveRegulation().getText();
-//                if (activeRegulation == null || activeRegulation.trim().isEmpty()) {
-//                    activeRegulation = "No regulation specified.";
-//                }
-//                setInstructions(
-//                        "<h3>The following regulation received the most votes:</h3><p>" + activeRegulation + "</p>");
-//                addCenterComponent(instructionsScrollPane);
-//                startRegulationDisplayTimer();
-//            }
-//        });    	
-//    }
 
     public void updateDebriefing(final PostRoundSanctionUpdateEvent event) {
         Runnable runnable = new Runnable() {
             public void run() {
                 postSanctionDebriefingText(event);
-                addCenterComponent(instructionsScrollPane);                
+                switchInstructionsPane();
             }
         };
         SwingUtilities.invokeLater(runnable);
@@ -871,14 +751,17 @@ public class GameWindow2D extends JPanel implements GameWindow {
                 if (dataModel.getRoundConfiguration().isPostRoundSanctioningEnabled()) {
                     // add sanctioning text and slap the PostRoundSanctioningPanel in
                     PostRoundSanctioningPanel panel = new PostRoundSanctioningPanel(event, dataModel.getRoundConfiguration(), client);
-                    addCenterComponent(panel);
+                    panel.setName(POST_ROUND_SANCTIONING_PANEL_NAME);
+                    add(panel);
+                    showPanel(POST_ROUND_SANCTIONING_PANEL_NAME);
                 }
                 else {
                     instructionsEditorPane.setText("Waiting for updated round totals from the server...");
-                    addCenterComponent(instructionsScrollPane);
+                    switchInstructionsPane();
                 }
                 if (chatPanel != null) {
-                    remove(chatPanel);
+                    // FIXME: figure out what to do here.
+                    getPanel().remove(chatPanel);
                     chatPanel = null;
                 }
                 // generate debriefing text from data culled from the Event
@@ -900,10 +783,18 @@ public class GameWindow2D extends JPanel implements GameWindow {
             public void run() {
                 ChatPanel chatPanel = getChatPanel();
                 chatPanel.initialize();
-//                remove( messagePanel );
-                addCenterComponent( chatPanel );
+                showPanel(CHAT_PANEL_NAME);
                 startChatTimer();
             }
         });
+    }
+    
+    public void add(JComponent component) {
+        getPanel().add(component, component.getName());
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return mainPanel;
     }
 }

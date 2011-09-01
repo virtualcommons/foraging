@@ -3,8 +3,11 @@ package edu.asu.commons.foraging.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.FileHandler;
@@ -72,9 +75,6 @@ import edu.asu.commons.net.event.ConnectionEvent;
 import edu.asu.commons.net.event.DisconnectionRequest;
 import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.Utils;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 /**
  * $Id: ForagingServer.java 529 2010-08-17 00:08:01Z alllee $
@@ -107,7 +107,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
 
     private ForagingPersister persister;
 
-    private volatile int numberOfCompletedQuizzes;
+    private volatile int numberOfSubmittedQuizzes;
     private volatile int numberOfCompletedSanctions;
     private volatile int numberOfCompletedAgentDesigns;
     
@@ -298,21 +298,12 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
 
             addEventProcessor(new EventTypeProcessor<QuizResponseEvent>(QuizResponseEvent.class) {
                 public void handle(final QuizResponseEvent event) {
-                    // XXX: can get rid of this event processor once we verify that the persister is storing it properly
-                    logger.info("Received quiz response: " + event);
-                }
-            });
-            
-            addEventProcessor(new EventTypeProcessor<QuizCompletedEvent>(QuizCompletedEvent.class) {
-                public void handle(QuizCompletedEvent event) {
-                    numberOfCompletedQuizzes++;
-                    //                  System.err.println("XXX: queued clients; " + queuedClients);
-                    //System.err.println("XXX: number of completed quizzes; " + numberOfCompletedQuizzes);
-                    if (numberOfCompletedQuizzes == clients.size()) {
+                    numberOfSubmittedQuizzes++;
+                    if (numberOfSubmittedQuizzes >= clients.size()) {
                         // we're done, notify the sleeping queue.
                         logger.info("Received all quizzes, notifying quiz signal");
                         Utils.notify(quizSignal);
-                        numberOfCompletedQuizzes = 0;
+                        numberOfSubmittedQuizzes = 0;
                     }
                     // FIXME: pass in the id of the client completing the quiz? 
                     transmit(new QuizCompletedEvent(facilitatorId));
@@ -651,7 +642,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                         logger.info("Begin round request from facilitator - starting round.");
                         experimentStarted = true;
                         Utils.notify(roundSignal);
-                        System.out.println("Signalled the round start");
+                        System.out.println("Notified round signal");
                     }
                     else {
                         logger.warning("Ignoring begin round request from id: " + event.getId());

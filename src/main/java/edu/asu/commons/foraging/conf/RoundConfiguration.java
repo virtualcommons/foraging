@@ -319,7 +319,9 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return Collections.emptyMap();
     }
     
-
+    public String getQuizExplanation(String questionNumber) {
+        return getProperty(questionNumber + "-explanation");
+    }
 
     /**
      * Possible values, freeze, fine?
@@ -552,55 +554,48 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         }
         instructionsBuilder.append(getInstructions());
         if (isFieldOfVisionEnabled()) {
-            // create note type box, test to see how 
-            // JEditorPaneS render CSS divs or fieldsets..?
-            instructionsBuilder.append("<hr><b>");
-            instructionsBuilder.append(getFieldOfVisionInstructions()).append("</b>");
+            instructionsBuilder.append(getFieldOfVisionInstructions());
         }
         if (isCensoredChat()) {
-            instructionsBuilder.append("<hr><b>");
-            instructionsBuilder.append(getCensoredChatInstructions()).append("</b>");
+            instructionsBuilder.append(getCensoredChatInstructions());
         }
         else if (isInRoundChatEnabled()) {
-            instructionsBuilder.append("<hr><b>");
-            instructionsBuilder.append(getInRoundChatInstructions()).append("</b>");
+            instructionsBuilder.append(getInRoundChatInstructions());
         }
         else if (isChatEnabled()) {
-            instructionsBuilder.append("<hr><b>");
             // FIXME: hard-coded, need to make instructions template-able, perhaps
             // via FreeMarker or Velocity.
-            instructionsBuilder.append("Before the beginning of this round you will be able to chat with the other members of your group for ").append(getChatDuration()).append(" seconds.</b>");
+            instructionsBuilder.append("Before the beginning of this round you will be able to chat with the other members of your group for ").append(getChatDuration()).append(" seconds.");
         }
         String resourceGeneratorType = getResourceGeneratorType();
         if (resourceGeneratorType.equals("mobile")) {
-            instructionsBuilder.append("<hr>").append(getMobileResourceInstructions());
+            instructionsBuilder.append(getMobileResourceInstructions());
         }
         else if (resourceGeneratorType.equals("top-bottom-patchy")) {
-            instructionsBuilder.append("<hr>").append(getPatchyResourceInstructions());
+            instructionsBuilder.append(getPatchyResourceInstructions());
         }
 
         // and add the quiz instructions if the quiz is enabled.
         if (isQuizEnabled()) {
-            instructionsBuilder.append("<hr><b>");
-            instructionsBuilder.append(getQuizInstructions()).append("</b>");
+            instructionsBuilder.append(getQuizInstructions());
         }
         return instructionsBuilder;
     }
     
     private String getMobileResourceInstructions() {
-        return getProperty("mobile-resource-instructions", "The resource can move around in a semblance of free will / agency.");
+        return getProperty("mobile-resource-instructions", "<p>The resource can move around in a semblance of free will / agency.</p>");
     }
     
     private String getPatchyResourceInstructions() {
-        return getProperty("patch-resource-instructiosn", "The resource is not uniformly distributed.  There are patches of high growth and low growth.");
+        return getProperty("patch-resource-instructiosn", "<p>The resource is not uniformly distributed.  There are patches of high growth and low growth.</p>");
     }
 
     private String getInRoundChatInstructions() {
-        return getProperty("in-round-chat-instructions", "You can chat during this round with all players visible on the screen.");
+        return getProperty("in-round-chat-instructions", "<p>You can chat during this round with all players visible on the screen.</p>");
     }
 
     public String getTrustGameInstructions() {
-        return getProperty("trust-game-instructions", "You will be randomly matched with another person in your group.");
+        return getProperty("trust-game-instructions");
     }
 
 }
