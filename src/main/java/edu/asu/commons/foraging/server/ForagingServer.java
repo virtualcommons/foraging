@@ -298,6 +298,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
 
             addEventProcessor(new EventTypeProcessor<QuizResponseEvent>(QuizResponseEvent.class) {
                 public void handle(final QuizResponseEvent event) {
+                    logger.debug("Received quiz response: " + event);
                     numberOfSubmittedQuizzes++;
                     transmit(new QuizCompletedEvent(facilitatorId));
                     ClientData clientData = clients.get(event.getId());

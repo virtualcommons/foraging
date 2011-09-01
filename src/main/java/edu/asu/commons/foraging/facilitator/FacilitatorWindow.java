@@ -59,10 +59,6 @@ public class FacilitatorWindow extends JPanel {
 
     private int viewSpacing = 50;
 
-    private JMenuItem startExperimentMenuItem;
-
-    private JMenuItem stopExperimentMenuItem;
-
     private JMenuItem showInstructionsMenuItem;
     
     private JMenuItem startRoundMenuItem;
@@ -113,8 +109,6 @@ public class FacilitatorWindow extends JPanel {
     	showInstructionsMenuItem.setEnabled(false);
         startRoundMenuItem.setEnabled(false);
         stopRoundMenuItem.setEnabled(true);
-        startExperimentMenuItem.setEnabled(false);
-        stopExperimentMenuItem.setEnabled(true);
         // initViewPanel();
         // repaint();
     }
@@ -305,8 +299,6 @@ public class FacilitatorWindow extends JPanel {
     }
 
     public void updateMenuItems() {
-        startExperimentMenuItem.setEnabled(true);
-        stopExperimentMenuItem.setEnabled(false);
         startRoundMenuItem.setEnabled(false);
         showInstructionsMenuItem.setEnabled(false);
     }
@@ -387,8 +379,6 @@ public class FacilitatorWindow extends JPanel {
         loadExperimentMenuItem.setEnabled(true);
 
         //Disable all other menus
-        startExperimentMenuItem.setEnabled(false);
-        stopExperimentMenuItem.setEnabled(false);
         startRoundMenuItem.setEnabled(false);
         stopRoundMenuItem.setEnabled(false);
     }

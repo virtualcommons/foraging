@@ -575,7 +575,7 @@ public class GameWindow2D implements GameWindow {
                 update(configuration.getRoundDuration().getTimeLeft());
                 if (configuration.isInRoundChatEnabled()) {
                     ChatPanel chatPanel = getChatPanel();
-                    chatPanel.initialize();
+                    chatPanel.initialize(true);
                     Dimension chatPanelSize = new Dimension(250, getPanel().getSize().height);
                     chatPanel.setPreferredSize(chatPanelSize);
                     // FIXME: switch to different layout manager
@@ -641,13 +641,13 @@ public class GameWindow2D implements GameWindow {
                         "<ul>" +
                         "<li>Tokens collected: %d</li>" +
                         "<li>Income: $%3.2f</li>" +
-                        "<li>Quiz questions answered correctly: %d (%3.2f)</li>" +
+                        "<li>Quiz questions answered correctly: %d (adds $%3.2f to your total)</li>" +
                         "</ul>",
                         event.getCurrentTokens(), getIncome(event.getCurrentTokens()), correctQuizAnswers, quizReward)
                 );
         double showUpPayment = dataModel.getRoundConfiguration().getParentConfiguration().getShowUpPayment();
         instructionsBuilder.append(String.format("Your <b>total income</b> so far (including a $%3.2f bonus for showing up) is : $%3.2f<hr>",
-                showUpPayment, dataModel.getTotalIncome() + showUpPayment));
+                showUpPayment, dataModel.getTotalIncome() + showUpPayment + quizReward));
 
         if (event.isLastRound()) {
             for (String trustGameLog : event.getTrustGameLog()) {
@@ -798,7 +798,7 @@ public class GameWindow2D implements GameWindow {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 ChatPanel chatPanel = getChatPanel();
-                chatPanel.initialize();
+                chatPanel.initialize(false);
                 showPanel(CHAT_PANEL_NAME);
                 startChatTimer();
             }

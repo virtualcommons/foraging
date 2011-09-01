@@ -44,7 +44,8 @@ public class QuizResponseEvent extends AbstractPersistableEvent implements Clien
     }
 
     public int getNumberOfCorrectAnswers() {
-        int correctAnswers = responses.size() - incorrectAnswers.size();
+        // FIXME: kludgy - responses is always off by one as it also contains the input submit button.
+        int correctAnswers = (responses.size() - 1) - incorrectAnswers.size();
         if (correctAnswers < 0) {
             // FIXME: replace with proper logging?
             System.err.println("Somehow the number of responses was less than the number of incorrect answers: "

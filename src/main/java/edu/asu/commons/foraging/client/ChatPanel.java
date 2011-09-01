@@ -54,6 +54,8 @@ public class ChatPanel extends JPanel {
 
     private ForagingClient client;
     
+    private boolean inRoundChat = false;
+    
     public ChatPanel(ForagingClient client) {
         this.client = client;
         this.clientId = client.getId();
@@ -86,12 +88,6 @@ public class ChatPanel extends JPanel {
                     }
                 }
             });
-            final JButton sendButton = new JButton("Send");
-            sendButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    sendMessage();
-                }
-            });
             JPanel targetHandlePanel = new JPanel();
             targetHandlePanel.setLayout(new BoxLayout(targetHandlePanel, BoxLayout.LINE_AXIS));
             targetHandleLabel = new JLabel("everyone");
@@ -102,7 +98,6 @@ public class ChatPanel extends JPanel {
 
             add(targetHandlePanel, BorderLayout.NORTH);
             add(chatField, BorderLayout.CENTER);
-//            add(sendButton, BorderLayout.SOUTH);
             setChatFieldFocus();
         }
 
@@ -116,8 +111,13 @@ public class ChatPanel extends JPanel {
             if (message == null || "".equals(message) || targetIdentifier == null) {
                 return;
             }
-            client.transmit(new ChatRequest(clientId, message, targetIdentifier));            
-            chatField.requestFocusInWindow();
+            client.transmit(new ChatRequest(clientId, message, targetIdentifier));
+            if (inRoundChat) {
+                getParent().requestFocusInWindow();
+            }
+            else {
+                chatField.requestFocusInWindow();
+            }
             chatField.setText("");
         }
 
@@ -276,7 +276,8 @@ public class ChatPanel extends JPanel {
         }
     }
 
-    public void initialize() {
+    public void initialize(boolean inRoundChat) {
+        this.inRoundChat = inRoundChat;
         if (HANDLES != null) {
             displayMessage("System message", " --- Round ended --- ");
             return;
