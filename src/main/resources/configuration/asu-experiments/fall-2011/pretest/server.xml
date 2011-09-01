@@ -141,4 +141,24 @@ Please fill in the following form to design your strategies as Player 1 or Playe
 </p>
 ]]>
 </entry>
+<entry key='in-round-chat-instructions'>
+    <![CDATA[
+<p>
+You can chat with all other <b>visible</b> participants in your group <b>during this round</b>.
+You may communicate about any aspect of the experiment that you would like to
+discuss with other participants with whom you have been matched. You may not promise
+them side-payments after the experiment is completed or threaten them with any
+consequence after the experiment is finished. We are monitoring the chat traffic
+while you chat. If we see that somebody reveals his or her identity, we have to stop
+the experiment and remove the whole group from which this person is a member out of
+this room.
+</p>
+<p>
+You will see other participants labeled as "1", "2","3", "4", or "5" in the chat
+box.  You can send a chat message by hitting the enter key, typing into the
+textfield and then pressing the enter key again.  You must hit the enter key before
+you enter each message.
+</p>
+    ]]>
+</entry>
 </properties>
