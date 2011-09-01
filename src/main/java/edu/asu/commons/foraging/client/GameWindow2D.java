@@ -650,11 +650,13 @@ public class GameWindow2D implements GameWindow {
         double showUpPayment = dataModel.getRoundConfiguration().getParentConfiguration().getShowUpPayment();
         instructionsBuilder.append(String.format("Your <b>total income</b> so far (including a $%3.2f bonus for showing up) is : $%3.2f<hr>",
                 showUpPayment, dataModel.getTotalIncome() + showUpPayment + quizReward));
-
+        for (String trustGameLog : event.getTrustGameLog()) {
+            instructionsBuilder.append(trustGameLog);
+        }
         if (event.isLastRound()) {
-            for (String trustGameLog : event.getTrustGameLog()) {
-                instructionsBuilder.append(trustGameLog);
-            }
+//            for (String trustGameLog : event.getTrustGameLog()) {
+//                instructionsBuilder.append(trustGameLog);
+//            }
             instructionsBuilder.append(client.getDataModel().getRoundConfiguration().getLastRoundDebriefing());
             timeLeftLabel.setText("The experiment is now over.");
         }
