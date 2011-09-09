@@ -240,4 +240,9 @@ public class GameWindow3D implements GameWindow {
     public String getChatHandle(Identifier id) {
     	return chatPanel.getChatHandle(id);
     }
+
+    @Override
+    public void requestFocusInWindow() {
+        getPanel().requestFocusInWindow();
+    }
 }

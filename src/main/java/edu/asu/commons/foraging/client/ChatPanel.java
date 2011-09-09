@@ -2,21 +2,10 @@ package edu.asu.commons.foraging.client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,23 +17,16 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
-import javax.swing.text.html.HTMLEditorKit;
 
 import edu.asu.commons.event.ChatEvent;
 import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.EventTypeProcessor;
 import edu.asu.commons.net.Identifier;
 
-
-
-
 /**
  * $Id: ChatPanel.java 516 2010-05-10 23:31:53Z alllee $
  * 
- * Chat panel used to communicate with other players.  
- * 
- * FIXME: randomize handle mappings (e.g., A -> 3, B -> 1, C -> 4, D -> 2 ...) so that it's
- * not linear.
+ * Chat panel used to communicate with other players.
  * 
  * @author alllee
  * @version $Revision: 516 $
@@ -53,112 +35,31 @@ import edu.asu.commons.net.Identifier;
 public class ChatPanel extends JPanel {
 
     private ForagingClient client;
-    
-    private boolean inRoundChat = false;
-    
-    public ChatPanel(ForagingClient client) {
-        this.client = client;
-        this.clientId = client.getId();
-        client.getEventChannel().add(this, new EventTypeProcessor<ChatEvent>(ChatEvent.class) {
-            public void handle(final ChatEvent chatEvent) {
-                displayMessage(getChatHandle(chatEvent.getSource())  
-//                         FIXME: either "all" or "you".
-//                        + " -> " + getChatHandle(chatEvent.getTarget())
-                        ,chatEvent.toString());
-            }
-        });
-    }
-    private class TextEntryPanel extends JPanel {
-        private JLabel targetHandleLabel;
-
-        private Identifier targetIdentifier = Identifier.ALL;
-        private JTextField chatField;
-
-        public TextEntryPanel() {
-            super();
-            setLayout(new BorderLayout(3, 3));
-            chatField = new JTextField();
-            chatField.addKeyListener(new KeyAdapter() {
-                public void keyPressed(KeyEvent event) {
-                    // System.err.println("event keycode is: " +
-                    // event.getKeyCode());
-                    // System.err.println("vk_enter: " + KeyEvent.VK_ENTER);
-                    if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                        sendMessage();
-                    }
-                }
-            });
-            JPanel targetHandlePanel = new JPanel();
-            targetHandlePanel.setLayout(new BoxLayout(targetHandlePanel, BoxLayout.LINE_AXIS));
-            targetHandleLabel = new JLabel("everyone");
-            targetHandleLabel.setFont(new Font("Arial", Font.BOLD, 14));
-            targetHandleLabel.setForeground(new Color(0x0000dd));
-            targetHandlePanel.add(new JLabel(" Chatting with: "));
-            targetHandlePanel.add(targetHandleLabel);
-
-            add(targetHandlePanel, BorderLayout.NORTH);
-            add(chatField, BorderLayout.CENTER);
-            setChatFieldFocus();
-        }
-
-        private void setChatFieldFocus() {
-            chatField.requestFocusInWindow();
-        }
-
-        private void sendMessage() {
-            String message = chatField.getText();
-            System.err.println("sending message: " + message);
-            if (message == null || "".equals(message) || targetIdentifier == null) {
-                return;
-            }
-            client.transmit(new ChatRequest(clientId, message, targetIdentifier));
-            if (inRoundChat) {
-                client.getGameWindow().getPanel().requestFocusInWindow();
-            }
-            else {
-                chatField.requestFocusInWindow();
-            }
-            chatField.setText("");
-        }
-
-        private void setTargetHandle(Identifier targetIdentifier) {
-            this.targetIdentifier = targetIdentifier;
-            if (targetIdentifier == Identifier.ALL) {
-                targetHandleLabel.setText("everyone");
-            } else {
-                targetHandleLabel.setText(getChatHandle(targetIdentifier));
-            }
-            setChatFieldFocus();
-        }
-    }
-
-    private final static String HANDLE_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    
-    private String[] HANDLES;
-
-    private Identifier clientId;
 
     private JScrollPane messageScrollPane;
 
     private JTextPane messageWindow;
 
-    // used by the participant to select which participant to send a message to.
-    private JPanel participantButtonPanel;
-
     private List<Identifier> participants;
 
     private TextEntryPanel textEntryPanel;
-    
-    private JEditorPane chatInstructionsPane;
 
+    private JEditorPane chatInstructionsPane;
+    
+    public ChatPanel(ForagingClient client) {
+        this.client = client;
+        client.getEventChannel().add(this, new EventTypeProcessor<ChatEvent>(ChatEvent.class) {
+            public void handle(final ChatEvent chatEvent) {
+                displayMessage(chatEvent.getSource(), chatEvent.toString());
+            }
+        });
+        initGuiComponents();
+    }
+    
     private void addStylesToMessageWindow() {
         StyledDocument styledDocument = messageWindow.getStyledDocument();
-        // and why not have something like... StyleContext.getDefaultStyle() to
-        // replace this junk
         Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(
                 StyleContext.DEFAULT_STYLE);
-        // Style regularStyle = styledDocument.addStyle("regular",
-        // defaultStyle);
         StyleConstants.setFontFamily(defaultStyle, "Helvetica");
         StyleConstants.setBold(styledDocument.addStyle("bold", defaultStyle),
                 true);
@@ -166,19 +67,6 @@ public class ChatPanel extends JPanel {
                 .addStyle("italic", defaultStyle), true);
     }
 
-    private String getChatHandle(Identifier source) {
-        if (source.equals(Identifier.ALL)) {
-            return "all";
-        }
-        else {
-            String chatHandle = HANDLES[participants.indexOf(source)];
-            if (source.equals(clientId)) {
-                return chatHandle.concat(" (you)");
-            }
-            return chatHandle;
-        }
-    }
-    
     private void initGuiComponents() {
         setLayout(new BorderLayout(3, 3));
         setName("Chat panel");
@@ -188,72 +76,30 @@ public class ChatPanel extends JPanel {
         messageScrollPane = new JScrollPane(messageWindow);
         addStylesToMessageWindow();
 
-        // set up the participant panel
-        participantButtonPanel = new JPanel();
-        // participantButtonPanel.setLayout(new
-        // BoxLayout(participantButtonPanel,
-        // BoxLayout.PAGE_AXIS));
-        participantButtonPanel.setLayout(new GridLayout(0, 1));
-        participantButtonPanel.setBackground(Color.GRAY);
-        // JLabel selfLabel = new JLabel(getChatHandle(clientId));
-        // selfLabel.setForeground(Color.ORANGE);
-        // selfLabel.setBackground(Color.ORANGE);
-        // selfLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JButton selfButton = new JButton(getChatHandle(clientId));
-        selfButton.setEnabled(false);
-        selfButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        participantButtonPanel.add(selfButton);
-        participantButtonPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        for (final Identifier targetId: participants) {
-            if (targetId.equals(clientId)) {
-                continue;
-            }
-            JButton button = new JButton(getChatHandle(targetId));
-            button.setAlignmentX(JButton.CENTER_ALIGNMENT);
-            button.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    // change stuff in the messageEntryPanel
-                    textEntryPanel.setTargetHandle(targetId);
-                }
-            });
-            participantButtonPanel.add(button);
-        }
-        // special case to send a message to everyone
-        JButton sendAllButton = new JButton(" all ");
-        sendAllButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        sendAllButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                textEntryPanel.setTargetHandle(Identifier.ALL);
-            }
-        });
-        participantButtonPanel.add(sendAllButton);
-
-        textEntryPanel = new TextEntryPanel();
+        textEntryPanel = new TextEntryPanel(client);
         // orient the components in true lazyman fashion.
-        
-        chatInstructionsPane = new JEditorPane();
-        chatInstructionsPane.setContentType("text/html");
-        chatInstructionsPane.setEditorKit(new HTMLEditorKit());
-        chatInstructionsPane.setEditable(false);
-        chatInstructionsPane.setBackground(Color.WHITE);
-        JScrollPane chatInstructionsScrollPane = new JScrollPane(chatInstructionsPane);
-        chatInstructionsPane.setText(client.getCurrentRoundConfiguration().getChatInstructions());
 
+//        chatInstructionsPane = new JEditorPane();
+//        chatInstructionsPane.setContentType("text/html");
+//        chatInstructionsPane.setEditorKit(new HTMLEditorKit());
+//        chatInstructionsPane.setEditable(false);
+//        chatInstructionsPane.setBackground(Color.WHITE);
+//        JScrollPane chatInstructionsScrollPane = new JScrollPane(chatInstructionsPane);
+//        chatInstructionsPane.setText(client.getCurrentRoundConfiguration().getChatInstructions());
 //        add(chatInstructionsScrollPane, BorderLayout.NORTH);
-        add(new JLabel("In round chat"), BorderLayout.NORTH);
+        
+        add(textEntryPanel, BorderLayout.NORTH);
         add(messageScrollPane, BorderLayout.CENTER);
-        add(textEntryPanel, BorderLayout.SOUTH);
-        textEntryPanel.setChatFieldFocus();
     }
-    
+
     public void setTextFieldFocus() {
         textEntryPanel.setChatFieldFocus();
     }
-    
+
     public TextEntryPanel getTextEntryPanel() {
         return textEntryPanel;
     }
-    
+
     public JScrollPane getMessageScrollPane() {
         return messageScrollPane;
     }
@@ -262,44 +108,65 @@ public class ChatPanel extends JPanel {
         participants.clear();
     }
 
-    private void displayMessage(String chatHandle, String message) {
-        //		String chatHandle = getChatHandle(source);
+    private void displayMessage(Identifier identifier, String message) {
         StyledDocument document = messageWindow.getStyledDocument();
         try {
-            document.insertString(document.getLength(), chatHandle + " : ",
-                    document.getStyle("bold"));
-            document.insertString(document.getLength(), message + "\n", null);
-            messageWindow.setCaretPosition(document.getLength());
+            String source = identifier.getChatHandle() + " : ";
+            document.insertString(0, source, document.getStyle("bold"));
+            document.insertString(source.length(), message + "\n", null);
+            messageWindow.setCaretPosition(0);
         } catch (BadLocationException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
 
-    public void initialize(boolean inRoundChat) {
-        this.inRoundChat = inRoundChat;
-        if (HANDLES != null) {
-            displayMessage("System message", " --- Round ended --- ");
-            return;
-        }
+    public void initialize() {
         this.participants = client.getDataModel().getAllClientIdentifiers();
-        HANDLES = new String[participants.size()];
-        List<String> handles = new ArrayList<String>();
-        if (client.getDataModel().getRoundConfiguration().isChatAnonymized()) {
-            for (int i = HANDLES.length; --i >= 0;) {
-                handles.add(HANDLE_STRING.charAt(i) + "");
-            }
-            Collections.shuffle(handles);
-            for (int i = 0; i < HANDLES.length; i++) {
-                HANDLES[i] = handles.get(i);
-            }
+    }
+    
+    private class TextEntryPanel extends JPanel {
+
+        private static final long serialVersionUID = -4846486696999203769L;
+
+        private Identifier targetIdentifier = Identifier.ALL;
+        private JTextField chatField;
+
+        public TextEntryPanel(ForagingClient client) {
+            setLayout(new BorderLayout(3, 3));
+            chatField = new JTextField();
+            chatField.addKeyListener(new KeyAdapter() {
+                public void keyPressed(KeyEvent event) {
+                    if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                        sendMessage();
+                    }
+                }
+            });
+            add(new JLabel("In round chat"), BorderLayout.NORTH);
+            add(chatField, BorderLayout.CENTER);
         }
-        else {
-            for (int i = 0; i < HANDLES.length; i++) {
-                HANDLES[i] = client.getDataModel().getAssignedNumber(participants.get(i)) + "";
-            }
+
+        void setChatFieldFocus() {
+            chatField.requestFocusInWindow();
         }
-        initGuiComponents();
+
+        private void sendMessage() {
+            String message = chatField.getText();
+            System.err.println("sending message: " + message);
+            if (message == null || "".equals(message) || targetIdentifier == null) {
+                return;
+            }
+            client.transmit(new ChatRequest(client.getId(), message, targetIdentifier));
+            // special case for in round chat
+            if (client.getCurrentRoundConfiguration().isInRoundChatEnabled()) {
+                client.getGameWindow().requestFocusInWindow();
+            }
+            else {
+                chatField.requestFocusInWindow();
+            }
+            chatField.setText("");
+        }
+
     }
 
 }

@@ -21,5 +21,6 @@ public interface GameWindow {
     public void showInstructions();
     public void showTrustGame();
     public JPanel getPanel();
+    public void requestFocusInWindow();
 
 }

@@ -341,7 +341,7 @@ public class GameWindow2D implements GameWindow {
         htmlPane.setEditable(false);
         htmlPane.setDoubleBuffered(true);
         htmlPane.setBackground(Color.WHITE);
-        htmlPane.setFont(new Font("sansserif", Font.PLAIN, 12));
+        htmlPane.setFont(new Font("Trebuchet MS", Font.PLAIN, 15));
         return htmlPane;
     }
 
@@ -389,7 +389,7 @@ public class GameWindow2D implements GameWindow {
         messagePanel.add(new JLabel("Messages"), BorderLayout.NORTH);
         messageTextPane = new JTextPane();
         messageTextPane.setEditable(false);
-        messageTextPane.setFont(new Font("arial", Font.BOLD, 12));
+        messageTextPane.setFont(new Font("Trebuchet MS", Font.BOLD, 15));
         messageTextPane.setBackground(Color.WHITE);
         addStyles(messageTextPane.getStyledDocument());
         messageScrollPane = new JScrollPane(messageTextPane);
@@ -577,7 +577,7 @@ public class GameWindow2D implements GameWindow {
                 update(configuration.getRoundDuration().getTimeLeft());
                 if (configuration.isInRoundChatEnabled()) {
                     ChatPanel chatPanel = getChatPanel();
-                    chatPanel.initialize(true);
+                    chatPanel.initialize();
                     Dimension chatPanelSize = new Dimension(250, getPanel().getSize().height);
                     chatPanel.setPreferredSize(chatPanelSize);
                     // FIXME: switch to different layout manager
@@ -802,7 +802,7 @@ public class GameWindow2D implements GameWindow {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 ChatPanel chatPanel = getChatPanel();
-                chatPanel.initialize(false);
+                chatPanel.initialize();
                 showPanel(CHAT_PANEL_NAME);
                 startChatTimer();
             }
@@ -816,5 +816,11 @@ public class GameWindow2D implements GameWindow {
     @Override
     public JPanel getPanel() {
         return mainPanel;
+    }
+
+    @Override
+    public void requestFocusInWindow() {
+        getPanel().requestFocusInWindow();
+        
     }
 }

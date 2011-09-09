@@ -147,6 +147,7 @@ public class EmbeddedChatPanel extends JPanel {
                         + getChatHandle(chatEvent.getTarget()), chatEvent.toString());
             }
         });
+        initGuiComponents();
     }
     
     public void stop() {
@@ -192,60 +193,7 @@ public class EmbeddedChatPanel extends JPanel {
         messageScrollPane.setMaximumSize(messageWindowSize);
         addStylesToMessageWindow();
 
-        // set up the participant panel
-//        participantButtonPanel = new JPanel();
-//        // participantButtonPanel.setLayout(new
-//        // BoxLayout(participantButtonPanel,
-//        // BoxLayout.PAGE_AXIS));
-//        participantButtonPanel.setLayout(new GridLayout(0, 1));
-//        participantButtonPanel.setBackground(Color.GRAY);
-//        // JLabel selfLabel = new JLabel(getChatHandle(clientId));
-//        // selfLabel.setForeground(Color.ORANGE);
-//        // selfLabel.setBackground(Color.ORANGE);
-//        // selfLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        JButton selfButton = new JButton(getChatHandle(clientId));
-//        selfButton.setEnabled(false);
-//        selfButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        participantButtonPanel.add(selfButton);
-//        participantButtonPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-//        for (int i = 0; i < HANDLES.length; i++) {
-//            final Identifier targetId = participants.get(i);
-//            if (targetId.equals(clientId)) {
-//                continue;
-//            }
-//            String handle = HANDLES[i];
-//            JButton button = new JButton(handle);
-//            button.setAlignmentX(Component.CENTER_ALIGNMENT);
-//            button.addActionListener(new ActionListener() {
-//                public void actionPerformed(ActionEvent e) {
-//                    // change stuff in the messageEntryPanel
-//                    textEntryPanel.setTargetHandle(targetId);
-//                }
-//            });
-//            participantButtonPanel.add(button);
-//        }
-//        // special case to send a message to everyone
-//        JButton sendAllButton = new JButton(" all ");
-//        sendAllButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        sendAllButton.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent e) {
-//                textEntryPanel.setTargetHandle(Identifier.ALL);
-//            }
-//        });
-//        participantButtonPanel.add(sendAllButton);
-
         textEntryPanel = new TextEntryPanel();
-        // orient the components in true lazyman fashion.
-        
-//        chatInstructionsPane = new JEditorPane();
-//        chatInstructionsPane.setContentType("text/html");
-//        chatInstructionsPane.setEditorKit(new HTMLEditorKit());
-//        chatInstructionsPane.setEditable(false);
-//        JScrollPane chatInstructionsScrollPane = new JScrollPane(chatInstructionsPane);
-//        chatInstructionsPane.setText(CHAT_INSTRUCTIONS);
-        
-
-//        add(chatInstructionsScrollPane, BorderLayout.NORTH);
         add(messageScrollPane, BorderLayout.CENTER);
         add(textEntryPanel, BorderLayout.SOUTH);
     }
@@ -285,6 +233,5 @@ public class EmbeddedChatPanel extends JPanel {
         for (int i = HANDLES.length; --i >= 0;) {
             HANDLES[i] = " " + HANDLE_STRING.charAt(i) + " ";
         }
-        initGuiComponents();
     }
 }

@@ -234,9 +234,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 @Override
                 public void handle(SocketIdentifierUpdateRequest request) {
                     SocketIdentifier socketId = request.getSocketIdentifier();
-                    //getLogger().info("socket id from client: " + socketId);
-                    //getLogger().info("station number from client: " + socketId.getStationNumber());
-                    //getLogger().info("station number from event: " + request.getStationNumber());
                     ClientData clientData = clients.get(socketId);
                     if (clientData == null) {
                         getLogger().warning("No client data available for socket: " + socketId);

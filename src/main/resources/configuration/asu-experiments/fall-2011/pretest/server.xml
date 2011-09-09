@@ -37,9 +37,12 @@ shaded.
 
 <entry key="welcome-instructions">
 <![CDATA[
-<h3>Welcome to the experiment. The experiment will begin shortly after everyone has been
-assigned a station.</h3>
+<h1>Welcome</h1>
+<hr>
 <p>
+Welcome to the experiment. The experiment will begin shortly after everyone has been
+assigned a station.
+<br><br>
 Please <b>wait quietly</b> and <b>do not close this window or open any other applications</b>.
 </p>
 ]]>
@@ -47,7 +50,7 @@ Please <b>wait quietly</b> and <b>do not close this window or open any other app
 
 <entry key="general-instructions">
 <![CDATA[
-<h3>General Instructions</h3>
+<h1>General Instructions</h1>
 <p>
 Welcome. You have already earned 5 dollars by showing up at this experiment. You can
 earn more, up to a maximum of about 40 dollars, by participating in this experiment, which
@@ -56,7 +59,7 @@ on your decisions as well as the decisions of other people in this room during t
 six rounds of the experiment. 
 </p>
 <p>
-    You will appear on the screen as a yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif"></img>. 
+You will appear on the screen as a yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif"></img>. 
 You can move by pressing the four arrow keys on your keyboard.  You can move up,
 down, left, or right.  You have to press a key for each and every move of your
 yellow dot.  In this experiment you can collect green diamond shaped tokens 
@@ -92,7 +95,8 @@ than the middle cell in Image 2.  When all neighboring cells are empty, there is
 </tr>
 </table>
 
-<h3>Best Strategy</h3>
+<h2>Best Strategy</h2>
+<hr>
 <p>
 The chance that a token will regenerate on an empty cell increases as there are
 more tokens surrounding it.  Therefore, you want to have as many tokens around an
@@ -108,7 +112,8 @@ maximizes regrowth.
 
 <entry key='trust-game-instructions'>
 <![CDATA[
-<h3>Trust Game Instructions</h3>
+<h1>Trust Game Instructions</h1>
+<hr>
 <p>
     You will now play a mini-game where you will be matched with a random person in
     your group. In this game there are two roles, Player 1 and Player 2.  Your job
@@ -118,7 +123,8 @@ maximizes regrowth.
     the <b>end of the experiment</b>.
 </p>
 
-<h3>Game Mechanics</h3>
+<h2>Game Mechanics</h2>
+<hr>
 <p>
 The game works as follows:
 </p>
@@ -140,25 +146,5 @@ Please fill in the following form to design your strategies as Player 1 or Playe
 <b>If you have any questions, please raise your hand.  Are there any questions?</b>
 </p>
 ]]>
-</entry>
-<entry key='in-round-chat-instructions'>
-    <![CDATA[
-<p>
-You can chat with all other <b>visible</b> participants in your group <b>during this round</b>.
-You may communicate about any aspect of the experiment that you would like to
-discuss with other participants with whom you have been matched. You may not promise
-them side-payments after the experiment is completed or threaten them with any
-consequence after the experiment is finished. We are monitoring the chat traffic
-while you chat. If we see that somebody reveals his or her identity, we have to stop
-the experiment and remove the whole group from which this person is a member out of
-this room.
-</p>
-<p>
-You will see other participants labeled as "1", "2","3", "4", or "5" in the chat
-box.  You can send a chat message by hitting the enter key, typing into the
-textfield and then pressing the enter key again.  You must hit the enter key before
-you enter each message.
-</p>
-    ]]>
 </entry>
 </properties>

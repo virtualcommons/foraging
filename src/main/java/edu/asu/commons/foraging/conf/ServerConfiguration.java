@@ -77,7 +77,7 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     
     public String getFieldOfVisionInstructions() {
         return assistant.getProperty("field-of-vision-instructions", 
-                "Your vision is limited in this experiment.  The area that is visible to you will be shaded.");
+                "Your view of the resource will be limited in this round.  The area visible to you will be shaded.");
     }
 
 		

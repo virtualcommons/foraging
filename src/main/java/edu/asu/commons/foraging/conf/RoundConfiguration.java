@@ -566,11 +566,16 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public StringBuilder buildInstructions(StringBuilder instructionsBuilder) {
         if (isFirstRound()) {
             instructionsBuilder.append(getGeneralInstructions());
+            instructionsBuilder.append(getInstructions());
         }
-        instructionsBuilder.append(getInstructions());
-        addAllSpecialInstructions(instructionsBuilder);
+        else {
+            // FIXME: dirty hack, need to fix after we paginate things
+            instructionsBuilder.append(getInstructions());
+            addAllSpecialInstructions(instructionsBuilder);
+        }
         // and add the quiz instructions if the quiz is enabled.
         if (isQuizEnabled()) {
+            instructionsBuilder.append("<h1>Quiz</h1>").append("<hr>");
             instructionsBuilder.append(getQuizInstructions());
         }
         return instructionsBuilder;
