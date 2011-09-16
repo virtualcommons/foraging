@@ -18,7 +18,7 @@
 
 <entry key='instructions'>
 <![CDATA[
-<h3>Practice Round Instructions</h3>
+<h2>Practice Round Instructions</h2>
 <hr>
 <p>
 You will now have four minutes to practice with the experimental environment. The
@@ -38,9 +38,12 @@ randomly filling half of the cells.
 
 <entry key="quiz-instructions">
 <![CDATA[
+<h2>Quiz</h2>
+<hr>
 <p>
-Before we begin the practice round please answer the following questions.
+Before we begin the practice round please answer the following questions.  You will earn $0.50 for each correct answer.
 </p>
+<br><br>
 <form>
 <span class='q1'>Q1. Which one of the following statements is incorrect?</span> <br>
 <input type="radio" name="q1" value="A">A. Your decisions of where to collect tokens affects the regeneration of tokens.<br>

@@ -575,7 +575,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         }
         // and add the quiz instructions if the quiz is enabled.
         if (isQuizEnabled()) {
-            instructionsBuilder.append("<h1>Quiz</h1>").append("<hr>");
             instructionsBuilder.append(getQuizInstructions());
         }
         return instructionsBuilder;
