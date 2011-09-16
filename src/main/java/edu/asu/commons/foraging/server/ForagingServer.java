@@ -95,13 +95,13 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
 
     private Identifier facilitatorId;
 
-    // FIXME: use java.util.concurrent constructs instead?  CountDownLatch / CyclicBarrier?
+    // FIXME: use java.util.concurrent constructs instead? CountDownLatch / CyclicBarrier?
     private final Object roundSignal = new Object();
     private final Object quizSignal = new Object();
     private final Object postRoundSanctioningSignal = new Object();
     private final Object agentDesignSignal = new Object();
-    //  FIXME: these latches don't quite do what we want.  We need a way to reset them at each round.  
-    //  private CountDownLatch postRoundSanctionLatch;
+    // FIXME: these latches don't quite do what we want. We need a way to reset them at each round.
+    // private CountDownLatch postRoundSanctionLatch;
 
     private StateMachine stateMachine = new ForagingStateMachine();
 
@@ -110,14 +110,13 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
     private volatile int numberOfSubmittedQuizzes;
     private volatile int numberOfCompletedSanctions;
     private volatile int numberOfCompletedAgentDesigns;
-    
+
     private int monitorRotationInterval;
 
     private Duration currentRoundDuration;
     // private Duration chatDuration;
 
     private volatile boolean experimentStarted;
-
 
     // FIXME: add the ability to reconfigure an already instantiated server
     public ForagingServer() {
@@ -131,8 +130,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             Handler logHandler = new FileHandler(configuration.getLogFileDestination(), true);
             logHandler.setFormatter(new SimpleFormatter());
             logger.addHandler(logHandler);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             logger.severe("Unable to log to file : " + configuration.getLogFileDestination());
         }
@@ -142,7 +140,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
     public void processReplInput(String input, BufferedReader reader) {
         if (input.equals("clients")) {
             System.out.println("Connected Clients: " + clients.size());
-            for (Identifier id: clients.keySet()) {
+            for (Identifier id : clients.keySet()) {
                 getLogger().info("\t" + id);
             }
         }
@@ -169,19 +167,16 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             try {
                 String path = reader.readLine();
                 boolean converted = ForagingSaveFileConverter.convert(path);
-                if (! converted) {
+                if (!converted) {
                     System.out.println("Unable to convert from path: " + path);
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
-            }
-            catch (RuntimeException e) {
+            } catch (RuntimeException e) {
                 e.printStackTrace();
             }
         }
     }
-
 
     @Override
     protected StateMachine getStateMachine() {
@@ -192,9 +187,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
         return getConfiguration().getCurrentParameters();
     }
 
-    enum ServerState { WAITING, ROUND_IN_PROGRESS };
-
-
+    enum ServerState {
+        WAITING, ROUND_IN_PROGRESS
+    };
 
     private class ForagingStateMachine implements StateMachine {
         private Command roundProcessor;
@@ -202,29 +197,34 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
         private ResourceDispenser resourceDispenser;
         private ServerState serverState;
         private final Duration secondTick = Duration.create(1000L);
+
         /**
          * Initializes the state machine before the experiment ever begins.
          */
         public void initialize() {
             serverState = ServerState.WAITING;
-            serverDataModel = new ServerDataModel( getEventChannel() );
+            serverDataModel = new ServerDataModel(getEventChannel());
             // these two seem to be paired up frequently.
             serverDataModel.setRoundConfiguration(getCurrentRoundConfiguration());
             initializeRoundProcessor();
-            resourceDispenser = new ResourceDispenser( serverDataModel );
+            resourceDispenser = new ResourceDispenser(serverDataModel);
             initializeClientHandlers();
             initializeFacilitatorHandlers();
         }
 
         private void initializeRoundProcessor() {
             if (serverDataModel.getRoundConfiguration().is2dExperiment()) {
-                roundProcessor = new Command() { 
-                    public void execute() { processRound2d(); }
+                roundProcessor = new Command() {
+                    public void execute() {
+                        processRound2d();
+                    }
                 };
             }
             else {
                 roundProcessor = new Command() {
-                    public void execute() { processRound3d(); }
+                    public void execute() {
+                        processRound3d();
+                    }
                 };
             }
         }
@@ -253,15 +253,15 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                         transmit(new ClientMessageEvent(event.getId(), "The experiment has already started, we cannot add you at this time."));
                         return;
                     }
-                    //    String t = event.getId().toString();
-                    //   StringBuilder t1 = new StringBuilder(t);
-                    //   t1.append(clientIdCount);
+                    // String t = event.getId().toString();
+                    // StringBuilder t1 = new StringBuilder(t);
+                    // t1.append(clientIdCount);
                     Identifier newClientIdentifier = event.getId();
-                    //  Identifier newClientIdentifier = (Identifier)t1.toString();
+                    // Identifier newClientIdentifier = (Identifier)t1.toString();
 
-                    System.out.println("New Client ID : "+newClientIdentifier);
+                    System.out.println("New Client ID : " + newClientIdentifier);
 
-                    synchronized (clients) {                    	
+                    synchronized (clients) {
                         clients.put(newClientIdentifier, new ClientData(newClientIdentifier));
                     }
                     // send welcome instructions and experiment configuration
@@ -280,7 +280,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             addEventProcessor(new EventTypeProcessor<ChatRequest>(ChatRequest.class) {
                 public void handle(final ChatRequest request) {
                     RoundConfiguration configuration = getCurrentRoundConfiguration();
-                    if (! configuration.isChatEnabled()) {
+                    if (!configuration.isChatEnabled()) {
                         logger.warning("configuration doesn't allow for chat but received " + request);
                         return;
                     }
@@ -313,7 +313,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 public void handle(PostRoundSanctionRequest event) {
                     System.out.println("Received post round sanction request");
                     clients.get(event.getId()).getGroupDataModel().handleSanctionRequest(event);
-                    //                  postRoundSanctionLatch.countDown();
+                    // postRoundSanctionLatch.countDown();
                     numberOfCompletedSanctions++;
                     if (numberOfCompletedSanctions == clients.size()) {
                         // send an updated debriefing to everyone again.
@@ -321,7 +321,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                             clientData.applyPostRoundSanctioning();
                         }
                         boolean lastRound = getConfiguration().isLastRound();
-                        for (ClientData clientData: clients.values()) {
+                        for (ClientData clientData : clients.values()) {
                             PostRoundSanctionUpdateEvent updateEvent = new PostRoundSanctionUpdateEvent(clientData, getCurrentRoundConfiguration(), lastRound);
                             transmit(updateEvent);
                         }
@@ -350,16 +350,16 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 }
             });
 
-
             addEventProcessor(new EventTypeProcessor<ClientMovementRequest>(ClientMovementRequest.class) {
                 public void handle(ClientMovementRequest event) {
-                    if (serverState == ServerState.WAITING) return;
+                    if (serverState == ServerState.WAITING)
+                        return;
                     Identifier id = event.getId();
                     Direction direction = event.getDirection();
                     serverDataModel.moveClient(id, direction);
                 }
             });
-            addEventProcessor(new EventTypeProcessor<ExplicitCollectionModeRequest>(ExplicitCollectionModeRequest.class){
+            addEventProcessor(new EventTypeProcessor<ExplicitCollectionModeRequest>(ExplicitCollectionModeRequest.class) {
                 public void handleInExperimentThread(ExplicitCollectionModeRequest event) {
                     clients.get(event.getId()).setExplicitCollectionMode(event.isExplicitCollectionMode());
                 }
@@ -393,7 +393,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             });
             addEventProcessor(new EventTypeProcessor<ClientPoseUpdate>(ClientPoseUpdate.class) {
                 public void handleInExperimentThread(ClientPoseUpdate event) {
-                    if (serverState == ServerState.WAITING) return;
+                    if (serverState == ServerState.WAITING)
+                        return;
                     ClientData client = clients.get(event.getId());
                     client.setPosition(event.getPosition());
                     client.setHeading(event.getHeading());
@@ -404,26 +405,30 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             // FIXME: turn into lockResource/unlockResource?
             addEventProcessor(new EventTypeProcessor<LockResourceRequest>(LockResourceRequest.class) {
                 public void handleInExperimentThread(LockResourceRequest event) {
-                    if (serverState == ServerState.WAITING) return;
+                    if (serverState == ServerState.WAITING)
+                        return;
                     boolean successfullyLocked = serverDataModel.lockResource(event);
                     transmit(new LockResourceEvent(event.getId(), event.getResource(), successfullyLocked));
                 }
             });
             addEventProcessor(new EventTypeProcessor<UnlockResourceRequest>(UnlockResourceRequest.class) {
                 public void handleInExperimentThread(UnlockResourceRequest event) {
-                    if (serverState == ServerState.WAITING) return;
+                    if (serverState == ServerState.WAITING)
+                        return;
                     serverDataModel.unlockResource(event);
                 }
             });
             addEventProcessor(new EventTypeProcessor<HarvestResourceRequest>(HarvestResourceRequest.class) {
                 public void handleInExperimentThread(HarvestResourceRequest event) {
-                    if (serverState == ServerState.WAITING) return;
+                    if (serverState == ServerState.WAITING)
+                        return;
                     serverDataModel.harvestResource(event);
                 }
             });
             addEventProcessor(new EventTypeProcessor<HarvestFruitRequest>(HarvestFruitRequest.class) {
                 public void handleInExperimentThread(HarvestFruitRequest event) {
-                    if (serverState == ServerState.WAITING) return;
+                    if (serverState == ServerState.WAITING)
+                        return;
                     serverDataModel.harvestFruits(event);
                 }
             });
@@ -432,134 +437,138 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
         private void handleEnforcementSanctionRequest(RealTimeSanctionRequest request) {
             ClientData sourceClient = clients.get(request.getSource());
             ClientData targetClient = clients.get(request.getTarget());
-            
+
             GroupDataModel group = sourceClient.getGroupDataModel();
-            if (! group.equals(targetClient.getGroupDataModel())) {
-            	logger.severe("source client and target client groups are different: " + sourceClient + targetClient);
-            	return;
+            if (!group.equals(targetClient.getGroupDataModel())) {
+                logger.severe("source client and target client groups are different: " + sourceClient + targetClient);
+                return;
             }
             EnforcementMechanism enforcementMechanism = group.getActiveEnforcementMechanism();
             switch (enforcementMechanism) {
-            case EVERYONE_CAN_SANCTION:
-            	handleRealTimeSanctionRequest(request);
-            	break;
-            case RANDOM_MONITOR:
-            case ROTATING_MONITOR:
-                if (sourceClient.isMonitor()) {
-                    // monitor can always sanction regardless of if they have enough tokens.
-                    if (targetClient.getCurrentTokens() == 0) {
-                        // nothing to take, so sanctioning has no effect.
+                case EVERYONE_CAN_SANCTION:
+                    handleRealTimeSanctionRequest(request);
+                    break;
+                case RANDOM_MONITOR:
+                case ROTATING_MONITOR:
+                    if (sourceClient.isMonitor()) {
+                        // monitor can always sanction regardless of if they have enough tokens.
+                        if (targetClient.getCurrentTokens() == 0) {
+                            // nothing to take, so sanctioning has no effect.
+                            transmit(new ClientMessageEvent(sourceClient.getId(),
+                                    String.format("Ignoring token reduction request: # %d does not have any tokens to reduce.",
+                                            targetClient.getAssignedNumber())));
+                            return;
+                        }
+                        // monitors don't get any sanction costs.
+                        targetClient.sanctionPenalty();
+                        // add sanction request to the target client so they can figure out who just sanctioned them
+                        sourceClient.getLatestSanctions().add(request);
+                        targetClient.getLatestSanctions().add(request);
                         transmit(new ClientMessageEvent(sourceClient.getId(),
-                                String.format("Ignoring token reduction request: # %d does not have any tokens to reduce.", targetClient.getAssignedNumber())));
-                        return;
+                                String.format("Subtracting %d tokens from # %d at the cost of 0 to yourself.",
+                                        getCurrentRoundConfiguration().getSanctionPenalty(),
+                                        targetClient.getAssignedNumber())));
+                        transmit(new ClientMessageEvent(targetClient.getId(),
+                                String.format("# %d subtracted %d tokens from you.", sourceClient.getAssignedNumber(), getCurrentRoundConfiguration()
+                                        .getSanctionPenalty())));
                     }
-                    // monitors don't get any sanction costs.
-                    targetClient.sanctionPenalty();
-                    // add sanction request to the target client so they can figure out who just sanctioned them
-                    sourceClient.getLatestSanctions().add(request);
-                    targetClient.getLatestSanctions().add(request);
-                    transmit(new ClientMessageEvent(sourceClient.getId(), 
-                            String.format("Subtracting %d tokens from # %d at the cost of 0 to yourself." ,
-                                    getCurrentRoundConfiguration().getSanctionPenalty(),
-                                    targetClient.getAssignedNumber())));
-                    transmit(new ClientMessageEvent(targetClient.getId(),
-                            String.format("# %d subtracted %d tokens from you.", sourceClient.getAssignedNumber(), getCurrentRoundConfiguration().getSanctionPenalty()))); 
-                }
-                break;
-            case NONE:
-            default:
-            	logger.severe("tried to sanction with EnforcementMechanism.NONE");
+                    break;
+                case NONE:
+                default:
+                    logger.severe("tried to sanction with EnforcementMechanism.NONE");
             }
 
             // TODO: reimplement
-//            
-//            
-//            int srcEnforcementType = sourceClient.getEnforcementData().getResultIndex();
-//            int tgtEnforcementType = targetClient.getEnforcementData().getResultIndex();
-//
-//            if(srcEnforcementType == tgtEnforcementType) {
-//                System.out.println("This condition should be always true");
-//                switch(srcEnforcementType) {
-//                /*
-//                 *  No sanctioning just harvest
-//                 */ case NO_SANCTIONS:
-//                     System.out.println("This code should never be reached");
-//
-//                     break;
-//
-//                     /*
-//                      *  Harvest and sanction
-//                      *  Reduce other by 2 but also own by 1
-//                      */ 
-//                     case HARVEST_WITH_SANCTION:
-//                          sourceClient.sanctionCost();
-//                          targetClient.monitorSanctionPenalty(1);
-//                          // add sanction request to the target client so they can figure out who just sanctioned them
-//                          targetClient.getLatestSanctions().add(request);
-//                          transmit(new ClientMessageEvent(sourceClient.getId(), 
-//                                  String.format("Subtracting %d tokens from # %d at the cost of %d to yourself." ,
-//                                          getCurrentRoundConfiguration().getSanctionPenalty(1),
-//                                          targetClient.getAssignedNumber(),
-//                                          getCurrentRoundConfiguration().getSanctionCost())));
-//                          transmit(new ClientMessageEvent(targetClient.getId(),
-//                                  String.format("# %d subtracted %d tokens from you.", sourceClient.getAssignedNumber(), getCurrentRoundConfiguration().getSanctionPenalty(1))));                            
-//                          break;
-//
-//
-//                          /* 
-//                           * One participant is a moniter who sanctions but cannot harvest
-//                           * Moniter can give penalty by subtract 1 from sanctionee
-//                           * Nothing taken from Moniter but receives 25% tokens from each                   
-//                           */ case RANDOM_SANCTIONER:
-//                               //sourceClient.sanctionCost();
-//                               targetClient.monitorSanctionPenalty(0);
-//                               // add sanction request to the target client so they can figure out who just sanctioned them
-//                               targetClient.getLatestSanctions().add(request);
-//                               transmit(new ClientMessageEvent(sourceClient.getId(), 
-//                                       String.format("Subtracting %d tokens from # %d at the cost of 0 to yourself." ,
-//                                               getCurrentRoundConfiguration().getSanctionPenalty(0),
-//                                               targetClient.getAssignedNumber())));
-//                               transmit(new ClientMessageEvent(targetClient.getId(),
-//                                       String.format("# %d subtracted %d tokens from you.", sourceClient.getAssignedNumber(), getCurrentRoundConfiguration().getSanctionPenalty(0))));                           
-//                               break;
-//
-//                               /* 
-//                                * Harvest and sanction for 48 secs in sequence
-//                                * One participant is a moniter who sanctions but cannot harvest
-//                                * Moniter can give penalty by subtract 1 from sanctionee
-//                                * Nothing taken from Moniter but receives 25% tokens from each                  
-//                                */ case CIRCULAR_MONITERING:
-//                                    //sourceClient.sanctionCost();
-//                                    targetClient.monitorSanctionPenalty(0);
-//                                    // add sanction request to the target client so they can figure out who just sanctioned them
-//                                    targetClient.getLatestSanctions().add(request);
-//                                    transmit(new ClientMessageEvent(sourceClient.getId(), 
-//                                            String.format("Subtracting %d tokens from # %d at the cost of 0 to yourself." ,
-//                                                    getCurrentRoundConfiguration().getSanctionPenalty(),
-//                                                    targetClient.getAssignedNumber())));
-//                                    transmit(new ClientMessageEvent(targetClient.getId(),
-//                                            String.format("# %d subtracted %d tokens from you.", sourceClient.getAssignedNumber(), getCurrentRoundConfiguration().getSanctionPenalty())));                          
-//                                    break;
-//                }
-//            }
+            //
+            //
+            // int srcEnforcementType = sourceClient.getEnforcementData().getResultIndex();
+            // int tgtEnforcementType = targetClient.getEnforcementData().getResultIndex();
+            //
+            // if(srcEnforcementType == tgtEnforcementType) {
+            // System.out.println("This condition should be always true");
+            // switch(srcEnforcementType) {
+            // /*
+            // * No sanctioning just harvest
+            // */ case NO_SANCTIONS:
+            // System.out.println("This code should never be reached");
+            //
+            // break;
+            //
+            // /*
+            // * Harvest and sanction
+            // * Reduce other by 2 but also own by 1
+            // */
+            // case HARVEST_WITH_SANCTION:
+            // sourceClient.sanctionCost();
+            // targetClient.monitorSanctionPenalty(1);
+            // // add sanction request to the target client so they can figure out who just sanctioned them
+            // targetClient.getLatestSanctions().add(request);
+            // transmit(new ClientMessageEvent(sourceClient.getId(),
+            // String.format("Subtracting %d tokens from # %d at the cost of %d to yourself." ,
+            // getCurrentRoundConfiguration().getSanctionPenalty(1),
+            // targetClient.getAssignedNumber(),
+            // getCurrentRoundConfiguration().getSanctionCost())));
+            // transmit(new ClientMessageEvent(targetClient.getId(),
+            // String.format("# %d subtracted %d tokens from you.", sourceClient.getAssignedNumber(), getCurrentRoundConfiguration().getSanctionPenalty(1))));
+            // break;
+            //
+            //
+            // /*
+            // * One participant is a moniter who sanctions but cannot harvest
+            // * Moniter can give penalty by subtract 1 from sanctionee
+            // * Nothing taken from Moniter but receives 25% tokens from each
+            // */ case RANDOM_SANCTIONER:
+            // //sourceClient.sanctionCost();
+            // targetClient.monitorSanctionPenalty(0);
+            // // add sanction request to the target client so they can figure out who just sanctioned them
+            // targetClient.getLatestSanctions().add(request);
+            // transmit(new ClientMessageEvent(sourceClient.getId(),
+            // String.format("Subtracting %d tokens from # %d at the cost of 0 to yourself." ,
+            // getCurrentRoundConfiguration().getSanctionPenalty(0),
+            // targetClient.getAssignedNumber())));
+            // transmit(new ClientMessageEvent(targetClient.getId(),
+            // String.format("# %d subtracted %d tokens from you.", sourceClient.getAssignedNumber(), getCurrentRoundConfiguration().getSanctionPenalty(0))));
+            // break;
+            //
+            // /*
+            // * Harvest and sanction for 48 secs in sequence
+            // * One participant is a moniter who sanctions but cannot harvest
+            // * Moniter can give penalty by subtract 1 from sanctionee
+            // * Nothing taken from Moniter but receives 25% tokens from each
+            // */ case CIRCULAR_MONITERING:
+            // //sourceClient.sanctionCost();
+            // targetClient.monitorSanctionPenalty(0);
+            // // add sanction request to the target client so they can figure out who just sanctioned them
+            // targetClient.getLatestSanctions().add(request);
+            // transmit(new ClientMessageEvent(sourceClient.getId(),
+            // String.format("Subtracting %d tokens from # %d at the cost of 0 to yourself." ,
+            // getCurrentRoundConfiguration().getSanctionPenalty(),
+            // targetClient.getAssignedNumber())));
+            // transmit(new ClientMessageEvent(targetClient.getId(),
+            // String.format("# %d subtracted %d tokens from you.", sourceClient.getAssignedNumber(), getCurrentRoundConfiguration().getSanctionPenalty())));
+            // break;
+            // }
+            // }
         }
-        
+
         private void handleRealTimeSanctionRequest(RealTimeSanctionRequest request) {
             ClientData sourceClient = clients.get(request.getSource());
             ClientData targetClient = clients.get(request.getTarget());
             // validate request
-            //FIXME:Added a new test condition to check for the simplified version of sanctioning
-            boolean invalidSanctionRequest = sourceClient.getCurrentTokens() == 0 || targetClient.getCurrentTokens() == 0 || sourceClient.getGroupDataModel().isResourceDistributionEmpty() || (sourceClient.getGroupDataModel().getActiveSanctionMechanism()== SanctionMechanism.NONE); 
-            if ( invalidSanctionRequest ) {
+            // FIXME:Added a new test condition to check for the simplified version of sanctioning
+            boolean invalidSanctionRequest = sourceClient.getCurrentTokens() == 0 || targetClient.getCurrentTokens() == 0
+                    || sourceClient.getGroupDataModel().isResourceDistributionEmpty()
+                    || (sourceClient.getGroupDataModel().getActiveSanctionMechanism() == SanctionMechanism.NONE);
+            if (invalidSanctionRequest) {
                 // ignore the sanction request, send a message to the sanctioner.
                 logger.warning("Ignoring token reduction request, sending new client error message event to : " + sourceClient.getId());
-                if (sourceClient.getGroupDataModel().getActiveSanctionMechanism()== SanctionMechanism.NONE) { 
-                	transmit(new ClientMessageEvent(sourceClient.getId(),
+                if (sourceClient.getGroupDataModel().getActiveSanctionMechanism() == SanctionMechanism.NONE) {
+                    transmit(new ClientMessageEvent(sourceClient.getId(),
                             String.format("Ignoring token reduction request: Sanctioning not allowed in this round", targetClient.getAssignedNumber())));
                 }
                 else {
-                	transmit(new ClientMessageEvent(sourceClient.getId(),
-                			String.format("Ignoring token reduction request: # %d does not have any tokens to reduce.", targetClient.getAssignedNumber())));
+                    transmit(new ClientMessageEvent(sourceClient.getId(),
+                            String.format("Ignoring token reduction request: # %d does not have any tokens to reduce.", targetClient.getAssignedNumber())));
                 }
                 return;
             }
@@ -571,7 +580,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             // the sanction cost should always be set since the client should prevent any sanction requests from being emitted
             // if the user doesn't have enough tokens to issue the request.
             sanctionAppliedEvent.setSanctionCost(sanctionCost);
-            // the sanction penalty may be in the range [1, RoundConfiguration.getSanctionPenalty()] - 
+            // the sanction penalty may be in the range [1, RoundConfiguration.getSanctionPenalty()] -
             // if target has less than the actual sanction penalty they just get their tokens reduced to 0.
             sanctionAppliedEvent.setSanctionPenalty(subtractedTokens);
             sanctionAppliedEvent.setTarget(targetClient.getId());
@@ -580,15 +589,15 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             sourceClient.getLatestSanctions().add(request);
             targetClient.getLatestSanctions().add(request);
             logger.info("target client " + targetClient.getId() + " has sanctions: " + targetClient.getLatestSanctions());
-            transmit(new ClientMessageEvent(sourceClient.getId(), 
-                    String.format("Subtracting %d tokens from # %d at the cost of %d to yourself." ,
-                        subtractedTokens,
-                        targetClient.getAssignedNumber(),
-                        sanctionCost)));
+            transmit(new ClientMessageEvent(sourceClient.getId(),
+                    String.format("Subtracting %d tokens from # %d at the cost of %d to yourself.",
+                            subtractedTokens,
+                            targetClient.getAssignedNumber(),
+                            sanctionCost)));
             transmit(new ClientMessageEvent(targetClient.getId(),
-                        String.format("# %d subtracted %d tokens from you.", 
-                                sourceClient.getAssignedNumber(), 
-                                subtractedTokens)));
+                    String.format("# %d subtracted %d tokens from you.",
+                            sourceClient.getAssignedNumber(),
+                            subtractedTokens)));
         }
 
         private void initializeFacilitatorHandlers() {
@@ -607,7 +616,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                     // FIXME: assign groups?
                     if (event.getId().equals(facilitatorId)) {
                         logger.info("Show Instructions request from facilitator - showing round instructions.");
-                        for (Identifier id: clients.keySet()) {
+                        for (Identifier id : clients.keySet()) {
                             transmit(new ShowInstructionsRequest(id));
                         }
                     }
@@ -620,7 +629,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 public void handle(ShowTrustGameRequest event) {
                     if (event.getId().equals(facilitatorId)) {
                         logger.info("Showing trust game.");
-                        for (Identifier id: clients.keySet()) {
+                        for (Identifier id : clients.keySet()) {
                             transmit(new ShowTrustGameRequest(id));
                         }
                     }
@@ -634,7 +643,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                     if (event.getId().equals(facilitatorId)) {
                         if (getCurrentRoundConfiguration().isFirstRound()) {
                             // shuffle groups
-                            // set up the Client Group relationships ONLY IF we are in the first round... 
+                            // set up the Client Group relationships ONLY IF we are in the first round...
                             // kind of a hack.
                             shuffleParticipants();
                             initializeResourceDispenser();
@@ -659,62 +668,62 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             });
             addEventProcessor(new EventTypeProcessor<TrustGameSubmissionRequest>(TrustGameSubmissionRequest.class) {
                 int numberOfSubmissions = 0;
+
                 public void handle(TrustGameSubmissionRequest request) {
                     if (getCurrentRoundConfiguration().isTrustGameEnabled()) {
                         logger.info("trust game submission: " + request);
                         // basic sanity check
                         ClientData clientData = clients.get(request.getId());
                         clientData.setTrustGamePlayerOneAmountToKeep(request.getPlayerOneAmountToKeep());
-                        clientData.setTrustGamePlayerTwoAmountsToKeep(request.getPlayerTwoAmountsToKeep());                        
+                        clientData.setTrustGamePlayerTwoAmountsToKeep(request.getPlayerTwoAmountsToKeep());
                         persister.store(request);
                         numberOfSubmissions++;
                     }
                     if (numberOfSubmissions >= clients.size()) {
                         // once all clients have submitted their decisions, execute the trust game.
-                        for (GroupDataModel group: serverDataModel.getGroups()) {
+                        for (GroupDataModel group : serverDataModel.getGroups()) {
                             LinkedList<ClientData> clientList = new LinkedList<ClientData>(group.getClientDataMap().values());
                             Collections.shuffle(clientList);
                             // FIXME: arbitrary choice to save the first one to pair up with the last one as well.
-                            ClientData first = clientList.getFirst();                            
-                            for (Iterator<ClientData> iter = clientList.iterator(); iter.hasNext(); ) {
+                            ClientData first = clientList.getFirst();
+                            for (Iterator<ClientData> iter = clientList.iterator(); iter.hasNext();) {
                                 ClientData playerOne = iter.next();
                                 ClientData playerTwo = first;
                                 if (iter.hasNext()) {
-                                    playerTwo = iter.next();                                    
+                                    playerTwo = iter.next();
                                 }
 
                                 logger.info(String.format("Pairing %s with %s for trust game", playerOne, playerTwo));
-                                serverDataModel.calculateTrustGame(playerOne, playerTwo);                                
-                            }                                                                                   
+                                serverDataModel.calculateTrustGame(playerOne, playerTwo);
+                            }
                         }
-                        numberOfSubmissions = 0;                        
-                    }                                        
-                }                
-            });            
+                        numberOfSubmissions = 0;
+                    }
+                }
+            });
 
             addEventProcessor(new EventTypeProcessor<BeginChatRoundRequest>(BeginChatRoundRequest.class) {
                 public void handle(BeginChatRoundRequest request) {
                     if (getCurrentRoundConfiguration().isChatEnabled()) {
-                        
+                        // FIXME: need to handle properly corner case where chat is enabled before the first round
+                        // at that point the clients haven't been added to any groups yet.
+                        // probably the best way to handle this is to have the clients added
+                        // to groups when the show instructions request is handled.
                         if (getCurrentRoundConfiguration().isFirstRound()) {
                             shuffleParticipants();
                             initializeResourceDispenser();
                         }
 
-                        // FIXME: need to handle properly corner case where chat is enabled before the first round
-                        // at that point the clients haven't been added to any groups yet.
-                        // probably the best way to handle this is to have the clients added 
-                        // to groups when the show instructions request is handled.
-                        for (Map.Entry<Identifier, ClientData> entry: clients.entrySet()) {
+                        for (Map.Entry<Identifier, ClientData> entry : clients.entrySet()) {
                             Identifier id = entry.getKey();
                             ClientData clientData = entry.getValue();
                             // FIXME: hacky, get rid of this.
                             if (clientData.getGroupDataModel() == null) {
-                                // we haven't added this client to the server data model yet.  Add them now..
-                                // FIXME: will this cause problems if we invoke shuffleParticipants() later?  I.e.,
+                                // we haven't added this client to the server data model yet. Add them now..
+                                // FIXME: will this cause problems if we invoke shuffleParticipants() later? I.e.,
                                 // the clients get added to the server data model for the purposes of the chat
-                                // and then when they start the actual round they get reshuffled?  Need to
-                                // rethink clearly/carefully how clients and when clients get added to the server 
+                                // and then when they start the actual round they get reshuffled? Need to
+                                // rethink clearly/carefully how clients and when clients get added to the server
                                 // data model...!
                                 serverDataModel.addClient(clientData);
                             }
@@ -727,7 +736,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 }
             });
             // FIXME: handle reconfiguration requests from facilitator
-        } 
+        }
 
         private void relayChatRequest(ChatRequest request) {
             Identifier source = request.getSource();
@@ -739,10 +748,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 // check for field of vision
                 RoundConfiguration currentConfiguration = getCurrentRoundConfiguration();
                 if (currentConfiguration.isFieldOfVisionEnabled()) {
-                    // FIXME: replace with clientData.getFieldOfVision?                    
+                    // FIXME: replace with clientData.getFieldOfVision?
 
                     Circle circle = new Circle(clientData.getPosition(), currentConfiguration.getViewSubjectsRadius());
-                    sendChatEvent(request, clientData.getGroupDataModel().getClientIdentifiersWithin(circle));                    
+                    sendChatEvent(request, clientData.getGroupDataModel().getClientIdentifiersWithin(circle));
                 }
                 else {
                     sendChatEvent(request, clientData.getGroupDataModel().getClientIdentifiers());
@@ -750,12 +759,12 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             }
             else {
                 getLogger().info(String.format("%s sending [%s] to target [%s]", request.getSource(), request, request.getTarget()));
-                ChatEvent chatEvent = new ChatEvent(request.getTarget(), request.toString(), request.getSource());                  
+                ChatEvent chatEvent = new ChatEvent(request.getTarget(), request.toString(), request.getSource());
                 transmit(chatEvent);
             }
             persister.store(request);
         }
-        
+
         private void sendChatEvent(ChatRequest request, Collection<Identifier> identifiers) {
             for (Identifier targetId : identifiers) {
                 ChatEvent chatEvent = new ChatEvent(targetId, request.toString(), request.getSource(), true);
@@ -763,54 +772,54 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             }
         }
 
-         // FIXME: remove Dispatcher reference if it's unused.
+        // FIXME: remove Dispatcher reference if it's unused.
         public void execute(Dispatcher dispatcher) {
             switch (serverState) {
-            case ROUND_IN_PROGRESS:
-                // process incoming information
-                if (currentRoundDuration.hasExpired()) {
-                    // perform token adjustment if needed.
-                    for (GroupDataModel group: serverDataModel.getGroups()) {
-                        if (group.getActiveEnforcementMechanism().hasMonitor()) {
-                        	group.applyMonitorTax();
+                case ROUND_IN_PROGRESS:
+                    // process incoming information
+                    if (currentRoundDuration.hasExpired()) {
+                        // perform token adjustment if needed.
+                        for (GroupDataModel group : serverDataModel.getGroups()) {
+                            if (group.getActiveEnforcementMechanism().hasMonitor()) {
+                                group.applyMonitorTax();
+                            }
                         }
+                        stopRound();
+                        break;
                     }
-                    stopRound();
-                    break;
-                }
-                
-                roundProcessor.execute();
-//                Thread.yield();
-                Utils.sleep(SERVER_SLEEP_INTERVAL);
-                break;
-            case WAITING:
-                // initialize persister first so we store all relevant events. 
-                // persister MUST be initialized early so that we store pre-round events like QuizResponseEvent, ChatEvent, and the various Ranking requests.
-                initializeRound();
-                
 
-                getLogger().info("Round is initialized: now waiting for facilitator signal to start next round.");
-                if (getCurrentRoundConfiguration().isQuizEnabled()) {
-                    getLogger().info("Waiting for all quizzes to be submitted.");
-                    Utils.waitOn(quizSignal);
-                }
-                // then wait for the signal from the facilitator to actually start the round (a chat session might occur or a voting session).
-                Utils.waitOn(roundSignal);
-                // actually start the round once we receive the facilitator signal.
-                startRound();
-                break;
-            default:
-                throw new RuntimeException("Should never get here.");
+                    roundProcessor.execute();
+                    // Thread.yield();
+                    Utils.sleep(SERVER_SLEEP_INTERVAL);
+                    break;
+                case WAITING:
+                    // initialize persister first so we store all relevant events.
+                    // persister MUST be initialized early so that we store pre-round events like QuizResponseEvent, ChatEvent, and the various Ranking
+                    // requests.
+                    initializeRound();
+
+                    getLogger().info("Round is initialized: now waiting for facilitator signal to start next round.");
+                    if (getCurrentRoundConfiguration().isQuizEnabled()) {
+                        getLogger().info("Waiting for all quizzes to be submitted.");
+                        Utils.waitOn(quizSignal);
+                    }
+                    // then wait for the signal from the facilitator to actually start the round (a chat session might occur or a voting session).
+                    Utils.waitOn(roundSignal);
+                    // actually start the round once we receive the facilitator signal.
+                    startRound();
+                    break;
+                default:
+                    throw new RuntimeException("Should never get here.");
             }
         }
 
         private void processRound3d() {
             boolean secondHasPassed = secondTick.hasExpired();
             if (secondHasPassed) {
-                int secondsPerYear = getConfiguration().getCurrentParameters().getResourceAgingSecondsPerYear(); 
-                for (GroupDataModel group: serverDataModel.getGroups()) {
+                int secondsPerYear = getConfiguration().getCurrentParameters().getResourceAgingSecondsPerYear();
+                for (GroupDataModel group : serverDataModel.getGroups()) {
                     // update resource age
-                    if (secondTick.getStartCount() % secondsPerYear == 0) { 
+                    if (secondTick.getStartCount() % secondsPerYear == 0) {
                         resourceDispenser.updateResourceAge(group);
                     }
                     // renew resources
@@ -820,38 +829,38 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             }
             // send new information to each client
             long timeLeft = currentRoundDuration.getTimeLeft();
-            for (ClientData data: clients.values()) {
+            for (ClientData data : clients.values()) {
                 transmit(new SynchronizeClientEvent(data, timeLeft));
             }
             serverDataModel.clearDiffLists();
         }
-        
+
         private void processRound2d() {
             boolean secondHasPassed = secondTick.hasExpired();
             if (secondHasPassed) {
-            	// handle rotating monitors.
-            	if (getCurrentRoundConfiguration().isRotatingMonitorEnabled()
-            			&& currentRoundDuration.getElapsedTimeInSeconds() % monitorRotationInterval == 0) 
-            	{
-                	for (GroupDataModel group: serverDataModel.getGroups()) {
-                		boolean rotated = group.rotateMonitorIfNecessary();
-                		if (rotated) {
-                			// send new roles to all clients
-                			// FIXME: this is inefficient, we could synchronize twice.
-                			for (ClientData clientData : group.getClientDataMap().values()) {
-                				transmit(new SynchronizeClientEvent(clientData, currentRoundDuration.getTimeLeft()));
-                			}
-                		}
-                		
-                	}            		
-            	}
+                // handle rotating monitors.
+                if (getCurrentRoundConfiguration().isRotatingMonitorEnabled()
+                        && currentRoundDuration.getElapsedTimeInSeconds() % monitorRotationInterval == 0)
+                {
+                    for (GroupDataModel group : serverDataModel.getGroups()) {
+                        boolean rotated = group.rotateMonitorIfNecessary();
+                        if (rotated) {
+                            // send new roles to all clients
+                            // FIXME: this is inefficient, we could synchronize twice.
+                            for (ClientData clientData : group.getClientDataMap().values()) {
+                                transmit(new SynchronizeClientEvent(clientData, currentRoundDuration.getTimeLeft()));
+                            }
+                        }
+
+                    }
+                }
                 resourceDispenser.generateResources();
                 secondTick.restart();
             }
-            for (GroupDataModel group: serverDataModel.getGroups()) {
-                for (ClientData clientData: group.getClientDataMap().values()) {
+            for (GroupDataModel group : serverDataModel.getGroups()) {
+                for (ClientData clientData : group.getClientDataMap().values()) {
                     // ask each client if it wants to grab a token, wherever it is.
-                    clientData.collectToken();                    
+                    clientData.collectToken();
                 }
             }
 
@@ -879,21 +888,21 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
 
         private boolean shouldSynchronize(int assignedNumber) {
             long startCount = secondTick.getStartCount();
-            return (startCount < 3) || ((startCount % SYNCHRONIZATION_FREQUENCY) == (assignedNumber * 10)); 
+            return (startCount < 3) || ((startCount % SYNCHRONIZATION_FREQUENCY) == (assignedNumber * 10));
         }
 
         private void stopRound() {
             serverState = ServerState.WAITING;
             // FIXME: not needed, persister.persist() automatically adds this.
-//            persister.store(new RoundEndedMarkerEvent());
+            // persister.store(new RoundEndedMarkerEvent());
             sendEndRoundEvents();
             if (getCurrentRoundConfiguration().isPostRoundSanctioningEnabled()) {
                 // stop most of the round but don't persist/cleanup yet.
                 // block until we receive all postround sanctioning events.
-                // FIXME: use new java.util.concurrent constructs?  CountDownLatch or CyclicBarrier?
-                //              postRoundSanctionLatch = new CountDownLatch(clients.size());
-                //              try { postRoundSanctionLatch.await(); }
-                //              catch (InterruptedException ignored) {}
+                // FIXME: use new java.util.concurrent constructs? CountDownLatch or CyclicBarrier?
+                // postRoundSanctionLatch = new CountDownLatch(clients.size());
+                // try { postRoundSanctionLatch.await(); }
+                // catch (InterruptedException ignored) {}
                 Utils.waitOn(postRoundSanctioningSignal);
             }
             persistRound();
@@ -913,7 +922,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             for (Map.Entry<Identifier, ClientData> clientDataEntry : clients.entrySet()) {
                 Identifier id = clientDataEntry.getKey();
                 ClientData clientData = clientDataEntry.getValue();
-                transmit( new EndRoundEvent(id, clientData, lastRound) );
+                transmit(new EndRoundEvent(id, clientData, lastRound));
             }
         }
 
@@ -923,7 +932,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
 
         private void cleanupRound() {
             serverDataModel.cleanupRound();
-            for (ClientData clientData: clients.values()) {
+            for (ClientData clientData : clients.values()) {
                 clientData.reset();
             }
         }
@@ -938,7 +947,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             RoundConfiguration nextRoundConfiguration = getConfiguration().nextRound();
             serverDataModel.setRoundConfiguration(nextRoundConfiguration);
             initializeRoundProcessor();
-            // reset the group linkages 
+            // reset the group linkages
             if (shouldShuffleParticipants(currentRoundConfiguration, nextRoundConfiguration)) {
                 shuffleParticipants();
             }
@@ -947,7 +956,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             }
             logger.info("Advancing to round # " + getConfiguration().getCurrentRoundNumber());
             // send the next round configuration to each client
-            for (Identifier id: clients.keySet()) {
+            for (Identifier id : clients.keySet()) {
                 transmit(new SetConfigurationEvent<RoundConfiguration>(id, nextRoundConfiguration));
             }
             transmit(new SetConfigurationEvent<RoundConfiguration>(facilitatorId, nextRoundConfiguration));
@@ -957,10 +966,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             // when do we _have_ to shuffle participants?
             // 1. when randomize-groups is set for the next round
             // 2. when we move from a private property round to a open access round
-            // 3. in general, when the clients per group in the current round is different from the 
+            // 3. in general, when the clients per group in the current round is different from the
             // clients per group in the next round (FIXME: is this too broad or can #2 just be a special case of this?)
             return nextRoundConfiguration.shouldRandomizeGroup()
-            || (currentRoundConfiguration.getClientsPerGroup() != nextRoundConfiguration.getClientsPerGroup());
+                    || (currentRoundConfiguration.getClientsPerGroup() != nextRoundConfiguration.getClientsPerGroup());
         }
 
         private void shuffleParticipants() {
@@ -975,10 +984,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
         }
 
         private void initializeClientPositions() {
-            // reinitialize all client positions.  We don't have to do this if we are randomizing the group 
-            // because client positions get initialized when they are added to the group 
+            // reinitialize all client positions. We don't have to do this if we are randomizing the group
+            // because client positions get initialized when they are added to the group
             // (during the randomization process).
-            for (ClientData clientData: clients.values()) {
+            for (ClientData clientData : clients.values()) {
                 clientData.initializePosition();
             }
         }
@@ -987,9 +996,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             persister.initialize(getCurrentRoundConfiguration());
             initializeResourceDispenser();
         }
-        
+
         private void initializeResourceDispenser() {
-            // set up the resource dispenser, generates the initial resource distributions for the 
+            // set up the resource dispenser, generates the initial resource distributions for the
             // groups, must be done after creating the client group relationships.
             resourceDispenser.initialize();
         }
@@ -1009,7 +1018,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 monitorRotationInterval = Math.max(Duration.toSeconds(currentRoundDuration.getTimeLeft()) / roundConfiguration.getClientsPerGroup(), 1);
                 logger.info("monitor rotation interval: " + monitorRotationInterval);
             }
-            currentRoundDuration.start();            
+            currentRoundDuration.start();
             transmit(new FacilitatorUpdateEvent(facilitatorId, serverDataModel, currentRoundDuration.getTimeLeft()));
             secondTick.start();
             serverState = ServerState.ROUND_IN_PROGRESS;
@@ -1017,8 +1026,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
     }
 
     /**
-     * Main entry point.  Configuration options:
-     *  
+     * Main entry point. Configuration options:
+     * 
      * conf.dir, e.g -Dconf.dir=path/to/configuration
      * 
      */

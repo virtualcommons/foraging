@@ -168,6 +168,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
             public void handle(RoundStartedEvent event) {
                 System.err.println("client starting round: " + dataModel.is2dExperiment());
                 dataModel.initialize(event.getGroupDataModel());
+                setId(event.getId());
                 getGameWindow().startRound();
                 if (dataModel.is2dExperiment()) {
                     messageQueue.start();
