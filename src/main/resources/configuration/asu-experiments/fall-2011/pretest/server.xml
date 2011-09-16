@@ -43,7 +43,7 @@ shaded.
 Welcome to the experiment. The experiment will begin shortly after everyone has been
 assigned a station.
 <br><br>
-Please <b>wait quietly</b> and <b>do not close this window or open any other applications</b>.
+Please <b>wait quietly</b> and <b>do not close this window, open any other applications, or communicate with any of the other participants</b>.
 </p>
 ]]>
 </entry>
@@ -52,22 +52,31 @@ Please <b>wait quietly</b> and <b>do not close this window or open any other app
 <![CDATA[
 <h1>General Instructions</h1>
 <p>
-Welcome. You have already earned 5 dollars by showing up at this experiment. You can
-earn more, up to a maximum of about 40 dollars, by participating in this experiment, which
-will take about an hour to an hour and a half. The amount of money you earn depends
-on your decisions as well as the decisions of other people in this room during the
-six rounds of the experiment. 
+    <b>Welcome</b>. You have already earned 5 dollars just for showing up at this experiment. 
 </p>
 <p>
+You can earn more, up to a maximum of about 40 dollars, by participating in this
+experiment, which will take about an hour to an hour and a half. The amount of money
+you earn depends on your decisions AND the decisions of other people in this room
+over the course of the experiment.
+</p>
+<h2>How to participate</h2>
+<hr>
+<p>
 You will appear on the screen as a yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif"></img>. 
-You can move by pressing the four arrow keys on your keyboard.  You can move up,
-down, left, or right.  You have to press a key for each and every move of your
-yellow dot.  In this experiment you can collect green diamond shaped tokens 
-<img src="@CODEBASE_URL@/images/gem-token.gif"></img> and earn two cents for each collected token.  
-To collect a token, move your yellow dot over a green token and <b>press the space
-bar</b>.  Simply moving your avatar over a token does NOT collect that token.
+You can move by pressing the four arrow keys on your keyboard.  
+</p>
+<p>
+    You can move up, down, left, or right.  You have to press a key for each and
+    every move of your yellow dot.  In this experiment you can collect green diamond
+    shaped tokens <img src="@CODEBASE_URL@/images/gem-token.gif"></img> and earn two
+    cents for each collected token.  To collect a token, move your yellow dot over a
+    green token and <b>press the space bar</b>.  Simply moving your avatar over a
+    token does NOT collect that token.
 </p>
 
+<h2>Tokens</h2>
+<hr>
 <p>
 The tokens that you collect have the potential to regenerate.  After you have
 collected a green token, a new token can re-appear on that empty cell. The rate at
@@ -79,7 +88,6 @@ The middle cell in Image 1 denoted with an X has a greater chance of regeneratio
 than the middle cell in Image 2.  When all neighboring cells are empty, there is
 <b>no chance for regeneration</b>.
 </p>
-
 <table width="100%">
 <tr>
 <td align="center"><b>Image 1</b></td>
@@ -105,7 +113,7 @@ regrowth.  The optimal spatial pattern of tokens on the screen is the checkerboa
 diagram shown below, where half of the cells are empty and arranged in a way that
 maximizes regrowth.
 <br>
-<img src="@CODEBASE_URL@/images/optimal-strategy.jpg" alt="Checkerboard Resource"></img>
+<img src="@CODEBASE_URL@/images/foraging-checkerboard.png" alt="Checkerboard Resource"></img>
 </p>
 ]]>
 </entry>
@@ -115,24 +123,20 @@ maximizes regrowth.
 <h1>Trust Game Instructions</h1>
 <hr>
 <p>
-    You will now play a mini-game where you will be matched with a random person in
-    your group. In this game there are two roles, Player 1 and Player 2.  Your job
-    is to design strategies for both Player 1 and Player 2 roles.  When you are
-    randomly paired with another member of your group you may be selected as Player
-    1 <b>or</b> Player 2.  The results of your strategies will be shown to you at
-    the <b>end of the experiment</b>.
+    You will now participate in an exercise where you will be matched with a random
+    person in your group. In this game there are two roles, Player 1 and Player 2.
+    Your job is to design strategies for both Player 1 and Player 2 roles.  When you
+    are randomly paired with another member of your group you may be selected as
+    Player 1 <b>or</b> Player 2.  The results of your strategies will be shown to
+    you at the <b>end of the experiment</b>.
 </p>
 
-<h2>Game Mechanics</h2>
+<h2>How to participate</h2>
 <hr>
-<p>
-The game works as follows:
-</p>
 <ol>
-    <li>Player 1 first receives an endowment of one dollar and has to decide <b>how much to keep</b> and <b>how much to send to Player 2</b>.
-    <li>The amount Player 1 decides to send to Player 2 is tripled by
-        the system and then given to Player 2.  Player 2 then has to decide <b>how
-            much to keep</b> and <b>how much to send back to Player 1</b>.
+    <li>Player 1 will first receive an endowment of one dollar and has to decide <b>how much to keep</b>.  The remaining amount is <b>sent to Player 2</b>.
+    <li>The amount Player 1 sends to Player 2 is tripled by the system and then
+        given to Player 2.  Player 2 must then decide <b>how much to keep</b> and <b>how much to send back to Player 1</b>.
 </ol>
 <p>
 For example, if Player 1 sends 0 cents to Player 2, Player 1 earns 1 dollar and
