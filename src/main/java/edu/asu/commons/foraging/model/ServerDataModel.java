@@ -58,6 +58,8 @@ public class ServerDataModel extends ForagingDataModel {
     private transient FractalTerrain terrain;
     
     private transient boolean dirty = false;
+    
+    private final static String[] CHAT_HANDLES = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S" };
 
 
 	// Maps client Identifiers to the GroupDataModel that the client belongs to 
@@ -157,6 +159,7 @@ public class ServerDataModel extends ForagingDataModel {
     public synchronized void addClientToGroup(ClientData clientData, GroupDataModel group) {
         group.addClient(clientData);
         clientsToGroups.put(clientData.getId(), group);
+        clientData.getId().setChatHandle(CHAT_HANDLES[group.size()]);
         channel.handle(new AddClientEvent(clientData, group, clientData.getPosition()));
     }
 

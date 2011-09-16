@@ -708,6 +708,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                         for (Map.Entry<Identifier, ClientData> entry: clients.entrySet()) {
                             Identifier id = entry.getKey();
                             ClientData clientData = entry.getValue();
+                            // FIXME: hacky, get rid of this.
                             if (clientData.getGroupDataModel() == null) {
                                 // we haven't added this client to the server data model yet.  Add them now..
                                 // FIXME: will this cause problems if we invoke shuffleParticipants() later?  I.e.,
