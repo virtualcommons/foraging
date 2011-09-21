@@ -522,7 +522,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public boolean isTrustGameEnabled() {
-        return getBooleanProperty("trust-game", true);
+        return getBooleanProperty("post-round-trust-game", false);
     }
 
     public boolean isInRoundChatEnabled() {
