@@ -66,6 +66,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     public double getShowUpPayment() {
         return assistant.getDoubleProperty("show-up-payment", 5.0d);
     }
+
+    public double getQuizCorrectAnswerReward() {
+        return assistant.getDoubleProperty("quiz-correct-answer-reward", 0.50d);
+    }
     
     public String getWelcomeInstructions() {
         return assistant.getStringProperty("welcome-instructions", "Please wait quietly and do not open or close any programs on this computer.");
@@ -79,6 +83,8 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
         return assistant.getProperty("field-of-vision-instructions", 
                 "Your view of the resource will be limited in this round.  The area visible to you will be shaded.");
     }
+    
+    
 
 		
 }

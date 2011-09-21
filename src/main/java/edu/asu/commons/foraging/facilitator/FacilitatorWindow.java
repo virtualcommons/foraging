@@ -24,6 +24,7 @@ import javax.swing.JSplitPane;
 import javax.swing.ScrollPaneConstants;
 
 import edu.asu.commons.foraging.conf.RoundConfiguration;
+import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.event.FacilitatorEndRoundEvent;
 import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
 import edu.asu.commons.foraging.model.ClientData;
@@ -326,8 +327,6 @@ public class FacilitatorWindow extends JPanel {
         TreeSet<Identifier> orderedSet = new TreeSet<Identifier>(clientDataMap.keySet());
         for (Identifier clientId : orderedSet) {
             ClientData data = clientDataMap.get(clientId);
-            // FIXME: hack... inject the configuration into the client data so that getIncome() will return something appropriate.
-            // should just refactor getIncome or remove it from ClientData entirely.
             builder.append(String.format(
                             "<tr><td>%s</td>" +
                             "<td align='center'>%d</td>" +
@@ -336,7 +335,7 @@ public class FacilitatorWindow extends JPanel {
                             clientId.toString(), 
                             data.getCurrentTokens(), 
                             getIncome(data.getCurrentTokens()),
-                            data.getTotalIncome() + facilitator.getServerConfiguration().getShowUpPayment()));
+                            getTotalIncome(data)));
         }
         builder.append("</tbody></table><hr>");
         if (event.isLastRound()) {
@@ -349,12 +348,16 @@ public class FacilitatorWindow extends JPanel {
         stopRoundMenuItem.setEnabled(false);
     }
 
+    private double getTotalIncome(ClientData data) {
+        ServerConfiguration serverConfiguration = facilitator.getServerConfiguration();
+        double quizEarnings = data.getCorrectQuizAnswers() * serverConfiguration.getQuizCorrectAnswerReward();
+        double trustGameEarnings = data.getTrustGameEarnings();
+        double totalIncome = data.getTotalIncome() + serverConfiguration.getShowUpPayment() + quizEarnings + trustGameEarnings;
+        return totalIncome;
+    }
+
     private double getIncome(float numTokens) {
         RoundConfiguration configuration = facilitator.getCurrentRoundConfiguration();
-        if (configuration == null) {
-            // FIXME: last minute hack.
-            return 0.02f * numTokens;
-        }
         if (configuration.isPracticeRound()) {
             return 0.0f;
         }
@@ -396,8 +399,6 @@ public class FacilitatorWindow extends JPanel {
         TreeSet<Identifier> orderedSet = new TreeSet<Identifier>(clientDataMap.keySet());
         for (Identifier clientId : orderedSet) {
             ClientData data = clientDataMap.get(clientId);
-            // FIXME: hack... inject the configuration into the client data so that getIncome() will return something appropriate.
-            // should just refactor getIncome or remove it from ClientData entirely.
             buffer.append(String.format(
                             "<tr><td>%s</td>" +
                             "<td align='center'>%d</td>" +

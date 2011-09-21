@@ -333,10 +333,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty(questionNumber + "-explanation");
     }
 
-    public double getQuizCorrectAnswerReward() {
-        return getDoubleProperty("quiz-correct-answer-reward", 0.50d);
-    }
-
     /**
      * Possible values, freeze, fine?
      * 
@@ -624,6 +620,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public String getTrustGameInstructions() {
         return getProperty("trust-game-instructions");
+    }
+
+    public double getQuizCorrectAnswerReward() {
+        String key = "quiz-correct-answer-reward"; 
+        return getDoubleProperty(key, getParentConfiguration().getDoubleProperty(key));
     }
 
 }
