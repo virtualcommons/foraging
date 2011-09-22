@@ -141,7 +141,7 @@ public class GameWindow2D implements GameWindow {
                 timeLeftLabel.setText(getTimeLeftLabelText(roundTimeLeft));
                 // FIXME: subjectView.repaint() causes graphical glitches here
                 // only when we transition from 3D -> 2D experiment. Find out why.
-                subjectView.repaint();
+                getPanel().repaint();
             }
         });
     }
@@ -153,16 +153,22 @@ public class GameWindow2D implements GameWindow {
      * @param event
      */
     public void init() {
-        RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
-        if (roundConfiguration.isFirstRound()) {
-            setInstructions(roundConfiguration.getWelcomeInstructions());
-        }
-        // don't display next round time, instead wait for the
-        // facilitator signal.
-        timeLeftLabel.setText("Waiting for facilitator's signal.");
-        informationLabel.setText("Waiting for facilitator's signal.");
-        // add the next round instructions to the existing debriefing text set by the previous
-        // EndRoundEvent.
+        final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (roundConfiguration.isFirstRound()) {
+                    setInstructions(roundConfiguration.getWelcomeInstructions());
+                }
+                // don't display next round time, instead wait for the
+                // facilitator signal.
+                timeLeftLabel.setText("Waiting for facilitator's signal.");
+                informationLabel.setText("Waiting for facilitator's signal.");
+                // add the next round instructions to the existing debriefing text set by the previous
+                // EndRoundEvent.
+            }
+        });
+
+
     }
 
     private void setQuestionColors(List<String> questionNumbers, String color) {
