@@ -6,9 +6,9 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import edu.asu.commons.foraging.client.GridView;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.GroupDataModel;
+import edu.asu.commons.foraging.ui.GridView;
 
 /**
  * $Id: GroupView.java 510 2010-04-20 04:11:22Z alllee $

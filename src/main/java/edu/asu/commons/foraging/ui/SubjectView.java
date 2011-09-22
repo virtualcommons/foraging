@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import edu.asu.commons.foraging.client.ClientDataModel;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.net.Identifier;

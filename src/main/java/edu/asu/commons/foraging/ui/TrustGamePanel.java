@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.ui;
 
 import java.awt.Component;
 import java.util.Arrays;
@@ -11,6 +11,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
+import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import javax.sound.midi.SysexMessage;
 import javax.swing.ButtonModel;

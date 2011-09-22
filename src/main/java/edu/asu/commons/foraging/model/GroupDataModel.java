@@ -14,8 +14,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.experiment.DataModel;
-import edu.asu.commons.foraging.client.Circle;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
 import edu.asu.commons.foraging.event.EnforcementRankingRequest;
@@ -25,6 +25,7 @@ import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
+import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 
 
@@ -46,7 +47,7 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
 
     private transient Logger logger = Logger.getLogger(getClass().getName());
 
-    // a subset of the clients listed in the  
+    // the subset of clients in ServerDataModel
     private final Map<Identifier, ClientData> clients = new HashMap<Identifier, ClientData>();
     // FIXME: making this transient causes a NPE in the facilitator, should be transient however.
     private final Map<Point, Resource> resourceDistribution = new HashMap<Point, Resource>();
@@ -59,7 +60,7 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
     
     private final long groupId;
     private volatile static long nextGroupId = 0;
-    
+
     private volatile int receivedEnforcementRankings = 0;
     private volatile int receivedRegulationRankings = 0;
     private volatile int receivedSanctionRankings = 0;
@@ -755,6 +756,16 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
     	activeMonitor.setTaxReceived();
     	// persist monitor tax
 		serverDataModel.getEventChannel().handle(new MonitorTaxEvent(activeMonitor.getId(), monitorTaxes, totalTax));
+    }
+
+    @Override
+    public List<Identifier> getAllClientIdentifiers() {
+        return new ArrayList<Identifier>(clients.keySet());
+    }
+
+    @Override
+    public EventChannel getEventChannel() {
+        return serverDataModel.getEventChannel();
     }
 
 }

@@ -1,4 +1,6 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.ui;
+
+import java.awt.Font;
 
 import javax.swing.JPanel;
 
@@ -13,6 +15,8 @@ import edu.asu.commons.foraging.event.EndRoundEvent;
  * @version $Revision: 416 $
  */
 public interface GameWindow {
+    public static final Font DEFAULT_PLAIN_FONT = new Font("Trebuchet MS", Font.PLAIN, 16);
+    public static final Font DEFAULT_BOLD_FONT = new Font("Trebuchet MS", Font.BOLD, 16);
     
     public void startRound();
     public void endRound(EndRoundEvent event);

@@ -440,4 +440,10 @@ public class ServerDataModel extends ForagingDataModel {
             playerTwo.logTrustGameEarnings(playerOneLog + " - you were player two and didn't receive anything.");
         }
     }
+
+    @Override
+    public List<Identifier> getAllClientIdentifiers() {
+        return new ArrayList<Identifier>(clientsToGroups.keySet());
+
+    }
 }

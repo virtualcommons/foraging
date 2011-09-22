@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
-import edu.asu.commons.foraging.client.Circle;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.RoundConfiguration.SanctionAction;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.graphics.Point3D;
+import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 

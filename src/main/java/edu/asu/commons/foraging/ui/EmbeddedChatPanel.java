@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -27,6 +27,7 @@ import edu.asu.commons.event.ChatEvent;
 import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.event.EventTypeProcessor;
+import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.net.Identifier;
 
 

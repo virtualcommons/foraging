@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.ui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -33,15 +33,19 @@ import javax.swing.JTextPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.UIManager;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
+import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 import edu.asu.commons.event.Event;
 import edu.asu.commons.event.EventChannel;
+import edu.asu.commons.foraging.client.ClientDataModel;
+import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.ClientMovementRequest;
 import edu.asu.commons.foraging.event.CollectTokenRequest;
@@ -347,9 +351,11 @@ public class GameWindow2D implements GameWindow {
         htmlPane.setEditable(false);
         htmlPane.setDoubleBuffered(true);
         htmlPane.setBackground(Color.WHITE);
-        htmlPane.setFont(new Font("Trebuchet MS", Font.PLAIN, 15));
+        ForagingClient.addStyles(htmlPane, 16);
         return htmlPane;
     }
+    
+
 
     private void initGuiComponents(Dimension size) {
         // FIXME: replace with CardLayout for easier switching between panels
@@ -376,7 +382,9 @@ public class GameWindow2D implements GameWindow {
         // add labels to game panel
         // FIXME: replace with progress bar.
         timeLeftLabel = new JLabel("Connecting ...");
+        timeLeftLabel.setFont(DEFAULT_BOLD_FONT);
         informationLabel = new JLabel("Tokens collected: 0     ");
+        informationLabel.setFont(DEFAULT_BOLD_FONT);
         // latencyLabel = new JLabel("Latency: 0");
         informationLabel.setBackground(Color.YELLOW);
         informationLabel.setForeground(Color.BLUE);
@@ -395,7 +403,7 @@ public class GameWindow2D implements GameWindow {
         messagePanel.add(new JLabel("Messages"), BorderLayout.NORTH);
         messageTextPane = new JTextPane();
         messageTextPane.setEditable(false);
-        messageTextPane.setFont(new Font("Trebuchet MS", Font.BOLD, 15));
+        messageTextPane.setFont(DEFAULT_BOLD_FONT);
         messageTextPane.setBackground(Color.WHITE);
         addStyles(messageTextPane.getStyledDocument());
         messageScrollPane = new JScrollPane(messageTextPane);
@@ -427,7 +435,7 @@ public class GameWindow2D implements GameWindow {
                 showPanel(currentCardPanel);
             }
         });
-        // add component listeners, chat panel, and sanctioning window IF chat/sanctioning are enabled, and after the end of the round...
+        mainPanel.requestFocusInWindow();
     }
 
     /**
@@ -453,7 +461,7 @@ public class GameWindow2D implements GameWindow {
                 int keyChar = (int) keyEvent.getKeyChar();
                 int keyCode = keyEvent.getKeyCode();
                 Event event = null;
-                // directions are the most common action, do them first.
+                // directions are the most common action, check for them first.
                 Direction direction = Direction.valueOf(keyCode);
                 if (direction == null) {
                     // check to see if the key is something else.
@@ -583,7 +591,7 @@ public class GameWindow2D implements GameWindow {
                 update(configuration.getRoundDuration().getTimeLeft());
                 if (configuration.isInRoundChatEnabled()) {
                     ChatPanel chatPanel = getChatPanel();
-                    chatPanel.initialize();
+                    chatPanel.initialize(dataModel);
                     Dimension chatPanelSize = new Dimension(250, getPanel().getSize().height);
                     chatPanel.setPreferredSize(chatPanelSize);
                     // FIXME: switch to different layout manager
@@ -710,11 +718,7 @@ public class GameWindow2D implements GameWindow {
         if (roundConfiguration.isTrustGameEnabled()) {
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-            JEditorPane trustGameInstructionsEditorPane = new JEditorPane();
-            trustGameInstructionsEditorPane.setContentType("text/html");
-            trustGameInstructionsEditorPane.setEditorKit(new HTMLEditorKit());
-            trustGameInstructionsEditorPane.setEditable(false);
-            trustGameInstructionsEditorPane.setBackground(Color.WHITE);
+            JEditorPane trustGameInstructionsEditorPane = createInstructionsEditorPane();
             JScrollPane scrollPane = new JScrollPane(trustGameInstructionsEditorPane);
             trustGameInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getTrustGameInstructions());
             panel.add(scrollPane);
@@ -808,7 +812,7 @@ public class GameWindow2D implements GameWindow {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 ChatPanel chatPanel = getChatPanel();
-                chatPanel.initialize();
+                chatPanel.initialize(client.getDataModel());
                 showPanel(CHAT_PANEL_NAME);
                 startChatTimer();
             }

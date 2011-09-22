@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.ui;
 
 import java.awt.Point;
 import java.io.Serializable;

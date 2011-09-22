@@ -10,7 +10,6 @@ import java.util.TreeSet;
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
-import edu.asu.commons.foraging.client.Circle;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.MovementEvent;
 import edu.asu.commons.foraging.event.ResourceAddedEvent;
@@ -19,6 +18,7 @@ import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.ServerDataModel;
+import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Utils;
 

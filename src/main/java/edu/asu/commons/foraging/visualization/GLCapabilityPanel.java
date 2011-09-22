@@ -10,7 +10,7 @@ import javax.media.opengl.GLEventListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import edu.asu.commons.foraging.client.GameWindow3D;
+import edu.asu.commons.foraging.ui.GameWindow3D;
 
 @SuppressWarnings("serial")
 public class GLCapabilityPanel extends JPanel implements GLEventListener{

@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -9,6 +9,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import edu.asu.commons.foraging.client.ClientDataModel;
+import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.EndRoundEvent;
 import edu.asu.commons.foraging.event.LockResourceEvent;

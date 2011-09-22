@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -38,6 +38,7 @@ import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 import javax.swing.text.html.HTMLEditorKit;
 
+import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.EndRoundEvent;
 import edu.asu.commons.foraging.event.PostRoundSanctionRequest;

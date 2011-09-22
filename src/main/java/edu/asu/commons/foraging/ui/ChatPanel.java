@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -11,16 +11,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
-import javax.swing.text.StyledDocument;
+import javax.swing.text.Document;
 
 import edu.asu.commons.event.ChatEvent;
 import edu.asu.commons.event.ChatRequest;
+import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.event.EventTypeProcessor;
+import edu.asu.commons.experiment.DataModel;
+import edu.asu.commons.foraging.client.ForagingClient;
+import edu.asu.commons.foraging.conf.RoundConfiguration;
+import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.net.Identifier;
 
 /**
@@ -38,56 +39,36 @@ public class ChatPanel extends JPanel {
 
     private JScrollPane messageScrollPane;
 
-    private JTextPane messageWindow;
+    private JEditorPane messagesEditorPane;
 
     private List<Identifier> participants;
 
     private TextEntryPanel textEntryPanel;
-
-    private JEditorPane chatInstructionsPane;
     
-    public ChatPanel(ForagingClient client) {
-        this.client = client;
-        client.getEventChannel().add(this, new EventTypeProcessor<ChatEvent>(ChatEvent.class) {
+    public ChatPanel(EventChannel channel) {
+        channel.add(this, new EventTypeProcessor<ChatEvent>(ChatEvent.class) {
             public void handle(final ChatEvent chatEvent) {
                 displayMessage(chatEvent.getSource(), chatEvent.toString());
             }
         });
-        initGuiComponents();
-    }
-    
-    private void addStylesToMessageWindow() {
-        StyledDocument styledDocument = messageWindow.getStyledDocument();
-        Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(
-                StyleContext.DEFAULT_STYLE);
-        StyleConstants.setFontFamily(defaultStyle, "Helvetica");
-        StyleConstants.setBold(styledDocument.addStyle("bold", defaultStyle),
-                true);
-        StyleConstants.setItalic(styledDocument
-                .addStyle("italic", defaultStyle), true);
+        initGuiComponents();   
     }
 
+    public ChatPanel(ForagingClient client) {
+        this(client.getEventChannel());
+        this.client = client;
+    }
+    
     private void initGuiComponents() {
         setLayout(new BorderLayout(3, 3));
         setName("Chat panel");
-        messageWindow = new JTextPane();
-        messageWindow.setEditable(false);
-        messageWindow.setBackground(Color.WHITE);
-        messageScrollPane = new JScrollPane(messageWindow);
-        addStylesToMessageWindow();
+        messagesEditorPane = new JEditorPane();
+        messagesEditorPane.setEditable(false);
+        messagesEditorPane.setBackground(Color.WHITE);
+        messageScrollPane = new JScrollPane(messagesEditorPane);
+        ForagingClient.addStyles(messagesEditorPane, 16);
 
         textEntryPanel = new TextEntryPanel(client);
-        // orient the components in true lazyman fashion.
-
-//        chatInstructionsPane = new JEditorPane();
-//        chatInstructionsPane.setContentType("text/html");
-//        chatInstructionsPane.setEditorKit(new HTMLEditorKit());
-//        chatInstructionsPane.setEditable(false);
-//        chatInstructionsPane.setBackground(Color.WHITE);
-//        JScrollPane chatInstructionsScrollPane = new JScrollPane(chatInstructionsPane);
-//        chatInstructionsPane.setText(client.getCurrentRoundConfiguration().getChatInstructions());
-//        add(chatInstructionsScrollPane, BorderLayout.NORTH);
-        
         add(textEntryPanel, BorderLayout.NORTH);
         add(messageScrollPane, BorderLayout.CENTER);
     }
@@ -109,20 +90,20 @@ public class ChatPanel extends JPanel {
     }
 
     private void displayMessage(Identifier identifier, String message) {
-        StyledDocument document = messageWindow.getStyledDocument();
         try {
-            String source = identifier.getChatHandle() + " : ";
-            document.insertString(0, source, document.getStyle("bold"));
-            document.insertString(source.length(), message + "\n", null);
-            messageWindow.setCaretPosition(0);
+            Document document = messagesEditorPane.getDocument();
+            String source = String.format("<b>%s</b> : ", identifier.getChatHandle());
+            document.insertString(0, source, null);
+            document.insertString(source.length(), String.format("<i>%s</i><br>", message), null);
+            messagesEditorPane.setCaretPosition(0);
         } catch (BadLocationException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
 
-    public void initialize() {
-        this.participants = client.getDataModel().getAllClientIdentifiers();
+    public void initialize(DataModel<RoundConfiguration> dataModel) {
+        this.participants = dataModel.getAllClientIdentifiers();
     }
     
     private class TextEntryPanel extends JPanel {
@@ -142,7 +123,9 @@ public class ChatPanel extends JPanel {
                     }
                 }
             });
-            add(new JLabel("In round chat"), BorderLayout.NORTH);
+            JLabel headerLabel = new JLabel("Chat");
+            headerLabel.setFont(GameWindow.DEFAULT_BOLD_FONT);
+            add(headerLabel, BorderLayout.NORTH);
             add(chatField, BorderLayout.CENTER);
         }
 

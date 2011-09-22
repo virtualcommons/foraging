@@ -20,6 +20,7 @@ import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.RegulationData;
 import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.foraging.model.SanctionMechanism;
+import edu.asu.commons.foraging.ui.GameWindow2D;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 

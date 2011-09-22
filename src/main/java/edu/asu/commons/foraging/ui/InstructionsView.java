@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -6,6 +6,8 @@ import java.awt.Font;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import edu.asu.commons.foraging.client.ClientDataModel;
+import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.visualization.conceptual.AgentDesignPanel;
 import edu.asu.commons.foraging.visualization.forestry.AvatarDesignPanel;

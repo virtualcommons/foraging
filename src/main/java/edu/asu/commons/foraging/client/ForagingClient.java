@@ -3,12 +3,15 @@ package edu.asu.commons.foraging.client;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.util.LinkedList;
 
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.text.html.HTMLDocument;
 
 import edu.asu.commons.client.BaseClient;
 import edu.asu.commons.event.ClientMessageEvent;
@@ -35,6 +38,9 @@ import edu.asu.commons.foraging.event.ShowInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
+import edu.asu.commons.foraging.ui.GameWindow;
+import edu.asu.commons.foraging.ui.GameWindow2D;
+import edu.asu.commons.foraging.ui.GameWindow3D;
 import edu.asu.commons.net.SocketIdentifier;
 import edu.asu.commons.util.Duration;
 
@@ -115,6 +121,12 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
             return gameWindow3D;            
         }
     }
+    
+    public static void addStyles(JEditorPane editorPane, int fontSize) {
+        Font font = UIManager.getFont("Label.font");
+        String bodyRule = String.format("body { font-family: %s; font-size: %s pt; }", font.getFamily(), fontSize);
+        ((HTMLDocument) editorPane.getDocument()).getStyleSheet().addRule(bodyRule); 
+    }
 
     public void sendAvatarInfo(boolean male, Color hairColor, Color skinColor, Color shirtColor, Color trouserColor, Color shoesColor) {
         transmit(new AgentInfoRequest(getId(), male, hairColor, skinColor, shirtColor, trouserColor, shoesColor));
@@ -144,10 +156,11 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                         }
                         else {
                             clientPanel.add(gameWindow3D.getPanel(), BorderLayout.CENTER);
+                        
                         }
+                        getGameWindow().init();
                         clientPanel.revalidate();
                         clientPanel.repaint();
-                        getGameWindow().init();
                     }
                 });
 
