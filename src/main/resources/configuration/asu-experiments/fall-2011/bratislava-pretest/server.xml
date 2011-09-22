@@ -120,15 +120,16 @@ maximizes regrowth.
 
 <entry key='trust-game-instructions'>
 <![CDATA[
-<h1>Trust Game Instructions</h1>
+<h1>Instructions</h1>
 <hr>
 <p>
     You will now participate in an exercise where you will be matched with a random
-    person in your group. In this game there are two roles, Player 1 and Player 2.
+    person in your group. In this exercise there are two roles, Player 1 and Player 2.
     Your job is to design strategies for both Player 1 and Player 2 roles.  When you
     are randomly paired with another member of your group you may be selected as
-    Player 1 <b>or</b> Player 2.  The results of your strategies will be shown to
-    you at the <b>end of the experiment</b>.
+    Player 1 <b>or</b> Player 2.  The results of randomly pairing your strategies
+    with the other group member's strategies will be shown to you at the <b>end of
+    mhe experiment</b>.
 </p>
 
 <h2>How to participate</h2>
