@@ -5,7 +5,6 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,12 +32,10 @@ import javax.swing.JTextPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.UIManager;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
-import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
@@ -344,19 +341,6 @@ public class GameWindow2D implements GameWindow {
         getPanel().repaint();
     }
 
-    private HtmlEditorPane createInstructionsEditorPane() {
-        // JEditorPane pane = new JEditorPane("text/html",
-        // "Costly Sanctioning Experiment");
-        final HtmlEditorPane htmlPane = new HtmlEditorPane();
-        htmlPane.setEditable(false);
-        htmlPane.setDoubleBuffered(true);
-        htmlPane.setBackground(Color.WHITE);
-        ForagingClient.addStyles(htmlPane, 16);
-        return htmlPane;
-    }
-    
-
-
     private void initGuiComponents(Dimension size) {
         // FIXME: replace with CardLayout for easier switching between panels
         cardLayout = new CardLayout();
@@ -366,7 +350,7 @@ public class GameWindow2D implements GameWindow {
         subjectView = new SubjectView(subjectViewSize, dataModel);
 
         // add instructions panel card
-        instructionsEditorPane = createInstructionsEditorPane();
+        instructionsEditorPane = ForagingInterface.createInstructionsEditorPane();
         instructionsScrollPane = new JScrollPane(instructionsEditorPane);
         instructionsScrollPane.setDoubleBuffered(true);
         instructionsScrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
@@ -382,9 +366,9 @@ public class GameWindow2D implements GameWindow {
         // add labels to game panel
         // FIXME: replace with progress bar.
         timeLeftLabel = new JLabel("Connecting ...");
-        timeLeftLabel.setFont(DEFAULT_BOLD_FONT);
+        timeLeftLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
         informationLabel = new JLabel("Tokens collected: 0     ");
-        informationLabel.setFont(DEFAULT_BOLD_FONT);
+        informationLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
         // latencyLabel = new JLabel("Latency: 0");
         informationLabel.setBackground(Color.YELLOW);
         informationLabel.setForeground(Color.BLUE);
@@ -401,9 +385,10 @@ public class GameWindow2D implements GameWindow {
         messagePanel = new JPanel(new BorderLayout());
         // messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
         messagePanel.add(new JLabel("Messages"), BorderLayout.NORTH);
+        // FIXME: setFont doesn't work here the way we want it to.
         messageTextPane = new JTextPane();
         messageTextPane.setEditable(false);
-        messageTextPane.setFont(DEFAULT_BOLD_FONT);
+        messageTextPane.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
         messageTextPane.setBackground(Color.WHITE);
         addStyles(messageTextPane.getStyledDocument());
         messageScrollPane = new JScrollPane(messageTextPane);
@@ -597,6 +582,9 @@ public class GameWindow2D implements GameWindow {
                     // FIXME: switch to different layout manager
                     gamePanel.add(chatPanel, BorderLayout.EAST);
                 }
+                else {
+                    gamePanel.remove(getChatPanel());
+                }
                 showPanel(GAME_PANEL_NAME);
             }
         };
@@ -631,8 +619,6 @@ public class GameWindow2D implements GameWindow {
         // replace this junk
         Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(
                 StyleContext.DEFAULT_STYLE);
-        // Style regularStyle = styledDocument.addStyle("regular",
-        // defaultStyle);
         StyleConstants.setFontFamily(defaultStyle, "Helvetica");
         StyleConstants.setBold(styledDocument.addStyle("bold", defaultStyle),
                 true);
@@ -718,7 +704,7 @@ public class GameWindow2D implements GameWindow {
         if (roundConfiguration.isTrustGameEnabled()) {
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-            JEditorPane trustGameInstructionsEditorPane = createInstructionsEditorPane();
+            JEditorPane trustGameInstructionsEditorPane = ForagingInterface.createInstructionsEditorPane();
             JScrollPane scrollPane = new JScrollPane(trustGameInstructionsEditorPane);
             trustGameInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getTrustGameInstructions());
             panel.add(scrollPane);
@@ -752,6 +738,13 @@ public class GameWindow2D implements GameWindow {
                 instructionsEditorPane.setCaretPosition(0);
             }
         });
+    }
+    
+    public void trustGameSubmit() {
+        instructionsBuilder.append("<h1>Submission successful</h1><hr><p>Please wait while the rest of the submissions are gathered.</p>");
+        setInstructions(instructionsBuilder.toString());
+        switchInstructionsPane();
+        
     }
 
     public void switchInstructionsPane() {

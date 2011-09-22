@@ -2,6 +2,8 @@ package edu.asu.commons.foraging.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -21,7 +23,6 @@ import edu.asu.commons.event.EventTypeProcessor;
 import edu.asu.commons.experiment.DataModel;
 import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
-import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.net.Identifier;
 
 /**
@@ -62,11 +63,8 @@ public class ChatPanel extends JPanel {
     private void initGuiComponents() {
         setLayout(new BorderLayout(3, 3));
         setName("Chat panel");
-        messagesEditorPane = new JEditorPane();
-        messagesEditorPane.setEditable(false);
-        messagesEditorPane.setBackground(Color.WHITE);
+        messagesEditorPane = ForagingInterface.createInstructionsEditorPane();
         messageScrollPane = new JScrollPane(messagesEditorPane);
-        ForagingClient.addStyles(messagesEditorPane, 16);
 
         textEntryPanel = new TextEntryPanel(client);
         add(textEntryPanel, BorderLayout.NORTH);
@@ -74,7 +72,7 @@ public class ChatPanel extends JPanel {
     }
 
     public void setTextFieldFocus() {
-        textEntryPanel.setChatFieldFocus();
+        textEntryPanel.chatField.requestFocusInWindow();
     }
 
     public TextEntryPanel getTextEntryPanel() {
@@ -92,9 +90,9 @@ public class ChatPanel extends JPanel {
     private void displayMessage(Identifier identifier, String message) {
         try {
             Document document = messagesEditorPane.getDocument();
-            String source = String.format("<b>%s</b> : ", identifier.getChatHandle());
+            String source = String.format("%s : ", identifier.getChatHandle());
             document.insertString(0, source, null);
-            document.insertString(source.length(), String.format("<i>%s</i><br>", message), null);
+            document.insertString(source.length(), String.format("%s\n", message), null);
             messagesEditorPane.setCaretPosition(0);
         } catch (BadLocationException e) {
             e.printStackTrace();
@@ -123,14 +121,21 @@ public class ChatPanel extends JPanel {
                     }
                 }
             });
+            chatField.addFocusListener(new FocusListener() {
+                @Override
+                public void focusGained(FocusEvent e) {
+                    chatField.setBackground(Color.YELLOW);
+                }
+                @Override
+                public void focusLost(FocusEvent e) {
+                    chatField.setBackground(Color.WHITE);
+                }
+                
+            });
             JLabel headerLabel = new JLabel("Chat");
-            headerLabel.setFont(GameWindow.DEFAULT_BOLD_FONT);
+            headerLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
             add(headerLabel, BorderLayout.NORTH);
             add(chatField, BorderLayout.CENTER);
-        }
-
-        void setChatFieldFocus() {
-            chatField.requestFocusInWindow();
         }
 
         private void sendMessage() {

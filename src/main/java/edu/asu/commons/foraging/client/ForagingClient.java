@@ -121,12 +121,6 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
             return gameWindow3D;            
         }
     }
-    
-    public static void addStyles(JEditorPane editorPane, int fontSize) {
-        Font font = UIManager.getFont("Label.font");
-        String bodyRule = String.format("body { font-family: %s; font-size: %s pt; }", font.getFamily(), fontSize);
-        ((HTMLDocument) editorPane.getDocument()).getStyleSheet().addRule(bodyRule); 
-    }
 
     public void sendAvatarInfo(boolean male, Color hairColor, Color skinColor, Color shirtColor, Color trouserColor, Color shoesColor) {
         transmit(new AgentInfoRequest(getId(), male, hairColor, skinColor, shirtColor, trouserColor, shoesColor));
@@ -444,5 +438,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
 
     public void sendTrustGameSubmissionRequest(double playerOneAmountToKeep, double[] playerTwoAmountsToKeep) {
         transmit(new TrustGameSubmissionRequest(getId(), playerOneAmountToKeep, playerTwoAmountsToKeep));
+        // switch back to instructions window
+        getGameWindow2D().trustGameSubmit();
     }
 }

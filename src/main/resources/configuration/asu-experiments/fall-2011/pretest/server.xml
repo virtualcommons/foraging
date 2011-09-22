@@ -15,15 +15,19 @@
 <entry key="number-of-rounds">7</entry>
 <entry key="facilitator-instructions">
 <![CDATA[
-<h3>Facilitator Instructions</h3>
+<h2>Facilitator Instructions</h2>
+<hr>
 <p>
-Welcome to the facilitator interface.  This interface allows you to control
-the experiment.  You may only modify configuration parameters <b>before</b>
-you start the experiment by selecting the Configuration menu.  When all the
-participants are ready to begin the experiment, you can start the experiment
-by selecting Experiment -&gt; Start.  After a round has been completed you
-will be able to view the statistics for all of the participants.  You can
-begin the next round by selecting Round -&gt; Start.
+    This facilitator interface allows you to control the experiment.  In general you
+    will be invoking this sequence:
+
+    <ol>
+        <li>Show instructions</li>
+        <li>Start round</li>
+        <li>Show trust game as necessary</li>
+        <li>Start standalone chat round, as necessary</li>
+        <li>Goto 1.</li>
+    </ol>
 </p>
 ]]>
 </entry>
@@ -56,7 +60,7 @@ Please <b>wait quietly</b> and <b>do not close this window, open any other appli
 </p>
 <p>
 You can earn more, up to a maximum of about 40 dollars, by participating in this
-experiment, which will take about an hour to an hour and a half. The amount of money
+experiment which will take about an hour to an hour and a half. The amount of money
 you earn depends on your decisions AND the decisions of other people in this room
 over the course of the experiment.
 </p>
@@ -68,7 +72,7 @@ You can move by pressing the four arrow keys on your keyboard.
 </p>
 <p>
     You can move up, down, left, or right.  You have to press a key for each and
-    every move of your yellow dot.  In this experiment you can collect green diamond
+    every move of your yellow dot.  As you move around you can collect green diamond
     shaped tokens <img src="@CODEBASE_URL@/images/gem-token.gif"></img> and earn two
     cents for each collected token.  To collect a token, move your yellow dot over a
     green token and <b>press the space bar</b>.  Simply moving your avatar over a
@@ -109,9 +113,8 @@ than the middle cell in Image 2.  When all neighboring cells are empty, there is
 The chance that a token will regenerate on an empty cell increases as there are
 more tokens surrounding it.  Therefore, you want to have as many tokens around an
 empty cell as possible.  However, you also need empty cells to benefit from this
-regrowth.  The optimal spatial pattern of tokens on the screen is the checkerboard
-diagram shown below, where half of the cells are empty and arranged in a way that
-maximizes regrowth.
+regrowth.  The best arrangement of tokens that maximizes overall regrowth is the
+checkerboard diagram shown below.
 <br>
 <img src="@CODEBASE_URL@/images/foraging-checkerboard.png" alt="Checkerboard Resource"></img>
 </p>
@@ -129,7 +132,7 @@ maximizes regrowth.
     are randomly paired with another member of your group you may be selected as
     Player 1 <b>or</b> Player 2.  The results of randomly pairing your strategies
     with the other group member's strategies will be shown to you at the <b>end of
-    mhe experiment</b>.
+    the experiment</b>.
 </p>
 
 <h2>How to participate</h2>

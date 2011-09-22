@@ -58,6 +58,7 @@ import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
+import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
 import edu.asu.commons.foraging.model.ClientData;
@@ -297,7 +298,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 public void handle(final QuizResponseEvent event) {
                     logger.info("Received quiz response: " + event);
                     numberOfSubmittedQuizzes++;
-                    transmit(new QuizCompletedEvent(facilitatorId));
+                    transmit(new QuizCompletedEvent(facilitatorId, event));
                     ClientData clientData = clients.get(event.getId());
                     clientData.addCorrectQuizAnswers(event.getNumberOfCorrectAnswers());
                     if (numberOfSubmittedQuizzes >= clients.size()) {
@@ -677,6 +678,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                         clientData.setTrustGamePlayerOneAmountToKeep(request.getPlayerOneAmountToKeep());
                         clientData.setTrustGamePlayerTwoAmountsToKeep(request.getPlayerTwoAmountsToKeep());
                         persister.store(request);
+                        transmit(new TrustGameSubmissionEvent(facilitatorId, request));
                         numberOfSubmissions++;
                     }
                     if (numberOfSubmissions >= clients.size()) {

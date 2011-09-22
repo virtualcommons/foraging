@@ -8,6 +8,8 @@
 <entry key="resource-width">29</entry>
 <entry key="duration">240</entry>
 
+<!-- have a trust game before this round begins -->
+<entry key='trust-game'>true</entry>
 <!-- enable field of vision for tokens and subjects -->
 <entry key='tokens-field-of-vision'>true</entry>
 <entry key='subjects-field-of-vision'>true</entry>

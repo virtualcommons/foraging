@@ -46,6 +46,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
         return assistant.getBooleanProperty("update-facilitator", false);
     }
     
+    public boolean isCensoredChat() {
+        return assistant.getBooleanProperty("censored-chat", false);
+    }
+    
     public boolean shouldInitialize3D() {
         for (RoundConfiguration configuration : getAllParameters()) {
             if (configuration.is3dExperiment()) {

@@ -17,7 +17,6 @@
 
 <!-- resource regrowth parameters -->
 <entry key="initial-distribution">.25</entry>
-<entry key='post-round-trust-game'>true</entry>
 
 
 <entry key="instructions">

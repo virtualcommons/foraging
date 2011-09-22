@@ -421,10 +421,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public int getResourceWorldScale() {
         return getIntProperty("resource-scale", 32);
     }
+    
+    public boolean isChatRoundEnabled() {
+        return getBooleanProperty("chat-enabled");
+    }
 
     // Should always return true for 3d experiments
     public boolean isChatEnabled() {
-        return getBooleanProperty("chat-enabled") || isInRoundChatEnabled();
+        return  isChatRoundEnabled() || isInRoundChatEnabled();
     }
 
     public int getMaximumResourceAge() {
@@ -521,8 +525,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getBooleanProperty("censored-chat-enabled", false);
     }
 
+    /**
+     * Returns true if we should run a trust game before this round actually begins.
+     */
     public boolean isTrustGameEnabled() {
-        return getBooleanProperty("post-round-trust-game", false);
+        return getBooleanProperty("trust-game", false);
     }
 
     public boolean isInRoundChatEnabled() {
@@ -623,8 +630,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public double getQuizCorrectAnswerReward() {
-        String key = "quiz-correct-answer-reward"; 
-        return getDoubleProperty(key, getParentConfiguration().getDoubleProperty(key));
+        return getDoubleProperty("quiz-correct-answer-reward", getParentConfiguration().getQuizCorrectAnswerReward());
     }
 
 }

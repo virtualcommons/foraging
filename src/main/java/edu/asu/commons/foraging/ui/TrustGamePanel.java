@@ -504,11 +504,6 @@ public class TrustGamePanel extends JPanel {
             playerTwoAmountsToKeep[rowIndex - 1] = (Double) value;            
         }        
         client.sendTrustGameSubmissionRequest(playerOneAmountToKeep, playerTwoAmountsToKeep);
-        client.getGameWindow2D().switchInstructionsPane();
-        
-        
-        
-
     }// GEN-LAST:event_submitButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

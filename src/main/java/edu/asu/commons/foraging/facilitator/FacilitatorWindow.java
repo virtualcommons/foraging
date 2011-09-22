@@ -1,18 +1,15 @@
 package edu.asu.commons.foraging.facilitator;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -22,14 +19,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.text.BadLocationException;
 
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.event.FacilitatorEndRoundEvent;
 import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
+import edu.asu.commons.foraging.event.QuizCompletedEvent;
+import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.model.ClientData;
-import edu.asu.commons.foraging.model.GroupDataModel;
+import edu.asu.commons.foraging.ui.ForagingInterface;
 import edu.asu.commons.net.Identifier;
+import edu.asu.commons.util.HtmlEditorPane;
 
 
 
@@ -41,24 +42,11 @@ public class FacilitatorWindow extends JPanel {
     
     private FacilitatorChatPanel facilitatorChatPanel;
 
-    // private JFrame frame;	
-    private Dimension windowDimension;
-
     private JScrollPane informationScrollPane;
 
     private JEditorPane informationEditorPane;
 
-    private JScrollPane viewPane;
-
     private JLabel timeLeftLabel;
-
-    private JLabel messageLabel;
-
-    private JPanel informationPanel;
-
-    private Dimension groupViewDimension = new Dimension(400, 400);
-
-    private int viewSpacing = 50;
 
     private JMenuItem showInstructionsMenuItem;
     
@@ -75,9 +63,14 @@ public class FacilitatorWindow extends JPanel {
     private JMenuItem startChatMenuItem;
     private JMenuItem showTrustGameMenuItem;
 
+    private HtmlEditorPane messageEditorPane;
+
+    private StringBuilder instructionsBuilder;
+
+    private int completedTrustGames;
+
     public FacilitatorWindow(Dimension dimension, Facilitator facilitator) {
         this.facilitator = facilitator;
-        windowDimension = dimension;
         initGuiComponents();
         createMenu();
         // FIXME: only applicable for standalone java app version - also
@@ -106,12 +99,10 @@ public class FacilitatorWindow extends JPanel {
      * This method gets called at the start of each round including start of the experiment
      */
     public void displayGame() {
-        // switchCenterComponent(informationPanel, viewPane);
+        startChatMenuItem.setEnabled(false);
     	showInstructionsMenuItem.setEnabled(false);
         startRoundMenuItem.setEnabled(false);
         stopRoundMenuItem.setEnabled(true);
-        // initViewPanel();
-        // repaint();
     }
 
     private JMenuBar createMenu() {
@@ -134,6 +125,7 @@ public class FacilitatorWindow extends JPanel {
         showInstructionsMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 facilitator.sendShowInstructionsRequest();
+                addMessage("Instructions have been shown.");
                 startRoundMenuItem.setEnabled(true);
             }
         });
@@ -189,103 +181,39 @@ public class FacilitatorWindow extends JPanel {
         return menuBar;
     }
     private void initGuiComponents() {
-        setLayout(new BorderLayout(4, 4));
+        setLayout(new BorderLayout(3, 3));
         //		setBackground(Color.WHITE);
 
-        informationEditorPane = new JEditorPane("text/html",
-                "CSAN Facilitator Instructions");
-        informationEditorPane.setPreferredSize(new Dimension(400, 400));
-        informationEditorPane.setEditable(false);
-        
-        facilitatorChatPanel = new FacilitatorChatPanel(facilitator);
+        informationEditorPane = ForagingInterface.createInstructionsEditorPane();
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        
+
+
         informationScrollPane = new JScrollPane(informationEditorPane,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-        informationPanel = new JPanel(new BorderLayout());
-        messageLabel = new JLabel("Messages");
-        informationPanel.add(messageLabel, BorderLayout.NORTH);
-        informationPanel.add(informationScrollPane, BorderLayout.CENTER);
-
         setInstructions(facilitator.getServerConfiguration().getFacilitatorInstructions());
 
-        viewPane = new JScrollPane();
-        Dimension minimumSize = new Dimension(200, 200);
-        informationPanel.setMinimumSize(minimumSize);
-        splitPane.add(informationPanel);
-        splitPane.add(facilitatorChatPanel.getComponent());
+        JPanel messagePanel = new JPanel(new BorderLayout());
+        JLabel messagePanelLabel = new JLabel("System messages");
+        messagePanelLabel.setFont(ForagingInterface.DEFAULT_FONT_PLAIN);
+        messagePanel.add(messagePanelLabel, BorderLayout.NORTH);
+        Dimension minimumSize = new Dimension(600, 200);
+        messagePanel.setMinimumSize(minimumSize);
+        informationScrollPane.setMinimumSize(minimumSize);
+        
+        if (facilitator.getServerConfiguration().isCensoredChat()) {
+            facilitatorChatPanel = new FacilitatorChatPanel(facilitator);
+            messagePanel.add(facilitatorChatPanel.getComponent(), BorderLayout.CENTER);
+        }
+        else {
+            messageEditorPane = ForagingInterface.createInstructionsEditorPane();
+            JScrollPane messageScrollPane = new JScrollPane(messageEditorPane);
+            messagePanel.add(messageScrollPane, BorderLayout.CENTER);
+        }
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, informationScrollPane, messagePanel);
         add(splitPane, BorderLayout.CENTER);
-    }
-
-    public void initViewPanel() {
-        RoundConfiguration roundConfiguration = facilitator.getCurrentRoundConfiguration();
-        System.err.println("round configuration: " + roundConfiguration);
-        viewPane.getViewport().removeAll();
-
-        JPanel labelPanel = new JPanel();
-        labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.X_AXIS));
-        timeLeftLabel = new JLabel("Round has not begun yet.");
-        labelPanel.add(new JLabel("Round "
-                + facilitator.getServerConfiguration().getCurrentRoundNumber()
-                + "           "));
-        labelPanel.add(timeLeftLabel);
-
-        JPanel gridPanel = new JPanel();
-        gridPanel.setForeground(Color.BLACK);
-        //Display group views based on the window size, group view size and no. of groups		
-        Set<GroupDataModel> groups = facilitator.getServerGameState().getGroups();
-        System.out.println("# of groups: " + groups.size());
-        int cols = windowDimension.width / (groupViewDimension.width + viewSpacing);
-        int rows = 1;
-        if (cols != 0) {
-            rows = groups.size() / cols;
-            if ((groups.size() % cols) > 0)
-                ++rows;
-        }
-        gridPanel.setLayout(new GridLayout(rows, cols));
-        System.out.println("Rows = " + rows + " Cols = " + cols);
-
-        int groupCounter = 1;
-        for (GroupDataModel group : groups) {
-            JPanel groupPanel = new JPanel(new BorderLayout(4, 4));
-            GroupView groupView = new GroupView(groupViewDimension, group);
-            groupView.setup(roundConfiguration);
-
-            JPanel groupViewPanel = new JPanel();
-            //			groupViewPanel.setBackground(Color.blue);
-            groupViewPanel.setLayout(new BoxLayout(groupViewPanel,
-                    BoxLayout.Y_AXIS));
-            JLabel label = new JLabel("Group " + groupCounter, JLabel.CENTER);
-            //			label.setBackground(Color.RED);
-            groupViewPanel.add(label);
-            groupViewPanel.add(groupView);
-
-            groupPanel.add(groupViewPanel, BorderLayout.CENTER);
-
-            Dimension horizFillerDim = new Dimension(groupViewDimension.width
-                    + viewSpacing, viewSpacing / 2);
-            Dimension vertFillerDim = new Dimension(viewSpacing / 2,
-                    groupViewDimension.height + viewSpacing);
-            Box.Filler horizontalFiller = new Box.Filler(horizFillerDim,
-                    horizFillerDim, horizFillerDim);
-            Box.Filler verticalFiller = new Box.Filler(vertFillerDim,
-                    vertFillerDim, vertFillerDim);
-            groupPanel.add(verticalFiller, BorderLayout.EAST);
-            groupPanel.add(verticalFiller, BorderLayout.WEST);
-            groupPanel.add(horizontalFiller, BorderLayout.SOUTH);
-            groupPanel.add(horizontalFiller, BorderLayout.NORTH);
-
-            gridPanel.add(groupPanel);
-            ++groupCounter;
-        }
-        JPanel viewPanel = new JPanel();
-        viewPanel.setLayout(new BoxLayout(viewPanel, BoxLayout.Y_AXIS));
-        viewPanel.add(labelPanel);
-        viewPanel.add(gridPanel);
-        viewPane.getViewport().add(viewPanel);
+        splitPane.setDividerLocation(0.3d);
     }
 
     private void setInstructions(String contents) {
@@ -299,98 +227,12 @@ public class FacilitatorWindow extends JPanel {
         return facilitator;
     }
 
-    public void updateMenuItems() {
-        startRoundMenuItem.setEnabled(false);
-        showInstructionsMenuItem.setEnabled(false);
-    }
-
-    /*
-     private void centerOnScreen() {
-     Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
-     Dimension windowDimension = frame.getSize();
-     int x = (screenDimension.width - windowDimension.width ) / 2;
-     int y = (screenDimension.height - windowDimension.height) / 2;
-     frame.setLocation(x, y);
-     }
-     */
-
     public void updateWindow(long timeLeft) {
         timeLeftLabel.setText("Time left: " + (timeLeft / 1000));
         repaint();
     }
-
-    public void displayDebriefing(FacilitatorEndRoundEvent event) {
-        Map<Identifier, ClientData> clientDataMap = event.getClientDataMap();
-        StringBuilder builder = new StringBuilder();
-        builder.append(String.format("<h3>Round %d Results</h3>", facilitator.getCurrentRoundConfiguration().getRoundNumber()));
-        builder.append("<table><thead><th>Participant</th><th>Current tokens</th><th>Current Income</th><th>Total Income</th></thead><tbody>");
-        TreeSet<Identifier> orderedSet = new TreeSet<Identifier>(clientDataMap.keySet());
-        for (Identifier clientId : orderedSet) {
-            ClientData data = clientDataMap.get(clientId);
-            builder.append(String.format(
-                            "<tr><td>%s</td>" +
-                            "<td align='center'>%d</td>" +
-                            "<td align='center'>$%3.2f</td>" +
-                            "<td align='center'>$%3.2f</td></tr>",
-                            clientId.toString(), 
-                            data.getCurrentTokens(), 
-                            getIncome(data.getCurrentTokens()),
-                            getTotalIncome(data)));
-        }
-        builder.append("</tbody></table><hr>");
-        if (event.isLastRound()) {
-            builder.append("<h2><font color='blue'>The experiment is over.  Please prepare payments.</font></h2>");
-        }
-        informationEditorPane.setText(builder.toString());
-        // switchCenterComponent(viewPane, informationPanel);
-        //startRoundMenuItem.setEnabled(true);
-        showInstructionsMenuItem.setEnabled(true);
-        stopRoundMenuItem.setEnabled(false);
-    }
-
-    private double getTotalIncome(ClientData data) {
-        ServerConfiguration serverConfiguration = facilitator.getServerConfiguration();
-        double quizEarnings = data.getCorrectQuizAnswers() * serverConfiguration.getQuizCorrectAnswerReward();
-        double trustGameEarnings = data.getTrustGameEarnings();
-        double totalIncome = data.getTotalIncome() + serverConfiguration.getShowUpPayment() + quizEarnings + trustGameEarnings;
-        return totalIncome;
-    }
-
-    private double getIncome(float numTokens) {
-        RoundConfiguration configuration = facilitator.getCurrentRoundConfiguration();
-        if (configuration.isPracticeRound()) {
-            return 0.0f;
-        }
-        return configuration.getDollarsPerToken() * numTokens;
-    }
-
-    public void endRound(FacilitatorEndRoundEvent endRoundEvent) {
-        displayDebriefing(endRoundEvent);
-        if (endRoundEvent.isLastRound()) {
-            facilitator.endExperiment();
-        }
-        else {
-            // FIXME: get rid of 
-            facilitator.getServerConfiguration().nextRound();
-        }
-        completedQuizzes = 0;
-        messageLabel.setText("No messages");
-    }
-
-    public void configureForReplay() {
-        //Enable the replay menus
-        loadExperimentMenuItem.setEnabled(true);
-
-        //Disable all other menus
-        startRoundMenuItem.setEnabled(false);
-        stopRoundMenuItem.setEnabled(false);
-    }
-
-    public void quizCompleted() {
-        completedQuizzes++;
-        messageLabel.setText("Completed quizzes: " + completedQuizzes);
-    }
-
+    
+    // FXIME: get rid of duplication here & displayDebriefing..
     public void updateDebriefing(FacilitatorSanctionUpdateEvent event) {
         Map<Identifier, ClientData> clientDataMap = event.getClientDataMap();
         StringBuilder buffer = new StringBuilder();
@@ -415,4 +257,120 @@ public class FacilitatorWindow extends JPanel {
         } 
         informationEditorPane.setText(buffer.toString());
     }
+
+    public void displayDebriefing(FacilitatorEndRoundEvent event) {
+        Map<Identifier, ClientData> clientDataMap = event.getClientDataMap();
+        // this is the round that was just played.
+        RoundConfiguration roundConfiguration = facilitator.getCurrentRoundConfiguration();
+        instructionsBuilder = new StringBuilder();
+        
+        instructionsBuilder.append(String.format("<h3>%s Results</h3>", roundConfiguration.isPracticeRound() ? "Practice round" : "Round " + roundConfiguration.getRoundNumber()));
+        List<String> headers = Arrays.asList("Participant", "Current tokens", "Current income", "Quiz earnings", "Trust game earnings", "Total income");
+        instructionsBuilder.append("<table><thead>");
+        for (String header : headers) {
+            instructionsBuilder.append("<th>").append(header).append("</th>");
+        }
+        instructionsBuilder.append("</thead><tbody>");
+        TreeSet<Identifier> orderedSet = new TreeSet<Identifier>(clientDataMap.keySet());
+        for (Identifier clientId : orderedSet) {
+            ClientData data = clientDataMap.get(clientId);
+            instructionsBuilder.append(String.format(
+                            "<tr><td>%s</td>" +
+                            "<td align='center'>%d</td>" +
+                            "<td align='center'>$%3.2f</td>" +
+                            "<td align='center'>$%3.2f</td>" +
+                            "<td align='center'>$%3.2f</td>" +
+                            "<td align='center'>$%3.2f</td>" +
+                            "</tr>",
+                            clientId.toString(), 
+                            data.getCurrentTokens(), 
+                            getIncome(data.getCurrentTokens()),
+                            getQuizEarnings(data),
+                            data.getTrustGameEarnings(),
+                            getTotalIncome(data)));
+        }
+        instructionsBuilder.append("</tbody></table><hr>");
+        if (event.isLastRound()) {
+            instructionsBuilder.append("<h2><font color='blue'>The experiment is over.  Please prepare payments.</font></h2>");
+        }
+
+        showInstructionsMenuItem.setEnabled(true);
+        stopRoundMenuItem.setEnabled(false);
+    }
+
+    private double getTotalIncome(ClientData data) {
+        ServerConfiguration serverConfiguration = facilitator.getServerConfiguration();
+        double quizEarnings = getQuizEarnings(data);
+        double trustGameEarnings = data.getTrustGameEarnings();
+        return data.getTotalIncome() + serverConfiguration.getShowUpPayment() + quizEarnings + trustGameEarnings;
+    }
+    
+    private double getQuizEarnings(ClientData data) {
+        return data.getCorrectQuizAnswers() * facilitator.getServerConfiguration().getQuizCorrectAnswerReward();
+    }
+
+    private double getIncome(float numTokens) {
+        RoundConfiguration configuration = facilitator.getCurrentRoundConfiguration();
+        if (configuration.isPracticeRound()) {
+            return 0.0f;
+        }
+        return configuration.getDollarsPerToken() * numTokens;
+    }
+
+    public void endRound(FacilitatorEndRoundEvent endRoundEvent) {
+        displayDebriefing(endRoundEvent);
+        if (endRoundEvent.isLastRound()) {
+            facilitator.endExperiment();
+        }
+        else {
+            // FIXME: doesn't allow for very first round to be chat-enabled or trust-game-enabled
+            RoundConfiguration roundConfiguration = facilitator.getServerConfiguration().nextRound();
+            boolean showInstructionsNext = true;
+            if (roundConfiguration.isTrustGameEnabled()) {
+                showTrustGameMenuItem.setEnabled(true);
+                instructionsBuilder.append("<h2>TRUST GAME: Run a trust game next.  Click on the Round menu and select Show Trust Game</h2>");
+                showInstructionsNext = false;
+            }
+            if (roundConfiguration.isChatRoundEnabled()) {
+                startChatMenuItem.setEnabled(true);
+                instructionsBuilder.append("<h2>COMMUNICATION ROUND: There is a communication round configured to run at the end of this round.  Click on the Round menu and select Start Chat Round</h2>");
+                showInstructionsNext = false;
+            }
+            if (showInstructionsNext) {
+                instructionsBuilder.append("<h2>SHOW INSTRUCTIONS: Click on the Round menu and select Show instructions when ready.</h2>");
+            }
+            informationEditorPane.setText(instructionsBuilder.toString());
+        }
+        completedQuizzes = 0;
+        completedTrustGames = 0;
+    }
+
+    public void configureForReplay() {
+        //Enable the replay menus
+        loadExperimentMenuItem.setEnabled(true);
+
+        //Disable all other menus
+        startRoundMenuItem.setEnabled(false);
+        stopRoundMenuItem.setEnabled(false);
+    }
+    
+    public void addMessage(String message) {
+        try {
+            messageEditorPane.getDocument().insertString(0, message + "\n", null);
+        }
+        catch (BadLocationException exception) {
+            exception.printStackTrace();
+        }        
+    }
+
+    public void quizCompleted(QuizCompletedEvent event) {
+        completedQuizzes++;
+        addMessage(String.format("%d completed quizzes (%s)", completedQuizzes, event));
+    }
+    
+    public void trustGameSubmitted(TrustGameSubmissionEvent event) {
+        completedTrustGames++;
+        addMessage(String.format("%d completed trust games (%s)", completedTrustGames, event));
+    }
+
 }
