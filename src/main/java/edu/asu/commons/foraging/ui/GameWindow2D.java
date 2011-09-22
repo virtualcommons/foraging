@@ -575,15 +575,13 @@ public class GameWindow2D implements GameWindow {
                 // has begun.
                 update(configuration.getRoundDuration().getTimeLeft());
                 if (configuration.isInRoundChatEnabled()) {
+                    System.err.println("in round chat was enabled");
                     ChatPanel chatPanel = getChatPanel();
                     chatPanel.initialize(dataModel);
                     Dimension chatPanelSize = new Dimension(250, getPanel().getSize().height);
                     chatPanel.setPreferredSize(chatPanelSize);
                     // FIXME: switch to different layout manager
                     gamePanel.add(chatPanel, BorderLayout.EAST);
-                }
-                else {
-                    gamePanel.remove(getChatPanel());
                 }
                 showPanel(GAME_PANEL_NAME);
             }
@@ -771,6 +769,10 @@ public class GameWindow2D implements GameWindow {
     public void endRound(final EndRoundEvent event) {
         Runnable runnable = new Runnable() {
             public void run() {
+                if (chatPanel != null) {
+                    getPanel().remove(chatPanel);
+                    chatPanel = null;
+                }
                 if (dataModel.getRoundConfiguration().isPostRoundSanctioningEnabled()) {
                     // add sanctioning text and slap the PostRoundSanctioningPanel in
                     PostRoundSanctioningPanel panel = new PostRoundSanctioningPanel(event, dataModel.getRoundConfiguration(), client);
@@ -782,14 +784,8 @@ public class GameWindow2D implements GameWindow {
                     instructionsEditorPane.setText("Waiting for updated round totals from the server...");
                     switchInstructionsPane();
                 }
-                if (chatPanel != null) {
-                    // FIXME: figure out what to do here.
-                    getPanel().remove(chatPanel);
-                    chatPanel = null;
-                }
                 // generate debriefing text from data culled from the Event
                 addDebriefingText(event);
-                // messageTextPane.setText("");
             }
         };
         try {
