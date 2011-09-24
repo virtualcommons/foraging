@@ -213,7 +213,9 @@ public class FacilitatorWindow extends JPanel {
         }
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, informationScrollPane, messagePanel);
         add(splitPane, BorderLayout.CENTER);
-        splitPane.setDividerLocation(0.3d);
+        double proportion = 0.6d;
+        splitPane.setDividerLocation(proportion);
+        splitPane.setResizeWeight(proportion);
     }
 
     private void setInstructions(String contents) {

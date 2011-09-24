@@ -11,12 +11,12 @@ import edu.asu.commons.event.BeginRoundRequest;
 import edu.asu.commons.event.ConfigurationEvent;
 import edu.asu.commons.event.EndRoundRequest;
 import edu.asu.commons.event.EventTypeProcessor;
+import edu.asu.commons.event.FacilitatorMessageEvent;
 import edu.asu.commons.event.SetConfigurationEvent;
 import edu.asu.commons.facilitator.BaseFacilitator;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.event.BeginChatRoundRequest;
-import edu.asu.commons.foraging.event.FacilitatorCensoredChatRequest;
 import edu.asu.commons.foraging.event.FacilitatorEndRoundEvent;
 import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.FacilitatorUpdateEvent;
@@ -74,6 +74,11 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
         addEventProcessor(new EventTypeProcessor<FacilitatorSanctionUpdateEvent>(FacilitatorSanctionUpdateEvent.class) {
             public void handle(FacilitatorSanctionUpdateEvent event) {
                 facilitatorWindow.updateDebriefing(event);
+            }
+        });
+        addEventProcessor(new EventTypeProcessor<FacilitatorMessageEvent>(FacilitatorMessageEvent.class) {
+            public void handle(FacilitatorMessageEvent event) {
+                facilitatorWindow.addMessage(event.getMessage());
             }
         });
         addEventProcessor(new EventTypeProcessor<QuizCompletedEvent>(QuizCompletedEvent.class) {

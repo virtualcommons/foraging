@@ -15,17 +15,18 @@
 <entry key="number-of-rounds">7</entry>
 <entry key="facilitator-instructions">
 <![CDATA[
-<h2>Facilitator Instructions</h2>
-<hr>
 <p>
     This facilitator interface allows you to control the experiment.  In general you
-    will be invoking this sequence:
-
+    will be following a sequence similar to this:
     <ol>
         <li>Show instructions</li>
         <li>Start round</li>
-        <li>Show trust game as necessary</li>
-        <li>Start standalone chat round, as necessary</li>
+        <li>After round is over
+            <ol>
+                <li>show trust game if necessary</li>
+                <li>start standalone chat round if necessary</li>
+            </ol>
+        </li>
         <li>Goto 1.</li>
     </ol>
 </p>

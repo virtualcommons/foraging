@@ -3,6 +3,7 @@ package edu.asu.commons.foraging.conf;
 import java.awt.Dimension;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -631,6 +632,12 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public double getQuizCorrectAnswerReward() {
         return getDoubleProperty("quiz-correct-answer-reward", getParentConfiguration().getQuizCorrectAnswerReward());
+    }
+    
+    @Override
+    public String toString() {
+        List<RoundConfiguration> allParameters = getParentConfiguration().getAllParameters();
+        return String.format("Round %d of %d -- %s", allParameters.indexOf(this) + 1, allParameters.size(), getProperties());
     }
 
 }

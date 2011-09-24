@@ -22,6 +22,7 @@ import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.ClientMessageEvent;
 import edu.asu.commons.event.EndRoundRequest;
 import edu.asu.commons.event.EventTypeProcessor;
+import edu.asu.commons.event.FacilitatorMessageEvent;
 import edu.asu.commons.event.FacilitatorRegistrationRequest;
 import edu.asu.commons.event.RoundStartedMarkerEvent;
 import edu.asu.commons.event.SetConfigurationEvent;
@@ -183,7 +184,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
     protected StateMachine getStateMachine() {
         return stateMachine;
     }
-
+    
     private RoundConfiguration getCurrentRoundConfiguration() {
         return getConfiguration().getCurrentParameters();
     }
@@ -213,6 +214,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             initializeFacilitatorHandlers();
         }
 
+        // FIXME: remove this as we phase out the 3d environment
         private void initializeRoundProcessor() {
             if (serverDataModel.getRoundConfiguration().is2dExperiment()) {
                 roundProcessor = new Command() {
@@ -302,10 +304,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                     ClientData clientData = clients.get(event.getId());
                     clientData.addCorrectQuizAnswers(event.getNumberOfCorrectAnswers());
                     if (numberOfSubmittedQuizzes >= clients.size()) {
-                        // we're done, notify the sleeping queue.
+                        // we're done, notify the quizSignal
                         logger.info("Received all quizzes, notifying quiz signal");
+                        transmit(new FacilitatorMessageEvent(facilitatorId, "Received all quizzes, ready to start round."));
                         Utils.notify(quizSignal);
-                        numberOfSubmittedQuizzes = 0;
                     }
 
                 }
@@ -478,78 +480,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 default:
                     logger.severe("tried to sanction with EnforcementMechanism.NONE");
             }
-
-            // TODO: reimplement
-            //
-            //
-            // int srcEnforcementType = sourceClient.getEnforcementData().getResultIndex();
-            // int tgtEnforcementType = targetClient.getEnforcementData().getResultIndex();
-            //
-            // if(srcEnforcementType == tgtEnforcementType) {
-            // System.out.println("This condition should be always true");
-            // switch(srcEnforcementType) {
-            // /*
-            // * No sanctioning just harvest
-            // */ case NO_SANCTIONS:
-            // System.out.println("This code should never be reached");
-            //
-            // break;
-            //
-            // /*
-            // * Harvest and sanction
-            // * Reduce other by 2 but also own by 1
-            // */
-            // case HARVEST_WITH_SANCTION:
-            // sourceClient.sanctionCost();
-            // targetClient.monitorSanctionPenalty(1);
-            // // add sanction request to the target client so they can figure out who just sanctioned them
-            // targetClient.getLatestSanctions().add(request);
-            // transmit(new ClientMessageEvent(sourceClient.getId(),
-            // String.format("Subtracting %d tokens from # %d at the cost of %d to yourself." ,
-            // getCurrentRoundConfiguration().getSanctionPenalty(1),
-            // targetClient.getAssignedNumber(),
-            // getCurrentRoundConfiguration().getSanctionCost())));
-            // transmit(new ClientMessageEvent(targetClient.getId(),
-            // String.format("# %d subtracted %d tokens from you.", sourceClient.getAssignedNumber(), getCurrentRoundConfiguration().getSanctionPenalty(1))));
-            // break;
-            //
-            //
-            // /*
-            // * One participant is a moniter who sanctions but cannot harvest
-            // * Moniter can give penalty by subtract 1 from sanctionee
-            // * Nothing taken from Moniter but receives 25% tokens from each
-            // */ case RANDOM_SANCTIONER:
-            // //sourceClient.sanctionCost();
-            // targetClient.monitorSanctionPenalty(0);
-            // // add sanction request to the target client so they can figure out who just sanctioned them
-            // targetClient.getLatestSanctions().add(request);
-            // transmit(new ClientMessageEvent(sourceClient.getId(),
-            // String.format("Subtracting %d tokens from # %d at the cost of 0 to yourself." ,
-            // getCurrentRoundConfiguration().getSanctionPenalty(0),
-            // targetClient.getAssignedNumber())));
-            // transmit(new ClientMessageEvent(targetClient.getId(),
-            // String.format("# %d subtracted %d tokens from you.", sourceClient.getAssignedNumber(), getCurrentRoundConfiguration().getSanctionPenalty(0))));
-            // break;
-            //
-            // /*
-            // * Harvest and sanction for 48 secs in sequence
-            // * One participant is a moniter who sanctions but cannot harvest
-            // * Moniter can give penalty by subtract 1 from sanctionee
-            // * Nothing taken from Moniter but receives 25% tokens from each
-            // */ case CIRCULAR_MONITERING:
-            // //sourceClient.sanctionCost();
-            // targetClient.monitorSanctionPenalty(0);
-            // // add sanction request to the target client so they can figure out who just sanctioned them
-            // targetClient.getLatestSanctions().add(request);
-            // transmit(new ClientMessageEvent(sourceClient.getId(),
-            // String.format("Subtracting %d tokens from # %d at the cost of 0 to yourself." ,
-            // getCurrentRoundConfiguration().getSanctionPenalty(),
-            // targetClient.getAssignedNumber())));
-            // transmit(new ClientMessageEvent(targetClient.getId(),
-            // String.format("# %d subtracted %d tokens from you.", sourceClient.getAssignedNumber(), getCurrentRoundConfiguration().getSanctionPenalty())));
-            // break;
-            // }
-            // }
         }
 
         private void handleRealTimeSanctionRequest(RealTimeSanctionRequest request) {
@@ -642,17 +572,16 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             addEventProcessor(new EventTypeProcessor<BeginRoundRequest>(BeginRoundRequest.class) {
                 public void handle(BeginRoundRequest event) {
                     if (event.getId().equals(facilitatorId)) {
-                        if (getCurrentRoundConfiguration().isFirstRound()) {
-                            // shuffle groups
-                            // set up the Client Group relationships ONLY IF we are in the first round...
-                            // kind of a hack.
-                            shuffleParticipants();
-                            initializeResourceDispenser();
+                        if (isReadyToStartRound()) {
+                            logger.info("Begin round request from facilitator - starting round.");
+                            experimentStarted = true;
+                            Utils.notify(roundSignal);
+                            System.out.println("Notified round signal");
                         }
-                        logger.info("Begin round request from facilitator - starting round.");
-                        experimentStarted = true;
-                        Utils.notify(roundSignal);
-                        System.out.println("Notified round signal");
+                        else {
+                            transmit(new FacilitatorMessageEvent(facilitatorId,
+                                    String.format("Couldn't start round, waiting on %d of %d quizzes", numberOfSubmittedQuizzes, clients.size())));
+                        }
                     }
                     else {
                         logger.warning("Ignoring begin round request from id: " + event.getId());
@@ -708,12 +637,13 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 public void handle(BeginChatRoundRequest request) {
                     if (getCurrentRoundConfiguration().isChatEnabled()) {
                         // FIXME: need to handle properly corner case where chat is enabled before the first round
-                        // at that point the clients haven't been added to any groups yet.
-                        // probably the best way to handle this is to have the clients added
-                        // to groups when the show instructions request is handled.
+                        // - at that point the clients haven't been added to any groups yet.
+                        // another way to handle this is to have the clients added
+                        // to groups when the show instructions request is handled..
+                        initializeGroups();
+                        /*
                         if (getCurrentRoundConfiguration().isFirstRound()) {
                             shuffleParticipants();
-                            initializeResourceDispenser();
                         }
 
                         for (Map.Entry<Identifier, ClientData> entry : clients.entrySet()) {
@@ -734,10 +664,18 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                             // just store communication traffic in a separate text file.
 
                         }
+                        */
                     }
                 }
             });
             // FIXME: handle reconfiguration requests from facilitator
+        }
+
+        protected boolean isReadyToStartRound() {
+            if (getCurrentRoundConfiguration().isQuizEnabled()) {
+                return numberOfSubmittedQuizzes >= clients.size(); 
+            }
+            return true;
         }
 
         private void relayChatRequest(ChatRequest request) {
@@ -795,19 +733,27 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                     Utils.sleep(SERVER_SLEEP_INTERVAL);
                     break;
                 case WAITING:
+                    // FIXME: there is an inherent nastiness going on with this model of control flow
+                    // the problem is this: when we first spin up the server, there are no connected clients.  control flow
+                    // enters here, we initialize the round (with no participants, etc.) and then wait on the quiz signal
+                    
+                    // the issue is that we need to initialize the groups at some clear, well-defined time.
+                    // we have to do it after all the clients are connected, so perhaps showInstructions can be the time to do it?
+                    // the previous way which I've been slowly refactoring was to do it on the beginning of the first round (as a special case)
+                    // in the handler for BeginRoundRequest) and to do it at the end of every round.  Probably better to do it in round initialization
+                    
                     // initialize persister first so we store all relevant events.
                     // persister MUST be initialized early so that we store pre-round events like QuizResponseEvent, ChatEvent, and the various Ranking
                     // requests.
-                    initializeRound();
-
-                    getLogger().info("Round is initialized: now waiting for facilitator signal to start next round.");
+                    persister.initialize(getCurrentRoundConfiguration());
+                    getLogger().info("Initialized persister, waiting for facilitator signal to start next round.");
                     if (getCurrentRoundConfiguration().isQuizEnabled()) {
                         getLogger().info("Waiting for all quizzes to be submitted.");
                         Utils.waitOn(quizSignal);
                     }
                     // then wait for the signal from the facilitator to actually start the round (a chat session might occur or a voting session).
                     Utils.waitOn(roundSignal);
-                    // actually start the round once we receive the facilitator signal.
+
                     startRound();
                     break;
                 default:
@@ -933,6 +879,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
         }
 
         private void cleanupRound() {
+            numberOfSubmittedQuizzes = 0;
             serverDataModel.cleanupRound();
             for (ClientData clientData : clients.values()) {
                 clientData.reset();
@@ -945,17 +892,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 serverState = ServerState.WAITING;
                 return;
             }
-            RoundConfiguration currentRoundConfiguration = getCurrentRoundConfiguration();
             RoundConfiguration nextRoundConfiguration = getConfiguration().nextRound();
             serverDataModel.setRoundConfiguration(nextRoundConfiguration);
             initializeRoundProcessor();
-            // reset the group linkages
-            if (shouldShuffleParticipants(currentRoundConfiguration, nextRoundConfiguration)) {
-                shuffleParticipants();
-            }
-            else {
-                initializeClientPositions();
-            }
             logger.info("Advancing to round # " + getConfiguration().getCurrentRoundNumber());
             // send the next round configuration to each client
             for (Identifier id : clients.keySet()) {
@@ -964,14 +903,16 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
             transmit(new SetConfigurationEvent<RoundConfiguration>(facilitatorId, nextRoundConfiguration));
         }
 
-        private boolean shouldShuffleParticipants(RoundConfiguration currentRoundConfiguration, RoundConfiguration nextRoundConfiguration) {
+        private boolean shouldShuffleParticipants() {
+            RoundConfiguration currentRoundConfiguration = getCurrentRoundConfiguration();
+            RoundConfiguration previousRoundConfiguration = getConfiguration().getPreviousRoundConfiguration();
             // when do we _have_ to shuffle participants?
             // 1. when randomize-groups is set for the next round
             // 2. when we move from a private property round to a open access round
             // 3. in general, when the clients per group in the current round is different from the
             // clients per group in the next round (FIXME: is this too broad or can #2 just be a special case of this?)
-            return nextRoundConfiguration.shouldRandomizeGroup()
-                    || (currentRoundConfiguration.getClientsPerGroup() != nextRoundConfiguration.getClientsPerGroup());
+            return currentRoundConfiguration.shouldRandomizeGroup()
+                    || (previousRoundConfiguration.getClientsPerGroup() != currentRoundConfiguration.getClientsPerGroup());
         }
 
         private void shuffleParticipants() {
@@ -993,13 +934,19 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
                 clientData.initializePosition();
             }
         }
-
-        private void initializeRound() {
-            persister.initialize(getCurrentRoundConfiguration());
-            initializeResourceDispenser();
-        }
-
-        private void initializeResourceDispenser() {
+        
+        private void initializeGroups() {
+            // reset group linkages if necessary
+            if (shouldShuffleParticipants()) {
+                logger.info("Shuffling participants");
+                shuffleParticipants();
+            }
+            else {
+                logger.info("Didn't need to shuffle participants : " + getCurrentRoundConfiguration());
+                // shuffleParticipants automatically initializes the client positions
+                // if we don't shuffle, we need to manually re-initialize them.
+                initializeClientPositions();
+            }
             // set up the resource dispenser, generates the initial resource distributions for the
             // groups, must be done after creating the client group relationships.
             resourceDispenser.initialize();
@@ -1007,6 +954,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
 
         private void startRound() {
             RoundConfiguration roundConfiguration = getCurrentRoundConfiguration();
+            // actually start the round once we receive the facilitator signal.
+            getLogger().info("Initializing groups.");
+            // FIXME: what if we want groups before the round actually begins..?
+            initializeGroups();
             // send RoundStartedEvents to all connected clients
             for (Map.Entry<Identifier, ClientData> entry : clients.entrySet()) {
                 Identifier id = entry.getKey();
