@@ -31,7 +31,7 @@ public class ClientData implements Serializable {
     
     private final Identifier id;
     private GroupDataModel groupDataModel;
-    
+
     private RegulationData regulationData;
 
     private int[] regulationRankings;
