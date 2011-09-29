@@ -86,7 +86,7 @@ import edu.asu.commons.util.Utils;
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  * @version $Revision: 529 $
  */
-public class ForagingServer extends AbstractExperiment<ServerConfiguration> {
+public class ForagingServer extends AbstractExperiment<ServerConfiguration, RoundConfiguration> {
 
     private final Logger logger = Logger.getLogger(getClass().getName());
 

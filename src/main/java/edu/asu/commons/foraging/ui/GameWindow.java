@@ -17,6 +17,7 @@ public interface GameWindow {
     public void startRound();
     public void endRound(EndRoundEvent event);
     public void init();
+    public void dispose();
     public void update(long millisecondsLeft);
     public void showInstructions();
     public void showTrustGame();
