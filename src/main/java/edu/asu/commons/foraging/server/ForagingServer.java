@@ -58,6 +58,7 @@ import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
+import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
@@ -256,19 +257,12 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         transmit(new ClientMessageEvent(event.getId(), "The experiment has already started, we cannot add you at this time."));
                         return;
                     }
-                    // String t = event.getId().toString();
-                    // StringBuilder t1 = new StringBuilder(t);
-                    // t1.append(clientIdCount);
-                    Identifier newClientIdentifier = event.getId();
-                    // Identifier newClientIdentifier = (Identifier)t1.toString();
-
-                    System.out.println("New Client ID : " + newClientIdentifier);
-
+                    Identifier identifier = event.getId();
                     synchronized (clients) {
-                        clients.put(newClientIdentifier, new ClientData(newClientIdentifier));
+                        clients.put(identifier, new ClientData(identifier));
                     }
                     // send welcome instructions and experiment configuration
-                    transmit(new SetConfigurationEvent<RoundConfiguration>(newClientIdentifier, getCurrentRoundConfiguration()));
+                    transmit(new SetConfigurationEvent<RoundConfiguration>(identifier, getCurrentRoundConfiguration()));
                 }
             });
             addEventProcessor(new EventTypeProcessor<DisconnectionRequest>(DisconnectionRequest.class) {
@@ -284,7 +278,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 public void handle(final ChatRequest request) {
                     RoundConfiguration configuration = getCurrentRoundConfiguration();
                     if (!configuration.isChatEnabled()) {
-                        logger.warning("configuration doesn't allow for chat but received " + request);
+                        sendFacilitatorMessage("configuration doesn't allow for chat but received " + request);
                         return;
                     }
                     if (configuration.isCensoredChat()) {
@@ -298,15 +292,14 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
             addEventProcessor(new EventTypeProcessor<QuizResponseEvent>(QuizResponseEvent.class) {
                 public void handle(final QuizResponseEvent event) {
-                    logger.info("Received quiz response: " + event);
+                    sendFacilitatorMessage("Received quiz response: " + event);
                     numberOfSubmittedQuizzes++;
                     transmit(new QuizCompletedEvent(facilitatorId, event));
                     ClientData clientData = clients.get(event.getId());
                     clientData.addCorrectQuizAnswers(event.getNumberOfCorrectAnswers());
                     if (numberOfSubmittedQuizzes >= clients.size()) {
                         // we're done, notify the quizSignal
-                        logger.info("Received all quizzes, notifying quiz signal");
-                        transmit(new FacilitatorMessageEvent(facilitatorId, "Received all quizzes, ready to start round."));
+                        sendFacilitatorMessage("Received all quizzes, ready to start round.");
                         Utils.notify(quizSignal);
                     }
 
@@ -314,7 +307,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<PostRoundSanctionRequest>(PostRoundSanctionRequest.class) {
                 public void handle(PostRoundSanctionRequest event) {
-                    System.out.println("Received post round sanction request");
+                    logger.info("Received post round sanction request");
                     clients.get(event.getId()).getGroupDataModel().handleSanctionRequest(event);
                     // postRoundSanctionLatch.countDown();
                     numberOfCompletedSanctions++;
@@ -576,15 +569,16 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                             logger.info("Begin round request from facilitator - starting round.");
                             experimentStarted = true;
                             Utils.notify(roundSignal);
-                            System.out.println("Notified round signal");
                         }
                         else {
-                            transmit(new FacilitatorMessageEvent(facilitatorId,
-                                    String.format("Couldn't start round, waiting on %d of %d quizzes", numberOfSubmittedQuizzes, clients.size())));
+                            sendFacilitatorMessage(String.format(
+                                    "Couldn't start round, waiting on %d of %d quizzes", 
+                                    numberOfSubmittedQuizzes, 
+                                    clients.size()));
                         }
                     }
                     else {
-                        logger.warning("Ignoring begin round request from id: " + event.getId());
+                        sendFacilitatorMessage("Ignoring begin round request from id: " + event.getId());
                     }
                 }
             });
@@ -596,12 +590,20 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     }
                 }
             });
+            addEventProcessor(new EventTypeProcessor<SurveyIdSubmissionRequest>(SurveyIdSubmissionRequest.class) {
+                @Override
+                public void handle(SurveyIdSubmissionRequest request) {
+                    ClientData clientData = clients.get(request.getId());
+                    clientData.getId().setSurveyId(request.getSurveyId());
+                    sendFacilitatorMessage(String.format("Storing survey id %s for client %s", request.getSurveyId(), clientData));
+                    
+                }
+            });
             addEventProcessor(new EventTypeProcessor<TrustGameSubmissionRequest>(TrustGameSubmissionRequest.class) {
                 int numberOfSubmissions = 0;
-
+                @Override
                 public void handle(TrustGameSubmissionRequest request) {
                     if (getCurrentRoundConfiguration().isTrustGameEnabled()) {
-                        logger.info("trust game submission: " + request);
                         // basic sanity check
                         ClientData clientData = clients.get(request.getId());
                         clientData.setTrustGamePlayerOneAmountToKeep(request.getPlayerOneAmountToKeep());
@@ -609,6 +611,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         persister.store(request);
                         transmit(new TrustGameSubmissionEvent(facilitatorId, request));
                         numberOfSubmissions++;
+                        sendFacilitatorMessage(String.format("%d trust game submissions (%s)", numberOfSubmissions, request));
                     }
                     if (numberOfSubmissions >= clients.size()) {
                         // once all clients have submitted their decisions, execute the trust game.
@@ -623,9 +626,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                                 if (iter.hasNext()) {
                                     playerTwo = iter.next();
                                 }
-
-                                logger.info(String.format("Pairing %s with %s for trust game", playerOne, playerTwo));
-                                serverDataModel.calculateTrustGame(playerOne, playerTwo);
+                                String trustGameResults = serverDataModel.calculateTrustGame(playerOne, playerTwo);
+                                sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in: %s", playerOne, playerTwo, trustGameResults));
                             }
                         }
                         numberOfSubmissions = 0;
@@ -710,6 +712,11 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 ChatEvent chatEvent = new ChatEvent(targetId, request.toString(), request.getSource(), true);
                 transmit(chatEvent);
             }
+        }
+        
+        private void sendFacilitatorMessage(String message) {
+            logger.info(message);
+            transmit(new FacilitatorMessageEvent(facilitatorId, message));
         }
 
         // FIXME: remove Dispatcher reference if it's unused.

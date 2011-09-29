@@ -165,7 +165,7 @@ public class GameWindow2D implements GameWindow {
             public void run() {
                 if (roundConfiguration.isFirstRound()) {
                     if (roundConfiguration.getParentConfiguration().shouldAskForSurveyId()) {
-                        mainPanel.add(getSurveyIdPanel());
+                        add(getSurveyIdPanel());
                         showPanel(SurveyIdPanel.NAME);
                     }
                     else {
@@ -831,7 +831,7 @@ public class GameWindow2D implements GameWindow {
     
     public JPanel getSurveyIdPanel() {
         if (surveyIdPanel == null) {
-            surveyIdPanel = new SurveyIdPanel();
+            surveyIdPanel = new SurveyIdPanel(client);
         }
         return surveyIdPanel;
     }

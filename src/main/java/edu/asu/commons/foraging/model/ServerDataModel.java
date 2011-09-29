@@ -399,16 +399,16 @@ public class ServerDataModel extends ForagingDataModel {
         logger.warning("unapply() not implemented yet: " + persistableEvent);
     }
 
-    public void calculateTrustGame(ClientData playerOne, ClientData playerTwo) {
+    public String calculateTrustGame(ClientData playerOne, ClientData playerTwo) {
         if (playerOne.getId().equals(playerTwo.getId())) {
-            logger.warning("Tried to calculate trust game with self, aborting");
-            return;
+            return "Tried to calculate trust game with self, aborting";
         }
         double p1AmountToKeep = playerOne.getTrustGamePlayerOneAmountToKeep();
         double[] p2AmountsToKeep = playerTwo.getTrustGamePlayerTwoAmountsToKeep();
         
         double amountSent = 1.0d - p1AmountToKeep;
-        logger.info(String.format("Player one (%s) sent %s", playerOne, amountSent));
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("Player one (%s) sent %s to player two (%s)\n", playerOne, amountSent, playerTwo));
         if (amountSent > 0) {
             double p2AmountToKeep = 0.0d;
             int index = 0;
@@ -425,11 +425,11 @@ public class ServerDataModel extends ForagingDataModel {
             double totalAmountSent = 3 * amountSent;
             double amountReturnedToP1 = totalAmountSent - p2AmountToKeep;
             String playerOneLog = String.format("Player one (%s) earned %s + %s = %s", playerOne, p1AmountToKeep, amountReturnedToP1, p1AmountToKeep + amountReturnedToP1);
-            logger.info(playerOneLog);
+            builder.append(playerOneLog).append("\n");
             playerOne.logTrustGameEarnings(playerOneLog);
             playerOne.addTrustGameEarnings(p1AmountToKeep + amountReturnedToP1);
             String playerTwoLog = String.format("Player two (%s) earned %s", playerTwo, p2AmountToKeep);
-            logger.info(playerTwoLog);
+            builder.append(playerTwoLog).append("\n");
             playerTwo.logTrustGameEarnings(playerTwoLog);
             playerTwo.addTrustGameEarnings(p2AmountToKeep);
         }
@@ -439,6 +439,7 @@ public class ServerDataModel extends ForagingDataModel {
             playerOne.addTrustGameEarnings(p1AmountToKeep);
             playerTwo.logTrustGameEarnings(playerOneLog + " - you were player two and didn't receive anything.");
         }
+        return builder.toString();
     }
 
     @Override

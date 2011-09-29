@@ -1,5 +1,8 @@
 package edu.asu.commons.foraging.ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -21,11 +24,22 @@ public class SurveyIdPanel extends JPanel {
     public SurveyIdPanel() {
         initComponents();
         setName(NAME);
+        submitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                String surveyId = surveyIdTextField.getText();
+                if (surveyId == null || surveyId.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(SurveyIdPanel.this, "Please enter a survey id.");
+                    return;
+                }
+                client.sendSurveyId(surveyId);
+            }
+        });
     }
     
     public SurveyIdPanel(ForagingClient client) {
         this();
         this.client = client;
+        participantIdLabel.setText(client.getId().toString());
     }
 
     /** This method is called from within the constructor to
@@ -42,7 +56,7 @@ public class SurveyIdPanel extends JPanel {
         submitButton = new javax.swing.JButton();
         participantIdLabel = new javax.swing.JLabel();
 
-        surveyIdInstructionsLabel.setText("Please enter a unique survey ID for this participant:");
+        surveyIdInstructionsLabel.setText("Please enter a unique survey ID for this participant.");
 
         surveyIdTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -85,12 +99,6 @@ public class SurveyIdPanel extends JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void surveyIdTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_surveyIdTextFieldActionPerformed
-        String surveyId = surveyIdTextField.getText();
-        if (surveyId == null || surveyId.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter a survey id.");
-            return;
-        }
-        client.sendSurveyId(surveyId);
         
 
     }//GEN-LAST:event_surveyIdTextFieldActionPerformed
