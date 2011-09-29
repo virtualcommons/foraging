@@ -52,6 +52,7 @@ particular rule.
 ]]>
 </entry>
 
+<entry key='external-survey-enabled'>true</entry>
 <entry key='survey-instructions'>
     <![CDATA[
     <h1>Survey</h1>
@@ -70,12 +71,18 @@ particular rule.
     ]]>
 </entry>
 
+<entry key='survey-link'>
+    <![CDATA[
+    https://qtrial.qualtrics.com/SE/?SID=SV_38lReBOv0Wk7wgY
+    ]]>
+</entry>
+
 <entry key="instructions">
 <![CDATA[
 <h3>Round 4 Instructions</h3>
 <hr>
 <p>
-    In this round you will 
+    Round 4 is about to begin.  
 </p>
 
 <p>

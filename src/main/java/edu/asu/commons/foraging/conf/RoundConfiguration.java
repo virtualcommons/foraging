@@ -12,6 +12,7 @@ import edu.asu.commons.conf.ExperimentRoundParameters;
 import edu.asu.commons.foraging.graphics.Point3D;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
+import edu.asu.commons.net.Identifier;
 
 
 /**
@@ -654,6 +655,24 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public double getQuizCorrectAnswerReward() {
         return getDoubleProperty("quiz-correct-answer-reward", getParentConfiguration().getQuizCorrectAnswerReward());
+    }
+
+    public boolean isExternalSurveyEnabled() {
+        return getBooleanProperty("external-survey-enabled");
+    }
+
+    public String getSurveyInstructions() {
+        return getProperty("survey-instructions");
+    }
+
+    public String getSurveyLink() {
+        return getProperty("survey-link", "https://qtrial.qualtrics.com/SE/?SID=SV_38lReBOv0Wk7wgY");
+    }
+
+    public String getSurveyInstructions(Identifier id) {
+        String surveyInstructions = getSurveyInstructions();
+        String updatedSurveyInstructions = surveyInstructions.replace("@PLAYER_ID@", id.toString());
+        return updatedSurveyInstructions;
     }
     
     @Override
