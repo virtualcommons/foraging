@@ -33,6 +33,7 @@ import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
+import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
 import edu.asu.commons.foraging.ui.GameWindow;
@@ -399,6 +400,11 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
     public void sendTrustGameSubmissionRequest(double playerOneAmountToKeep, double[] playerTwoAmountsToKeep) {
         transmit(new TrustGameSubmissionRequest(getId(), playerOneAmountToKeep, playerTwoAmountsToKeep));
         // switch back to instructions window
-        getGameWindow2D().trustGameSubmit();
+        getGameWindow2D().trustGameSubmitted();
+    }
+    
+    public void sendSurveyId(String surveyId) {
+        transmit(new SurveyIdSubmissionRequest(getId(), surveyId));
+        getGameWindow2D().surveyIdSubmitted();
     }
 }

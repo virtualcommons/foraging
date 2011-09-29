@@ -165,7 +165,8 @@ public class GameWindow2D implements GameWindow {
             public void run() {
                 if (roundConfiguration.isFirstRound()) {
                     if (roundConfiguration.getParentConfiguration().shouldAskForSurveyId()) {
-                        
+                        mainPanel.add(getSurveyIdPanel());
+                        showPanel(SurveyIdPanel.NAME);
                     }
                     else {
                         setInstructions(roundConfiguration.getWelcomeInstructions());
@@ -749,7 +750,7 @@ public class GameWindow2D implements GameWindow {
         });
     }
     
-    public void trustGameSubmit() {
+    public void trustGameSubmitted() {
         instructionsBuilder.append("<h1>Submission successful</h1><hr><p>Please wait while the rest of the submissions are gathered.</p>");
         setInstructions(instructionsBuilder.toString());
         switchInstructionsPane();
@@ -830,8 +831,7 @@ public class GameWindow2D implements GameWindow {
     
     public JPanel getSurveyIdPanel() {
         if (surveyIdPanel == null) {
-            surveyIdPanel = new JPanel();
-            surveyIdPanel.setName(SURVEY_ID_PANEL_NAME);
+            surveyIdPanel = new SurveyIdPanel();
         }
         return surveyIdPanel;
     }
@@ -845,5 +845,10 @@ public class GameWindow2D implements GameWindow {
     public void requestFocusInWindow() {
         getPanel().requestFocusInWindow();
         
+    }
+
+    public void surveyIdSubmitted() {
+        setInstructions(dataModel.getRoundConfiguration().getWelcomeInstructions());
+        switchInstructionsPane();
     }
 }

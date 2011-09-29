@@ -1,24 +1,31 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * SurveyIdPanel.java
- *
- * Created on Sep 28, 2011, 5:56:24 PM
- */
 package edu.asu.commons.foraging.ui;
 
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import edu.asu.commons.foraging.client.ForagingClient;
+
 /**
- *
- * @author alllee
+ * $Id: Exp$
+ * 
+ * @author Allen Lee
  */
-public class SurveyIdPanel extends javax.swing.JPanel {
+public class SurveyIdPanel extends JPanel {
+    
+    private static final long serialVersionUID = -5354746936864584226L;
+    public final static String NAME = "survey id panel";
+    
+    private ForagingClient client;
 
     /** Creates new form SurveyIdPanel */
     public SurveyIdPanel() {
         initComponents();
+        setName(NAME);
+    }
+    
+    public SurveyIdPanel(ForagingClient client) {
+        this();
+        this.client = client;
     }
 
     /** This method is called from within the constructor to
@@ -78,7 +85,14 @@ public class SurveyIdPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void surveyIdTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_surveyIdTextFieldActionPerformed
-        // TODO add your handling code here:
+        String surveyId = surveyIdTextField.getText();
+        if (surveyId == null || surveyId.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter a survey id.");
+            return;
+        }
+        client.sendSurveyId(surveyId);
+        
+
     }//GEN-LAST:event_surveyIdTextFieldActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
