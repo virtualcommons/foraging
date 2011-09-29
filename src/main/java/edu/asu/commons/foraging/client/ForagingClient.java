@@ -3,15 +3,12 @@ package edu.asu.commons.foraging.client;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.util.LinkedList;
 
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.text.html.HTMLDocument;
 
 import edu.asu.commons.client.BaseClient;
 import edu.asu.commons.event.ClientMessageEvent;
@@ -67,13 +64,10 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
     };
 
     private ClientState state = ClientState.UNCONNECTED;
+    
+    private GameWindow gameWindow;
 
-    private GameWindow2D gameWindow2D;
-    
-    private GameWindow3D gameWindow3D;
-    
     private ClientDataModel dataModel;
-    
     
     private MessageQueue messageQueue;
     
@@ -88,13 +82,13 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         dataModel = new ClientDataModel(this);
         clientPanel.setLayout(new BorderLayout());
         if (configuration.shouldInitialize2D()) {
-            gameWindow2D = new GameWindow2D(this, screenSize);
-            clientPanel.add(gameWindow2D.getPanel(), BorderLayout.CENTER);    
+            gameWindow = new GameWindow2D(this, screenSize);
         }
         else if (configuration.shouldInitialize3D()) {
-            gameWindow3D = new GameWindow3D(this);
-            clientPanel.add(gameWindow3D.getPanel(), BorderLayout.CENTER);    
+            gameWindow = new GameWindow3D(this);
         }
+        clientPanel.add(gameWindow.getPanel(), BorderLayout.CENTER);    
+
     }
     
 
@@ -106,30 +100,25 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
     }
 
     public GameWindow2D getGameWindow2D() {
-        return gameWindow2D;
+        return (GameWindow2D) gameWindow;
     }
     
     public GameWindow3D getGameWindow3D() {
-        return gameWindow3D;
+        return (GameWindow3D) gameWindow;
     }
     
     public GameWindow getGameWindow() {
-        if (dataModel.is2dExperiment()) {
-            return gameWindow2D;
-        }
-        else {
-            return gameWindow3D;            
-        }
+        return gameWindow;
     }
 
     public void sendAvatarInfo(boolean male, Color hairColor, Color skinColor, Color shirtColor, Color trouserColor, Color shoesColor) {
         transmit(new AgentInfoRequest(getId(), male, hairColor, skinColor, shirtColor, trouserColor, shoesColor));
-        gameWindow3D.removeAgentDesigner();
+        getGameWindow3D().removeAgentDesigner();
     }
 
     public void sendAgentInfo(Color color) {
         transmit(new AgentInfoRequest(getId(), color));
-        gameWindow3D.removeAgentDesigner();
+        getGameWindow3D().removeAgentDesigner();
     }
     
     @Override
@@ -141,20 +130,15 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                 dataModel.setRoundConfiguration(configuration);
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        clientPanel.removeAll();
-                        if (dataModel.is2dExperiment()) {
-                            clientPanel.add(gameWindow2D.getPanel(), BorderLayout.CENTER);
-                            if (gameWindow3D != null) {
-                                gameWindow3D.dispose();
-                            }
-                        }
-                        else {
-                            clientPanel.add(gameWindow3D.getPanel(), BorderLayout.CENTER);
-                        
-                        }
-                        getGameWindow().init();
-                        clientPanel.revalidate();
-                        clientPanel.repaint();
+//                        clientPanel.removeAll();
+                        // only needed for defunct 3d case, getting rid of this now.
+//                        if (gameWindow != null) {
+//                            gameWindow.dispose();
+//                        }
+//                        clientPanel.add(gameWindow.getPanel(), BorderLayout.CENTER);
+                        gameWindow.init();
+//                        clientPanel.revalidate();
+//                        clientPanel.repaint();
                     }
                 });
 
@@ -199,8 +183,9 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         addEventProcessor(new EventTypeProcessor<SynchronizeClientEvent>(SynchronizeClientEvent.class) {
             public void handle(SynchronizeClientEvent event) {
                 dataModel.setGroupDataModel(event.getGroupDataModel());
+                // FIXME: gross
                 if (dataModel.is2dExperiment()) {
-                    dataModel.update(event, gameWindow2D);
+                    dataModel.update(event, getGameWindow2D());
                 }
                 getGameWindow().update(event.getTimeLeft());
             }
@@ -214,7 +199,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         addEventProcessor(new EventTypeProcessor<LockResourceEvent>(LockResourceEvent.class) {
             public void handle(LockResourceEvent event) {
                 // tell the game window to highlight the appropriate resource
-                gameWindow3D.highlightResource(event);
+                getGameWindow3D().highlightResource(event);
             }
         });
     }
@@ -223,52 +208,27 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         addEventProcessor(new EventTypeProcessor<BeginChatRoundRequest>(BeginChatRoundRequest.class) {
             public void handle(BeginChatRoundRequest request) {
                 dataModel.initialize(request.getGroupDataModel());
-                gameWindow2D.initializeChatPanel();
+                getGameWindow2D().initializeChatPanel();
             }
         });
         addEventProcessor(new EventTypeProcessor<PostRoundSanctionUpdateEvent>(PostRoundSanctionUpdateEvent.class) {
             public void handle(PostRoundSanctionUpdateEvent event) {
-                gameWindow2D.updateDebriefing(event);
+                getGameWindow2D().updateDebriefing(event);
             }
         });
         addEventProcessor(new EventTypeProcessor<ClientPositionUpdateEvent>(ClientPositionUpdateEvent.class) {
             public void handle(ClientPositionUpdateEvent event) {
                 if (state == ClientState.RUNNING) {
-                    dataModel.updateDiffs(event, gameWindow2D);
+                    dataModel.updateDiffs(event, getGameWindow2D());
                 }
             }
         });
 
         addEventProcessor(new EventTypeProcessor<ClientMessageEvent>(ClientMessageEvent.class) {
             public void handle(ClientMessageEvent event) {
-                gameWindow2D.displayMessage(event.toString());
+                getGameWindow2D().displayMessage(event.toString());
             }
         });
-//        addEventProcessor(new EventTypeProcessor<EnforcementMechanismUpdateEvent>(EnforcementMechanismUpdateEvent.class) {
-//            public void handle(final EnforcementMechanismUpdateEvent event) {
-//            	dataModel.setGroupDataModel(event.getGroupDataModel());
-//                gameWindow2D.displayActiveEnforcementMechanism();
-//            }
-//        });
-//        addEventProcessor(new EventTypeProcessor<RegulationSubmissionUpdateEvent>(RegulationSubmissionUpdateEvent.class) {
-//            public void handle(final RegulationSubmissionUpdateEvent event) {
-//            	dataModel.setGroupDataModel(event.getGroupDataModel());
-//                gameWindow2D.initializeRegulationVotingPanel();
-//            }
-//        });
-//        addEventProcessor(new EventTypeProcessor<RegulationUpdateEvent>(RegulationUpdateEvent.class) {
-//            public void handle(final RegulationUpdateEvent event) {
-//            	dataModel.setActiveRegulation(event.getRegulationData());
-//            	gameWindow2D.displayActiveRegulation();
-//            }
-//        });
-//        
-//        addEventProcessor(new EventTypeProcessor<SanctionUpdateEvent>(SanctionUpdateEvent.class) {
-//            public void handle(final SanctionUpdateEvent event) {
-//            	dataModel.setGroupDataModel(event.getGroupDataModel());
-//            	gameWindow2D.displaySanctionMechanism();
-//            }
-//        });
     }
 
     public boolean canPerformRealTimeSanction() {
@@ -281,7 +241,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         	//System.out.println("Sending post round sanction request");
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    gameWindow2D.switchInstructionsPane();        
+                    getGameWindow2D().switchInstructionsPane();        
                 }
             });
             super.transmit(request);

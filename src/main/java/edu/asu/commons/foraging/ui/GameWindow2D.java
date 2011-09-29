@@ -70,11 +70,15 @@ public class GameWindow2D implements GameWindow {
 
     private final ClientDataModel dataModel;
 
-    private final static String INSTRUCTIONS_PANEL_NAME = "Foraging instructions panel";
-    private final static String GAME_PANEL_NAME = "Game panel";
-    private final static String TRUST_GAME_PANEL_NAME = "Trust game panel";
+    // instructions panel
+    private final static String INSTRUCTIONS_PANEL_NAME = "instructions screen panel";
+    // game board panel
+    private final static String GAME_PANEL_NAME = "foraging game panel";
+    private final static String TRUST_GAME_PANEL_NAME = "trust game panel";
     // standalone chat panel
-    private final static String CHAT_PANEL_NAME = "Chat panel";
+    private final static String CHAT_PANEL_NAME = "standalone chat panel";
+    // survey id panel
+    private final static String SURVEY_ID_PANEL_NAME = "survey id panel";
 
     protected static final String POST_ROUND_SANCTIONING_PANEL_NAME = null;
 
@@ -93,6 +97,8 @@ public class GameWindow2D implements GameWindow {
     private JTextPane messageTextPane;
 
     private JPanel labelPanel;
+    
+    private JPanel surveyIdPanel;
 
     // FIXME: this shouldn't be public
     public static Duration duration;
@@ -158,7 +164,12 @@ public class GameWindow2D implements GameWindow {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (roundConfiguration.isFirstRound()) {
-                    setInstructions(roundConfiguration.getWelcomeInstructions());
+                    if (roundConfiguration.getParentConfiguration().shouldAskForSurveyId()) {
+                        
+                    }
+                    else {
+                        setInstructions(roundConfiguration.getWelcomeInstructions());
+                    }
                 }
                 // don't display next round time, instead wait for the
                 // facilitator signal.
@@ -815,6 +826,19 @@ public class GameWindow2D implements GameWindow {
     @Override
     public JPanel getPanel() {
         return mainPanel;
+    }
+    
+    public JPanel getSurveyIdPanel() {
+        if (surveyIdPanel == null) {
+            surveyIdPanel = new JPanel();
+            surveyIdPanel.setName(SURVEY_ID_PANEL_NAME);
+        }
+        return surveyIdPanel;
+    }
+    
+    @Override
+    public void dispose() {
+        // no-op, nothing to dispose.
     }
 
     @Override
