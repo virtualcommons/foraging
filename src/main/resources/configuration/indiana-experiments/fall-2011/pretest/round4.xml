@@ -12,18 +12,70 @@
 <entry key='max-cell-occupancy'>1</entry>
 
 <entry key="initial-distribution">.25</entry>
+<entry key='voting-enabled'>true</entry>
+<entry key='initial-voting-instructions'>
+    <![CDATA[
+<h1>Notice</h1>
+<hr>
+<p>
+In a moment, you will see a screen on your computer called Rule Options. It
+will list 6 different rules that you can consider as options for managing how
+each of your groups collect green tokens today. 
+</p>
+<p>
+You can nominate one rule from the list to help decide whether or not to have a
+rule and what that rule will be. The rule that has the most nominations will be
+considered chosen and established as the rule. If there is a tie, then each
+tied nominated rule will receive an equal chance of getting selected at random.
+</p>
+    ]]>
+</entry>
+
+<entry key='voting-instructions'>
+<![CDATA[
+<h1>Voting Instructions</h1>
+<hr>
+<p>
+To nominate a rule, click the radio button to the left of the one you choose, and
+then click "submit." The computer will tally the nominations and then report
+the results on the next screen. The results will be presented to each
+participant in your group and the experimenter.
+</p>
+
+<p>
+The identity of people who nominated a particular rule will NOT be revealed.
+Therefore, neither you nor the experimenter will know who nominated a
+particular rule.
+</p>
+
+</p>
+]]>
+</entry>
+
+<entry key='survey-instructions'>
+    <![CDATA[
+    <h1>Survey</h1>
+    <hr>
+        <p>
+            Before we continue to the next round of the token task, we would like to ask you
+            some quick questions.  At the beginning of the survey you will need to enter:
+        </p>
+        <ul>
+            <li>Your player ID: @PLAYER_ID@ </li>
+            <li>Your survey ID: @SURVEY_ID@ </li>
+        </ul>
+        <p>
+            <a href='@SURVEY_LINK@'>Please click here to begin the survey</a>.
+        </p>
+    ]]>
+</entry>
 
 <entry key="instructions">
 <![CDATA[
 <h3>Round 4 Instructions</h3>
 <hr>
 <p>
-    Round 4 is the same as the previous rounds with one exception.  You will be able
-    to communicate with the other participants in your group <b>during</b> the
-    round.  To communicate, hit the enter key, type uour message, and then hit the
-    enter key again.  You must hit the enter key before every message you type,
-    otherwise control will return to the game screen where you can use the arrow
-    keys to move around.
+    In this round you will 
 </p>
 
 <p>
@@ -36,23 +88,4 @@ questions so far?</b>
 ]]>
 </entry>
 
-<entry key="chat-instructions">
-<![CDATA[
-<p>
-You can chat with the other participants in your group during this round.
-You may communicate about any aspect of the experiment that you would like to
-discuss with other participants with whom you have been matched. You may not promise
-them side-payments after the experiment is completed or threaten them with any
-consequence after the experiment is finished. We are monitoring the chat traffic
-while you chat. If we see that somebody reveals his or her identity, we have to stop
-the experiment and remove the whole group from which this person is a member out of
-this room.
-</p>
-<p>
-You will see other participants labeled as "1", "2","3", "4", or "5" in the chat
-box.  You can send a chat message by typing into the textfield and pressing the
-enter key.
-</p>
-]]>
-</entry>
 </properties>

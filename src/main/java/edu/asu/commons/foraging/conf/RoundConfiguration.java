@@ -308,11 +308,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("regulation-instructions");
     }
 
-    public String getVotingInstructions() {
-        return getProperty(
-                "voting-instructions",
-                "You may rank the options below from 1 to 5, where 1 is the most favorable and 5 is the least favorable.  When you rank a given option it will be sorted automatically.");
-    }
 
     public String getLastRoundDebriefing() {
         return getProperty("last-round-debriefing");
@@ -527,6 +522,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public boolean isVotingEnabled() {
         return getBooleanProperty("voting-enabled");
+    }
+
+    public String getVotingInstructions() {
+        return getProperty("voting-instructions");
+    }
+
+    public String getInitialVotingInstructions() {
+        return getProperty("initial-voting-instructions", "<h1>Notice</h1><hr><p>You will be given the ability to vote for rules in the next screen.</p>");
     }
 
     public List<String> getFixedRules() {
