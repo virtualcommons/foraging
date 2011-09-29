@@ -44,6 +44,15 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     private static final double DEFAULT_TOKEN_BIRTH_PROBABILITY = 0.01d;
 
+    private final static List<String> FIXED_RULES =  Arrays.asList(
+            "Wait 2 minutes for the screen to fill up with green tokens. Then everyone collect tokens for the remaining amount of time.",
+            "Each person gets a set area within which they can do whatever they want with the green tokens. With four people, each person gets one of the four corners.",
+            "Each person collects green tokens at a certain rate: 1 token every 3 seconds (i.e., count to 3 between each token you collect).",
+            "When someone collects from a cluster of green tokens (i.e., 3 or more tokens that are touching each other) that person leaves at least 2 tokens touching each other.",
+            "Collect green tokens until only about 10 are left; at that point, everyone must wait at least 1 minute before collecting any more tokens.",
+            "No rule (Everyone can do whatever they want)."
+            );
+
     public double getTrustGamePayoffIncrement() {
         return getDoubleProperty("trust-game-payoff", 0.25d);
     }
@@ -514,6 +523,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getBooleanProperty("rotating-monitor-enabled", false);
     }
 
+    public boolean isVotingEnabled() {
+        return getBooleanProperty("voting-enabled");
+    }
+
+    public List<String> getFixedRules() {
+        return FIXED_RULES;
+
+    }
     public boolean isVotingAndRegulationEnabled() {
         return getBooleanProperty("voting-and-regulation-enabled", false);
     }
@@ -637,7 +654,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     @Override
     public String toString() {
         List<RoundConfiguration> allParameters = getParentConfiguration().getAllParameters();
-        return String.format("Round %d of %d -- %s", allParameters.indexOf(this) + 1, allParameters.size(), getProperties());
+        return String.format("Round %d of %d\n\t%s", allParameters.indexOf(this) + 1, allParameters.size(), getProperties());
     }
 
 }

@@ -4,8 +4,8 @@
 <comment>Foraging XML-ized experiment round configuration</comment>
 <entry key="display-group-tokens">true</entry>
 <entry key="clients-per-group">4</entry>
-<entry key="resource-depth">29</entry>
-<entry key="resource-width">29</entry>
+<entry key="resource-depth">26</entry>
+<entry key="resource-width">26</entry>
 <entry key="duration">240</entry>
 
 <entry key='always-explicit'>true</entry>
