@@ -10,16 +10,23 @@
  */
 package edu.asu.commons.foraging.ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.ButtonModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 
-import edu.asu.commons.foraging.conf.RoundConfiguration;
+import edu.asu.commons.foraging.client.ForagingClient;
+import edu.asu.commons.foraging.event.VoteRuleRequest;
 
 /**
  *
@@ -29,16 +36,24 @@ public class VotingForm extends javax.swing.JPanel {
     
     public final static String NAME = "Voting form";
     
-    private RoundConfiguration roundConfiguration;
+    private ForagingClient client;
+    
     private List<JRadioButton> radioButtons = new ArrayList<JRadioButton>();
     private List<JLabel> labels = new ArrayList<JLabel>();
+    private List<String> rules = new ArrayList<String>();
     /** Creates new form VotingForm */
     public VotingForm() {
         this(Arrays.asList("Rule 1", "Rule 2", "Rule 3", "Rule 4"));
     }
+    
+    public VotingForm(ForagingClient client) {
+        this(client.getCurrentRoundConfiguration().getFixedRules());
+        this.client = client;
+    }
 
     public VotingForm(List<String> rules) {
         initComponents();
+        this.rules.addAll(rules);
         initForm(rules);
         setName(NAME);
     }
@@ -64,9 +79,8 @@ public class VotingForm extends javax.swing.JPanel {
         ruleHeaderLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
         horizontalLabelParallelGroup.addComponent(ruleHeaderLabel);
         
-        verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleHeaderLabel).addComponent(buttonHeaderLabel));
+        verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleHeaderLabel).addGap(10).addComponent(buttonHeaderLabel));
         
-
         for (String rule: rules) {
             JRadioButton radioButton = new JRadioButton();                        
             radioButton.setActionCommand(String.valueOf(radioButtons.size()));
@@ -79,8 +93,29 @@ public class VotingForm extends javax.swing.JPanel {
             horizontalLabelParallelGroup.addComponent(ruleLabel);
             verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addComponent(radioButton));
         }
+        JButton submitButton = getSubmitButton();
+        horizontalLabelParallelGroup.addComponent(submitButton);
+        verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(submitButton).addGap(80));
         groupLayout.setHorizontalGroup(horizontalGroup);
         groupLayout.setVerticalGroup(verticalGroup);
+    }
+    
+    private JButton getSubmitButton() {
+        JButton submitButton = new JButton("Submit");
+        submitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ButtonModel model = buttonGroup.getSelection();
+                if (model == null) {
+                    JOptionPane.showMessageDialog(VotingForm.this, "Please select a rule.");
+                    return;
+                }
+                String selectedRule = model.getActionCommand();
+                int selectedRuleIndex = Integer.parseInt(selectedRule);
+                client.transmit(new VoteRuleRequest(client.getId(), selectedRuleIndex, rules.get(selectedRuleIndex)));
+            }
+        });
+        return submitButton;
+        
     }
 
     /** This method is called from within the constructor to
@@ -91,21 +126,16 @@ public class VotingForm extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
         buttonGroup = new javax.swing.ButtonGroup();
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 790, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 469, Short.MAX_VALUE)
-        );
     }// </editor-fold>//GEN-END:initComponents
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+
     private javax.swing.ButtonGroup buttonGroup;
-    // End of variables declaration//GEN-END:variables
+    
+    public static void main(String[] args) {
+        JFrame frame = new JFrame();
+        frame.add(new VotingForm());
+        frame.pack();
+        frame.setVisible(true);
+        
+    }
 }
