@@ -20,7 +20,7 @@ import edu.asu.commons.util.HtmlEditorPane;
  */
 public final class ForagingInterface {
     
-    public static final Font DEFAULT_FONT_PLAIN = new Font(getDefaultFont().getFamily(), Font.PLAIN, 16);
+    public static final Font DEFAULT_PLAIN_FONT = new Font(getDefaultFont().getFamily(), Font.PLAIN, 16);
     public static final Font DEFAULT_BOLD_FONT = new Font(getDefaultFont().getFamily(), Font.BOLD, 16);
     
 

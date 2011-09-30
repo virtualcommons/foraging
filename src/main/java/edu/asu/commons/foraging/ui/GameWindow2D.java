@@ -761,18 +761,33 @@ public class GameWindow2D implements GameWindow {
     }
     
 
-    public void showVotingInstructions() {
+    public void showInitialVotingInstructions() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                setInstructions(dataModel.getRoundConfiguration().getVotingInstructions());
+                setInstructions(dataModel.getRoundConfiguration().getInitialVotingInstructions());
                 switchInstructionsPane();
             }
         });
     }
 
+    private JPanel votingPanel;
+    private JPanel getVotingPanel() {
+        if (votingPanel == null) {
+            votingPanel = new JPanel();
+            votingPanel.setLayout(new BoxLayout(votingPanel, BoxLayout.Y_AXIS));
+            JEditorPane instructionsEditorPane = ForagingInterface.createInstructionsEditorPane();
+            JScrollPane scrollPane = new JScrollPane(instructionsEditorPane);
+            instructionsEditorPane.setText(client.getCurrentRoundConfiguration().getVotingInstructions());
+            votingPanel.add(scrollPane);
+            VotingForm votingForm = new VotingForm(dataModel.getRoundConfiguration().getFixedRules());
+            votingPanel.add(votingForm);
+            votingPanel.setName(VotingForm.NAME);
+        }
+        return votingPanel;
+    }
     public void showVoteScreen() {
-        // implement vote screen
-
+        add(getVotingPanel());
+        showPanel(VotingForm.NAME);
     }
 
     public void showSurveyInstructions() {

@@ -162,7 +162,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         });
         addEventProcessor(new EventTypeProcessor<ShowVotingInstructionsRequest>(ShowVotingInstructionsRequest.class) {
             public void handle(ShowVotingInstructionsRequest request) {
-                getGameWindow2D().showVotingInstructions();
+                getGameWindow2D().showInitialVotingInstructions();
             }
         });
         addEventProcessor(new EventTypeProcessor<ShowVoteScreenRequest>(ShowVoteScreenRequest.class) {

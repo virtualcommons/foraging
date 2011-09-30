@@ -13,34 +13,39 @@ package edu.asu.commons.foraging.ui;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+
+import edu.asu.commons.foraging.conf.RoundConfiguration;
 
 /**
  *
  * @author alllee
  */
 public class VotingForm extends javax.swing.JPanel {
-
-    List<JRadioButton> radioButtons = new ArrayList<JRadioButton>();
-    List<JLabel> labels = new ArrayList<JLabel>();
+    
+    public final static String NAME = "Voting form";
+    
+    private RoundConfiguration roundConfiguration;
+    private List<JRadioButton> radioButtons = new ArrayList<JRadioButton>();
+    private List<JLabel> labels = new ArrayList<JLabel>();
     /** Creates new form VotingForm */
     public VotingForm() {
         this(Arrays.asList("Rule 1", "Rule 2", "Rule 3", "Rule 4"));
     }
-    
+
     public VotingForm(List<String> rules) {
-        initForm(rules);
         initComponents();
+        initForm(rules);
+        setName(NAME);
     }
     
     private void initForm(List<String> rules) {
-        JPanel panel = new JPanel();
-        GroupLayout groupLayout = new GroupLayout(panel);
-        panel.setLayout(groupLayout);
+        GroupLayout groupLayout = new GroupLayout(this);
+        setLayout(groupLayout);
         groupLayout.setAutoCreateGaps(true);
         groupLayout.setAutoCreateContainerGaps(true);
         GroupLayout.SequentialGroup horizontalGroup = groupLayout.createSequentialGroup();
@@ -51,13 +56,23 @@ public class VotingForm extends javax.swing.JPanel {
         horizontalGroup.addGroup(horizontalButtonParallelGroup);
         
         GroupLayout.SequentialGroup verticalGroup = groupLayout.createSequentialGroup();
+        JLabel buttonHeaderLabel = new JLabel("Select one");
+        buttonHeaderLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
+        horizontalButtonParallelGroup.addComponent(buttonHeaderLabel);
+        
+        JLabel ruleHeaderLabel = new JLabel("Rule");
+        ruleHeaderLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
+        horizontalLabelParallelGroup.addComponent(ruleHeaderLabel);
+        
+        verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleHeaderLabel).addComponent(buttonHeaderLabel));
+        
 
         for (String rule: rules) {
             JRadioButton radioButton = new JRadioButton();                        
             radioButton.setActionCommand(String.valueOf(radioButtons.size()));
             radioButtons.add(radioButton);
             horizontalButtonParallelGroup.addComponent(radioButton);
-            JLabel ruleLabel = new JLabel(rule);
+            JLabel ruleLabel = new JLabel(String.format("%d. %s", radioButtons.size(), rule));
             ruleLabel.setFont(ForagingInterface.DEFAULT_PLAIN_FONT);
             labels.add(ruleLabel);
             buttonGroup.add(radioButton);

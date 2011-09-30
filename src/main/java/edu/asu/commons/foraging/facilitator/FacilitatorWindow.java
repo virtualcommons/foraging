@@ -232,7 +232,7 @@ public class FacilitatorWindow extends JPanel {
 
         JPanel messagePanel = new JPanel(new BorderLayout());
         JLabel messagePanelLabel = new JLabel("System messages");
-        messagePanelLabel.setFont(ForagingInterface.DEFAULT_FONT_PLAIN);
+        messagePanelLabel.setFont(ForagingInterface.DEFAULT_PLAIN_FONT);
         messagePanel.add(messagePanelLabel, BorderLayout.NORTH);
         Dimension minimumSize = new Dimension(600, 200);
         messagePanel.setMinimumSize(minimumSize);
