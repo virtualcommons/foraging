@@ -8,13 +8,74 @@
 <entry key="resource-width">26</entry>
 <entry key="duration">240</entry>
 
-<entry key='tokens-field-of-vision'>true</entry>
-<entry key='subjects-field-of-vision'>true</entry>
-
 <entry key="initial-distribution">.25</entry>
 
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
+
+<entry key='sanction-type'>REAL_TIME</entry>
+<entry key="sanction-cost">1</entry>
+<entry key="sanction-multiplier">2</entry>
+<entry key='sanction-instructions'>
+    <![CDATA[
+    <h1>Instructions</h1>
+    <hr>
+<p>
+During this upcoming round you will have the option to reduce the earnings of
+another participant at a cost to your own earnings.
+</p>
+<h2>How it works</h2>
+<hr>
+    <ul>
+        <li>If you press the numeric key 1-5 corresponding to another participant, you
+            will reduce the number of tokens they have collected in this round by two
+            tokens. This will also reduce your own token amount by one token. The decision
+            whether or when to use this option is up to you. 
+        </li>
+        <li>When you reduce the number of tokens of another participant, they will
+            receive a message stating that you have reduced their tokens. Likewise, if
+            another participant reduces your number of tokens, you will also receive a
+            message. These messages will be displayed on the bottom of your screen.
+        </li>
+        <li>If your tokens are being reduced or you are reducing another participant's
+            tokens, you will receive some visual cues.  When your tokens are being reduced
+            your yellow dot will turn red briefly with a blue background.  The participant
+            currently reducing your tokens will turn purple with a white background.
+        </li>
+        <li>You may reduce the earnings of other participants as long as there are
+            tokens remaining on the screen and while both you and the other participant
+            have a positive number of tokens collected during the round.  <b>Each time</b>
+            you press the numeric key corresponding to another participant your token
+            amount is reduced by <b>one</b>, and their token amount is reduced by
+            <b>two</b>.  
+        </li>
+    </ul>
+    ]]>
+</entry>
+<entry key='external-survey-enabled'>true</entry>
+<entry key='survey-instructions'>
+    <![CDATA[
+    <h1>Survey</h1>
+    <hr>
+        <p>
+            Before we continue to the next round of the token task, we would like to ask you
+            some quick questions.  At the beginning of the survey you will need to enter:
+        </p>
+        <ul>
+            <li>Your player ID: {participantId} </li>
+            <li>Your survey ID: {surveyId} </li>
+        </ul>
+        <p>
+            Please <a href='{surveyLink}'>click here</a> to begin the survey.
+        </p>
+    ]]>
+</entry>
+
+<entry key='survey-link'>
+    <![CDATA[
+    https://qtrial.qualtrics.com/SE/?SID=SV_38lReBOv0Wk7wgY
+    ]]>
+</entry>
 
 
 <entry key="instructions">

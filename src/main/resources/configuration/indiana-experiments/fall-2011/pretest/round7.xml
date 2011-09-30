@@ -8,9 +8,6 @@
 <entry key="resource-width">26</entry>
 <entry key="duration">240</entry>
 
-<entry key='tokens-field-of-vision'>true</entry>
-<entry key='subjects-field-of-vision'>true</entry>
-
 <entry key="initial-distribution">.25</entry>
 
 <entry key='always-explicit'>true</entry>

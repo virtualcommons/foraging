@@ -22,7 +22,10 @@ import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.FacilitatorUpdateEvent;
 import edu.asu.commons.foraging.event.QuizCompletedEvent;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
+import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
+import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
+import edu.asu.commons.foraging.event.ShowVotingInstructionsRequest;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.model.ServerDataModel;
 
@@ -106,44 +109,6 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
         }
     }
 
-    // public void accept(Identifier id, Object event) {
-    // if (event instanceof ConfigurationEvent) {
-    // ConfigurationEvent configEvent = (ConfigurationEvent) event;
-    // setConfiguration(configEvent.getConfiguration());
-    // }
-    // else if (event instanceof ServerGameStateEvent) {
-    // ServerGameStateEvent serverGameStateEvent = (ServerGameStateEvent) event;
-    // if (!stopExperiment) {
-    //
-    // if (serverGameState == null) {
-    // System.err.println("about to display game..");
-    // experimentRunning = true;
-    // // FIXME: could use configuration from this event... serverGameStateEvent.getServerGameState().getConfiguration();
-    // serverGameState = serverGameStateEvent.getServerGameState();
-    // facilitatorWindow.displayGame();
-    // }
-    // else {
-    // // synchronous updates
-    // serverGameState = serverGameStateEvent.getServerGameState();
-    // }
-    // }
-    // facilitatorWindow.updateWindow(serverGameStateEvent.getTimeLeft());
-    // // facilitatorWindow.repaint();
-    // }
-    // else if (event instanceof FacilitatorEndRoundEvent) {
-    // FacilitatorEndRoundEvent endRoundEvent = (FacilitatorEndRoundEvent) event;
-    // serverGameState = null;
-    // facilitatorWindow.endRound(endRoundEvent);
-    // }
-    // else if (event instanceof FacilitatorSanctionUpdateEvent) {
-    // FacilitatorSanctionUpdateEvent fdue = (FacilitatorSanctionUpdateEvent) event;
-    // facilitatorWindow.updateDebriefing(fdue);
-    // }
-    // else if (event instanceof QuizCompletedEvent) {
-    // facilitatorWindow.quizCompleted();
-    // }
-    // }
-
     /*
      * Send a request to server to start an experiment
      */
@@ -159,8 +124,21 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
         transmit(new ShowInstructionsRequest(getId()));
     }
 
-    void sendShowTrustGameRequest() {
+    public void sendShowTrustGameRequest() {
         transmit(new ShowTrustGameRequest(getId()));
+    }
+    
+
+    public void sendShowVotingInstructionsRequest() {
+        transmit(new ShowVotingInstructionsRequest(getId()));
+    }
+    
+    public void sendShowVoteScreenRequest() {
+        transmit(new ShowVoteScreenRequest(getId()));
+    }
+    
+    public void sendShowSurveyInstructionsRequest() {
+        transmit(new ShowSurveyInstructionsRequest(getId()));
     }
 
     /*
@@ -246,4 +224,5 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
     public void setServerGameState(ServerDataModel serverGameState) {
         this.serverDataModel = serverGameState;
     }
+
 }

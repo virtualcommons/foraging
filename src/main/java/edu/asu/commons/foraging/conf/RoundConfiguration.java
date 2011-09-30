@@ -385,11 +385,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getSanctionInstructions() {
-        return getProperty("sanction-instructions", "<h2>Voting instructions</h2>" +
-                "<ul> " +
-                "<li> You must make a choice within the next 30 seconds. " +
-                "<li>The votes of all participants in your group will determine the outcome." +
-                "</ul>");
+        return getProperty("sanction-instructions");
     }
 
     public boolean isAlwaysInExplicitCollectionMode() {
@@ -523,6 +519,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getBooleanProperty("rotating-monitor-enabled", false);
     }
 
+    /**
+     * Returns true if voting is enabled before the beginning of this round.
+     * @return 
+     */
     public boolean isVotingEnabled() {
         return getBooleanProperty("voting-enabled");
     }
@@ -659,6 +659,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getDoubleProperty("quiz-correct-answer-reward", getParentConfiguration().getQuizCorrectAnswerReward());
     }
 
+    /**
+     * Returns true if we should have a survey at the beginning of this round.
+     * @return
+     */
     public boolean isExternalSurveyEnabled() {
         return getBooleanProperty("external-survey-enabled");
     }

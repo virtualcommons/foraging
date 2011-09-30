@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import edu.asu.commons.foraging.graphics.RGBA;
-import edu.asu.commons.foraging.jcal3d.misc.Error;
 import edu.asu.commons.foraging.jcal3d.misc.Loader;
 import edu.asu.commons.foraging.jcal3d.misc.Saver;
 

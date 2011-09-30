@@ -785,9 +785,10 @@ public class GameWindow2D implements GameWindow {
                     getPanel().remove(chatPanel);
                     chatPanel = null;
                 }
-                if (dataModel.getRoundConfiguration().isPostRoundSanctioningEnabled()) {
+                RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
+                if (roundConfiguration.isPostRoundSanctioningEnabled()) {
                     // add sanctioning text and slap the PostRoundSanctioningPanel in
-                    PostRoundSanctioningPanel panel = new PostRoundSanctioningPanel(event, dataModel.getRoundConfiguration(), client);
+                    PostRoundSanctioningPanel panel = new PostRoundSanctioningPanel(event, roundConfiguration, client);
                     panel.setName(POST_ROUND_SANCTIONING_PANEL_NAME);
                     add(panel);
                     showPanel(POST_ROUND_SANCTIONING_PANEL_NAME);

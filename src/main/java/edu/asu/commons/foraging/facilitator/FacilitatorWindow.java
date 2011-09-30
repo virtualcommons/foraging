@@ -62,6 +62,9 @@ public class FacilitatorWindow extends JPanel {
 
     private JMenuItem startChatMenuItem;
     private JMenuItem showTrustGameMenuItem;
+    private JMenuItem showVotingInstructionsMenuItem;
+    private JMenuItem showVoteScreenMenuItem;
+    private JMenuItem showSurveyInstructionsMenuItem;
 
     private HtmlEditorPane messageEditorPane;
 
@@ -138,6 +141,8 @@ public class FacilitatorWindow extends JPanel {
             }
         });
         menu.add(showTrustGameMenuItem);
+
+
         
         startRoundMenuItem = new JMenuItem("Start");
         startRoundMenuItem.setMnemonic(KeyEvent.VK_T);
@@ -159,6 +164,30 @@ public class FacilitatorWindow extends JPanel {
         });
         menu.add(stopRoundMenuItem);
         menuBar.add(menu);
+        
+        // voting menu
+        menu = new JMenu("Voting");
+        
+        showVotingInstructionsMenuItem = createMenuItem(menu, "Show voting instructions", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                facilitator.sendShowVotingInstructionsRequest();
+            }
+        });
+        showVoteScreenMenuItem = createMenuItem(menu, "Show voting screen", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                facilitator.sendShowVoteScreenRequest();
+            }
+        });
+        menuBar.add(menu);
+        
+        // survey menu
+        menu = new JMenu("Survey");
+        showSurveyInstructionsMenuItem = createMenuItem(menu, "Show survey instructions", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                facilitator.sendShowSurveyInstructionsRequest();
+            }
+        });
+        menuBar.add(menu);
 
         //Configuration menu
         menu = new JMenu("Configuration");
@@ -175,6 +204,13 @@ public class FacilitatorWindow extends JPanel {
         menuBar.add(menu);
 
         return menuBar;
+    }
+    
+    private JMenuItem createMenuItem(JMenu menu, String name, ActionListener listener) {
+        JMenuItem menuItem = new JMenuItem(name);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        return menuItem;
     }
 
     public JMenuBar getMenuBar() {

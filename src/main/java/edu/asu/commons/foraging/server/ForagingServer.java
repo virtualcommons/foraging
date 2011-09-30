@@ -57,6 +57,7 @@ import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
+import edu.asu.commons.foraging.event.ShowRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
@@ -535,33 +536,46 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     }
                 }
             });
-            addEventProcessor(new EventTypeProcessor<ShowInstructionsRequest>(ShowInstructionsRequest.class) {
-                public void handle(ShowInstructionsRequest event) {
-                    // FIXME: assign groups?
-                    if (event.getId().equals(facilitatorId)) {
-                        logger.info("Show Instructions request from facilitator - showing round instructions.");
-                        for (Identifier id : clients.keySet()) {
-                            transmit(new ShowInstructionsRequest(id));
+            addEventProcessor(new EventTypeProcessor<ShowRequest>(ShowRequest.class, true) {
+                public void handle(ShowRequest request) {
+                    if (request.getId().equals(facilitatorId)) {
+                        logger.info("handling request " + request + " from facilitator");
+                        for (Identifier id: clients.keySet()) {
+                            transmit(request.copy(id));
                         }
                     }
                     else {
-                        logger.warning("Ignoring show instructions request from id: " + event.getId());
+                        sendFacilitatorMessage("Ignoring show request from id: " + request.getId());
                     }
                 }
             });
-            addEventProcessor(new EventTypeProcessor<ShowTrustGameRequest>(ShowTrustGameRequest.class) {
-                public void handle(ShowTrustGameRequest event) {
-                    if (event.getId().equals(facilitatorId)) {
-                        logger.info("Showing trust game.");
-                        for (Identifier id : clients.keySet()) {
-                            transmit(new ShowTrustGameRequest(id));
-                        }
-                    }
-                    else {
-                        logger.warning("Ignoring show instructions request from id: " + event.getId());
-                    }
-                }
-            });
+//            addEventProcessor(new EventTypeProcessor<ShowInstructionsRequest>(ShowInstructionsRequest.class) {
+//                public void handle(ShowInstructionsRequest event) {
+//                    // FIXME: assign groups?
+//                    if (event.getId().equals(facilitatorId)) {
+//                        logger.info("Show Instructions request from facilitator - showing round instructions.");
+//                        for (Identifier id : clients.keySet()) {
+//                            transmit(new ShowInstructionsRequest(id));
+//                        }
+//                    }
+//                    else {
+//                        logger.warning("Ignoring show instructions request from id: " + event.getId());
+//                    }
+//                }
+//            });
+//            addEventProcessor(new EventTypeProcessor<ShowTrustGameRequest>(ShowTrustGameRequest.class) {
+//                public void handle(ShowTrustGameRequest event) {
+//                    if (event.getId().equals(facilitatorId)) {
+//                        logger.info("Showing trust game.");
+//                        for (Identifier id : clients.keySet()) {
+//                            transmit(new ShowTrustGameRequest(id));
+//                        }
+//                    }
+//                    else {
+//                        logger.warning("Ignoring show instructions request from id: " + event.getId());
+//                    }
+//                }
+//            });
             addEventProcessor(new EventTypeProcessor<BeginRoundRequest>(BeginRoundRequest.class) {
                 public void handle(BeginRoundRequest event) {
                     if (event.getId().equals(facilitatorId)) {
