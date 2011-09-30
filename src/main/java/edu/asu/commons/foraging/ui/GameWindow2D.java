@@ -712,24 +712,34 @@ public class GameWindow2D implements GameWindow {
     public void showTrustGame() {
         RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
         if (roundConfiguration.isTrustGameEnabled()) {
-            JPanel panel = new JPanel();
-            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-            JEditorPane trustGameInstructionsEditorPane = ForagingInterface.createInstructionsEditorPane();
-            JScrollPane scrollPane = new JScrollPane(trustGameInstructionsEditorPane);
-            trustGameInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getTrustGameInstructions());
-            panel.add(scrollPane);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    JPanel panel = new JPanel();
+                    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+                    JEditorPane trustGameInstructionsEditorPane = ForagingInterface.createInstructionsEditorPane();
+                    JScrollPane scrollPane = new JScrollPane(trustGameInstructionsEditorPane);
+                    trustGameInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getTrustGameInstructions());
+                    panel.add(scrollPane);
 
-            TrustGamePanel trustGamePanel = new TrustGamePanel(client);
-            // trustGamePanel.setPreferredSize(new Dimension(300, 400));
-            JScrollPane trustGameScrollPane = new JScrollPane(trustGamePanel);
-            panel.add(trustGameScrollPane);
-            panel.setName(TRUST_GAME_PANEL_NAME);
-            // addCenterComponent(panel);
-            // panel.revalidate();
-            // panel.repaint();
-            add(panel);
-            showPanel(TRUST_GAME_PANEL_NAME);
+                    TrustGamePanel trustGamePanel = new TrustGamePanel(client);
+                    // trustGamePanel.setPreferredSize(new Dimension(300, 400));
+                    JScrollPane trustGameScrollPane = new JScrollPane(trustGamePanel);
+                    panel.add(trustGameScrollPane);
+                    panel.setName(TRUST_GAME_PANEL_NAME);
+                    // addCenterComponent(panel);
+                    // panel.revalidate();
+                    // panel.repaint();
+                    add(panel);
+                    showPanel(TRUST_GAME_PANEL_NAME);
+                }
+            });
         }
+    }
+    
+    public void trustGameSubmitted() {
+        instructionsBuilder.append("<h1>Submission successful</h1><hr><p>Please wait while the rest of the submissions are gathered.</p>");
+        setInstructions(instructionsBuilder.toString());
+        switchInstructionsPane();
     }
 
     public void showInstructions() {
@@ -750,12 +760,30 @@ public class GameWindow2D implements GameWindow {
         });
     }
     
-    public void trustGameSubmitted() {
-        instructionsBuilder.append("<h1>Submission successful</h1><hr><p>Please wait while the rest of the submissions are gathered.</p>");
-        setInstructions(instructionsBuilder.toString());
-        switchInstructionsPane();
-        
+
+    public void showVotingInstructions() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                setInstructions(dataModel.getRoundConfiguration().getVotingInstructions());
+                switchInstructionsPane();
+            }
+        });
     }
+
+    public void showVoteScreen() {
+        // implement vote screen
+
+    }
+
+    public void showSurveyInstructions() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                setInstructions(dataModel.getRoundConfiguration().getSurveyInstructions(dataModel.getId()));
+                switchInstructionsPane();
+            }
+        });
+    }
+
 
     public void switchInstructionsPane() {
         showPanel(INSTRUCTIONS_PANEL_NAME);
@@ -852,4 +880,5 @@ public class GameWindow2D implements GameWindow {
         setInstructions(dataModel.getRoundConfiguration().getWelcomeInstructions());
         switchInstructionsPane();
     }
+
 }

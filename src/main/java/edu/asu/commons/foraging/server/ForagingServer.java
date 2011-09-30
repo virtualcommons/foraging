@@ -539,13 +539,13 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             addEventProcessor(new EventTypeProcessor<ShowRequest>(ShowRequest.class, true) {
                 public void handle(ShowRequest request) {
                     if (request.getId().equals(facilitatorId)) {
-                        logger.info("handling request " + request + " from facilitator");
                         for (Identifier id: clients.keySet()) {
                             transmit(request.copy(id));
                         }
+                        sendFacilitatorMessage("Received " + request + " from facilitator, copied & broadcastto all clients.");
                     }
                     else {
-                        sendFacilitatorMessage("Ignoring show request from id: " + request.getId());
+                        sendFacilitatorMessage("Ignoring show request from non facilitator id: " + request.getId());
                     }
                 }
             });
@@ -610,7 +610,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     ClientData clientData = clients.get(request.getId());
                     clientData.getId().setSurveyId(request.getSurveyId());
                     sendFacilitatorMessage(String.format("Storing survey id %s for client %s", request.getSurveyId(), clientData));
-                    
                 }
             });
             addEventProcessor(new EventTypeProcessor<TrustGameSubmissionRequest>(TrustGameSubmissionRequest.class) {

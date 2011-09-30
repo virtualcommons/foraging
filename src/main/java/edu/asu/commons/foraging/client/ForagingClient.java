@@ -32,7 +32,10 @@ import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
+import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
+import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
+import edu.asu.commons.foraging.event.ShowVotingInstructionsRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
@@ -95,6 +98,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
 
     @Override
     protected void postConnect() {
+        // FIXME: this is hacky.. using the client side socket as the "authoritative" id.
         SocketIdentifier socketId = (SocketIdentifier) getId();
         transmit(new SocketIdentifierUpdateRequest(socketId, socketId.getStationNumber()));
         state = ClientState.WAITING;
@@ -154,6 +158,21 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         addEventProcessor(new EventTypeProcessor<ShowTrustGameRequest>(ShowTrustGameRequest.class) {
             public void handle(ShowTrustGameRequest request) {
                 getGameWindow().showTrustGame();
+            }
+        });
+        addEventProcessor(new EventTypeProcessor<ShowVotingInstructionsRequest>(ShowVotingInstructionsRequest.class) {
+            public void handle(ShowVotingInstructionsRequest request) {
+                getGameWindow2D().showVotingInstructions();
+            }
+        });
+        addEventProcessor(new EventTypeProcessor<ShowVoteScreenRequest>(ShowVoteScreenRequest.class) {
+            public void handle(ShowVoteScreenRequest request) {
+                getGameWindow2D().showVoteScreen();
+            }
+        });
+        addEventProcessor(new EventTypeProcessor<ShowSurveyInstructionsRequest>(ShowSurveyInstructionsRequest.class) {
+            public void handle(ShowSurveyInstructionsRequest request) {
+                getGameWindow2D().showSurveyInstructions();
             }
         });
         addEventProcessor(new EventTypeProcessor<RoundStartedEvent>(RoundStartedEvent.class) {
@@ -404,6 +423,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
     }
     
     public void sendSurveyId(String surveyId) {
+        getId().setSurveyId(surveyId);
         transmit(new SurveyIdSubmissionRequest(getId(), surveyId));
         getGameWindow2D().surveyIdSubmitted();
     }
