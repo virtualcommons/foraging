@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.stringtemplate.v4.ST;
+
 import edu.asu.commons.conf.ExperimentRoundParameters;
 import edu.asu.commons.foraging.graphics.Point3D;
 import edu.asu.commons.foraging.model.ClientData;
@@ -671,8 +673,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public String getSurveyInstructions(Identifier id) {
         String surveyInstructions = getSurveyInstructions();
-        String updatedSurveyInstructions = surveyInstructions.replace("@PLAYER_ID@", id.toString());
-        return updatedSurveyInstructions;
+        ST template = new ST(surveyInstructions, '{', '}'); 
+        template.add("surveyLink", getSurveyLink());
+        template.add("participantId", id);
+        template.add("surveyId", id.getSurveyId());
+        return template.render();
     }
     
     @Override

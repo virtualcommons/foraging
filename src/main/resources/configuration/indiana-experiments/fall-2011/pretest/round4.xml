@@ -62,11 +62,11 @@ particular rule.
             some quick questions.  At the beginning of the survey you will need to enter:
         </p>
         <ul>
-            <li>Your player ID: @PLAYER_ID@ </li>
-            <li>Your survey ID: @SURVEY_ID@ </li>
+            <li>Your player ID: {participantId} </li>
+            <li>Your survey ID: {surveyId} </li>
         </ul>
         <p>
-            <a href='@SURVEY_LINK@'>Please click here to begin the survey</a>.
+            Please <a href='{surveyLink}'>click here</a> to begin the survey.
         </p>
     ]]>
 </entry>
