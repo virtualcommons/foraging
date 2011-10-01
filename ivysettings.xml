@@ -6,7 +6,7 @@ vim:sts=2:sw=2:
   <settings defaultResolver="chain-resolver" />
   <property name='local-m2-pattern' value='${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision]'/>
   <resolvers>
-    <chain name='chain-resolver' returnFirst='true'>
+    <chain name='chain-resolver'>
       <filesystem name='m2' m2compatible='true'>
         <ivy pattern='${local-m2-pattern}.pom' />
         <artifact pattern='${local-m2-pattern}.[ext]'/>

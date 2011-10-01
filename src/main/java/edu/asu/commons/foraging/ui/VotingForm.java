@@ -13,7 +13,6 @@ package edu.asu.commons.foraging.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.ButtonModel;
@@ -76,7 +75,7 @@ public class VotingForm extends javax.swing.JPanel {
         
         for (ForagingRule rule: rules) {
             JRadioButton radioButton = new JRadioButton();                        
-            radioButton.setActionCommand(String.valueOf(radioButtons.size()));
+            radioButton.setActionCommand(rule.name());
             radioButtons.add(radioButton);
             horizontalButtonParallelGroup.addComponent(radioButton);
             JLabel ruleLabel = new JLabel(String.format("%d. %s", radioButtons.size(), rule));
@@ -102,9 +101,8 @@ public class VotingForm extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(VotingForm.this, "Please select a rule.");
                     return;
                 }
-                String selectedRule = model.getActionCommand();
-                int selectedRuleIndex = Integer.parseInt(selectedRule);
-                client.transmit(new VoteRuleRequest(client.getId(), selectedRuleIndex, ForagingRule.values()[selectedRuleIndex]));
+                ForagingRule selectedRule = ForagingRule.valueOf(model.getActionCommand());
+                client.transmit(new VoteRuleRequest(client.getId(), selectedRule));
             }
         });
         return submitButton;
