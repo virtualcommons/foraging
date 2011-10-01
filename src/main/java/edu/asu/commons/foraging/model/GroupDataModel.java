@@ -25,6 +25,7 @@ import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
+import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 
@@ -67,6 +68,8 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
     private EnforcementMechanism activeEnforcementMechanism = EnforcementMechanism.NONE;
     private SanctionMechanism activeSanctionMechanism = SanctionMechanism.NONE;
     private RegulationData activeRegulation;
+    
+    private Map<ForagingRule, Integer> ruleTallyMap = new HashMap<ForagingRule, Integer>();
     
     private List<ClientData> waitingMonitors;
     

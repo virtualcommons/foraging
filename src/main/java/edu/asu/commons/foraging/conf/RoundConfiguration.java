@@ -14,6 +14,7 @@ import edu.asu.commons.conf.ExperimentRoundParameters;
 import edu.asu.commons.foraging.graphics.Point3D;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
+import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.net.Identifier;
 
 
@@ -49,14 +50,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     private static final double DEFAULT_TOKEN_BIRTH_PROBABILITY = 0.01d;
 
-    private final static List<String> FIXED_RULES =  Arrays.asList(
-            "Wait 2 minutes for the screen to fill up with green tokens. Then everyone collect tokens for the remaining amount of time.",
-            "Each person gets a set area within which they can do whatever they want with the green tokens. With four people, each person gets one of the four corners.",
-            "Each person collects green tokens at a certain rate: 1 token every 3 seconds (i.e., count to 3 between each token you collect).",
-            "When someone collects from a cluster of green tokens (i.e., 3 or more tokens that are touching each other) that person leaves at least 2 tokens touching each other.",
-            "Collect green tokens until only about 10 are left; at that point, everyone must wait at least 1 minute before collecting any more tokens.",
-            "No rule (Everyone can do whatever they want)."
-            );
+    
 
     public double getTrustGamePayoffIncrement() {
         return getDoubleProperty("trust-game-payoff", 0.25d);
@@ -534,9 +528,9 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String getInitialVotingInstructions() {
         return getProperty("initial-voting-instructions", "<h1>Notice</h1><hr><p>You will be given the ability to vote for rules in the next screen.</p>");
     }
-
-    public List<String> getFixedRules() {
-        return FIXED_RULES;
+    
+    public List<ForagingRule> getForagingRules() {
+        return Arrays.asList(ForagingRule.values());
 
     }
     public boolean isVotingAndRegulationEnabled() {

@@ -27,6 +27,7 @@ import javax.swing.JRadioButton;
 
 import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.event.VoteRuleRequest;
+import edu.asu.commons.foraging.rules.ForagingRule;
 
 /**
  *
@@ -34,31 +35,23 @@ import edu.asu.commons.foraging.event.VoteRuleRequest;
  */
 public class VotingForm extends javax.swing.JPanel {
     
+    private static final long serialVersionUID = 3871660663519284024L;
+
     public final static String NAME = "Voting form";
     
     private ForagingClient client;
     
     private List<JRadioButton> radioButtons = new ArrayList<JRadioButton>();
     private List<JLabel> labels = new ArrayList<JLabel>();
-    private List<String> rules = new ArrayList<String>();
-    /** Creates new form VotingForm */
-    public VotingForm() {
-        this(Arrays.asList("Rule 1", "Rule 2", "Rule 3", "Rule 4"));
-    }
-    
-    public VotingForm(ForagingClient client) {
-        this(client.getCurrentRoundConfiguration().getFixedRules());
-        this.client = client;
-    }
 
-    public VotingForm(List<String> rules) {
+    public VotingForm(ForagingClient client) {
+        this.client = client;
         initComponents();
-        this.rules.addAll(rules);
-        initForm(rules);
+        initForm(ForagingRule.values());
         setName(NAME);
     }
     
-    private void initForm(List<String> rules) {
+    private void initForm(ForagingRule... rules) {
         GroupLayout groupLayout = new GroupLayout(this);
         setLayout(groupLayout);
         groupLayout.setAutoCreateGaps(true);
@@ -81,7 +74,7 @@ public class VotingForm extends javax.swing.JPanel {
         
         verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleHeaderLabel).addGap(10).addComponent(buttonHeaderLabel));
         
-        for (String rule: rules) {
+        for (ForagingRule rule: rules) {
             JRadioButton radioButton = new JRadioButton();                        
             radioButton.setActionCommand(String.valueOf(radioButtons.size()));
             radioButtons.add(radioButton);
@@ -111,7 +104,7 @@ public class VotingForm extends javax.swing.JPanel {
                 }
                 String selectedRule = model.getActionCommand();
                 int selectedRuleIndex = Integer.parseInt(selectedRule);
-                client.transmit(new VoteRuleRequest(client.getId(), selectedRuleIndex, rules.get(selectedRuleIndex)));
+                client.transmit(new VoteRuleRequest(client.getId(), selectedRuleIndex, ForagingRule.values()[selectedRuleIndex]));
             }
         });
         return submitButton;
@@ -133,7 +126,7 @@ public class VotingForm extends javax.swing.JPanel {
     
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        frame.add(new VotingForm());
+        frame.add(new VotingForm(null));
         frame.pack();
         frame.setVisible(true);
         

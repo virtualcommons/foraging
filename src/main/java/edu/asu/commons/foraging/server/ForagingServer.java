@@ -56,14 +56,13 @@ import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
-import edu.asu.commons.foraging.event.ShowInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowRequest;
-import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
+import edu.asu.commons.foraging.event.VoteRuleRequest;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
@@ -364,12 +363,20 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             addEventProcessor(new EventTypeProcessor<CollectTokenRequest>(CollectTokenRequest.class) {
                 public void handle(CollectTokenRequest event) {
                     ClientData clientData = clients.get(event.getId());
+                    // FIXME: change this to collect the token immediately
                     clientData.setCollecting();
                 }
             });
             addEventProcessor(new EventTypeProcessor<ResetTokenDistributionRequest>(ResetTokenDistributionRequest.class) {
                 public void handleInExperimentThread(ResetTokenDistributionRequest event) {
                     resourceDispenser.resetTokenDistribution(event);
+                }
+            });
+            addEventProcessor(new EventTypeProcessor<VoteRuleRequest>(VoteRuleRequest.class) {
+                @Override
+                public void handle(VoteRuleRequest request) {
+                    
+                    
                 }
             });
             addEventProcessor(new EventTypeProcessor<RealTimeSanctionRequest>(RealTimeSanctionRequest.class) {

@@ -779,12 +779,13 @@ public class GameWindow2D implements GameWindow {
             JScrollPane scrollPane = new JScrollPane(instructionsEditorPane);
             instructionsEditorPane.setText(client.getCurrentRoundConfiguration().getVotingInstructions());
             votingPanel.add(scrollPane);
-            VotingForm votingForm = new VotingForm(dataModel.getRoundConfiguration().getFixedRules());
+            VotingForm votingForm = new VotingForm(client);
             votingPanel.add(votingForm);
             votingPanel.setName(VotingForm.NAME);
         }
         return votingPanel;
     }
+    
     public void showVoteScreen() {
         add(getVotingPanel());
         showPanel(VotingForm.NAME);
