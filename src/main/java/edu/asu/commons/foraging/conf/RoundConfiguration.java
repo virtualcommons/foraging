@@ -607,6 +607,9 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         if (isFieldOfVisionEnabled()) {
             addSpecialInstructions(builder, getFieldOfVisionInstructions());
         }
+        if (isSanctioningEnabled()) {
+            addSpecialInstructions(builder, getSanctionInstructions());
+        }
         if (isCensoredChat()) {
             addSpecialInstructions(builder, getCensoredChatInstructions());
         }
@@ -676,6 +679,24 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         template.add("participantId", id);
         template.add("surveyId", id.getSurveyId());
         return template.render();
+    }
+    
+    public String getVotingNominationInstructions(List<ForagingRule> selectedRules) {
+//        ST template = new ST(getVotingNominationInstructions(), '$', '$');
+//        template.add("selectedRules", selectedRules);
+//        return template.render();
+        StringBuilder builder = new StringBuilder("<h1>Voting Results</h1><hr>");
+        if (selectedRules.size() > 1) {
+            // tiebreaker
+            builder.append("<p><b>NOTE:</b> There was a tie and the first rule listed here was randomly selected as the winner.</p><ul>");
+            for (ForagingRule rule: selectedRules) {
+                builder.append("<li>").append(rule.toString());
+            }
+            builder.append("</ul>");
+        }
+        builder.append("<h1>Selected Rule</h1><hr>");
+        builder.append("<p><b>").append(selectedRules.get(0)).append("</b></p>");
+        return builder.toString();
     }
     
     @Override

@@ -53,7 +53,6 @@ particular rule.
 ]]>
 </entry>
 
-
 <entry key="instructions">
 <![CDATA[
 <h3>Round 4 Instructions</h3>
@@ -82,8 +81,8 @@ questions so far?</b>
             some quick questions.  At the beginning of the survey you will need to enter:
         </p>
         <ul>
-            <li>Your player ID: {participantId} </li>
-            <li>Your survey ID: {surveyId} </li>
+            <li><b>Your participant ID</b>: {participantId} </li>
+            <li><b>Your survey ID</b>: {surveyId} </li>
         </ul>
         <p>
             Please <a href='{surveyLink}'>click here</a> to begin the survey.

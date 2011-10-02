@@ -385,11 +385,13 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     if (votesReceived >= clients.size()) {
                         // calculate votes
                         for (GroupDataModel group: serverDataModel.getGroups()) {
-                            List<ForagingRule> candidates = group.generateSelectedRule();
-                            ForagingRule selectedRule = group.getSelectedRule();
+                            Map<ForagingRule, Integer> votingResults = group.generateVotingResults();
+                            List<ForagingRule> selectedRules = group.getSelectedRules();
                             for (Identifier id: group.getClientIdentifiers()) {
-                                sendFacilitatorMessage("Group " + group + " selected " + selectedRule + " from candidate set: " + candidates);
-                                transmit(new RuleSelectedUpdateEvent(id, selectedRule, candidates));
+                                sendFacilitatorMessage(String.format(
+                                        "%s selected [%s] from all rules (%s)",
+                                        group, selectedRules, votingResults));
+                                transmit(new RuleSelectedUpdateEvent(id, selectedRules, votingResults));
                             }
                             
                         }

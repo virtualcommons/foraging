@@ -53,6 +53,7 @@ import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
+import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.HtmlEditorPane;
@@ -771,20 +772,39 @@ public class GameWindow2D implements GameWindow {
     }
 
     private JPanel votingPanel;
+
+    private VotingForm votingForm;
+
+    private HtmlEditorPane votingInstructionsEditorPane;
     private JPanel getVotingPanel() {
         if (votingPanel == null) {
             votingPanel = new JPanel();
             votingPanel.setLayout(new BoxLayout(votingPanel, BoxLayout.Y_AXIS));
-            JEditorPane instructionsEditorPane = ForagingInterface.createInstructionsEditorPane();
-            JScrollPane scrollPane = new JScrollPane(instructionsEditorPane);
-            instructionsEditorPane.setText(client.getCurrentRoundConfiguration().getVotingInstructions());
+            votingInstructionsEditorPane = ForagingInterface.createInstructionsEditorPane();
+            JScrollPane scrollPane = new JScrollPane(votingInstructionsEditorPane);
+            votingInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getVotingInstructions());
             votingPanel.add(scrollPane);
-            VotingForm votingForm = new VotingForm(client);
+            votingForm = new VotingForm(client);
             votingPanel.add(votingForm);
             votingPanel.setName(VotingForm.NAME);
         }
         return votingPanel;
     }
+    
+
+    public void showVotingResults(final List<ForagingRule> selectedRules, final Map<ForagingRule, Integer> votingResults) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                VotingForm resultsForm = new VotingForm(client, votingResults);
+                votingPanel.remove(votingForm);
+                votingPanel.add(resultsForm);
+                votingPanel.revalidate();
+                votingInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getVotingNominationInstructions(selectedRules));
+                showPanel(VotingForm.NAME);
+            }
+        });
+    }
+    
     
     public void showVoteScreen() {
         add(getVotingPanel());
@@ -896,5 +916,12 @@ public class GameWindow2D implements GameWindow {
         setInstructions(dataModel.getRoundConfiguration().getWelcomeInstructions());
         switchInstructionsPane();
     }
+
+    public void ruleVoteSubmitted() {
+        // TODO Auto-generated method stub
+        setInstructions("<h1>Submitted</h1><hr><p>Thank you for submitting your vote.  Please wait while we tally the rest of the votes from the othe rmembers of your group.</p>");
+        switchInstructionsPane();
+    }
+
 
 }

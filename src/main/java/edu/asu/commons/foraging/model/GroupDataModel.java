@@ -77,7 +77,7 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
 
     private ArrayList<RegulationData> submittedRegulations = new ArrayList<RegulationData>();
 
-    private ForagingRule selectedRule;
+    private ArrayList<ForagingRule> selectedRules;
 
     public GroupDataModel(ServerDataModel serverDataModel) {
         this(serverDataModel, nextGroupId++);
@@ -771,7 +771,7 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
         return serverDataModel.getEventChannel();
     }
 
-    public List<ForagingRule> generateSelectedRule() {
+    public Map<ForagingRule, Integer> generateVotingResults() {
         Map<ForagingRule, Integer> tallyMap = new HashMap<ForagingRule, Integer>();
         for (ClientData client: clients.values()) {
             ForagingRule rule = client.getVotedRule();
@@ -781,7 +781,7 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
             }
             tallyMap.put(rule, count + 1);
         }
-        ArrayList<ForagingRule> selectedRules = new ArrayList<ForagingRule>();
+        selectedRules = new ArrayList<ForagingRule>();
         Integer maxSeenValue = 0;
         for (Map.Entry<ForagingRule, Integer> entry : tallyMap.entrySet()) {
             Integer currentValue = entry.getValue();
@@ -802,12 +802,16 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
 //        getLogger().info("tally map is: " + tallyMap);
         getLogger().info("picking first rule from " + selectedRules);
         Collections.shuffle(selectedRules);
-        selectedRule = selectedRules.get(0);
+        return tallyMap;
+    }
+    
+    public List<ForagingRule> getSelectedRules() {
         return selectedRules;
     }
     
+    
     public ForagingRule getSelectedRule() {
-        return selectedRule;
+        return selectedRules.get(0);
     }
 
 }

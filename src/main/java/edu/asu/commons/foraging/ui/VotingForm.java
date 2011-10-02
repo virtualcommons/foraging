@@ -12,20 +12,20 @@ package edu.asu.commons.foraging.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ButtonModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 
 import edu.asu.commons.foraging.client.ForagingClient;
-import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.rules.ForagingRule;
 
 /**
@@ -39,18 +39,20 @@ public class VotingForm extends javax.swing.JPanel {
     public final static String NAME = "Voting form";
     
     private ForagingClient client;
-    
-    private List<JRadioButton> radioButtons = new ArrayList<JRadioButton>();
-    private List<JLabel> labels = new ArrayList<JLabel>();
 
     public VotingForm(ForagingClient client) {
+        this(client, new HashMap<ForagingRule, Integer>());
+    }
+    
+    public VotingForm(ForagingClient client, Map<ForagingRule, Integer> votingResults) {
         this.client = client;
         initComponents();
-        initForm(ForagingRule.values());
+        initForm(votingResults);
         setName(NAME);
     }
     
-    private void initForm(ForagingRule... rules) {
+    private void initForm(Map<ForagingRule, Integer> votingResults) {
+        ForagingRule[] rules = ForagingRule.values();
         GroupLayout groupLayout = new GroupLayout(this);
         setLayout(groupLayout);
         groupLayout.setAutoCreateGaps(true);
@@ -63,31 +65,42 @@ public class VotingForm extends javax.swing.JPanel {
         horizontalGroup.addGroup(horizontalButtonParallelGroup);
         
         GroupLayout.SequentialGroup verticalGroup = groupLayout.createSequentialGroup();
-        JLabel buttonHeaderLabel = new JLabel("Select one");
-        buttonHeaderLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
-        horizontalButtonParallelGroup.addComponent(buttonHeaderLabel);
+        String rightColumnHeader = votingResults.isEmpty() ? "Select one" : "Nominations";
+        JLabel rightHeaderLabel = new JLabel(rightColumnHeader);
+        rightHeaderLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
+        horizontalButtonParallelGroup.addComponent(rightHeaderLabel);
         
         JLabel ruleHeaderLabel = new JLabel("Rule");
         ruleHeaderLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
         horizontalLabelParallelGroup.addComponent(ruleHeaderLabel);
         
-        verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleHeaderLabel).addGap(10).addComponent(buttonHeaderLabel));
-        
+        verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleHeaderLabel).addGap(10).addComponent(rightHeaderLabel));
+        int ruleIndex = 0;
         for (ForagingRule rule: rules) {
-            JRadioButton radioButton = new JRadioButton();                        
-            radioButton.setActionCommand(rule.name());
-            radioButtons.add(radioButton);
-            horizontalButtonParallelGroup.addComponent(radioButton);
-            JLabel ruleLabel = new JLabel(String.format("%d. %s", radioButtons.size(), rule));
+            ruleIndex++;
+            JLabel ruleLabel = new JLabel(String.format("Rule %d: %s", ruleIndex, rule));
             ruleLabel.setFont(ForagingInterface.DEFAULT_PLAIN_FONT);
-            labels.add(ruleLabel);
-            buttonGroup.add(radioButton);
             horizontalLabelParallelGroup.addComponent(ruleLabel);
-            verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addComponent(radioButton));
+            JComponent component = null;
+            if (votingResults.isEmpty()) {
+                JRadioButton radioButton = new JRadioButton();                        
+                radioButton.setActionCommand(rule.name());
+                buttonGroup.add(radioButton);
+                component = radioButton;
+                horizontalButtonParallelGroup.addComponent(radioButton);
+                verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addComponent(radioButton));
+            }
+            else {
+                component = new JLabel(votingResults.get(rule) + " votes");
+            }
+            horizontalButtonParallelGroup.addComponent(component);
+            verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addComponent(component));
         }
-        JButton submitButton = getSubmitButton();
-        horizontalLabelParallelGroup.addComponent(submitButton);
-        verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(submitButton).addGap(80));
+        if (votingResults.isEmpty()) {
+            JButton submitButton = getSubmitButton();
+            horizontalLabelParallelGroup.addComponent(submitButton);
+            verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(submitButton).addGap(80));
+        }
         groupLayout.setHorizontalGroup(horizontalGroup);
         groupLayout.setVerticalGroup(verticalGroup);
     }
@@ -102,7 +115,7 @@ public class VotingForm extends javax.swing.JPanel {
                     return;
                 }
                 ForagingRule selectedRule = ForagingRule.valueOf(model.getActionCommand());
-                client.transmit(new RuleVoteRequest(client.getId(), selectedRule));
+                client.sendRuleVoteRequest(selectedRule);
             }
         });
         return submitButton;

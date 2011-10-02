@@ -39,7 +39,7 @@ public class GroupDataModelTest {
                     data.setVotedRule(rule);
                 }
                 // verify that this is the rule in place.
-                assertEquals(rule, group.generateSelectedRule());
+                assertEquals(rule, group.generateVotingResults());
             }
         }
     }
@@ -59,7 +59,7 @@ public class GroupDataModelTest {
                 ForagingRule votedRule = rules.get(index);
                 data.setVotedRule(votedRule);
             }
-            assertTrue(tieBreakerRules.contains(group.generateSelectedRule()));
+            assertTrue(tieBreakerRules.contains(group.generateVotingResults()));
         }
     }
 

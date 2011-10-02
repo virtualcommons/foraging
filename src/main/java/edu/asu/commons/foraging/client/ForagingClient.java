@@ -31,6 +31,8 @@ import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
+import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
+import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.ShowInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
@@ -39,6 +41,7 @@ import edu.asu.commons.foraging.event.ShowVotingInstructionsRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
+import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.foraging.ui.GameWindow;
 import edu.asu.commons.foraging.ui.GameWindow2D;
 import edu.asu.commons.foraging.ui.GameWindow3D;
@@ -163,6 +166,12 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         addEventProcessor(new EventTypeProcessor<ShowVotingInstructionsRequest>(ShowVotingInstructionsRequest.class) {
             public void handle(ShowVotingInstructionsRequest request) {
                 getGameWindow2D().showInitialVotingInstructions();
+            }
+        });
+        addEventProcessor(new EventTypeProcessor<RuleSelectedUpdateEvent>(RuleSelectedUpdateEvent.class) {
+            @Override
+            public void handle(RuleSelectedUpdateEvent event) {
+                getGameWindow2D().showVotingResults(event.getSelectedRules(), event.getVotingResults());
             }
         });
         addEventProcessor(new EventTypeProcessor<ShowVoteScreenRequest>(ShowVoteScreenRequest.class) {
@@ -426,5 +435,10 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         getId().setSurveyId(surveyId);
         transmit(new SurveyIdSubmissionRequest(getId(), surveyId));
         getGameWindow2D().surveyIdSubmitted();
+    }
+
+    public void sendRuleVoteRequest(ForagingRule selectedRule) {
+        transmit(new RuleVoteRequest(getId(), selectedRule));
+        getGameWindow2D().ruleVoteSubmitted();
     }
 }

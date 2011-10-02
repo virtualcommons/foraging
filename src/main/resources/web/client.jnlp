@@ -11,6 +11,8 @@
   <resources> 
     <j2se version="1.6+"/>
     <jar href="client.jar"/>
+    <jar href='stringtemplate.jar'/>
+    <jar href='antlr-runtime.jar'/>
     <jar href='@FRAMEWORK_JAR@'/>
     <!--
     <property name="sun.java2d.noddraw" value="true"/> 

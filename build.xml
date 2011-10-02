@@ -102,7 +102,7 @@
         <include name="facilitator.jar"/>
       </fileset>
       <fileset dir="${lib.dir}">
-        <include name="${framework.jar}"/>
+        <include name="*.jar"/>
       </fileset>
       <fileset dir="${resources.dir}/web">
         <include name="index.html"/>
