@@ -771,4 +771,39 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
         return serverDataModel.getEventChannel();
     }
 
+    public ForagingRule generateSelectedRule() {
+        Map<ForagingRule, Integer> tallyMap = new HashMap<ForagingRule, Integer>();
+        for (ClientData client: clients.values()) {
+            ForagingRule rule = client.getVotedRule();
+            Integer count = tallyMap.get(rule);
+            if (count == null) {
+                count = 0;
+            }
+            tallyMap.put(rule, count + 1);
+        }
+        ArrayList<ForagingRule> selectedRules = new ArrayList<ForagingRule>();
+        Integer maxSeenValue = 0;
+        for (Map.Entry<ForagingRule, Integer> entry : tallyMap.entrySet()) {
+            Integer currentValue = entry.getValue();
+//            getLogger().info("rule : " + entry.getKey() + " has a vote value of " + currentValue);
+
+
+            if (currentValue > maxSeenValue) {
+                maxSeenValue = currentValue;
+//                getLogger().info("That was better than " + maxSeenValue + " - clearing out the old rule set and adding this one.");
+                selectedRules.clear();
+                selectedRules.add(entry.getKey());
+            }
+            else if (currentValue == maxSeenValue) {
+//                getLogger().info("that was the same as " + maxSeenValue + " - adding this one." + selectedRules);
+                selectedRules.add(entry.getKey());
+            }
+        }
+//        getLogger().info("tally map is: " + tallyMap);
+        getLogger().info("picking first rule from " + selectedRules);
+        Collections.shuffle(selectedRules);
+        return selectedRules.get(0);
+
+    }
+
 }

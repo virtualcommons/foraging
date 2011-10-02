@@ -25,7 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 
 import edu.asu.commons.foraging.client.ForagingClient;
-import edu.asu.commons.foraging.event.VoteRuleRequest;
+import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.rules.ForagingRule;
 
 /**
@@ -102,7 +102,7 @@ public class VotingForm extends javax.swing.JPanel {
                     return;
                 }
                 ForagingRule selectedRule = ForagingRule.valueOf(model.getActionCommand());
-                client.transmit(new VoteRuleRequest(client.getId(), selectedRule));
+                client.transmit(new RuleVoteRequest(client.getId(), selectedRule));
             }
         });
         return submitButton;

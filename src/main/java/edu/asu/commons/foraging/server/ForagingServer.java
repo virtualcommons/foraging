@@ -55,6 +55,8 @@ import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
+import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
+import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.ShowRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
@@ -62,7 +64,6 @@ import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
-import edu.asu.commons.foraging.event.VoteRuleRequest;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
@@ -70,6 +71,7 @@ import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.SanctionMechanism;
 import edu.asu.commons.foraging.model.ServerDataModel;
+import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Dispatcher;
 import edu.asu.commons.net.Identifier;
@@ -372,11 +374,27 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     resourceDispenser.resetTokenDistribution(event);
                 }
             });
-            addEventProcessor(new EventTypeProcessor<VoteRuleRequest>(VoteRuleRequest.class) {
+            addEventProcessor(new EventTypeProcessor<RuleVoteRequest>(RuleVoteRequest.class) {
+                int votesReceived = 0;
                 @Override
-                public void handle(VoteRuleRequest request) {
-                    
-                    
+                public void handle(RuleVoteRequest request) {
+                    sendFacilitatorMessage("Received vote rule request: " + request);
+                    ClientData client = clients.get(request.getId());
+                    client.setVotedRule(request.getRule());
+                    votesReceived++;
+                    if (votesReceived >= clients.size()) {
+                        // calculate votes
+                        for (GroupDataModel group: serverDataModel.getGroups()) {
+                            ForagingRule selectedRule = group.generateSelectedRule();
+                            for (Identifier id: group.getClientIdentifiers()) {
+                                sendFacilitatorMessage("Group " + group + " selected " + selectedRule);
+                                transmit(new RuleSelectedUpdateEvent(id, selectedRule));
+                            }
+                            
+                        }
+                    }
+
+
                 }
             });
             addEventProcessor(new EventTypeProcessor<RealTimeSanctionRequest>(RealTimeSanctionRequest.class) {

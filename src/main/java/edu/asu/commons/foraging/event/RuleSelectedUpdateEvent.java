@@ -15,12 +15,12 @@ import edu.asu.commons.net.Identifier;
  * @version $Revision: 522 $
  */
 
-public class VoteRuleRequest extends AbstractPersistableEvent {
+public class RuleSelectedUpdateEvent extends AbstractPersistableEvent {
 
     private static final long serialVersionUID = 4360213814026474451L;
     private ForagingRule rule;
   
-    public VoteRuleRequest(Identifier id, ForagingRule rule) {
+    public RuleSelectedUpdateEvent(Identifier id, ForagingRule rule) {
         super(id, rule.toString());
         this.rule = rule;
     }
@@ -31,7 +31,7 @@ public class VoteRuleRequest extends AbstractPersistableEvent {
     
     @Override
     public String toString() {
-        return String.format("%s voted for rule [%s]", id, rule); 
+        return rule.toString();
     }
 
 
