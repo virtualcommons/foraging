@@ -68,9 +68,7 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
     private EnforcementMechanism activeEnforcementMechanism = EnforcementMechanism.NONE;
     private SanctionMechanism activeSanctionMechanism = SanctionMechanism.NONE;
     private RegulationData activeRegulation;
-    
-    private Map<ForagingRule, Integer> ruleTallyMap = new HashMap<ForagingRule, Integer>();
-    
+        
     private List<ClientData> waitingMonitors;
     
     private ClientData activeMonitor;
@@ -78,6 +76,8 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
     private int tokensCollectedDuringInterval = 0;
 
     private ArrayList<RegulationData> submittedRegulations = new ArrayList<RegulationData>();
+
+    private ForagingRule selectedRule;
 
     public GroupDataModel(ServerDataModel serverDataModel) {
         this(serverDataModel, nextGroupId++);
@@ -771,7 +771,7 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
         return serverDataModel.getEventChannel();
     }
 
-    public ForagingRule generateSelectedRule() {
+    public List<ForagingRule> generateSelectedRule() {
         Map<ForagingRule, Integer> tallyMap = new HashMap<ForagingRule, Integer>();
         for (ClientData client: clients.values()) {
             ForagingRule rule = client.getVotedRule();
@@ -802,8 +802,12 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
 //        getLogger().info("tally map is: " + tallyMap);
         getLogger().info("picking first rule from " + selectedRules);
         Collections.shuffle(selectedRules);
-        return selectedRules.get(0);
-
+        selectedRule = selectedRules.get(0);
+        return selectedRules;
+    }
+    
+    public ForagingRule getSelectedRule() {
+        return selectedRule;
     }
 
 }

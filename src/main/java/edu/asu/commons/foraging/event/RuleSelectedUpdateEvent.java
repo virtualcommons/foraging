@@ -1,6 +1,8 @@
 package edu.asu.commons.foraging.event;
 
 
+import java.util.List;
+
 import edu.asu.commons.event.AbstractPersistableEvent;
 import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.net.Identifier;
@@ -18,20 +20,26 @@ import edu.asu.commons.net.Identifier;
 public class RuleSelectedUpdateEvent extends AbstractPersistableEvent {
 
     private static final long serialVersionUID = 4360213814026474451L;
-    private ForagingRule rule;
+    private final ForagingRule selectedRule;
+    private final List<ForagingRule> candidates;
   
-    public RuleSelectedUpdateEvent(Identifier id, ForagingRule rule) {
+    public RuleSelectedUpdateEvent(Identifier id, ForagingRule rule, List<ForagingRule> candidates) {
         super(id, rule.toString());
-        this.rule = rule;
+        this.selectedRule = rule;
+        this.candidates = candidates;
     }
     
-    public ForagingRule getRule() {
-        return rule;
+    public ForagingRule getSelectedRule() {
+        return selectedRule;
     }
     
     @Override
     public String toString() {
-        return rule.toString();
+        return selectedRule.toString();
+    }
+
+    public List<ForagingRule> getCandidates() {
+        return candidates;
     }
 
 
