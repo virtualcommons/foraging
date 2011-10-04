@@ -406,10 +406,10 @@ public class GameWindow2D implements GameWindow {
         messageTextPane.setBackground(Color.WHITE);
         addStyles(messageTextPane.getStyledDocument());
         messageScrollPane = new JScrollPane(messageTextPane);
-        // Dimension scrollPaneSize = new Dimension(getPreferredSize().width, 50);
-        // messageScrollPane.setMinimumSize(scrollPaneSize);
-        // messageScrollPane.setPreferredSize(scrollPaneSize);
-        // messageScrollPane.setMaximumSize(scrollPaneSize);
+        Dimension scrollPaneSize = new Dimension(getPanel().getPreferredSize().width, 60);
+        messageScrollPane.setMinimumSize(scrollPaneSize);
+        messageScrollPane.setPreferredSize(scrollPaneSize);
+        messageScrollPane.setMaximumSize(scrollPaneSize);
         messagePanel.add(messageScrollPane, BorderLayout.CENTER);
         gamePanel.add(messagePanel, BorderLayout.SOUTH);
 
@@ -427,7 +427,7 @@ public class GameWindow2D implements GameWindow {
             public void componentResized(ComponentEvent event) {
                 Component component = event.getComponent();
                 // offset by 35 pixels to allow for message box
-                Dimension screenSize = new Dimension(component.getWidth(), component.getHeight() - 50);
+                Dimension screenSize = new Dimension(component.getWidth(), component.getHeight() - 90);
                 subjectView.setScreenSize(screenSize);
                 subjectView.setImageSizes();
                 getPanel().revalidate();
