@@ -27,7 +27,7 @@
             some quick questions.  At the beginning of the survey you will need to enter:
         </p>
         <ul>
-            <li>Your player ID: {participantId} </li>
+            <li>Your participant ID: {participantId} </li>
             <li>Your survey ID: {surveyId} </li>
         </ul>
         <p>
@@ -38,7 +38,7 @@
 
 <entry key='survey-link'>
     <![CDATA[
-    https://qtrial.qualtrics.com/SE/?SID=SV_38lReBOv0Wk7wgY
+    https://qtrial.qualtrics.com/SE/?SID=SV_e8rPe7yyhue5OVm
     ]]>
 </entry>
 

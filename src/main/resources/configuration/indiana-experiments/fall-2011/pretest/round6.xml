@@ -13,7 +13,7 @@
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
 
-<entry key='sanction-type'>REAL_TIME</entry>
+<entry key='sanction-type'>real-time</entry>
 <entry key="sanction-cost">1</entry>
 <entry key="sanction-multiplier">2</entry>
 <entry key='sanction-instructions'>
@@ -52,31 +52,6 @@ another participant at a cost to your own earnings.
     </ul>
     ]]>
 </entry>
-<entry key='external-survey-enabled'>true</entry>
-<entry key='survey-instructions'>
-    <![CDATA[
-    <h1>Survey</h1>
-    <hr>
-        <p>
-            Before we continue to the next round of the token task, we would like to ask you
-            some quick questions.  At the beginning of the survey you will need to enter:
-        </p>
-        <ul>
-            <li>Your player ID: {participantId} </li>
-            <li>Your survey ID: {surveyId} </li>
-        </ul>
-        <p>
-            Please <a href='{surveyLink}'>click here</a> to begin the survey.
-        </p>
-    ]]>
-</entry>
-
-<entry key='survey-link'>
-    <![CDATA[
-    https://qtrial.qualtrics.com/SE/?SID=SV_38lReBOv0Wk7wgY
-    ]]>
-</entry>
-
 
 <entry key="instructions">
 <![CDATA[

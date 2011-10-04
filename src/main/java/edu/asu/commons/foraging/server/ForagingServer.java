@@ -509,19 +509,17 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             ClientData targetClient = clients.get(request.getTarget());
             // validate request
             // FIXME:Added a new test condition to check for the simplified version of sanctioning
-            boolean invalidSanctionRequest = sourceClient.getCurrentTokens() == 0 || targetClient.getCurrentTokens() == 0
-                    || sourceClient.getGroupDataModel().isResourceDistributionEmpty()
-                    || (sourceClient.getGroupDataModel().getActiveSanctionMechanism() == SanctionMechanism.NONE);
+            boolean invalidSanctionRequest = sourceClient.getCurrentTokens() == 0 || targetClient.getCurrentTokens() == 0 || sourceClient.getGroupDataModel().isResourceDistributionEmpty();
             if (invalidSanctionRequest) {
                 // ignore the sanction request, send a message to the sanctioner.
                 logger.warning("Ignoring token reduction request, sending new client error message event to : " + sourceClient.getId());
-                if (sourceClient.getGroupDataModel().getActiveSanctionMechanism() == SanctionMechanism.NONE) {
+                if (getCurrentRoundConfiguration().isSanctioningEnabled()) {
                     transmit(new ClientMessageEvent(sourceClient.getId(),
-                            String.format("Ignoring token reduction request: Sanctioning not allowed in this round", targetClient.getAssignedNumber())));
+                            String.format("Ignoring token reduction request: # %d does not have any tokens to reduce.", targetClient.getAssignedNumber())));
                 }
                 else {
                     transmit(new ClientMessageEvent(sourceClient.getId(),
-                            String.format("Ignoring token reduction request: # %d does not have any tokens to reduce.", targetClient.getAssignedNumber())));
+                            String.format("Ignoring token reduction request: Sanctioning not allowed in this round", targetClient.getAssignedNumber())));
                 }
                 return;
             }

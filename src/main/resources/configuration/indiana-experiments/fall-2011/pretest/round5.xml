@@ -29,7 +29,7 @@ questions so far?</b>
 ]]>
 </entry>
 
-<entry key='sanction-type'>REAL_TIME</entry>
+<entry key='sanction-type'>real-time</entry>
 <entry key="sanction-cost">1</entry>
 <entry key="sanction-multiplier">2</entry>
 <entry key='sanction-instructions'>

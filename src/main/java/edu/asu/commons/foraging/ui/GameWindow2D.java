@@ -32,6 +32,7 @@ import javax.swing.JTextPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -492,6 +493,7 @@ public class GameWindow2D implements GameWindow {
                                 // System.out.println("Can do sanctioning");
                                 int assignedNumber = keyChar - 48;
                                 Identifier sanctionee = dataModel.getClientId(assignedNumber);
+                                System.err.println("Punishing : " + sanctionee);
                                 if (sanctionee == null || sanctionee.equals(dataModel.getId())) {
                                     // don't allow self-flagellation :-).
                                     return;
@@ -499,10 +501,8 @@ public class GameWindow2D implements GameWindow {
                                 // only allow sanctions for subjects within this subject's field of vision
                                 Point subjectPosition = dataModel.getClientDataMap().get(sanctionee).getPoint();
                                 if (dataModel.getClientData().isSubjectInFieldOfVision(subjectPosition)) {
-                                    // System.out.println("sanctioning event sent");
                                     event = new RealTimeSanctionRequest(dataModel.getId(), sanctionee);
-                                    // below function must be used for enforcement type4
-                                    // dataModel.sanction(dataModel.getId(), sanctionee);
+                                    System.out.println("sending sanctioning event : " + event);
                                 }
                                 else {
                                     displayErrorMessage("The participant is out of range.");
@@ -611,17 +611,16 @@ public class GameWindow2D implements GameWindow {
     }
 
     public void displayMessage(String errorMessage, Color color) {
-        // String chatHandle = getChatHandle(source);
-        // messageTextPane.setForeground(color);
-        // StyledDocument document = messageTextPane.getStyledDocument();
-        // try {
-        // document.insertString(document.getLength(), errorMessage + "\n", document.getStyle("bold"));
-        // messageTextPane.setCaretPosition(document.getLength());
-        // }
-        // catch (BadLocationException e) {
-        // e.printStackTrace();
-        // throw new RuntimeException(e);
-        // }
+        messageTextPane.setForeground(color);
+        StyledDocument document = messageTextPane.getStyledDocument();
+        try {
+            document.insertString(document.getLength(), errorMessage + "\n", document.getStyle("bold"));
+            messageTextPane.setCaretPosition(document.getLength());
+        }
+        catch (BadLocationException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     // FIXME: add to some common GUI package?
@@ -919,7 +918,7 @@ public class GameWindow2D implements GameWindow {
 
     public void ruleVoteSubmitted() {
         // TODO Auto-generated method stub
-        setInstructions("<h1>Submitted</h1><hr><p>Thank you for submitting your vote.  Please wait while we tally the rest of the votes from the othe rmembers of your group.</p>");
+        setInstructions("<h1>Submitted</h1><hr><p>Thank you for submitting your vote.  Please wait while we tally the rest of the votes from the other members of your group.</p>");
         switchInstructionsPane();
     }
 

@@ -91,7 +91,8 @@ public class VotingForm extends javax.swing.JPanel {
                 verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addComponent(radioButton));
             }
             else {
-                component = new JLabel(votingResults.get(rule) + " votes");
+                Integer numberOfVotes = votingResults.get(rule);
+                component = new JLabel(String.format("%s votes", numberOfVotes == null ? "0" : numberOfVotes));
             }
             horizontalButtonParallelGroup.addComponent(component);
             verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addComponent(component));

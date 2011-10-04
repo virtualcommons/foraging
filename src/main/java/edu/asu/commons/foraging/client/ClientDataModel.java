@@ -71,10 +71,8 @@ public class ClientDataModel extends ForagingDataModel {
         return Identifier.NULL;
     }
     
-    // FIXME: the logic here is getting complex, refactor later
     public boolean isSanctioningAllowed() {
-    	return groupDataModel.getActiveSanctionMechanism() == SanctionMechanism.EVERYBODY_CAN_SANCTION;
-//    	&& getClientData().isSanctioningAllowed() || isSanctioningEnabled();
+        return getRoundConfiguration().isSanctioningEnabled();
     }
     
     public boolean isHarvestingAllowed() {

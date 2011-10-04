@@ -34,7 +34,7 @@ tied nominated rule will receive an equal chance of getting selected at random.
 
 <entry key='voting-instructions'>
 <![CDATA[
-<h1>Voting Instructions</h1>
+<h1>Instructions</h1>
 <hr>
 <p>
 To nominate a rule, click the radio button to the left of the one you choose, and
@@ -92,12 +92,12 @@ questions so far?</b>
 
 <entry key='survey-link'>
     <![CDATA[
-    https://qtrial.qualtrics.com/SE/?SID=SV_38lReBOv0Wk7wgY
+    https://qtrial.qualtrics.com/SE/?SID=SV_cLX7jnYikmD9eSM
     ]]>
 </entry>
 
 
-<entry key='sanction-type'>REAL_TIME</entry>
+<entry key='sanction-type'>real-time</entry>
 <entry key="sanction-cost">1</entry>
 <entry key="sanction-multiplier">2</entry>
 <entry key='sanction-instructions'>
