@@ -81,7 +81,6 @@ questions so far?</b>
             some quick questions.  At the beginning of the survey you will need to enter:
         </p>
         <ul>
-            <li><b>Your participant ID</b>: {participantId} </li>
             <li><b>Your survey ID</b>: {surveyId} </li>
         </ul>
         <p>
