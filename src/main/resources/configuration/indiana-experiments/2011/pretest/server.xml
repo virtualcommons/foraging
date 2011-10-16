@@ -15,7 +15,7 @@
 <entry key="round8">round8.xml</entry>
 <entry key="round9">round9.xml</entry>
 <entry key="wait-for-participants">true</entry>
-<entry key="number-of-rounds">7</entry>
+<entry key="number-of-rounds">10</entry>
 <entry key='external-survey-enabled'>true</entry>
 <entry key='survey-id-enabled'>true</entry>
 <entry key="facilitator-instructions">
