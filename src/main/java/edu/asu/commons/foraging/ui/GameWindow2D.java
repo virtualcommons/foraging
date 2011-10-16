@@ -434,7 +434,11 @@ public class GameWindow2D implements GameWindow {
                 showPanel(currentCardPanel);
             }
         });
-        mainPanel.requestFocusInWindow();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                mainPanel.requestFocusInWindow();
+            }
+        });
     }
 
     /**
