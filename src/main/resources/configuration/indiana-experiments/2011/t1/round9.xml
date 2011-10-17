@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="display-group-tokens">true</entry>
+<entry key="clients-per-group">4</entry>
+<entry key="resource-depth">26</entry>
+<entry key="resource-width">26</entry>
+<entry key="duration">240</entry>
+
+<entry key='tokens-field-of-vision'>true</entry>
+<entry key='subjects-field-of-vision'>true</entry>
+
+<entry key="initial-distribution">.25</entry>
+
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+
+
+<entry key='external-survey-enabled'>true</entry>
+<entry key='survey-instructions'>
+    <![CDATA[
+    <h1>Survey</h1>
+    <hr>
+        <p>
+            Before we continue to the next round of the token task, we would like to ask you
+            some quick questions.  At the beginning of the survey you will need to enter:
+        </p>
+        <ul>
+            <li>Your participant ID: {participantId} </li>
+            <li>Your survey ID: {surveyId} </li>
+        </ul>
+        <p>
+            Please <a href='{surveyLink}'>click here</a> to begin the survey.
+        </p>
+    ]]>
+</entry>
+
+<entry key='survey-link'>
+    <![CDATA[
+    https://qtrial.qualtrics.com/SE/?SID=SV_e8rPe7yyhue5OVm
+    ]]>
+</entry>
+
+
+<entry key="instructions">
+<![CDATA[
+<h3>Instructions</h3>
+<hr>
+<p>
+    This is the last round of the experiment.
+</p>
+<p>
+If you have any questions please raise your hand.  <b>Do you have any
+questions so far?</b>
+</p>
+]]>
+</entry>
+<entry key="last-round-debriefing">
+    <![CDATA[
+    <p>
+        This was the last round, but not the end of the experiment. We will now
+        determine your payments. While we are doing this, we request that you
+        carefully fill out a brief survey.
+    </p>
+    <p>
+        When we are ready we will call you one by one to the room next door. We
+        will
+        pay you there in private. Please wait until your computer number is called,
+        and then proceed to the room next door to turn in your computer number and
+        your survey. 
+    </p>
+    <p>
+        Please answer the survey carefully and thank you for participating. 
+    </p>
+    ]]>
+</entry>
+
+
+</properties>

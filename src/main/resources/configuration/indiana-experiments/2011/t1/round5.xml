@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="display-group-tokens">true</entry>
+<entry key="clients-per-group">4</entry>
+<entry key="resource-depth">26</entry>
+<entry key="resource-width">26</entry>
+<entry key="duration">240</entry>
+
+<entry key="initial-distribution">.25</entry>
+
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+
+<entry key="instructions">
+<![CDATA[
+<h3>Round 5 Instructions</h3>
+<hr>
+<p>
+Round 5 is the same as round 4.</p>
+<p>
+The length of this round is again four minutes.
+</p>
+<p>
+If you have any questions please raise your hand.  <b>Do you have any
+questions so far?</b>
+</p>
+]]>
+</entry>
+
+<entry key='sanction-type'>real-time</entry>
+<entry key="sanction-cost">1</entry>
+<entry key="sanction-multiplier">2</entry>
+<entry key='sanction-instructions'>
+    <![CDATA[
+    <h1>Instructions</h1>
+    <hr>
+<p>
+During this upcoming round you will have the option to reduce the earnings of
+another participant at a cost to your own earnings.
+</p>
+<h2>How it works</h2>
+<hr>
+    <ul>
+        <li>If you press the numeric key 1-5 corresponding to another participant, you
+            will reduce the number of tokens they have collected in this round by two
+            tokens. This will also reduce your own token amount by one token. The decision
+            whether or when to use this option is up to you. 
+        </li>
+        <li>When you reduce the number of tokens of another participant, they will
+            receive a message stating that you have reduced their tokens. Likewise, if
+            another participant reduces your number of tokens, you will also receive a
+            message. These messages will be displayed on the bottom of your screen.
+        </li>
+        <li>If your tokens are being reduced or you are reducing another participant's
+            tokens, you will receive some visual cues.  When your tokens are being reduced
+            your yellow dot will turn red briefly with a blue background.  The participant
+            currently reducing your tokens will turn purple with a white background.
+        </li>
+        <li>You may reduce the earnings of other participants as long as there are
+            tokens remaining on the screen and while both you and the other participant
+            have a positive number of tokens collected during the round.  <b>Each time</b>
+            you press the numeric key corresponding to another participant your token
+            amount is reduced by <b>one</b>, and their token amount is reduced by
+            <b>two</b>.  
+        </li>
+    </ul>
+    ]]>
+</entry>
+</properties>
