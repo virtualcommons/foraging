@@ -171,6 +171,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         addEventProcessor(new EventTypeProcessor<RuleSelectedUpdateEvent>(RuleSelectedUpdateEvent.class) {
             @Override
             public void handle(RuleSelectedUpdateEvent event) {
+                dataModel.setSelectedRules(event.getSelectedRules());
                 getGameWindow2D().showVotingResults(event.getSelectedRules(), event.getVotingResults());
             }
         });

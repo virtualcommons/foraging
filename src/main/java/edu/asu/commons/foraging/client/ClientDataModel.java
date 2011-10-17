@@ -20,10 +20,10 @@ import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.RegulationData;
 import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.foraging.model.SanctionMechanism;
+import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.foraging.ui.GameWindow2D;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
-
 /**
  * $Id: ClientDataModel.java 499 2010-03-31 00:58:49Z alllee $
  * 
@@ -50,6 +50,7 @@ public class ClientDataModel extends ForagingDataModel {
     // these are the subjects that have sanctioned us.
     private Map<Identifier, Duration> sanctioners = new HashMap<Identifier, Duration>();
 
+    private List<ForagingRule> selectedRules = new ArrayList<ForagingRule>();
     private ForagingClient client;
 
     private volatile boolean explicitCollectionMode = false;
@@ -287,11 +288,18 @@ public class ClientDataModel extends ForagingDataModel {
         return groupDataModel.getRemovedResources();
     }
 
-	public void setActiveRegulation(RegulationData regulationData) {
-		groupDataModel.setActiveRegulation(regulationData);
-	}
-	
-	public RegulationData getActiveRegulation() {
-		return groupDataModel.getActiveRegulation();
-	}
+    public void setActiveRegulation(RegulationData regulationData) {
+        groupDataModel.setActiveRegulation(regulationData);
+    }
+
+    public RegulationData getActiveRegulation() {
+        return groupDataModel.getActiveRegulation();
+    }
+    public void setSelectedRules(List<ForagingRule> selectedRules) {
+        this.selectedRules = selectedRules;
+    }
+
+    public List<ForagingRule> getSelectedRules() {
+        return selectedRules;
+    }
 }

@@ -92,7 +92,7 @@ public class VotingForm extends javax.swing.JPanel {
             }
             else {
                 Integer numberOfVotes = votingResults.get(rule);
-                component = new JLabel(String.format("%s votes", numberOfVotes == null ? "0" : numberOfVotes));
+                component = new JLabel(String.valueOf(numberOfVotes == null ? 0 : numberOfVotes));
             }
             horizontalButtonParallelGroup.addComponent(component);
             verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addComponent(component));
