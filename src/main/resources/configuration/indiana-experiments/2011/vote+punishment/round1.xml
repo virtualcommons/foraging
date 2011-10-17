@@ -13,38 +13,47 @@
 
 <entry key="instructions">
 <![CDATA[
-<h3>Round 1 Instructions</h3>
+<h3>Instructions for Round 1</h3>
 <hr>
 <p>
-This is the first round of the experiment. The length of the round is 4
-minutes. As in the practice round you can collect green tokens but now
-you will earn <b>two cents</b> for each token collected.  You <b>cannot</b>
-reset the distribution of green tokens. 
+    The first round of the experiment will begin in a moment. The length of the
+    round is 4 minutes. As in the practice round you can collect green tokens.
+    This time you will earn <b>two cents</b> for each token collected.  This time
+    you <b>cannot</b> reset the distribution of green tokens. 
 </p>
+<h3>Groups</h3>
+<hr>
 <p>
 In this round the renewable resource will become five times bigger.  You will share this
-larger environment with four other players in this room that have been randomly
-selected.  Each group's resource environment is distinct from the other groups.
+larger environment with three other random players in this room .  In particular,
+each of you in this room has been randomly assigned to one of several equal-sized 4
+person groups and everyone in your group has been randomly assigned a number from 1
+to 4.  You will stay in the same group for the entire experiment, and each person's
+number from 1 to 4 will remain the same throughout the experiment. The other three people in your group will appear
+on the screen as blue dots <img src="@CODEBASE_URL@/images/gem-other.gif"> with a
+white number embedded in the dot.
 </p>
 <p>
-Each of you has been assigned a number from 1 to 5.  These numbers will remain the
-same throughout the experiment but you will <b>not</b> be able to identify which
-person in the room has been assigned which number, so your anonymity is guaranteed.  
+    In each round of the token task, you can see how many tokens each player has
+    collected at the top right corner of the screen.  On the top left corner of the
+    screen you will see the remaining time in the round.
 </p>
-
+<h3>Anonymity</h3>
+<hr>
 <p>
-The other four players will appear on the screen as blue dots 
-<img src="@CODEBASE_URL@/images/gem-other.gif"> with a white
-number embedded in the dot.  On the top right corner of the screen you can see 
-how many tokens each player has collected. On the top left corner of the screen you can see 
-a clock that displays the remaining time in the round.</p>
-<p>Since you can only see the resource within your vision you may neither see all 
-the other participants nor all the resource units. The figure below indicates the 
-vision range compared to the whole environment</p>
-<img src="@CODEBASE_URL@/images/vision-range.jpg">
+    Because group membership was randomly assigned by the computer, neither you nor
+    the experimenter will be able to identify which person in the room has been
+    assigned to a particular group or number within a group.  Your anonymity is
+    guaranteed.
+</p>
+<h3>Tokens</h3>
+<hr>
+    <p>
+        Each group has its own set of token resources.
+    </p>
 <p>
-If you have any questions please raise your hand.  <b>Do you have any
-questions so far?</b>
+<b>Do you have any questions so far?</b>  If you have any questions at this time,
+raise your hand and someone will come over to your station and answer it.
 </p>
 ]]>
 </entry>
