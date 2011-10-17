@@ -134,7 +134,7 @@
     <chmod dir="${deploy.dir}" perm="664" type="file" includes="**"/>
     <chmod dir="${deploy.dir}" perm="775" type="dir" includes="**"/>
   </target>
-  <target name="deploy">
+  <target name="deploy" depends='check-configuration' if='configuration.present'>
     <antcall target="deploy-to">
       <param name="deploy.dir" value="${web.dir}"/>
     </antcall>
@@ -241,7 +241,12 @@
     <java classname="${facilitator.class}" classpathref="project.classpath" fork="yes"/>
   </target>
   <target name="deploy-server" depends="deploy, server"/>
-  <target name="server" depends="compile">
+  <target name='check-configuration'>
+    <available file='${conf.dir}/server.xml' property='configuration.present'/>
+    <fail message="Did not find any configuration files in ${conf.dir}, please copy over an appropriate set of configuration files into ${conf.dir}"
+      unless="configuration.present" />
+  </target>
+  <target name="server" depends="compile,check-configuration" if='configuration.present'>
     <!-- make sure we update the configuration -->
     <copy todir="${build.dir}/conf" overwrite="true">
       <fileset dir="${conf.dir}"/>
@@ -251,6 +256,7 @@
         <filter token="CODEBASE_URL" value="${codebase.url}"/>
       </filterset>
     </copy>
+
     <java classname="${server.class}" classpathref="project.classpath" fork="yes">
       <jvmarg value="-server"/>
     </java>
