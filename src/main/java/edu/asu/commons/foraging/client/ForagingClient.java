@@ -237,6 +237,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
     private void initialize2DEventProcessors() {
         addEventProcessor(new EventTypeProcessor<BeginChatRoundRequest>(BeginChatRoundRequest.class) {
             public void handle(BeginChatRoundRequest request) {
+                System.err.println("Starting chat round");
                 dataModel.initialize(request.getGroupDataModel());
                 getGameWindow2D().initializeChatPanel();
             }

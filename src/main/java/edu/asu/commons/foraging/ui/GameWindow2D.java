@@ -471,11 +471,16 @@ public class GameWindow2D implements GameWindow {
                     switch (keyCode) {
                     // token request handling
                         case KeyEvent.VK_SPACE:
-                            if (dataModel.isHarvestingAllowed()) {
-                                event = new CollectTokenRequest(client.getId());
+                            try {
+                                if (dataModel.isHarvestingAllowed()) {
+                                    event = new CollectTokenRequest(client.getId());
+                                }
+                                else {
+                                    displayErrorMessage("You cannot harvest at this time.");
+                                }
                             }
-                            else {
-                                displayErrorMessage("You cannot harvest at this time.");
+                            catch (RuntimeException exception) {
+                                displayErrorMessage("You cannot harvest at this time");
                             }
                             break;
                         // real-time sanctioning keycode handling
@@ -709,6 +714,7 @@ public class GameWindow2D implements GameWindow {
     private ChatPanel getChatPanel() {
         if (chatPanel == null) {
             chatPanel = new ChatPanel(client);
+            chatPanel.setName(CHAT_PANEL_NAME);
         }
         return chatPanel;
     }
@@ -881,7 +887,7 @@ public class GameWindow2D implements GameWindow {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 ChatPanel chatPanel = getChatPanel();
-                chatPanel.initialize(client.getDataModel());
+                chatPanel.initialize(dataModel);
                 showPanel(CHAT_PANEL_NAME);
                 startChatTimer();
             }

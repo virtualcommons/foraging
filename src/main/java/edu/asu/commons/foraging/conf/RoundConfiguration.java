@@ -426,9 +426,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getBooleanProperty("chat-enabled");
     }
 
-    // Should always return true for 3d experiments
     public boolean isChatEnabled() {
-        return  isChatRoundEnabled() || isInRoundChatEnabled();
+        return isChatRoundEnabled() || isInRoundChatEnabled() || isCensoredChat();
     }
 
     public int getMaximumResourceAge() {
@@ -603,24 +602,24 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return instructionsBuilder;
     }
 
-    public StringBuilder addAllSpecialInstructions(StringBuilder builder) {
+    public StringBuilder addAllSpecialInstructions(StringBuilder instructionsBuilder) {
+        // FIXME: refactor this convoluted conditional logic if possible
+        StringBuilder builder = new StringBuilder();
         if (isFieldOfVisionEnabled()) {
             addSpecialInstructions(builder, getFieldOfVisionInstructions());
         }
         if (isSanctioningEnabled()) {
             addSpecialInstructions(builder, getSanctionInstructions());
         }
-        if (isCensoredChat()) {
-            addSpecialInstructions(builder, getCensoredChatInstructions());
-        }
-        else if (isInRoundChatEnabled()) {
+        if (isInRoundChatEnabled()) {
             addSpecialInstructions(builder, getInRoundChatInstructions());
         }
         else if (isChatEnabled()) {
-            // FIXME: hard-coded, need to make instructions template-able, perhaps
-            // via FreeMarker or Velocity.
             addSpecialInstructions(builder,
                     "Before the beginning of this round you will be able to chat with the other members of your group for " + getChatDuration() + " seconds.");
+        }
+        if (isCensoredChat()) {
+            addSpecialInstructions(builder, getCensoredChatInstructions());
         }
         String resourceGeneratorType = getResourceGeneratorType();
         if (resourceGeneratorType.equals("mobile")) {
@@ -629,11 +628,16 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         else if (resourceGeneratorType.equals("top-bottom-patchy")) {
             addSpecialInstructions(builder, getPatchyResourceInstructions());
         }
-        return builder;
+        if (builder.toString().isEmpty()) {
+            return instructionsBuilder;
+        }
+        else {
+            return instructionsBuilder.append("<h1>Additional instructions</h1><hr><ul>").append(builder).append("</ul>");
+        }
     }
 
     private void addSpecialInstructions(StringBuilder builder, String instructions) {
-        builder.append("<p>").append(instructions).append("</p>");
+        builder.append("<li>").append(instructions).append("</li>");
     }
 
     private String getMobileResourceInstructions() {

@@ -6,6 +6,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -164,6 +165,9 @@ public class SubjectView extends GridView {
             Ellipse2D.Double circle = new Ellipse2D.Double(x, y, diameter, diameter);
             // clip the rendered part of the Field of vision circle that crosses the playing boundary 
             graphics2D.setClip(circle);
+            // this is actually a bit too tall, fine-tune & investigate later
+            Rectangle bounds = new Rectangle(getPreferredSize());
+            graphics2D.clip(bounds);
             Paint originalPaint = graphics2D.getPaint();
             graphics2D.setPaint(FIELD_OF_VISION_COLOR);
             graphics2D.fill(circle);

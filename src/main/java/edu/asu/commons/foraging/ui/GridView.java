@@ -73,8 +73,8 @@ public abstract class GridView extends JPanel {
         dw = (availableWidth / boardSize.getWidth());
         dh = (availableHeight / boardSize.getHeight());
         // ensure square proportions
-        dh = dw = Math.min(dw, dh);
-//        dh = dw;
+        dw = dh = Math.min(dw, dh);
+//        availableWidth = availableHeight = Math.min(availableWidth, availableHeight);
 
         xoffset = (int) Math.floor((availableWidth - (dw * boardSize.getWidth())) / 2);
         yoffset = (int) Math.floor((availableHeight - (dh * boardSize.getHeight())) / 2);

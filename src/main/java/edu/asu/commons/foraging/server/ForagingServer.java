@@ -69,7 +69,6 @@ import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.ResourceDispenser;
-import edu.asu.commons.foraging.model.SanctionMechanism;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.foraging.ui.Circle;
@@ -157,6 +156,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         }
         else if (input.equals("skip-quiz")) {
             System.out.println("skipping quiz");
+            numberOfSubmittedQuizzes = clients.size();
             Utils.notify(quizSignal);
         }
         else if (input.equals("start-round")) {
@@ -202,6 +202,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private ResourceDispenser resourceDispenser;
         private ServerState serverState;
         private final Duration secondTick = Duration.create(1000L);
+        private volatile boolean groupsInitialized;
 
         /**
          * Initializes the state machine before the experiment ever begins.
@@ -682,30 +683,12 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         // another way to handle this is to have the clients added
                         // to groups when the show instructions request is handled..
                         initializeGroups();
-                        /*
-                        if (getCurrentRoundConfiguration().isFirstRound()) {
-                            shuffleParticipants();
-                        }
-
+                        sendFacilitatorMessage("Sending begin chat round request to all participants");
                         for (Map.Entry<Identifier, ClientData> entry : clients.entrySet()) {
                             Identifier id = entry.getKey();
                             ClientData clientData = entry.getValue();
-                            // FIXME: hacky, get rid of this.
-                            if (clientData.getGroupDataModel() == null) {
-                                // we haven't added this client to the server data model yet. Add them now..
-                                // FIXME: will this cause problems if we invoke shuffleParticipants() later? I.e.,
-                                // the clients get added to the server data model for the purposes of the chat
-                                // and then when they start the actual round they get reshuffled? Need to
-                                // rethink clearly/carefully how clients and when clients get added to the server
-                                // data model...!
-                                serverDataModel.addClient(clientData);
-                            }
                             transmit(new BeginChatRoundRequest(id, clientData.getGroupDataModel()));
-                            // FIXME: should we initialize the persister now?
-                            // just store communication traffic in a separate text file.
-
                         }
-                        */
                     }
                 }
             });
@@ -887,8 +870,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
         private void stopRound() {
             serverState = ServerState.WAITING;
-            // FIXME: not needed, persister.persist() automatically adds this.
-            // persister.store(new RoundEndedMarkerEvent());
             sendEndRoundEvents();
             if (getCurrentRoundConfiguration().isPostRoundSanctioningEnabled()) {
                 // stop most of the round but don't persist/cleanup yet.
@@ -926,6 +907,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
         private void cleanupRound() {
             numberOfSubmittedQuizzes = 0;
+            groupsInitialized = false;
             serverDataModel.cleanupRound();
             for (ClientData clientData : clients.values()) {
                 clientData.reset();
@@ -950,12 +932,14 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         }
 
         private boolean shouldShuffleParticipants() {
+            // guard to ensure that we don't shuffle participants twice in a round (in the event there was a chat round preceding the normal game round)
+            if (groupsInitialized) return false;
             RoundConfiguration currentRoundConfiguration = getCurrentRoundConfiguration();
             RoundConfiguration previousRoundConfiguration = getConfiguration().getPreviousRoundConfiguration();
-            // when do we _have_ to shuffle participants?
+            // we shuffle participants:
             // 1. when randomize-groups is set for the next round
             // 2. when we move from a private property round to a open access round
-            // 3. in general, when the clients per group in the current round is different from the
+            // 3. when the clients per group in the current round is different from the
             // clients per group in the next round (FIXME: is this too broad or can #2 just be a special case of this?)
             return currentRoundConfiguration.shouldRandomizeGroup()
                     || (previousRoundConfiguration.getClientsPerGroup() != currentRoundConfiguration.getClientsPerGroup());
@@ -996,6 +980,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             // set up the resource dispenser, generates the initial resource distributions for the
             // groups, must be done after creating the client group relationships.
             resourceDispenser.initialize();
+            groupsInitialized = true;
         }
 
         private void startRound() {
