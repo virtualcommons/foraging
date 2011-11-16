@@ -125,6 +125,8 @@ public class GameWindow2D implements GameWindow {
 
     private CardLayout cardLayout;
 
+    private ChatPanel inRoundChatPanel;
+
     // private EnergyLevel energyLevel;
 
     public GameWindow2D(ForagingClient client, Dimension size) {
@@ -371,8 +373,8 @@ public class GameWindow2D implements GameWindow {
         instructionsScrollPane.setName(INSTRUCTIONS_PANEL_NAME);
         add(instructionsScrollPane);
 
-        // add game panel card
-        // FIXME: use a more flexible LayoutManager so that in-round chat isn't so fubared.
+        // FIXME: use a more flexible LayoutManager so that in-round chat isn't squeezed all the way on the right
+        // side of the screen.
         gamePanel = new JPanel(new BorderLayout());
         gamePanel.setBackground(Color.WHITE);
         gamePanel.setName(GAME_PANEL_NAME);
@@ -597,8 +599,9 @@ public class GameWindow2D implements GameWindow {
                 // has begun.
                 update(configuration.getRoundDuration().getTimeLeft());
                 if (configuration.isInRoundChatEnabled()) {
+                    // FIXME: use separate chat panel for in round chat
                     System.err.println("in round chat was enabled");
-                    ChatPanel chatPanel = getChatPanel();
+                    ChatPanel chatPanel = getInRoundChatPanel();
                     chatPanel.initialize(dataModel);
                     Dimension chatPanelSize = new Dimension(250, getPanel().getSize().height);
                     chatPanel.setPreferredSize(chatPanelSize);
@@ -715,8 +718,16 @@ public class GameWindow2D implements GameWindow {
         if (chatPanel == null) {
             chatPanel = new ChatPanel(client);
             chatPanel.setName(CHAT_PANEL_NAME);
+            add(chatPanel);
         }
         return chatPanel;
+    }
+    
+    private ChatPanel getInRoundChatPanel() {
+        if (inRoundChatPanel == null) {
+            inRoundChatPanel = new ChatPanel(client);
+        }
+        return inRoundChatPanel;
     }
 
     public void showTrustGame() {
@@ -854,9 +865,9 @@ public class GameWindow2D implements GameWindow {
     public void endRound(final EndRoundEvent event) {
         Runnable runnable = new Runnable() {
             public void run() {
-                if (chatPanel != null) {
-                    getPanel().remove(chatPanel);
-                    chatPanel = null;
+                if (inRoundChatPanel != null) {
+                    getPanel().remove(inRoundChatPanel);
+                    inRoundChatPanel = null;
                 }
                 RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
                 if (roundConfiguration.isPostRoundSanctioningEnabled()) {
@@ -886,6 +897,7 @@ public class GameWindow2D implements GameWindow {
     public void initializeChatPanel() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+                // FIXME: figure out how to reconcile this w/ in round chat.
                 ChatPanel chatPanel = getChatPanel();
                 chatPanel.initialize(dataModel);
                 showPanel(CHAT_PANEL_NAME);
