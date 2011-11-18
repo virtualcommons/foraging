@@ -66,28 +66,22 @@ public abstract class GridView extends JPanel {
 
     public void setImageSizes() {
         if (boardSize == null) return;
-        int availableWidth = (int) screenSize.getWidth();
-        int availableHeight = (int) screenSize.getHeight();
+        double availableWidth = screenSize.getWidth();
+        double availableHeight = screenSize.getHeight();
 
         // stretch board to the max
         dw = (availableWidth / boardSize.getWidth());
         dh = (availableHeight / boardSize.getHeight());
         // ensure square proportions
         dw = dh = Math.min(dw, dh);
-//        availableWidth = availableHeight = Math.min(availableWidth, availableHeight);
 
         xoffset = (int) Math.floor((availableWidth - (dw * boardSize.getWidth())) / 2);
         yoffset = (int) Math.floor((availableHeight - (dh * boardSize.getHeight())) / 2);
-//        System.err.println("x offset: " + xoffset);
-//        System.err.println("y offset: " + yoffset);
-//        System.err.println("dw : " + dw);
-//        System.err.println("dh: " + dh);
 
         fontSize = (int)(0.85 * dh);
         font = new Font("sansserif", Font.BOLD, fontSize);
-        // make sure we've got enough room
-        setPreferredSize(new Dimension(availableWidth, availableHeight));
-
+        
+        setPreferredSize(screenSize);
         //FIXME: reduce code duplication
         // get scaled instances of the originals
         int cellWidth = getCellWidth();

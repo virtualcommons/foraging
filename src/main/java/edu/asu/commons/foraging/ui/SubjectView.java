@@ -158,10 +158,11 @@ public class SubjectView extends GridView {
             int radius = viewSubjectsRadius;
             viewSubjectsField.setCenter(currentPosition);
             Point topLeftCorner = new Point(currentPosition.x - radius, currentPosition.y - radius);
-            double x = scaleXDouble(topLeftCorner.x) + fieldOfVisionXOffset;
-            double y = scaleYDouble(topLeftCorner.y) + fieldOfVisionYOffset;
+            // for some reason 
+            double x = Math.ceil(scaleXDouble(topLeftCorner.x) + fieldOfVisionXOffset);
+            double y = Math.ceil(scaleYDouble(topLeftCorner.y) + fieldOfVisionYOffset);
             double diameter = radius * 2.0d;
-            diameter = Math.min(scaleXDouble(diameter), scaleYDouble(diameter)) + (dw / 2);
+            diameter = Math.max(scaleXDouble(diameter), scaleYDouble(diameter)) + (dw / 2);
             Ellipse2D.Double circle = new Ellipse2D.Double(x, y, diameter, diameter);
             // clip the rendered part of the Field of vision circle that crosses the playing boundary 
             graphics2D.setClip(circle);
@@ -170,6 +171,7 @@ public class SubjectView extends GridView {
             graphics2D.clip(bounds);
             Paint originalPaint = graphics2D.getPaint();
             graphics2D.setPaint(FIELD_OF_VISION_COLOR);
+//            graphics2D.fillOval((int) x, (int) y, (int) diameter, (int) diameter);
             graphics2D.fill(circle);
             graphics2D.setPaint(originalPaint);
         }

@@ -3,12 +3,14 @@ package edu.asu.commons.foraging.client;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.util.LinkedList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 
 import edu.asu.commons.client.BaseClient;
 import edu.asu.commons.event.ClientMessageEvent;
@@ -81,15 +83,11 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
     private JPanel clientPanel = new JPanel();
     
     public ForagingClient(ServerConfiguration configuration) {
-        this(configuration, new Dimension(900, 800));
-    }
-    
-    public ForagingClient(ServerConfiguration configuration, Dimension screenSize) {
         super(configuration);
         dataModel = new ClientDataModel(this);
         clientPanel.setLayout(new BorderLayout());
         if (configuration.shouldInitialize2D()) {
-            gameWindow = new GameWindow2D(this, screenSize);
+            gameWindow = new GameWindow2D(this);
         }
         else if (configuration.shouldInitialize3D()) {
             gameWindow = new GameWindow3D(this);
@@ -407,20 +405,20 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                 //Dimension defaultDimension = new Dimension(600, 600);
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    
                 } 
                 catch(Exception e) {
                     e.printStackTrace();
                     System.err.println("Couldn't set native look and feel: "+ e);
                 }
-                Dimension defaultDimension = new Dimension(1024, 768);
             	JFrame frame = new JFrame();
-                ForagingClient client = new ForagingClient(new ServerConfiguration(), defaultDimension);
+                ForagingClient client = new ForagingClient(new ServerConfiguration());
                 client.connect();
                 frame.setTitle("Client Window: " + client.getId());
                 frame.add(client.clientPanel);
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setPreferredSize(defaultDimension);
                 frame.setVisible(true);
+                frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
+                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 frame.pack();
             }
         };

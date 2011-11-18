@@ -129,7 +129,7 @@ public class GameWindow2D implements GameWindow {
 
     // private EnergyLevel energyLevel;
 
-    public GameWindow2D(ForagingClient client, Dimension size) {
+    public GameWindow2D(ForagingClient client) {
         this.client = client;
         this.dataModel = client.getDataModel();
         // FIXME: set the actual screen size dimensions after this JPanel has been initialized...
@@ -137,8 +137,7 @@ public class GameWindow2D implements GameWindow {
         // feed subject view the available screen size so that
         // it can adjust appropriately when given a board size
         // int width = (int) Math.min(Math.floor(size.getWidth()), Math.floor(size.getHeight() * 0.85));
-
-        initGuiComponents(size);
+        initGuiComponents();
     }
 
     /**
@@ -357,12 +356,12 @@ public class GameWindow2D implements GameWindow {
         getPanel().repaint();
     }
 
-    private void initGuiComponents(Dimension size) {
+    private void initGuiComponents() {
         // FIXME: replace with CardLayout for easier switching between panels
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
-
-        Dimension subjectViewSize = new Dimension((int) size.getWidth(), (int) (size.getHeight() * 0.85));
+        // default sized subject view
+        Dimension subjectViewSize = new Dimension(768, 768);
         subjectView = new SubjectView(subjectViewSize, dataModel);
 
         // add instructions panel card
@@ -428,8 +427,7 @@ public class GameWindow2D implements GameWindow {
         mainPanel.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent event) {
                 Component component = event.getComponent();
-                // offset by 35 pixels to allow for message box
-                Dimension screenSize = new Dimension(component.getWidth(), component.getHeight() - 90);
+                Dimension screenSize = new Dimension(component.getWidth(), (int) (component.getHeight() * 0.85d));
                 subjectView.setScreenSize(screenSize);
                 subjectView.setImageSizes();
                 getPanel().revalidate();
