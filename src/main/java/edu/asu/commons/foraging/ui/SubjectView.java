@@ -162,7 +162,7 @@ public class SubjectView extends GridView {
             double x = Math.ceil(scaleXDouble(topLeftCorner.x) + fieldOfVisionXOffset);
             double y = Math.ceil(scaleYDouble(topLeftCorner.y) + fieldOfVisionYOffset);
             double diameter = radius * 2.0d;
-            diameter = Math.max(scaleXDouble(diameter), scaleYDouble(diameter)) + (dw / 2);
+            diameter = Math.min(scaleXDouble(diameter), scaleYDouble(diameter)) + (dw * 0.75);
             Ellipse2D.Double circle = new Ellipse2D.Double(x, y, diameter, diameter);
             // clip the rendered part of the Field of vision circle that crosses the playing boundary 
             graphics2D.setClip(circle);
