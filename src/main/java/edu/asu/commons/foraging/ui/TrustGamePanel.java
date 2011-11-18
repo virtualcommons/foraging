@@ -1,5 +1,6 @@
 package edu.asu.commons.foraging.ui;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.ButtonModel;
@@ -9,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
@@ -84,6 +86,7 @@ public class TrustGamePanel extends JPanel {
         }
     }
 
+    @SuppressWarnings("unused") @Deprecated
     private class PlayerTwoInputColumnCellEditor extends DefaultCellEditor {
         private static final long serialVersionUID = -981239232309467766L;
 
@@ -121,7 +124,8 @@ public class TrustGamePanel extends JPanel {
         this.client = client;
         setRoundConfiguration(client.getCurrentRoundConfiguration());
         TableColumn column = playerTwoTable.getColumnModel().getColumn(2);
-        column.setCellEditor(new DefaultCellEditor(new JComboBox()) {          
+        column.setCellEditor(new DefaultCellEditor(new JComboBox()) {
+            @Override
             public Component getTableCellEditorComponent(JTable table, Object value, boolean selected, int row, int column) {
                 JComboBox combo = (JComboBox) super.getTableCellEditorComponent(table, value, selected, row, column);
                 combo.removeAllItems();
@@ -131,6 +135,19 @@ public class TrustGamePanel extends JPanel {
                 }
                 return combo;
             }
+        });
+        playerTwoTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                if (column == 2) {
+                    setBackground(Color.YELLOW);
+                }
+                else {
+                    setBackground(Color.LIGHT_GRAY);
+                }
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            }
+            
         });
     }
 

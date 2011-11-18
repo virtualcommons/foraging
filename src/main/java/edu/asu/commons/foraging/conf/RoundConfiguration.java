@@ -569,7 +569,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public StringBuilder getCurrentRoundInstructions() {
-        return buildInstructions(new StringBuilder());
+        return buildAllInstructions(new StringBuilder());
     }
 
     /**
@@ -585,21 +585,22 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      * @param instructionsBuilder
      * @return
      */
-    public StringBuilder buildInstructions(StringBuilder instructionsBuilder) {
+    public StringBuilder buildAllInstructions(StringBuilder instructionsBuilder) {
+        // add the quiz instructions if the quiz is enabled.
         if (isFirstRound()) {
             instructionsBuilder.append(getGeneralInstructions());
-            instructionsBuilder.append(getInstructions());
         }
-        else {
-            // FIXME: dirty hack, need to fix after we paginate things
-            instructionsBuilder.append(getInstructions());
-            addAllSpecialInstructions(instructionsBuilder);
-        }
-        // and add the quiz instructions if the quiz is enabled.
-        if (isQuizEnabled()) {
-            instructionsBuilder.append(getQuizInstructions());
-        }
-        return instructionsBuilder;
+        return isQuizEnabled() 
+                ? buildInstructions(instructionsBuilder).append(getQuizInstructions())
+                        : buildInstructions(instructionsBuilder);
+    }
+        
+    public StringBuilder buildInstructions() {
+        return buildInstructions(new StringBuilder());
+    }
+    
+    public StringBuilder buildInstructions(StringBuilder instructionsBuilder) {
+        return addAllSpecialInstructions(instructionsBuilder.append(getInstructions()));
     }
 
     public StringBuilder addAllSpecialInstructions(StringBuilder instructionsBuilder) {
@@ -632,7 +633,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
             return instructionsBuilder;
         }
         else {
-            return instructionsBuilder.append("<h1>Additional instructions</h1><hr><ul>").append(builder).append("</ul>");
+            return instructionsBuilder.append("<h2>Additional instructions</h2><hr><ul>").append(builder).append("</ul>");
         }
     }
 
@@ -707,6 +708,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String toString() {
         List<RoundConfiguration> allParameters = getParentConfiguration().getAllParameters();
         return String.format("Round %d of %d\n\t%s", allParameters.indexOf(this) + 1, allParameters.size(), getProperties());
+    }
+
+    public String getQuizInstructionsWithoutInputs() {
+        return getQuizInstructions().replaceAll("<input.*value=\"[\\w]+\">", "");
     }
 
 }

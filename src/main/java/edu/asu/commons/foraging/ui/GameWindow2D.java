@@ -219,22 +219,18 @@ public class GameWindow2D implements GameWindow {
                 }
 
                 client.transmit(new QuizResponseEvent(client.getId(), actualAnswers, incorrectAnswers));
-                StringBuilder builder = new StringBuilder();
+                StringBuilder builder = configuration.buildInstructions();
                 setQuestionColors(correctAnswers, "black");
                 setQuestionColors(incorrectAnswers, "red");
                 if (incorrectAnswers.isEmpty()) {
-                    builder.append(configuration.getInstructions());
-                    configuration.addAllSpecialInstructions(builder);
                     // notify the server and also notify the participant.
                     builder.append("<br><b>Congratulations!</b> You have answered all questions correctly.");
                     setInstructions(builder.toString());
                 }
                 else {
-                    String currentInstructions = instructionsBuilder.toString();
+                    // add the quiz instructions back, but remove all inputs
+                    builder.append(configuration.getQuizInstructionsWithoutInputs());
                     // remove all inputs.
-                    currentInstructions = currentInstructions.replaceAll("<input.*value=\"[\\w]+\">", "");
-                    System.err.println("new instructions: " + currentInstructions);
-                    builder.append(currentInstructions);
                     Collections.sort(incorrectAnswers);
                     Collections.sort(correctAnswers);
                     HTMLEditorKit editorKit = (HTMLEditorKit) instructionsEditorPane.getEditorKit();
@@ -494,8 +490,8 @@ public class GameWindow2D implements GameWindow {
                         case KeyEvent.VK_8:
                         case KeyEvent.VK_9:
                             if (!dataModel.isSanctioningAllowed()) {
-                                // get rid of magic constants
-                                displayErrorMessage("You may not reduce other participants tokens at this time.");
+                                // FIXME: get rid of magic constants
+//                                displayErrorMessage("You may not reduce other participants tokens at this time.");
                                 return;
                             }
                             if (client.canPerformRealTimeSanction()) {
@@ -764,7 +760,7 @@ public class GameWindow2D implements GameWindow {
     public void showInstructions() {
         final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
         instructionsBuilder.delete(0, instructionsBuilder.length());
-        roundConfiguration.buildInstructions(instructionsBuilder);
+        roundConfiguration.buildAllInstructions(instructionsBuilder);
         // and add the quiz instructions if the quiz is enabled.
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
