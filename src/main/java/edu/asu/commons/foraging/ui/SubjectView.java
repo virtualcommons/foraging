@@ -86,8 +86,8 @@ public class SubjectView extends GridView {
             if (subjectFieldOfVision) {
                 viewSubjectsRadius = configuration.getViewSubjectsRadius();
                 viewSubjectsField = new Circle(dataModel.getCurrentPosition(), viewSubjectsRadius);
-                fieldOfVisionXOffset = (dw * 0.3);
-                fieldOfVisionYOffset = (dh * 0.3);
+                fieldOfVisionXOffset = (dw / 3.0d);
+                fieldOfVisionYOffset = (dh / 3.0d);
             }
         }
         super.setup(configuration);

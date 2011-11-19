@@ -518,7 +518,7 @@ public class GameWindow2D implements GameWindow {
                         // reset token distribution request handling
                         case KeyEvent.VK_ENTER:
                             if (dataModel.getRoundConfiguration().isInRoundChatEnabled()) {
-                                getChatPanel().setTextFieldFocus();
+                                getInRoundChatPanel().setTextFieldFocus();
                             }
                             break;
                         case KeyEvent.VK_R:
