@@ -28,9 +28,9 @@ import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.QuizCompletedEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.model.ClientData;
-import edu.asu.commons.foraging.ui.ForagingInterface;
 import edu.asu.commons.net.Identifier;
-import edu.asu.commons.util.HtmlEditorPane;
+import edu.asu.commons.ui.HtmlEditorPane;
+import edu.asu.commons.ui.UserInterfaceUtils;
 
 
 
@@ -220,7 +220,7 @@ public class FacilitatorWindow extends JPanel {
         setLayout(new BorderLayout(3, 3));
         //		setBackground(Color.WHITE);
 
-        informationEditorPane = ForagingInterface.createInstructionsEditorPane();
+        informationEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
 
 
 
@@ -232,7 +232,7 @@ public class FacilitatorWindow extends JPanel {
 
         JPanel messagePanel = new JPanel(new BorderLayout());
         JLabel messagePanelLabel = new JLabel("System messages");
-        messagePanelLabel.setFont(ForagingInterface.DEFAULT_PLAIN_FONT);
+        messagePanelLabel.setFont(UserInterfaceUtils.DEFAULT_PLAIN_FONT);
         messagePanel.add(messagePanelLabel, BorderLayout.NORTH);
         Dimension minimumSize = new Dimension(600, 200);
         messagePanel.setMinimumSize(minimumSize);
@@ -243,7 +243,7 @@ public class FacilitatorWindow extends JPanel {
             messagePanel.add(facilitatorChatPanel.getComponent(), BorderLayout.CENTER);
         }
         else {
-            messageEditorPane = ForagingInterface.createInstructionsEditorPane();
+            messageEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
             JScrollPane messageScrollPane = new JScrollPane(messageEditorPane);
             messagePanel.add(messageScrollPane, BorderLayout.CENTER);
         }

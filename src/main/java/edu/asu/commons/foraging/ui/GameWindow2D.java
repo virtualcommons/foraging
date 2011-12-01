@@ -56,17 +56,18 @@ import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.net.Identifier;
+import edu.asu.commons.ui.HtmlEditorPane;
+import edu.asu.commons.ui.UserInterfaceUtils;
 import edu.asu.commons.util.Duration;
-import edu.asu.commons.util.HtmlEditorPane;
 
 /**
- * $Id: GameWindow2D.java 529 2010-08-17 00:08:01Z alllee $
+ * $Id$
  * 
  * The client-side view for forager - can be used by standalone Java
  * applications or Applets.
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 529 $
+ * @version $Revision$
  */
 public class GameWindow2D implements GameWindow {
 
@@ -361,7 +362,7 @@ public class GameWindow2D implements GameWindow {
         subjectView = new SubjectView(subjectViewSize, dataModel);
 
         // add instructions panel card
-        instructionsEditorPane = ForagingInterface.createInstructionsEditorPane();
+        instructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
         instructionsScrollPane = new JScrollPane(instructionsEditorPane);
         instructionsScrollPane.setDoubleBuffered(true);
         instructionsScrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
@@ -377,9 +378,9 @@ public class GameWindow2D implements GameWindow {
         // add labels to game panel
         // FIXME: replace with progress bar.
         timeLeftLabel = new JLabel("Connecting ...");
-        timeLeftLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
+        timeLeftLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
         informationLabel = new JLabel("Tokens collected: 0     ");
-        informationLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
+        informationLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
         // latencyLabel = new JLabel("Latency: 0");
         informationLabel.setBackground(Color.YELLOW);
         informationLabel.setForeground(Color.BLUE);
@@ -399,7 +400,7 @@ public class GameWindow2D implements GameWindow {
         // FIXME: setFont doesn't work here the way we want it to.
         messageTextPane = new JTextPane();
         messageTextPane.setEditable(false);
-        messageTextPane.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
+        messageTextPane.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
         messageTextPane.setBackground(Color.WHITE);
         addStyles(messageTextPane.getStyledDocument());
         messageScrollPane = new JScrollPane(messageTextPane);
@@ -719,7 +720,7 @@ public class GameWindow2D implements GameWindow {
     
     private ChatPanel getInRoundChatPanel() {
         if (inRoundChatPanel == null) {
-            inRoundChatPanel = new ChatPanel(client);
+            inRoundChatPanel = new ChatPanel(client, true);
         }
         return inRoundChatPanel;
     }
@@ -731,7 +732,7 @@ public class GameWindow2D implements GameWindow {
                 public void run() {
                     JPanel panel = new JPanel();
                     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-                    JEditorPane trustGameInstructionsEditorPane = ForagingInterface.createInstructionsEditorPane();
+                    JEditorPane trustGameInstructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
                     JScrollPane scrollPane = new JScrollPane(trustGameInstructionsEditorPane);
                     trustGameInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getTrustGameInstructions());
                     panel.add(scrollPane);
@@ -794,7 +795,7 @@ public class GameWindow2D implements GameWindow {
         if (votingPanel == null) {
             votingPanel = new JPanel();
             votingPanel.setLayout(new BoxLayout(votingPanel, BoxLayout.Y_AXIS));
-            votingInstructionsEditorPane = ForagingInterface.createInstructionsEditorPane();
+            votingInstructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
             JScrollPane scrollPane = new JScrollPane(votingInstructionsEditorPane);
             votingInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getVotingInstructions());
             votingPanel.add(scrollPane);

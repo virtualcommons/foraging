@@ -53,12 +53,12 @@ import edu.asu.commons.util.Duration;
 
 
 /**
- * $Id: ForagingClient.java 529 2010-08-17 00:08:01Z alllee $
+ * $Id$
  * 
  * Client for costly sanctioning experiments.  Encompasses both 2D and 3D.
  * 
  * @author <a href='mailto:mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 529 $
+ * @version $Revision$
  */
 
 public class ForagingClient extends BaseClient<ServerConfiguration> {
@@ -235,7 +235,6 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
     private void initialize2DEventProcessors() {
         addEventProcessor(new EventTypeProcessor<BeginChatRoundRequest>(BeginChatRoundRequest.class) {
             public void handle(BeginChatRoundRequest request) {
-                System.err.println("Starting chat round");
                 dataModel.initialize(request.getGroupDataModel());
                 getGameWindow2D().initializeChatPanel();
             }
@@ -417,7 +416,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                 frame.setTitle("Client Window: " + client.getId());
                 frame.add(client.clientPanel);
                 frame.setVisible(true);
-                frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
+                frame.setExtendedState(Frame.MAXIMIZED_BOTH);
                 frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 frame.pack();
             }

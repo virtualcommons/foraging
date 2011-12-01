@@ -1,7 +1,6 @@
 package edu.asu.commons.foraging.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -11,14 +10,15 @@ import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.visualization.conceptual.AgentDesignPanel;
 import edu.asu.commons.foraging.visualization.forestry.AvatarDesignPanel;
-import edu.asu.commons.util.HtmlEditorPane;
+import edu.asu.commons.ui.HtmlEditorPane;
+import edu.asu.commons.ui.UserInterfaceUtils;
 
 
 /**
- * $Id: InstructionsView.java 529 2010-08-17 00:08:01Z alllee $
+ * $Id$
  * 
  * @author <a href='Allen.Lee@asu.edu'>Allen Lee</a>, Deepali Bhagvat
- * @version $Revision: 529 $
+ * @version $Revision$
  */
 
 public class InstructionsView {
@@ -30,22 +30,14 @@ public class InstructionsView {
     private JPanel agentDesignPanel = null;
     
     public InstructionsView() {
-    	instructionsEditorPane = createInstructionsEditorPane();
+    	instructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
         instructionsScrollPane = new JScrollPane(instructionsEditorPane);
         mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(instructionsScrollPane, BorderLayout.CENTER);
         setInstructions("Please wait patiently until the other participants finish designing their avatars.");
     }
-    
-    private HtmlEditorPane createInstructionsEditorPane() {
-        final HtmlEditorPane htmlPane = new HtmlEditorPane();
-        // htmlPane.setPreferredSize(new Dimension(400, 400));
-        htmlPane.setEditable(false);
-        htmlPane.setFont(new Font("serif", Font.PLAIN, 12));
-        return htmlPane;
-    }
-    
+
     public void setInstructions(String instructions) {
         instructionsEditorPane.setText(instructions);
         instructionsEditorPane.setCaretPosition(0);

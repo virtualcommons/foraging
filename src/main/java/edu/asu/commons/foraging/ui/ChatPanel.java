@@ -18,20 +18,20 @@ import javax.swing.text.Document;
 
 import edu.asu.commons.event.ChatEvent;
 import edu.asu.commons.event.ChatRequest;
-import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.event.EventTypeProcessor;
 import edu.asu.commons.experiment.DataModel;
 import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.net.Identifier;
+import edu.asu.commons.ui.UserInterfaceUtils;
 
 /**
- * $Id: ChatPanel.java 516 2010-05-10 23:31:53Z alllee $
+ * $Id$
  * 
  * Chat panel used to communicate with other players.
  * 
  * @author alllee
- * @version $Revision: 516 $
+ * @version $Revision$
  */
 @SuppressWarnings("serial")
 public class ChatPanel extends JPanel {
@@ -46,24 +46,30 @@ public class ChatPanel extends JPanel {
 
     private TextEntryPanel textEntryPanel;
     
-    public ChatPanel(EventChannel channel) {
-        channel.add(this, new EventTypeProcessor<ChatEvent>(ChatEvent.class) {
+    public ChatPanel(ForagingClient client) {
+        this(client, false);
+    }
+
+    
+    public ChatPanel(ForagingClient client, boolean isInRoundChat) {
+        this.client = client;
+        client.getEventChannel().add(this, new EventTypeProcessor<ChatEvent>(ChatEvent.class) {
             public void handle(final ChatEvent chatEvent) {
                 displayMessage(chatEvent.getSource(), chatEvent.toString());
             }
         });
-        initGuiComponents();   
-    }
-
-    public ChatPanel(ForagingClient client) {
-        this(client.getEventChannel());
-        this.client = client;
+        initGuiComponents(isInRoundChat);   
     }
     
-    private void initGuiComponents() {
+    private void initGuiComponents(boolean isInRoundChat) {
         setLayout(new BorderLayout(3, 3));
         setName("Chat panel");
-        messagesEditorPane = ForagingInterface.createInstructionsEditorPane();
+        if (! isInRoundChat) {
+            JEditorPane instructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
+            
+            
+        }
+        messagesEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
         messageScrollPane = new JScrollPane(messagesEditorPane);
 
         textEntryPanel = new TextEntryPanel(client);
@@ -133,7 +139,7 @@ public class ChatPanel extends JPanel {
                 
             });
             JLabel headerLabel = new JLabel("Chat");
-            headerLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
+            headerLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
             add(headerLabel, BorderLayout.NORTH);
             add(chatField, BorderLayout.CENTER);
         }

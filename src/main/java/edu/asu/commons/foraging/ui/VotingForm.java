@@ -27,6 +27,7 @@ import javax.swing.JRadioButton;
 
 import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.rules.ForagingRule;
+import edu.asu.commons.ui.UserInterfaceUtils;
 
 /**
  *
@@ -67,11 +68,11 @@ public class VotingForm extends javax.swing.JPanel {
         GroupLayout.SequentialGroup verticalGroup = groupLayout.createSequentialGroup();
         String rightColumnHeader = votingResults.isEmpty() ? "Select one" : "Nominations";
         JLabel rightHeaderLabel = new JLabel(rightColumnHeader);
-        rightHeaderLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
+        rightHeaderLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
         horizontalButtonParallelGroup.addComponent(rightHeaderLabel);
         
         JLabel ruleHeaderLabel = new JLabel("Rule");
-        ruleHeaderLabel.setFont(ForagingInterface.DEFAULT_BOLD_FONT);
+        ruleHeaderLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
         horizontalLabelParallelGroup.addComponent(ruleHeaderLabel);
         
         verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleHeaderLabel).addGap(10).addComponent(rightHeaderLabel));
@@ -79,7 +80,7 @@ public class VotingForm extends javax.swing.JPanel {
         for (ForagingRule rule: rules) {
             ruleIndex++;
             JLabel ruleLabel = new JLabel(String.format("Rule %d: %s", ruleIndex, rule));
-            ruleLabel.setFont(ForagingInterface.DEFAULT_PLAIN_FONT);
+            ruleLabel.setFont(UserInterfaceUtils.DEFAULT_PLAIN_FONT);
             horizontalLabelParallelGroup.addComponent(ruleLabel);
             JComponent component = null;
             if (votingResults.isEmpty()) {
