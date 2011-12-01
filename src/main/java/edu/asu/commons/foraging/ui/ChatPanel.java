@@ -2,6 +2,7 @@ package edu.asu.commons.foraging.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -66,8 +67,10 @@ public class ChatPanel extends JPanel {
         setName("Chat panel");
         if (! isInRoundChat) {
             JEditorPane instructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
-            
-            
+            JScrollPane instructionsScrollPane = new JScrollPane(instructionsEditorPane);
+            instructionsEditorPane.setText(client.getCurrentRoundConfiguration().getChatInstructions());
+            instructionsScrollPane.setPreferredSize(new Dimension(300, 300));
+            add(instructionsScrollPane, BorderLayout.EAST);
         }
         messagesEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
         messageScrollPane = new JScrollPane(messagesEditorPane);
