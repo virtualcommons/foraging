@@ -24,7 +24,7 @@
 You will now have four minutes to practice with the experimental environment. The
 decisions you make in this round will NOT influence your earnings.  At the beginning
 of the practice round half of the cells are occupied with green tokens.  The
-environment is a 13 x 13 grid of cells.
+environment is a {resourceWidth} x {resourceDepth} grid of cells.
 </p>
 <p>
 During this practice round, and <b>only during</b> this practice round, you are able
@@ -41,7 +41,7 @@ randomly filling half of the cells.
 <h2>Quiz</h2>
 <hr>
 <p>
-Before we begin the practice round please answer the following questions.  You will earn $0.50 for each correct answer.
+Before we begin the practice round please answer the following questions.  You will earn {quizCorrectAnswerReward} for each correct answer.
 </p>
 <br><br>
 <form>

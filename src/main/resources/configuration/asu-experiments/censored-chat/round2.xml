@@ -8,9 +8,6 @@
 <entry key="resource-depth">29</entry>
 <entry key="resource-width">29</entry>
 
-<entry key='censored-chat-enabled'>true</entry>
-<entry key='chat-enabled'>true</entry>
-
 <!-- enable field of vision for tokens and subjects -->
 <entry key='initial-distribution'>.25</entry>
 

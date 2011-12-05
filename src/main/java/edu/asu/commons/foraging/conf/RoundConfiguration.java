@@ -1,6 +1,7 @@
 package edu.asu.commons.foraging.conf;
 
 import java.awt.Dimension;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ import edu.asu.commons.net.Identifier;
 
 
 /**
- * $Id: RoundConfiguration.java 534 2011-05-08 02:02:39Z alllee $
+ * $Id$
  * 
  * At some point this should be persistent database objects in a key-value store..?
  * 
@@ -286,7 +287,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      * Returns the instructions for this round.
      */
     public String getInstructions() {
-        return getProperty("instructions", "<b>No instructions available for this round.</b>");
+        ST template = new ST(getProperty("instructions"), '{', '}');
+        // FIXME: see if it's possible to simplify usage here so bean properties are transparently accessed within a templatized instruction.
+        template.add("resourceWidth", getResourceWidth());
+        template.add("resourceDepth", getResourceDepth());
+        return template.render();
     }
 
     public boolean shouldDisplayGroupTokens() {
@@ -300,7 +305,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String getChatInstructions() {
         return getProperty("chat-instructions");
     }
-
+    
     public String getRegulationInstructions() {
         return getProperty("regulation-instructions");
     }
@@ -316,7 +321,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      * @return
      */
     public String getQuizInstructions() {
-        return getProperty("quiz-instructions");
+        // FIXME: cache?
+        ST template = new ST(getProperty("quiz-instructions"), '{', '}');
+        template.add("quizCorrectAnswerReward", asCurrency(getQuizCorrectAnswerReward()));
+        return template.render();
+    }
+    
+    public String asCurrency(double amount) {
+        return NumberFormat.getCurrencyInstance().format(amount);
     }
 
     public Map<String, String> getQuizAnswers() {
@@ -497,7 +509,9 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getGeneralInstructions() {
-        return getParentConfiguration().getGeneralInstructions();
+        ST template = new ST(getParentConfiguration().getGeneralInstructions(), '{', '}');
+        template.add("showUpPayment", getParentConfiguration().getShowUpPayment());
+        return template.render();
     }
 
     public String getFieldOfVisionInstructions() {

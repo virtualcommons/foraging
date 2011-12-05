@@ -68,7 +68,9 @@ public class ChatPanel extends JPanel {
         if (! isInRoundChat) {
             JEditorPane instructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
             JScrollPane instructionsScrollPane = new JScrollPane(instructionsEditorPane);
-            instructionsEditorPane.setText(client.getCurrentRoundConfiguration().getChatInstructions());
+            RoundConfiguration roundConfiguration = client.getCurrentRoundConfiguration();
+            
+            instructionsEditorPane.setText(roundConfiguration.getChatInstructions());
             instructionsScrollPane.setPreferredSize(new Dimension(300, 300));
             add(instructionsScrollPane, BorderLayout.EAST);
         }
