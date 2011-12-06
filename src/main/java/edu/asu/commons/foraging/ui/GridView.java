@@ -18,10 +18,10 @@ import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.util.ResourceLoader;
 
 /**
- * $Id: GridView.java 475 2010-02-24 00:39:44Z alllee $
+ * $Id$
  * 
  * @author Allen Lee
- * @version $Revision: 475 $
+ * @version $Revision$
  * 
  * Superclass for experimenter and subject views of the simulation world.
  */
@@ -38,7 +38,7 @@ public abstract class GridView extends JPanel {
     scaledSelfExplicitCollectionModeImage, scaledBeingSanctionedImage, scaledSanctioningImage, scaledMonitorImage;
 
     /**
-     * Use these for the dimensions when drawing.
+     * Represents the width and height of a grid cell, respectively.
      */
     protected double dw, dh;
 

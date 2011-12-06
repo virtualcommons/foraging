@@ -21,7 +21,7 @@ import edu.asu.commons.util.Duration;
 
 
 /**
- * $Id: SubjectView.java 484 2010-03-09 00:42:46Z dbarge $
+ * $Id$
  * <p>
  * This class encapsulates the client's view of the game board. Used by the
  * ForagerGameWindow to render the current state of the game.
@@ -32,7 +32,7 @@ import edu.asu.commons.util.Duration;
  * 
  * 
  * @author Allen Lee
- * @version $Revision: 484 $
+ * @version $Revision$
  * 
  */
 public class SubjectView extends GridView {
@@ -86,6 +86,7 @@ public class SubjectView extends GridView {
             if (subjectFieldOfVision) {
                 viewSubjectsRadius = configuration.getViewSubjectsRadius();
                 viewSubjectsField = new Circle(dataModel.getCurrentPosition(), viewSubjectsRadius);
+                // FIXME: get rid of these magic numbers and figure out how to adjust it properly.
                 fieldOfVisionXOffset = (dw / 3.0d);
                 fieldOfVisionYOffset = (dh / 3.0d);
             }
@@ -159,8 +160,8 @@ public class SubjectView extends GridView {
             viewSubjectsField.setCenter(currentPosition);
             Point topLeftCorner = new Point(currentPosition.x - radius, currentPosition.y - radius);
             // for some reason 
-            double x = Math.ceil(scaleXDouble(topLeftCorner.x) + fieldOfVisionXOffset);
-            double y = Math.ceil(scaleYDouble(topLeftCorner.y) + fieldOfVisionYOffset);
+            double x = scaleXDouble(topLeftCorner.x) + fieldOfVisionXOffset;
+            double y = scaleYDouble(topLeftCorner.y) + fieldOfVisionYOffset;
             double diameter = radius * 2.0d;
             diameter = Math.min(scaleXDouble(diameter), scaleYDouble(diameter)) + (dw * 0.85);
             Ellipse2D.Double circle = new Ellipse2D.Double(x, y, diameter, diameter);

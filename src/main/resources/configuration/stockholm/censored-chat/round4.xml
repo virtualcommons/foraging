@@ -16,8 +16,6 @@
 <entry key='max-cell-occupancy'>1</entry>
 
 <!-- before this round begins, we have a chat session -->
-<entry key="chat-enabled">true</entry>
-
 <entry key='censored-chat-enabled'>true</entry>
 <entry key='chat-enabled'>true</entry>
 

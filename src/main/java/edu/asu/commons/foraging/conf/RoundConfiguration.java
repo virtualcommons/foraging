@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.stringtemplate.v4.ST;
 
@@ -303,13 +304,18 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getChatInstructions() {
-        return getProperty("chat-instructions");
+        ST template = createStringTemplate(getProperty("chat-instructions"));
+        template.add("chatDuration", inMinutes(getChatDuration()) + " minutes");
+        return template.render();
+    }
+    
+    public long inMinutes(long seconds) {
+        return TimeUnit.MINUTES.convert(seconds, TimeUnit.SECONDS);
     }
     
     public String getRegulationInstructions() {
         return getProperty("regulation-instructions");
     }
-
 
     public String getLastRoundDebriefing() {
         return getProperty("last-round-debriefing");
