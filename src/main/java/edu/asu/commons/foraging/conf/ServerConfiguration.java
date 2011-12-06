@@ -3,7 +3,7 @@ package edu.asu.commons.foraging.conf;
 import edu.asu.commons.conf.ExperimentConfiguration;
 
 /**
- * $Id: ServerConfiguration.java 529 2010-08-17 00:08:01Z alllee $
+ * $Id$
  * 
  * Contains the know-how for parsing and programmatically accessing the
  * server's configuration file properties. The forager server's config file
@@ -17,7 +17,7 @@ import edu.asu.commons.conf.ExperimentConfiguration;
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  * @see 
- * @version $Revision: 529 $
+ * @version $Revision$
  */
 public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfiguration> {
 
@@ -47,7 +47,7 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     }
     
     public boolean isCensoredChat() {
-        return assistant.getBooleanProperty("censored-chat", false);
+        return assistant.getBooleanProperty("censored-chat-enabled", false);
     }
     
     public boolean shouldInitialize3D() {

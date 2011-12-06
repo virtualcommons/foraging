@@ -23,11 +23,13 @@ import edu.asu.commons.foraging.event.FacilitatorCensoredChatRequest;
 import edu.asu.commons.util.ResourceLoader;
 
 /**
- * $Id: FacilitatorChatPanel.java 533 2010-11-23 19:31:57Z alllee $
+ * $Id$
  * 
  * Exposes a JPanel for approving chat messages and tied to a specific Facilitator instance.
  * 
+ * 
  * FIXME: should get rid of Facilitator dependency and use EventChannel instead
+ * FIXME: turn this into a JTable instead.
  * 
  *
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
@@ -79,7 +81,7 @@ public class FacilitatorChatPanel {
         chatRequestsPanel.setLayout(groupLayout);
         groupLayout.setAutoCreateGaps(true);
         GroupLayout.SequentialGroup horizontalGroup = groupLayout.createSequentialGroup();
-        JLabel messagesLabel = new JLabel("Messages");
+        JLabel messagesLabel = new JLabel("Message");
         JLabel approveLabel = new JLabel("Approve");
         JLabel statusLabel = new JLabel("Status");
         JLabel denyLabel = new JLabel("Deny");
@@ -162,7 +164,7 @@ public class FacilitatorChatPanel {
             statusLabelParallelGroup.addComponent(statusLabel);
             denyParallelGroup.addComponent(denyButton);
             
-            GroupLayout.ParallelGroup rowParallelGroup = groupLayout.createParallelGroup(Alignment.BASELINE);
+            GroupLayout.ParallelGroup rowParallelGroup = groupLayout.createParallelGroup(Alignment.LEADING);
             rowParallelGroup.addComponent(chatMessageTextArea).addComponent(approveButton).addComponent(statusLabel).addComponent(denyButton);
             verticalGroup.addGroup(rowParallelGroup);
         }

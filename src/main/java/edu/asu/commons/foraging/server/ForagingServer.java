@@ -81,12 +81,12 @@ import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id: ForagingServer.java 529 2010-08-17 00:08:01Z alllee $
+ * $Id$
  * 
  * Main experiment server class for costly sanctioning 2D experiment.
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 529 $
+ * @version $Revision$
  */
 public class ForagingServer extends AbstractExperiment<ServerConfiguration, RoundConfiguration> {
 
@@ -284,11 +284,18 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         sendFacilitatorMessage("configuration doesn't allow for chat but received " + request);
                         return;
                     }
-                    if (configuration.isCensoredChat()) {
-                        transmit(new FacilitatorCensoredChatRequest(facilitatorId, request));
+                    relayChatRequest(request);                    
+                }
+            });
+            addEventProcessor(new EventTypeProcessor<FacilitatorCensoredChatRequest>(FacilitatorCensoredChatRequest.class) {
+                public void handle(FacilitatorCensoredChatRequest request) {
+                    if (getCurrentRoundConfiguration().isCensoredChat()) {
+                        sendFacilitatorMessage("needs approval: " + request);
+                        request.setId(facilitatorId);
+                        transmit(request);
                     }
                     else {
-                        relayChatRequest(request);
+                        sendFacilitatorMessage("WARNING: received censored chat request but censored chat isn't enabled, bug in configuration.");
                     }
                 }
             });

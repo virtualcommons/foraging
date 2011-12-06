@@ -224,9 +224,7 @@ public class FacilitatorWindow extends JPanel {
 
 
 
-        informationScrollPane = new JScrollPane(informationEditorPane,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        informationScrollPane = new JScrollPane(informationEditorPane);
 
         setInstructions(facilitator.getServerConfiguration().getFacilitatorInstructions());
 
@@ -237,21 +235,19 @@ public class FacilitatorWindow extends JPanel {
         Dimension minimumSize = new Dimension(600, 200);
         messagePanel.setMinimumSize(minimumSize);
         informationScrollPane.setMinimumSize(minimumSize);
-        
-        if (facilitator.getServerConfiguration().isCensoredChat()) {
-            facilitatorChatPanel = new FacilitatorChatPanel(facilitator);
-            messagePanel.add(facilitatorChatPanel.getComponent(), BorderLayout.CENTER);
-        }
-        else {
-            messageEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
-            JScrollPane messageScrollPane = new JScrollPane(messageEditorPane);
-            messagePanel.add(messageScrollPane, BorderLayout.CENTER);
-        }
+        messageEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
+        JScrollPane messageScrollPane = new JScrollPane(messageEditorPane);
+        messagePanel.add(messageScrollPane, BorderLayout.CENTER);
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, informationScrollPane, messagePanel);
         add(splitPane, BorderLayout.CENTER);
         double proportion = 0.6d;
         splitPane.setDividerLocation(proportion);
         splitPane.setResizeWeight(proportion);
+        // add censored chat component if necessary
+        if (facilitator.getServerConfiguration().isCensoredChat()) {
+            facilitatorChatPanel = new FacilitatorChatPanel(facilitator);
+            add(facilitatorChatPanel.getComponent(), BorderLayout.SOUTH);
+        }
     }
 
     private void setInstructions(String contents) {

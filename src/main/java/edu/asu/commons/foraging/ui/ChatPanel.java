@@ -23,6 +23,7 @@ import edu.asu.commons.event.EventTypeProcessor;
 import edu.asu.commons.experiment.DataModel;
 import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
+import edu.asu.commons.foraging.event.FacilitatorCensoredChatRequest;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.UserInterfaceUtils;
 
@@ -155,9 +156,16 @@ public class ChatPanel extends JPanel {
             if (message == null || "".equals(message) || targetIdentifier == null) {
                 return;
             }
-            client.transmit(new ChatRequest(client.getId(), message, targetIdentifier));
+            RoundConfiguration configuration = client.getCurrentRoundConfiguration();
+            ChatRequest request = new ChatRequest(client.getId(), message, targetIdentifier);
+            if (configuration.isCensoredChat()) {
+                client.transmit(new FacilitatorCensoredChatRequest(client.getId(), request));
+            }
+            else {
+                client.transmit(request);
+            }
             // special case for in round chat
-            if (client.getCurrentRoundConfiguration().isInRoundChatEnabled()) {
+            if (configuration.isInRoundChatEnabled()) {
                 client.getGameWindow().requestFocusInWindow();
             }
             else {

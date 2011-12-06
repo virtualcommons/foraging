@@ -6,7 +6,7 @@ import edu.asu.commons.event.ClientRequest;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: FacilitatorCensoredChatRequest.java 522 2010-06-30 19:17:48Z alllee $
+ * $Id$
  * 
  * Event used to forward censored chat requests to the facilitator. 
  *
@@ -19,8 +19,8 @@ public class FacilitatorCensoredChatRequest extends AbstractPersistableEvent imp
 
     private ChatRequest censoredChatRequest;
     
-    public FacilitatorCensoredChatRequest(Identifier facilitatorId, ChatRequest request) {
-        super(facilitatorId);
+    public FacilitatorCensoredChatRequest(Identifier id, ChatRequest request) {
+        super(id);
         this.censoredChatRequest = request;
     }
     
@@ -34,6 +34,10 @@ public class FacilitatorCensoredChatRequest extends AbstractPersistableEvent imp
     
     public Identifier getTarget() {
         return censoredChatRequest.getTarget();
+    }
+    
+    public void setId(Identifier id) {
+        super.id = id;
     }
     
 
