@@ -18,7 +18,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.text.BadLocationException;
 
 import edu.asu.commons.foraging.conf.RoundConfiguration;

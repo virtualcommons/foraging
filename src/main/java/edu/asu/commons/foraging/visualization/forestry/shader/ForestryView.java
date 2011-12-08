@@ -38,7 +38,6 @@ import edu.asu.commons.foraging.graphics.Ray;
 import edu.asu.commons.foraging.graphics.SkyBox;
 import edu.asu.commons.foraging.graphics.Triangle;
 import edu.asu.commons.foraging.graphics.Vector3D;
-import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.foraging.util.Tuple2f;
 import edu.asu.commons.foraging.util.Tuple2i;
@@ -313,16 +312,16 @@ public class ForestryView extends GameView3d {
         //Create avatars
         Woodcutter avatar;
         synchronized (getDataModel()) {
-        	for (ClientData clientData : getDataModel().getClientDataMap().values()) {
-        		int avatarNo = clientData.getAssignedNumber();
-//        		avatar = loadAvatar(AVATARS[avatarNo - 1], clientData.getPosition(), avatarNo );
-//        		String avatarFile = clientData.isMale()? AVATAR_FILE_PATH + "maleWoodcutter.cfg": AVATAR_FILE_PATH + "femaleWoodcutter.cfg";
-        		String avatarFile = AVATAR_FILE;
-        		avatar = loadAvatar(avatarFile, clientData.getHairColor(), clientData.getSkinColor(), 
-        				clientData.getShirtColor(), clientData.getTrouserColor(), clientData.getShoesColor(), 
-        				clientData.getPoint3D(), avatarNo);
-        		avatars.put(clientData.getId(), avatar);
-        	}
+//        	for (ClientData clientData : getDataModel().getClientDataMap().values()) {
+//        		int avatarNo = clientData.getAssignedNumber();
+////        		avatar = loadAvatar(AVATARS[avatarNo - 1], clientData.getPosition(), avatarNo );
+////        		String avatarFile = clientData.isMale()? AVATAR_FILE_PATH + "maleWoodcutter.cfg": AVATAR_FILE_PATH + "femaleWoodcutter.cfg";
+//        		String avatarFile = AVATAR_FILE;
+//        		avatar = loadAvatar(avatarFile, clientData.getHairColor(), clientData.getSkinColor(), 
+//        				clientData.getShirtColor(), clientData.getTrouserColor(), clientData.getShoesColor(), 
+//        				clientData.getPoint3D(), avatarNo);
+//        		avatars.put(clientData.getId(), avatar);
+//        	}
         }
         avatar = avatars.get(client.getId());
         setCamera(avatar);
@@ -554,30 +553,30 @@ public class ForestryView extends GameView3d {
 		//Added this line as each tree was getting added twice as it is present in 
 		//the resourceDistribution as well as addedResources list
 		// FIXME: figure out how this is being used.  
-		getDataModel().clearDiffLists(); 
+//		getDataModel().clearDiffLists(); 
 		
 		repaint();
 	}
 	
 	@Override
 	public void updateResources() {
-        for (Resource resource: getDataModel().getRemovedResources()) {
-            Tree tree = (Tree) treeGrid.getNode(resource.getPosition());
-            if (! tree.harvested) {
-                treeGrid.remove(resource.getPosition());
-            }
-        }
-        for (Resource resource: getDataModel().getAddedResources()) {
-        	addTree(resource);
-        	//System.out.println("A new tree added");
-        }
-        for (Resource resource : getDataModel().getResourceDistribution().values()) {
-            Tree tree = (Tree) treeGrid.getNode(resource.getPosition());
-            if (!tree.isHarvested() && tree.getAge() != resource.getAge())  {
-            	tree.setAge(resource.getAge());            
-            }
-        }
-        getDataModel().clearDiffLists();
+//        for (Resource resource: getDataModel().getRemovedResources()) {
+//            Tree tree = (Tree) treeGrid.getNode(resource.getPosition());
+//            if (! tree.harvested) {
+//                treeGrid.remove(resource.getPosition());
+//            }
+//        }
+//        for (Resource resource: getDataModel().getAddedResources()) {
+//        	addTree(resource);
+//        	//System.out.println("A new tree added");
+//        }
+//        for (Resource resource : getDataModel().getResourceDistribution().values()) {
+//            Tree tree = (Tree) treeGrid.getNode(resource.getPosition());
+//            if (!tree.isHarvested() && tree.getAge() != resource.getAge())  {
+//            	tree.setAge(resource.getAge());            
+//            }
+//        }
+//        getDataModel().clearDiffLists();
     }
 	
 	private void addTree(Resource resource) {
@@ -670,17 +669,17 @@ public class ForestryView extends GameView3d {
 	}
 	
 	public void updateAgentPositions() {
-        for (ClientData clientData : getDataModel().getClientDataMap().values()) {
-            Identifier id = clientData.getId();
-            if (id.equals(client.getId())) {
-                continue;
-            }
-            Woodcutter avatar = avatars.get(id);
-            avatar.setPosition(clientData.getPoint3D());                
-            avatar.setHeading(clientData.getHeading());
-            if (clientData.isAnimationActive())
-            	avatar.animate( clientData.getAnimationState() );
-        }
+//        for (ClientData clientData : getDataModel().getClientDataMap().values()) {
+//            Identifier id = clientData.getId();
+//            if (id.equals(client.getId())) {
+//                continue;
+//            }
+//            Woodcutter avatar = avatars.get(id);
+//            avatar.setPosition(clientData.getPoint3D());                
+//            avatar.setHeading(clientData.getHeading());
+//            if (clientData.isAnimationActive())
+//            	avatar.animate( clientData.getAnimationState() );
+//        }
     }
 
 	//################### Avatar picking related functions #####################

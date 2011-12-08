@@ -1,5 +1,6 @@
 package edu.asu.commons.foraging.server;
 
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
@@ -68,6 +70,7 @@ import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
 import edu.asu.commons.foraging.model.GroupDataModel;
+import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.rules.ForagingRule;
@@ -312,7 +315,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         sendFacilitatorMessage("Received all quizzes, ready to start round.");
                         Utils.notify(quizSignal);
                     }
-
                 }
             });
             addEventProcessor(new EventTypeProcessor<PostRoundSanctionRequest>(PostRoundSanctionRequest.class) {
@@ -847,16 +849,23 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     clientData.collectToken();
                 }
             }
-
-            for (ClientData clientData : clients.values()) {
-                if (shouldSynchronize(clientData.getAssignedNumber())) {
-                    transmit(new SynchronizeClientEvent(clientData, currentRoundDuration.getTimeLeft()));
-                }
-                else {
-                    transmit(new ClientPositionUpdateEvent(clientData, currentRoundDuration.getTimeLeft()));
+            for (GroupDataModel group: serverDataModel.getGroups()) {
+                Set<Resource> addedTokensSet = group.getAddedResources();
+                Resource[] addedResources = addedTokensSet.toArray(new Resource[addedTokensSet.size()]);
+                Set<Resource> removedTokensSet = group.getRemovedResources();
+                Resource[] removedResources = removedTokensSet.toArray(new Resource[removedTokensSet.size()]);
+                Map<Identifier, Integer> clientTokens = group.getClientTokens();
+                Map<Identifier, Point> clientPositions = group.getClientPositions();
+                for (ClientData data: group.getClientDataMap().values()) {
+                    if (shouldSynchronize(data.getAssignedNumber())) {
+                        transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
+                    }
+                    else {
+                        transmit(new ClientPositionUpdateEvent(data, addedResources, removedResources, clientTokens, clientPositions, currentRoundDuration.getTimeLeft()));
+                    }
                 }
             }
-            // send the current ServerGameState to the facilitator
+            // FIXME: refine this, send basic info to the facilitator (how many resources left, etc.) 
             if (shouldUpdateFacilitator()) {
                 transmit(new FacilitatorUpdateEvent(facilitatorId, serverDataModel, currentRoundDuration.getTimeLeft()));
             }
@@ -866,8 +875,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         }
 
         private boolean shouldUpdateFacilitator() {
-            long startCount = secondTick.getStartCount();
-            return (startCount < 3);
+            return false;
         }
 
         private boolean shouldSynchronize(int assignedNumber) {

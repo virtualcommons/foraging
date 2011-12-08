@@ -35,7 +35,6 @@ import edu.asu.commons.foraging.graphics.RGBA;
 import edu.asu.commons.foraging.graphics.TextureLoader;
 import edu.asu.commons.foraging.graphics.Triangulation;
 import edu.asu.commons.foraging.graphics.Vector3D;
-import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.foraging.util.Tuple2i;
 import edu.asu.commons.foraging.util.Tuple3i;
@@ -491,12 +490,12 @@ public class AbstractView extends GameView3d {
 
         Agent agent;
         synchronized (getDataModel()) {
-            for (ClientData clientData : getDataModel().getClientDataMap().values()) {
+            for (Identifier id : getDataModel().getAllClientIdentifiers()) {
                 //String textureFile = TEXTURES[clientData.getAssignedNumber() - 1];
-            	Color color = clientData.getSkinColor();
-            	agent = new Agent(clientData.getPoint3D(), 0, new RGBA(color), Agent.textureFile, clientData.getAssignedNumber(), this);
+            	Color color = getDataModel().getClientData().getSkinColor();
+            	agent = new Agent(dataModel.getPoint3D(id), 0, new RGBA(color), Agent.textureFile, dataModel.getAssignedNumber(id), this);
                 // this client is always the first agent in the list.
-                agents.put(clientData.getId(), agent);
+                agents.put(id, agent);
             }
         }
         
@@ -931,14 +930,14 @@ public class AbstractView extends GameView3d {
     }
     
     public void updateAgentPositions() {
-        for (ClientData clientData : getDataModel().getClientDataMap().values()) {
-            Identifier id = clientData.getId();
+        for (Identifier id : getDataModel().getAllClientIdentifiers()) {
             if (id.equals(client.getId())) {
                 continue;
             }
             Agent agent = agents.get(id);
-            agent.setPosition(clientData.getPoint3D());
-            agent.setHeading(clientData.getHeading());
+            agent.setPosition(dataModel.getPoint3D(id));
+            // FIXME: unimplemented
+//            agent.setHeading(dataModel.getHeading(id));
         }
     }
 
@@ -954,8 +953,7 @@ public class AbstractView extends GameView3d {
 		Point labelPosition;
 		//Other clients
 		Identifier selfId = client.getId();
-		for (ClientData clientData : getDataModel().getClientDataMap().values()) {
-	        Identifier id = clientData.getId();
+		for (Identifier id: getDataModel().getAllClientIdentifiers()) {
 	        if (id.equals(selfId)) {
 	            // skip ourselves
 	            continue;

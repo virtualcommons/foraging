@@ -141,7 +141,7 @@ public class TestView extends GameView3d {
 		}		
 		//Added this line as each tree was getting added twice as it is present in 
 		//the resourceDistribution as well as addedResources list
-		getDataModel().clearDiffLists(); 
+//		getDataModel().clearDiffLists(); 
 	}
 	
 	@Override
@@ -230,7 +230,7 @@ public class TestView extends GameView3d {
 			if (treeCount == nTrees)
 				break;
         }
-        getDataModel().clearDiffLists();
+//        getDataModel().clearDiffLists();
 
 	}
 

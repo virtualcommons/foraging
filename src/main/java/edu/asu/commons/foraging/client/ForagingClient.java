@@ -2,7 +2,6 @@ package edu.asu.commons.foraging.client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.util.LinkedList;
 
@@ -27,7 +26,6 @@ import edu.asu.commons.foraging.event.ClientMovementRequest;
 import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
 import edu.asu.commons.foraging.event.CollectTokenRequest;
 import edu.asu.commons.foraging.event.EndRoundEvent;
-import edu.asu.commons.foraging.event.LockResourceEvent;
 import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
 import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
@@ -49,6 +47,7 @@ import edu.asu.commons.foraging.ui.GameWindow2D;
 import edu.asu.commons.foraging.ui.GameWindow3D;
 import edu.asu.commons.net.SocketIdentifier;
 import edu.asu.commons.util.Duration;
+import edu.asu.commons.util.Utils;
 
 
 
@@ -208,29 +207,37 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                 }
             }
         });
+        addEventProcessor(new EventTypeProcessor<ClientPositionUpdateEvent>(ClientPositionUpdateEvent.class) {
+            public void handle(ClientPositionUpdateEvent event) {
+                if (state == ClientState.RUNNING) {
+                    dataModel.update(event);
+                    getGameWindow().update(event.getTimeLeft());
+                }
+            }
+        });
         addEventProcessor(new EventTypeProcessor<SynchronizeClientEvent>(SynchronizeClientEvent.class) {
             public void handle(SynchronizeClientEvent event) {
                 dataModel.setGroupDataModel(event.getGroupDataModel());
-                // FIXME: gross
-                if (dataModel.is2dExperiment()) {
-                    dataModel.update(event, getGameWindow2D());
-                }
+                
+//                if (dataModel.is2dExperiment()) {
+//                    dataModel.update(event, getGameWindow2D());
+//                }
                 getGameWindow().update(event.getTimeLeft());
             }
         });
         initialize2DEventProcessors();
-        initialize3DEventProcessors();
+//        initialize3DEventProcessors();
         messageQueue = new MessageQueue();
     }
     
-    private void initialize3DEventProcessors() {
-        addEventProcessor(new EventTypeProcessor<LockResourceEvent>(LockResourceEvent.class) {
-            public void handle(LockResourceEvent event) {
-                // tell the game window to highlight the appropriate resource
-                getGameWindow3D().highlightResource(event);
-            }
-        });
-    }
+//    private void initialize3DEventProcessors() {
+//        addEventProcessor(new EventTypeProcessor<LockResourceEvent>(LockResourceEvent.class) {
+//            public void handle(LockResourceEvent event) {
+//                // tell the game window to highlight the appropriate resource
+//                getGameWindow3D().highlightResource(event);
+//            }
+//        });
+//    }
     
     private void initialize2DEventProcessors() {
         addEventProcessor(new EventTypeProcessor<BeginChatRoundRequest>(BeginChatRoundRequest.class) {
@@ -244,13 +251,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                 getGameWindow2D().updateDebriefing(event);
             }
         });
-        addEventProcessor(new EventTypeProcessor<ClientPositionUpdateEvent>(ClientPositionUpdateEvent.class) {
-            public void handle(ClientPositionUpdateEvent event) {
-                if (state == ClientState.RUNNING) {
-                    dataModel.updateDiffs(event, getGameWindow2D());
-                }
-            }
-        });
+
 
         addEventProcessor(new EventTypeProcessor<ClientMessageEvent>(ClientMessageEvent.class) {
             public void handle(ClientMessageEvent event) {
@@ -358,8 +359,8 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
 //                    moveClient(request);
                     transmit(request);
                 }
-//                Utils.sleep(100);
-                Thread.yield();
+                Utils.sleep(100);
+//                Thread.yield();
             }
         }
 

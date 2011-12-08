@@ -3,18 +3,16 @@ package edu.asu.commons.foraging.event;
 import java.awt.Point;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 
 import edu.asu.commons.event.AbstractEvent;
 import edu.asu.commons.foraging.model.ClientData;
-import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.net.Identifier;
 
 
 
 /**
- * $Id: ClientPositionUpdateEvent.java 4 2008-07-25 22:51:44Z alllee $
+ * $Id$
  * 
  * Only contains the differences between rounds since this event is sent quite frequently.
  * 
@@ -22,7 +20,7 @@ import edu.asu.commons.net.Identifier;
  * 
  * @author Deepali Bhagvat
  * @author Allen Lee
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 public class ClientPositionUpdateEvent extends AbstractEvent {
 
@@ -30,28 +28,24 @@ public class ClientPositionUpdateEvent extends AbstractEvent {
 
     private final Resource[] addedResources;
     private final Resource[] removedResources;
+    // FIXME: merge these two using a Pair
     private final Map<Identifier, Integer> clientTokens;
     private final Map<Identifier, Point> clientPositions;
     private final Queue<RealTimeSanctionRequest> latestSanctions;
     
     private final long timeLeft;
     
-    public ClientPositionUpdateEvent(ClientData clientData, long timeLeft) {
-        this(clientData.getId(), clientData.getGroupDataModel(), timeLeft);
+    public ClientPositionUpdateEvent(ClientData data, Resource[] addedResources, Resource[] removedResources, Map<Identifier, Integer> clientTokens,
+            Map<Identifier, Point> clientPositions, long timeLeft) {
+        super(data.getId());
+        this.addedResources = addedResources;
+        this.removedResources = removedResources;
+        this.clientTokens = clientTokens;
+        this.clientPositions = clientPositions;
+        this.timeLeft = timeLeft;
+        this.latestSanctions = data.getLatestSanctions();
     }
 
-    public ClientPositionUpdateEvent(Identifier id, GroupDataModel group, long timeLeft) {
-        super(id);
-        Set<Resource> addedTokensSet = group.getAddedResources();
-        this.addedResources = addedTokensSet.toArray(new Resource[addedTokensSet.size()]);
-        Set<Resource> removedTokensSet = group.getRemovedResources();
-        this.removedResources = removedTokensSet.toArray(new Resource[removedTokensSet.size()]);
-        this.timeLeft = timeLeft;
-        this.clientTokens = group.getClientTokens();
-        this.clientPositions = group.getClientPositions();
-        this.latestSanctions = group.getClientData(id).getLatestSanctions();
-    }
-    
     public int getCurrentTokens() {
         return getCurrentTokens( getId() );
     }
@@ -71,7 +65,7 @@ public class ClientPositionUpdateEvent extends AbstractEvent {
     public Resource[] getRemovedTokens() {
         return removedResources;
     }
-
+    
     public Point getClientPosition() {
         return getClientPosition(id);
     }
@@ -82,5 +76,13 @@ public class ClientPositionUpdateEvent extends AbstractEvent {
     
     public long getTimeLeft() {
         return timeLeft;
+    }
+
+    public Map<Identifier, Point> getClientPositions() {
+        return clientPositions;
+    }
+
+    public Map<Identifier, Integer> getClientTokens() {
+        return clientTokens;
     }
 }

@@ -14,7 +14,6 @@ import java.util.Map;
 
 import edu.asu.commons.foraging.client.ClientDataModel;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
-import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 
@@ -148,7 +147,6 @@ public class SubjectView extends GridView {
     }
 
     protected void paintSubjects(Graphics2D graphics2D) {
-        Map<Identifier, ClientData> positions = dataModel.getClientDataMap();
         graphics2D.setFont(font);
         FontMetrics fontMetrics = graphics2D.getFontMetrics(font); 
         int characterHeight = fontMetrics.getAscent();
@@ -176,9 +174,9 @@ public class SubjectView extends GridView {
             graphics2D.fill(circle);
             graphics2D.setPaint(originalPaint);
         }
-        for (Map.Entry<Identifier, ClientData> entry : positions.entrySet()) {
+        for (Map.Entry<Identifier, Point> entry : dataModel.getClientPositions().entrySet()) {
             Identifier id = entry.getKey();
-            Point subjectLocation = entry.getValue().getPosition();
+            Point subjectLocation = entry.getValue();
             // optimized conditional
             if (viewSubjectsField == null || id.equals(dataModel.getId()) || viewSubjectsField.contains(subjectLocation)) {
                 // only draw if:
@@ -221,9 +219,9 @@ public class SubjectView extends GridView {
             graphics2D.fillRect(x, y, getCellWidth(), getCellHeight());
             graphics2D.drawImage(scaledSanctioningImage, x, y, this);   
         }
-        else if (id.equals(dataModel.getMonitorId())) {
-            graphics2D.drawImage(scaledMonitorImage, x, y, this);
-        }
+//        else if (id.equals(dataModel.getMonitorId())) {
+//            graphics2D.drawImage(scaledMonitorImage, x, y, this);
+//        }
         else if (id.equals(dataModel.getId())) {
             if (dataModel.isExplicitCollectionMode()) {
                 graphics2D.drawImage(scaledSelfExplicitCollectionModeImage, x, y, this);

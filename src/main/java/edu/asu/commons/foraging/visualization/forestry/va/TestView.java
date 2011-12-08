@@ -20,7 +20,7 @@ import edu.asu.commons.foraging.visualization.GameView3d;
 /**
  * The TestView class is used to test the trees created in this package.
  * @author <a href='deepali.bhagvat@asu.edu'>Deepali Bhagvat</a>
- * @version $Revision: 4 $
+ * @version $Revision$
  *
  */
 public class TestView extends GameView3d {
@@ -69,7 +69,7 @@ public class TestView extends GameView3d {
 		}		
 		//Added this line as each tree was getting added twice as it is present in 
 		//the resourceDistribution as well as addedResources list
-		getDataModel().clearDiffLists(); 
+//		getDataModel().clearDiffLists(); 
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class TestView extends GameView3d {
 			if (treeCount == nTrees)
 				break;
         }
-        getDataModel().clearDiffLists();
+//        getDataModel().clearDiffLists();
 
 	}
 

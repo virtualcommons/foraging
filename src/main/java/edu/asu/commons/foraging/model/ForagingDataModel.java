@@ -9,12 +9,12 @@ import edu.asu.commons.foraging.conf.RoundConfiguration;
 
 
 /**
- * $Id: ForagingDataModel.java 4 2008-07-25 22:51:44Z alllee $ The
+ * $Id$ The
  * 
- * Convenience abstract class for storing csan data.
+ * Base class for the foraging client side and server side data models.
  * 
  * @author Allen Lee
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 
 public abstract class ForagingDataModel implements DataModel<RoundConfiguration> {
@@ -24,6 +24,8 @@ public abstract class ForagingDataModel implements DataModel<RoundConfiguration>
     protected transient EventChannel channel;
     protected transient boolean sanctioningEnabled;
     protected transient boolean experiment2d;
+    protected transient int boardWidth;
+    protected transient int boardHeight;
     
     private RoundConfiguration roundConfiguration;
 
@@ -36,28 +38,34 @@ public abstract class ForagingDataModel implements DataModel<RoundConfiguration>
     }
 
     public int getBoardWidth() {
-        return roundConfiguration.getResourceWidth();
+        return boardWidth;
     }
 
     public int getBoardHeight() {
-        return roundConfiguration.getResourceDepth();
+        return boardHeight;
     }
 
     public RoundConfiguration getRoundConfiguration() {
         return roundConfiguration;
     }
 
-    // FIXME: considers game world to be flat rectilinear, will need to adapt to
-    // torus
-    // (wraparound on vertical edge only) for other experiments.
+    // FIXME: considers game world to be flat rectilinear, may need to adapt to
+    // torus (wraparound on vertical edge only) for other experiments.
     public boolean isValidPosition(Point p) {
-        return p.x >= 0 && p.x < getBoardWidth() && p.y >= 0 && p.y < getBoardHeight();
+        return isValidPosition(p.x, p.y);
+    }
+    
+    public boolean isValidPosition(int x, int y) {
+        return x >= 0 && x < boardWidth && y >= 0 && y < boardHeight;
     }
 
     public void setRoundConfiguration(RoundConfiguration configuration) {
         this.roundConfiguration = configuration;
         sanctioningEnabled = configuration.isSanctioningEnabled();
         experiment2d = configuration.is2dExperiment();
+        boardHeight = configuration.getResourceDepth();
+        boardWidth = configuration.getResourceWidth();
+        
     }
     
     public boolean isSanctioningEnabled() {

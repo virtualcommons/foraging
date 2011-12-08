@@ -302,31 +302,32 @@ public class GameWindow2D implements GameWindow {
         if (dataModel.getRoundConfiguration().shouldDisplayGroupTokens()) {
             StringBuilder builder = new StringBuilder("Tokens collected:");
             // XXX: use this method so that we get the proper ordering of client ids/assigned numbers..
-            Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();
+//            Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();
             Point clientPosition = dataModel.getCurrentPosition();
 
+            // FIXME: refactor this ugliness. 
             for (Identifier id : dataModel.getAllClientIdentifiers()) {
-                ClientData clientData = clientDataMap.get(id);
+//                ClientData clientData = clientDataMap.get(id);
                 String formatString = "";
                 if (id.equals(dataModel.getId())) {
                     formatString = " [%d (you) : %d] ";
-                    builder.append(String.format(formatString, clientData.getAssignedNumber(), clientData.getCurrentTokens()));
+                    builder.append(String.format(formatString, dataModel.getAssignedNumber(id), dataModel.getCurrentTokens(id)));
                 }
                 else {
                     if (!dataModel.getRoundConfiguration().isFieldOfVisionEnabled()) {
                         formatString = " [%d : %d] ";
-                        builder.append(String.format(formatString, clientData.getAssignedNumber(), clientData.getCurrentTokens()));
+                        builder.append(String.format(formatString, dataModel.getAssignedNumber(id), dataModel.getCurrentTokens(id)));
                     }
                     else {
                         double radius = dataModel.getRoundConfiguration().getViewSubjectsRadius();
                         Circle fieldOfVision = new Circle(clientPosition, radius);
-                        if (fieldOfVision.contains(clientData.getPosition())) {
+                        if (fieldOfVision.contains(dataModel.getClientPosition(id))) {
                             formatString = " [%d : %d] ";
-                            builder.append(String.format(formatString, clientData.getAssignedNumber(), clientData.getCurrentTokens()));
+                            builder.append(String.format(formatString, dataModel.getAssignedNumber(id), dataModel.getCurrentTokens(id)));
                         }
                         else {
                             formatString = " [%d : XX] ";
-                            builder.append(String.format(formatString, clientData.getAssignedNumber()));
+                            builder.append(String.format(formatString, dataModel.getAssignedNumber(id)));
                         }
                     }
                 }
@@ -505,7 +506,7 @@ public class GameWindow2D implements GameWindow {
                                     return;
                                 }
                                 // only allow sanctions for subjects within this subject's field of vision
-                                Point subjectPosition = dataModel.getClientDataMap().get(sanctionee).getPoint();
+                                Point subjectPosition = dataModel.getClientPosition(sanctionee);
                                 if (dataModel.getClientData().isSubjectInFieldOfVision(subjectPosition)) {
                                     event = new RealTimeSanctionRequest(dataModel.getId(), sanctionee);
                                     System.out.println("sending sanctioning event : " + event);

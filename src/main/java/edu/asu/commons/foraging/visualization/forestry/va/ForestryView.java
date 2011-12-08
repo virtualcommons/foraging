@@ -430,13 +430,13 @@ public class ForestryView extends GameView3d {
         //Create avatars
         Woodcutter avatar;
         synchronized (getDataModel()) {
-        	for (ClientData clientData : getDataModel().getClientDataMap().values()) {
-        		int avatarNo = clientData.getAssignedNumber();
-        		avatar = loadAvatar(AVATAR_FILE, clientData.getHairColor(), clientData.getSkinColor(), 
-        				clientData.getShirtColor(), clientData.getTrouserColor(), clientData.getShoesColor(), 
-        				clientData.getPoint3D(), avatarNo);
-        		avatars.put(clientData.getId(), avatar);
-        	}
+//        	for (ClientData clientData : getDataModel().getClientDataMap().values()) {
+//        		int avatarNo = clientData.getAssignedNumber();
+//        		avatar = loadAvatar(AVATAR_FILE, clientData.getHairColor(), clientData.getSkinColor(), 
+//        				clientData.getShirtColor(), clientData.getTrouserColor(), clientData.getShoesColor(), 
+//        				clientData.getPoint3D(), avatarNo);
+//        		avatars.put(clientData.getId(), avatar);
+//        	}
         }
         avatar = avatars.get(client.getId());
         setCamera(avatar);
@@ -711,17 +711,17 @@ public class ForestryView extends GameView3d {
 	 * Updates avatar positions, headings and animation states according to the information sent by the server
 	 */
 	public void updateAgentPositions() {
-        for (ClientData clientData : getDataModel().getClientDataMap().values()) {
-            Identifier id = clientData.getId();
-            if (id.equals(client.getId())) {
-                continue;
-            }
-            Woodcutter avatar = avatars.get(id);
-            avatar.setPosition(clientData.getPoint3D());
-            avatar.setHeading(clientData.getHeading());            
-            if (clientData.isAnimationActive())
-            	avatar.animate( clientData.getAnimationState() );
-        }
+//        for (ClientData clientData : getDataModel().getClientDataMap().values()) {
+//            Identifier id = clientData.getId();
+//            if (id.equals(client.getId())) {
+//                continue;
+//            }
+//            Woodcutter avatar = avatars.get(id);
+//            avatar.setPosition(clientData.getPoint3D());
+//            avatar.setHeading(clientData.getHeading());            
+//            if (clientData.isAnimationActive())
+//            	avatar.animate( clientData.getAnimationState() );
+//        }
     }
 
 	//################### Avatar picking related functions #####################

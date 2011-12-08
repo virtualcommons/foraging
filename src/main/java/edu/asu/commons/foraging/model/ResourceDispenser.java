@@ -16,14 +16,14 @@ import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 
 
 /**
- * $Id: ResourceDispenser.java 489 2010-03-10 19:05:12Z alllee $ 
+ * $Id$ 
  *
  * Creates resource tokens in the game world.  Current implementation generates a 
  * resource token probabilistically.  The probability that a token will be generated
  * in an empty space is 
  * P(t) = r * the number of neighboring cells containing a resource token / totalNumberOfNeighboringCells
  * 
- * @version $Revision: 489 $
+ * @version $Revision$
  */
 
 public class ResourceDispenser {
@@ -360,7 +360,7 @@ public class ResourceDispenser {
             return rate * getNeighborsTokenRatio(group, currentX, currentY);
         }
 
-        protected double getNeighborsTokenRatio(GroupDataModel group, int currentX, int currentY) {
+        protected double getNeighborsTokenRatio(final GroupDataModel group, final int currentX, final int currentY) {
             double neighborsWithTokens = 0;
             // start off at -1 to offset the off-by-one we get from adding the
             // current cell.
