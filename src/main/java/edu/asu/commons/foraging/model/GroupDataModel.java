@@ -31,7 +31,7 @@ import edu.asu.commons.net.Identifier;
 
 
 /**
- * $Id: GroupDataModel.java 497 2010-03-29 20:10:49Z alllee $
+ * $Id$
  * 
  * Represents a collection of Clients and associates them with a token distribution.  In the
  * case of a shared resource model where all clients share the same world space, there will
@@ -39,7 +39,7 @@ import edu.asu.commons.net.Identifier;
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  * @author Deepali Bhagvat
- * @version $Revision: 497 $
+ * @version $Revision$
  */
 
 public class GroupDataModel implements Serializable, Comparable<GroupDataModel>, DataModel<RoundConfiguration> {
@@ -629,7 +629,7 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
     
     public Map<Point, Resource> getResourceDistribution() {
         synchronized (resourceDistribution) {
-            return Collections.unmodifiableMap(resourceDistribution);
+            return new HashMap<Point, Resource>(resourceDistribution);
         }
     }
     

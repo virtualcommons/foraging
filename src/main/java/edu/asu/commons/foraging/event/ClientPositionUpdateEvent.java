@@ -1,6 +1,7 @@
 package edu.asu.commons.foraging.event;
 
 import java.awt.Point;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
@@ -31,17 +32,23 @@ public class ClientPositionUpdateEvent extends AbstractEvent {
     // FIXME: merge these two using a Pair
     private final Map<Identifier, Integer> clientTokens;
     private final Map<Identifier, Point> clientPositions;
+//    private final List<Point> collectedTokens;
     private final Queue<RealTimeSanctionRequest> latestSanctions;
     
     private final long timeLeft;
     
-    public ClientPositionUpdateEvent(ClientData data, Resource[] addedResources, Resource[] removedResources, Map<Identifier, Integer> clientTokens,
-            Map<Identifier, Point> clientPositions, long timeLeft) {
+    public ClientPositionUpdateEvent(ClientData data, 
+            Resource[] addedResources, Resource[] removedResources, 
+            Map<Identifier, Integer> clientTokens,
+            Map<Identifier, Point> clientPositions, 
+//            List<Point> collectedTokens, 
+            long timeLeft) {
         super(data.getId());
         this.addedResources = addedResources;
         this.removedResources = removedResources;
         this.clientTokens = clientTokens;
         this.clientPositions = clientPositions;
+//        this.collectedTokens = collectedTokens;
         this.timeLeft = timeLeft;
         this.latestSanctions = data.getLatestSanctions();
     }

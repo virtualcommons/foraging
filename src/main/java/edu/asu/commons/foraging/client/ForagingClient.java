@@ -359,8 +359,8 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
 //                    moveClient(request);
                     transmit(request);
                 }
-                Utils.sleep(100);
-//                Thread.yield();
+                Utils.sleep(50);
+                Thread.yield();
             }
         }
 

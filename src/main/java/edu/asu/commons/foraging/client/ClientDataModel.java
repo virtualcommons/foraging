@@ -3,6 +3,7 @@ package edu.asu.commons.foraging.client;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,7 @@ public class ClientDataModel extends ForagingDataModel {
      * Returns a Set containing the positions of food pellets.
      */
     public Set<Point> getResourcePositions() {
-        return resourceDistribution.keySet();
+        return Collections.unmodifiableSet(resourceDistribution.keySet());
     }
 
     public Map<Point, Resource> getResourceDistribution() {
@@ -134,6 +135,7 @@ public class ClientDataModel extends ForagingDataModel {
 //            clientAssignedNumbers.put(id, data.getAssignedNumber());
         }
         allClientIdentifiers.addAll(Arrays.asList(ids));
+        setGroupDataModel(groupDataModel);
     }
 
     public Identifier getClientId(int assignedNumber) {
@@ -147,13 +149,9 @@ public class ClientDataModel extends ForagingDataModel {
     }
 
     public void setGroupDataModel(GroupDataModel groupDataModel) {
-//        if (this.groupDataModel != null) {
-//            this.groupDataModel.clear();
-//        }
-//        this.groupDataModel = groupDataModel;
         this.clientData = groupDataModel.getClientData(getId());
+        this.resourceDistribution = groupDataModel.getResourceDistribution();
         update(groupDataModel.getClientTokens(), groupDataModel.getClientPositions(), clientData.getLatestSanctions(), null, null);
-//        currentTokens = groupDataModel.getCurrentTokens( getId() );
     }
 
     public List<Identifier> getAllClientIdentifiers() {
@@ -178,6 +176,9 @@ public class ClientDataModel extends ForagingDataModel {
      */
     public void update(ClientPositionUpdateEvent event) {
         update(event.getClientTokens(), event.getClientPositions(), event.getLatestSanctions(), event.getAddedTokens(), event.getRemovedTokens());
+        Identifier id = getId();
+        clientData.setPosition(clientPositions.get(id));
+        clientData.setCurrentTokens(clientTokens.get(id));
     }
     
     public void update(Map<Identifier, Integer> clientTokens, 
@@ -211,7 +212,7 @@ public class ClientDataModel extends ForagingDataModel {
     }
 
     public Point getCurrentPosition() {
-        return getClientData().getPosition();
+        return clientData.getPosition();
     }
 
     public int getCurrentTokens() {
