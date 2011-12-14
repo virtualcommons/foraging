@@ -24,7 +24,8 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     private static final long serialVersionUID = -1737412253553943902L;
     
     private final static String DEFAULT_LOG_FILE_DESTINATION = "foraging-server.log";
-    
+    private static final double DEFAULT_DOLLARS_PER_TOKEN = .02d;
+
     public ServerConfiguration() {
         super();
     }
@@ -90,6 +91,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     
     public boolean shouldAskForSurveyId() {
         return getBooleanProperty("survey-id-enabled");
+    }
+
+    public double getDollarsPerToken() {
+        return DEFAULT_DOLLARS_PER_TOKEN;
     }
 		
 }

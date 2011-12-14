@@ -46,13 +46,9 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     private static final int DEFAULT_SANCTION_FLASH_DURATION = 3;
 
-    private static final double DEFAULT_DOLLARS_PER_TOKEN = .02d;
-
     private static final double DEFAULT_TOKEN_MOVEMENT_PROBABILITY = 0.2d;
 
     private static final double DEFAULT_TOKEN_BIRTH_PROBABILITY = 0.01d;
-
-    
 
     public double getTrustGamePayoffIncrement() {
         return getDoubleProperty("trust-game-payoff", 0.25d);
@@ -281,7 +277,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public double getDollarsPerToken() {
-        return getDoubleProperty("dollars-per-token", DEFAULT_DOLLARS_PER_TOKEN);
+        return getDoubleProperty("dollars-per-token", getParentConfiguration().getDollarsPerToken());
     }
 
     /**

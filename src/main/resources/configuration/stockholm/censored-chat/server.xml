@@ -11,6 +11,8 @@
 <entry key="round4">round4.xml</entry>
 <entry key="round5">round5.xml</entry>
 <entry key="round6">round6.xml</entry>
+<entry key='show-up-payment'>10.0</entry>
+<entry key='show-up-payment'>0.02</entry>
 <entry key="wait-for-participants">true</entry>
 <entry key="number-of-rounds">7</entry>
 <entry key="facilitator-instructions">
