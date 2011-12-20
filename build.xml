@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<!-- $Id: build.xml 330 2008-02-13 05:31:26Z alllee $
+<!-- $Id$
      vim:sts=2:sw=2:
-     Version: $Revision: 330 $
+     Version: $Revision$
  -->
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="foraging" default="build-all" basedir=".">
   <!-- ensure ivy availability -->
