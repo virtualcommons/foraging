@@ -223,48 +223,50 @@ public class GameWindow2D implements GameWindow {
                 StringBuilder builder = configuration.buildInstructions();
                 setQuestionColors(correctAnswers, "black");
                 setQuestionColors(incorrectAnswers, "red");
+                // FIXME: ugh, writing simplified HTML for HtmlEditorPane is a less
+                // than ideal way to deliver information.
+                builder.append("<h1>Quiz Results</h1><hr>");
                 if (incorrectAnswers.isEmpty()) {
                     // notify the server and also notify the participant.
-                    builder.append("<br><b>Congratulations!</b> You have answered all questions correctly.");
-                    setInstructions(builder.toString());
+                    builder.append("<p>You have answered all questions correctly. Please see below for more details.</p><hr>");
                 }
                 else {
-                    // add the quiz instructions back, but remove all inputs
-                    builder.append(configuration.getQuizInstructionsWithoutInputs());
-                    // remove all inputs.
+                    builder.append("<p>At least one of your answers was incorrect.  Please see below for more details.</p><hr>");
                     Collections.sort(incorrectAnswers);
                     Collections.sort(correctAnswers);
                     HTMLEditorKit editorKit = (HTMLEditorKit) instructionsEditorPane.getEditorKit();
                     StyleSheet styleSheet = editorKit.getStyleSheet();
                     StringBuilder correctString = new StringBuilder();
-                    if (!correctAnswers.isEmpty()) {
+                    if (correctAnswers.isEmpty()) {
                         correctString.append("<h3>Correctly answered questions</h3><ul>");
                         // FIXME: extract style modifications to method
                         for (String correctQuestionNumber : correctAnswers) {
                             String styleString = String.format(".%s { color: black; }", correctQuestionNumber);
                             styleSheet.addRule(styleString);
-                            correctString.append(String.format("<li>Your answer [ %s ] was correct for question %s.",
-                                    actualAnswers.get(correctQuestionNumber),
-                                    correctQuestionNumber));
+                            correctString.append(String.format("<li>%s : Your answer [ %s ] was correct.",
+                                        correctQuestionNumber.toUpperCase(),
+                                        actualAnswers.get(correctQuestionNumber)
+                                        ));
                         }
                         correctString.append("</ul>");
                     }
-
                     correctString.append("<h3>Incorrectly answered questions</h3><ul>");
                     for (String incorrectQuestionNumber : incorrectAnswers) {
                         String styleString = String.format(".%s { color: red; }", incorrectQuestionNumber);
                         styleSheet.addRule(styleString);
-                        correctString.append(String.format("<li>Your answer [ %s ] was incorrect for question %s.  The correct answer was [ %s ].  %s",
-                                actualAnswers.get(incorrectQuestionNumber),
-                                incorrectQuestionNumber,
-                                quizAnswers.get(incorrectQuestionNumber),
-                                configuration.getQuizExplanation(incorrectQuestionNumber)
-                                ));
+                        correctString.append(String.format("<li>%s : Your answer [ %s ] was incorrect.  The correct answer is [ %s ].",
+                                    incorrectQuestionNumber.toUpperCase(),
+                                    actualAnswers.get(incorrectQuestionNumber),
+                                    quizAnswers.get(incorrectQuestionNumber)
+                                    ));
                     }
                     correctString.append("</ul>");
                     builder.append(correctString);
-                    setInstructions(builder.toString());
                 }
+
+                // add the quiz instructions back, but remove all inputs
+                builder.append(configuration.getQuizResults());
+                setInstructions(builder.toString());
             }
         };
     }

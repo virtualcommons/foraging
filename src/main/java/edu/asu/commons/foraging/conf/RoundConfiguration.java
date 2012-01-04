@@ -725,6 +725,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         List<RoundConfiguration> allParameters = getParentConfiguration().getAllParameters();
         return String.format("Round %d of %d\n\t%s", allParameters.indexOf(this) + 1, allParameters.size(), getProperties());
     }
+    
+    public String getQuizResults() {
+        return getProperty("quiz-results");
+    }
 
     public String getQuizInstructionsWithoutInputs() {
         return getQuizInstructions().replaceAll("<input.*value=\"[\\w]+\">", "");

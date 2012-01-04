@@ -38,13 +38,6 @@
 ]]>
 </entry>
 
-<entry key='field-of-vision-instructions'>
-<![CDATA[
-Your vision is limited in this experiment.  The area that is visible to you will be
-shaded.
-]]>
-</entry>
-
 <entry key="welcome-instructions">
 <![CDATA[
 <h1>Welcome</h1>
@@ -63,8 +56,10 @@ are told to do so.
 <entry key="general-instructions">
 <![CDATA[
 <h1>General Instructions</h1>
+<h2>Your Earnings</h2>
+<hr>
 <p>
-You have already earned 5 dollars just for showing up at this experiment.  You can
+You have already earned 5 dollars by showing up at this experiment.  You can
 earn more, up to a maximum of about $15-$40, by participating in this experiment
 which will take about an hour to an hour and a half. The amount of money you earn
 depends on your decisions as well as the decisions of your group members.</p>
@@ -113,7 +108,8 @@ When all neighboring cells are empty, there is no renewal.
 </table>
 <p>
     If you have any questions at this time, please raise your hand and someone will
-    come over to your station and answer it.  
+    come over to your station and answer it.  If you have no questions, continue to
+    the quiz below.
 </p>
 ]]>
 </entry>

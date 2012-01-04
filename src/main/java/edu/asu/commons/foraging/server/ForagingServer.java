@@ -17,6 +17,8 @@ import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.apache.commons.lang.StringUtils;
+
 import edu.asu.commons.command.Command;
 import edu.asu.commons.event.BeginRoundRequest;
 import edu.asu.commons.event.ChatEvent;
@@ -747,7 +749,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         
         private void sendFacilitatorMessage(String message) {
             logger.info(message);
-            transmit(new FacilitatorMessageEvent(facilitatorId, message));
+            if (facilitatorId != null && StringUtils.isNotBlank(message)) {
+                transmit(new FacilitatorMessageEvent(facilitatorId, message));
+            }
         }
 
         // FIXME: remove Dispatcher reference if it's unused.
