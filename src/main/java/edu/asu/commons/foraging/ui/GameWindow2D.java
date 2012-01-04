@@ -343,8 +343,7 @@ public class GameWindow2D implements GameWindow {
     }
 
     private String getTimeLeftLabelText(long roundTimeLeft) {
-        long secondsLeft = roundTimeLeft / 1000L;
-        return "Time left: " + secondsLeft + " second(s)";
+    	return String.format("Time left: %d second(s)", roundTimeLeft / 1000L);
     }
 
     private void setInstructions(String s) {

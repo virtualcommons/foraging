@@ -3,6 +3,7 @@ package edu.asu.commons.foraging.client;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.util.LinkedList;
 
 import javax.swing.JFrame;
@@ -416,10 +417,10 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                 client.connect();
                 frame.setTitle("Client Window: " + client.getId());
                 frame.add(client.clientPanel);
-                frame.setVisible(true);
                 frame.setExtendedState(Frame.MAXIMIZED_BOTH);
                 frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 frame.pack();
+                frame.setVisible(true);
             }
         };
         SwingUtilities.invokeLater(createGuiRunnable);
