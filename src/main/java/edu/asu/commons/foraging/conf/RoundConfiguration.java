@@ -284,7 +284,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      * Returns the instructions for this round.
      */
     public String getInstructions() {
-        ST template = new ST(getProperty("instructions"), '{', '}');
+        ST template = createStringTemplate(getProperty("instructions"));
         // FIXME: see if it's possible to simplify usage here so bean properties are transparently accessed within a templatized instruction.
         template.add("resourceWidth", getResourceWidth());
         template.add("resourceDepth", getResourceDepth());
@@ -324,7 +324,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      */
     public String getQuizInstructions() {
         // FIXME: cache?
-        ST template = new ST(getProperty("quiz-instructions"), '{', '}');
+        ST template = createStringTemplate(getProperty("quiz-instructions"));
         template.add("quizCorrectAnswerReward", asCurrency(getQuizCorrectAnswerReward()));
         return template.render();
     }
@@ -511,7 +511,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getGeneralInstructions() {
-        ST template = new ST(getParentConfiguration().getGeneralInstructions(), '{', '}');
+        ST template = createStringTemplate(getParentConfiguration().getGeneralInstructions());
         template.add("showUpPayment", getParentConfiguration().getShowUpPayment());
         return template.render();
     }
@@ -695,7 +695,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public String getSurveyInstructions(Identifier id) {
         String surveyInstructions = getSurveyInstructions();
-        ST template = new ST(surveyInstructions, '{', '}'); 
+        ST template = createStringTemplate(surveyInstructions); 
         template.add("surveyLink", getSurveyLink());
         template.add("participantId", id);
         template.add("surveyId", id.getSurveyId());
@@ -703,9 +703,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
     
     public String getVotingNominationInstructions(List<ForagingRule> selectedRules) {
-//        ST template = new ST(getVotingNominationInstructions(), '$', '$');
-//        template.add("selectedRules", selectedRules);
-//        return template.render();
         StringBuilder builder = new StringBuilder("<h1>Voting Results</h1><hr>");
         if (selectedRules.size() > 1) {
             // tiebreaker
@@ -726,12 +723,19 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return String.format("Round %d of %d\n\t%s", allParameters.indexOf(this) + 1, allParameters.size(), getProperties());
     }
     
-    public String getQuizResults() {
-        return getProperty("quiz-results");
+    public String getQuizResults(List<String> incorrectQuestionNumbers, Map<Object, Object> actualAnswers) {
+//        if (incorrectQuestionNumbers.isEmpty()) {
+//             notify the server and also notify the participant.
+//            builder.append("<p>You have answered all questions correctly. Please see below for more details.</p><hr>");
+//        }
+//        else {
+//            builder.append("<p>At least one of your answers was incorrect.  Please see below for more details.</p><hr>");
+//        }
+        ST template = createStringTemplate(getProperty("quiz-results"));
+        template.add("allCorrect", incorrectQuestionNumbers.isEmpty());
+        for (String incorrectQuestionNumber : incorrectQuestionNumbers) {
+            template.add("incorrect_" + incorrectQuestionNumber, String.format("Your answer, %s, was incorrect.", actualAnswers.get(incorrectQuestionNumber)));
+        }
+        return template.render();
     }
-
-    public String getQuizInstructionsWithoutInputs() {
-        return getQuizInstructions().replaceAll("<input.*value=\"[\\w]+\">", "");
-    }
-
 }

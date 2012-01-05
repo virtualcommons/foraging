@@ -17,8 +17,6 @@ import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import org.apache.commons.lang.StringUtils;
-
 import edu.asu.commons.command.Command;
 import edu.asu.commons.event.BeginRoundRequest;
 import edu.asu.commons.event.ChatEvent;
@@ -562,7 +560,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                             sourceClient.getAssignedNumber(),
                             subtractedTokens)));
         }
-
+        @SuppressWarnings("rawtypes")
         private void initializeFacilitatorHandlers() {
             // facilitator handlers
             addEventProcessor(new EventTypeProcessor<FacilitatorRegistrationRequest>(FacilitatorRegistrationRequest.class) {
@@ -575,12 +573,13 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 }
             });
             addEventProcessor(new EventTypeProcessor<ShowRequest>(ShowRequest.class, true) {
+                @Override
                 public void handle(ShowRequest request) {
                     if (request.getId().equals(facilitatorId)) {
                         for (Identifier id: clients.keySet()) {
                             transmit(request.copy(id));
                         }
-                        sendFacilitatorMessage("Received " + request + " from facilitator, copied & broadcastto all clients.");
+//                        sendFacilitatorMessage("Received " + request + " from facilitator, copied & broadcast to all clients.");
                     }
                     else {
                         sendFacilitatorMessage("Ignoring show request from non facilitator id: " + request.getId());
@@ -646,6 +645,12 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 @Override
                 public void handle(SurveyIdSubmissionRequest request) {
                     ClientData clientData = clients.get(request.getId());
+                    String surveyId = request.getSurveyId();
+                    for (ClientData data: clients.values()) {
+                        if (surveyId.equals(data.getSurveyId())) {
+                            sendFacilitatorMessage(String.format("WARNING: survey id %s was already assigned to client %s but is now also being assigned to %s", surveyId, data, clientData));
+                        }
+                    }
                     clientData.getId().setSurveyId(request.getSurveyId());
                     sendFacilitatorMessage(String.format("Storing survey id %s for client %s", request.getSurveyId(), clientData));
                 }
@@ -749,7 +754,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         
         private void sendFacilitatorMessage(String message) {
             logger.info(message);
-            if (facilitatorId != null && StringUtils.isNotBlank(message)) {
+            if (facilitatorId != null) {
                 transmit(new FacilitatorMessageEvent(facilitatorId, message));
             }
         }

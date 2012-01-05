@@ -20,11 +20,11 @@ import edu.asu.commons.util.Duration;
 
 /**
  * 
- * $Id: ClientData.java 510 2010-04-20 04:11:22Z alllee $
+ * $Id$
  * 
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>, Deepali Bhagvat
- * @version $Revision: 510 $
+ * @version $Revision$
  */
 public class ClientData implements Serializable {
 
@@ -580,7 +580,7 @@ public class ClientData implements Serializable {
     }
 
     public String toString() {
-        return String.format("id (%s) number (%d)", id, assignedNumber);
+        return String.format("id (%s) assigned number (%d)", id, assignedNumber);
     }
 
     public void addTrustGameEarnings(double trustGameEarnings) {
@@ -613,6 +613,10 @@ public class ClientData implements Serializable {
 
     public void setVotedRule(ForagingRule votedRule) {
         this.votedRule = votedRule;
+    }
+    
+    public String getSurveyId() {
+        return getId().getSurveyId();
     }
     
 }

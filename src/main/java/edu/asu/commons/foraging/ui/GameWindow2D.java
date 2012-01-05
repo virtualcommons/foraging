@@ -16,7 +16,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -202,7 +201,7 @@ public class GameWindow2D implements GameWindow {
             public void actionPerformed(ActionEvent e) {
                 HtmlEditorPane.FormActionEvent formEvent = (HtmlEditorPane.FormActionEvent) e;
                 Properties actualAnswers = formEvent.getData();
-                List<String> incorrectAnswers = new ArrayList<String>();
+                List<String> incorrectQuestionNumbers = new ArrayList<String>();
                 List<String> correctAnswers = new ArrayList<String>();
 
                 // iterate through expected answers
@@ -215,57 +214,15 @@ public class GameWindow2D implements GameWindow {
                     }
                     else {
                         // flag the incorrect response
-                        incorrectAnswers.add(questionNumber);
+                        incorrectQuestionNumbers.add(questionNumber);
                     }
                 }
-
-                client.transmit(new QuizResponseEvent(client.getId(), actualAnswers, incorrectAnswers));
-                StringBuilder builder = configuration.buildInstructions();
-                setQuestionColors(correctAnswers, "black");
-                setQuestionColors(incorrectAnswers, "red");
-                // FIXME: ugh, writing simplified HTML for HtmlEditorPane is a less
-                // than ideal way to deliver information.
-                builder.append("<h1>Quiz Results</h1><hr>");
-                if (incorrectAnswers.isEmpty()) {
-                    // notify the server and also notify the participant.
-                    builder.append("<p>You have answered all questions correctly. Please see below for more details.</p><hr>");
-                }
-                else {
-                    builder.append("<p>At least one of your answers was incorrect.  Please see below for more details.</p><hr>");
-                    Collections.sort(incorrectAnswers);
-                    Collections.sort(correctAnswers);
-                    HTMLEditorKit editorKit = (HTMLEditorKit) instructionsEditorPane.getEditorKit();
-                    StyleSheet styleSheet = editorKit.getStyleSheet();
-                    StringBuilder correctString = new StringBuilder();
-                    if (correctAnswers.isEmpty()) {
-                        correctString.append("<h3>Correctly answered questions</h3><ul>");
-                        // FIXME: extract style modifications to method
-                        for (String correctQuestionNumber : correctAnswers) {
-                            String styleString = String.format(".%s { color: black; }", correctQuestionNumber);
-                            styleSheet.addRule(styleString);
-                            correctString.append(String.format("<li>%s : Your answer [ %s ] was correct.",
-                                        correctQuestionNumber.toUpperCase(),
-                                        actualAnswers.get(correctQuestionNumber)
-                                        ));
-                        }
-                        correctString.append("</ul>");
-                    }
-                    correctString.append("<h3>Incorrectly answered questions</h3><ul>");
-                    for (String incorrectQuestionNumber : incorrectAnswers) {
-                        String styleString = String.format(".%s { color: red; }", incorrectQuestionNumber);
-                        styleSheet.addRule(styleString);
-                        correctString.append(String.format("<li>%s : Your answer [ %s ] was incorrect.  The correct answer is [ %s ].",
-                                    incorrectQuestionNumber.toUpperCase(),
-                                    actualAnswers.get(incorrectQuestionNumber),
-                                    quizAnswers.get(incorrectQuestionNumber)
-                                    ));
-                    }
-                    correctString.append("</ul>");
-                    builder.append(correctString);
-                }
-
-                // add the quiz instructions back, but remove all inputs
-                builder.append(configuration.getQuizResults());
+                client.transmit(new QuizResponseEvent(client.getId(), actualAnswers, incorrectQuestionNumbers));
+                setQuestionColors(correctAnswers, "blue");
+                setQuestionColors(incorrectQuestionNumbers, "red");
+                // RoundConfiguration now builds the appropriate quiz results page.
+                StringBuilder builder = new StringBuilder(configuration.getQuizResults(incorrectQuestionNumbers, actualAnswers));
+                configuration.buildInstructions(builder);
                 setInstructions(builder.toString());
             }
         };
