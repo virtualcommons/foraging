@@ -589,7 +589,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     /**
-     * The preferred method of building instructions within the foraging experiment.
+     * Returns a StringBuilder containing all instructions for the given round.  
+     * FIXME: Need to refactor this + buildInstructions variants, this logic should be simplified.
      * 
      * Given a StringBuilder, will append the various instructions conditionally relevant
      * to this {@link #RoundConfiguration()}.
@@ -602,13 +603,16 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      * @return
      */
     public StringBuilder buildAllInstructions(StringBuilder instructionsBuilder) {
-        // add the quiz instructions if the quiz is enabled.
         if (isFirstRound()) {
             instructionsBuilder.append(getGeneralInstructions());
         }
-        return isQuizEnabled() 
-                ? buildInstructions(instructionsBuilder).append(getQuizInstructions())
-                        : buildInstructions(instructionsBuilder);
+        if (isQuizEnabled()) {
+            // first show quiz instructions only
+            return instructionsBuilder.append(getQuizInstructions());
+        }
+        else {
+            return buildInstructions(instructionsBuilder);
+        }
     }
         
     public StringBuilder buildInstructions() {

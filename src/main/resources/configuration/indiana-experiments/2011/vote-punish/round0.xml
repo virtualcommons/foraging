@@ -2,6 +2,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 <comment>Foraging XML-ized experiment round configuration</comment>
+<entry key='initial-distribution'>0.5d</entry>
 <entry key="resource-width">13</entry>
 <entry key="resource-depth">13</entry>
 <entry key="practice-round">true</entry>
@@ -17,16 +18,21 @@
 <h2>Practice Round Instructions</h2>
 <hr>
 <p>
-You will now have four minutes to practice with the experimental environment. The
-decisions you make in this round will NOT influence your earnings.  At the beginning
-of the practice round half of the cells are occupied with green tokens.  The
-environment is a 13 x 13 grid of cells.
+    Once everyone has finished the quiz, we will start a practice round of the token
+    task.
+</p>
+<p>
+    During the practice round, you will have four minutes to practice with the
+    experimental environment. The decisions you make in this round will NOT
+    influence your earnings.  At the beginning of the practice round half of the
+    cells are occupied with green tokens.  The environment is a 13 x 13 grid of
+    cells.
 </p>
 <p>
 During this practice round, and <b>only during</b> this practice round, you are able
-to reset the tokens displayed on the screen by pressing the <b>R</b> key.  When you
-press the <b>R</b> key you will reset the resource to its initial distribution,
-randomly filling half of the cells.
+to reset the tokens displayed on the screen.  When you push the <b>R</b> key 
+you will reset the distribution of the tokens to randomly occupying half of the
+cells with green tokens.
 </p>
 <p>If you have any questions please raise your hand. <b>Do you have any questions so far?</b></p>
 ]]>

@@ -586,33 +586,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     }
                 }
             });
-//            addEventProcessor(new EventTypeProcessor<ShowInstructionsRequest>(ShowInstructionsRequest.class) {
-//                public void handle(ShowInstructionsRequest event) {
-//                    // FIXME: assign groups?
-//                    if (event.getId().equals(facilitatorId)) {
-//                        logger.info("Show Instructions request from facilitator - showing round instructions.");
-//                        for (Identifier id : clients.keySet()) {
-//                            transmit(new ShowInstructionsRequest(id));
-//                        }
-//                    }
-//                    else {
-//                        logger.warning("Ignoring show instructions request from id: " + event.getId());
-//                    }
-//                }
-//            });
-//            addEventProcessor(new EventTypeProcessor<ShowTrustGameRequest>(ShowTrustGameRequest.class) {
-//                public void handle(ShowTrustGameRequest event) {
-//                    if (event.getId().equals(facilitatorId)) {
-//                        logger.info("Showing trust game.");
-//                        for (Identifier id : clients.keySet()) {
-//                            transmit(new ShowTrustGameRequest(id));
-//                        }
-//                    }
-//                    else {
-//                        logger.warning("Ignoring show instructions request from id: " + event.getId());
-//                    }
-//                }
-//            });
             addEventProcessor(new EventTypeProcessor<BeginRoundRequest>(BeginRoundRequest.class) {
                 public void handle(BeginRoundRequest event) {
                     if (event.getId().equals(facilitatorId)) {
@@ -644,15 +617,17 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             addEventProcessor(new EventTypeProcessor<SurveyIdSubmissionRequest>(SurveyIdSubmissionRequest.class) {
                 @Override
                 public void handle(SurveyIdSubmissionRequest request) {
-                    ClientData clientData = clients.get(request.getId());
-                    String surveyId = request.getSurveyId();
-                    for (ClientData data: clients.values()) {
-                        if (surveyId.equals(data.getSurveyId())) {
-                            sendFacilitatorMessage(String.format("WARNING: survey id %s was already assigned to client %s but is now also being assigned to %s", surveyId, data, clientData));
+                    synchronized (clients) {
+                        ClientData clientData = clients.get(request.getId());
+                        String surveyId = request.getSurveyId();
+                        for (ClientData data: clients.values()) {
+                            if (surveyId.equals(data.getSurveyId())) {
+                                sendFacilitatorMessage(String.format("WARNING: survey id %s was already assigned to client %s but is now also being assigned to %s", surveyId, data, clientData));
+                            }
                         }
+                        clientData.getId().setSurveyId(request.getSurveyId());
+                        sendFacilitatorMessage(String.format("Storing survey id %s for client %s", request.getSurveyId(), clientData));
                     }
-                    clientData.getId().setSurveyId(request.getSurveyId());
-                    sendFacilitatorMessage(String.format("Storing survey id %s for client %s", request.getSurveyId(), clientData));
                 }
             });
             addEventProcessor(new EventTypeProcessor<TrustGameSubmissionRequest>(TrustGameSubmissionRequest.class) {
