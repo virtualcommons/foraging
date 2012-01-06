@@ -24,14 +24,14 @@
 <p>
     During the practice round, you will have four minutes to practice with the
     experimental environment. The decisions you make in this round will NOT
-    influence your earnings.  At the beginning of the practice round half of the
+    influence your earnings.  At the beginning of the practice round a quarter of the
     cells are occupied with green tokens.  The environment is a 13 x 13 grid of
     cells.
 </p>
 <p>
 During this practice round, and <b>only during</b> this practice round, you are able
 to reset the tokens displayed on the screen.  When you push the <b>R</b> key 
-you will reset the distribution of the tokens to randomly occupying half of the
+you will reset the distribution of the tokens to randomly occupying a quarter of the
 cells with green tokens.
 </p>
 <p>If you have any questions please raise your hand. <b>Do you have any questions so far?</b></p>
@@ -98,18 +98,6 @@ D. To collect a token you need to press the space bar while your yellow dot <img
     <br>
 <img src="@CODEBASE_URL@/images/question2.jpg"></img><br>
 </form>
-    ]]>
-</entry>
-<entry key='q1-explanation'>
-    <![CDATA[
-    In this question, "A", "B", and "D" are all true.  "C" is false.  Tokens only
-    regenerate when there are other tokens present in their immediately neighboring
-    cells. They do not spontaneously generate from the middle of the screen.
-    ]]>
-</entry>
-<entry key='q2-explanation'>
-    <![CDATA[
-    In this question, sequence "B" is not possible.  Tokens cannot regenerate on an empty screen as shown in sequence B.
     ]]>
 </entry>
 </properties>
