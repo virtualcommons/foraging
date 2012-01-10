@@ -29,40 +29,56 @@
 
 <entry key='initial-voting-instructions'>
     <![CDATA[
-<h1>Notice</h1>
+<h1>Important New Instructions</h1>
+<h2>Strategies for managing how players collect tokens for the rest of the experiment</h2>
 <hr>
 <p>
-In a moment, you will see a screen on your computer called Rule Options. It
-will list 6 different rules that you can consider as options for managing how
-each of your groups collect green tokens today. 
+In a moment, you will have the option to implement one of six strategies for how you
+and the three other people in your group collect tokens for the rest of the
+experiment.
+</p>
+<h2>Procedure for Deciding the Strategy</h2>
+<hr>
+<p>
+    Each of the {clientsPerGroup} people in your group can nominate one of the six
+    potential strategies.  The single strategy that receives the most nominations
+    wins.
 </p>
 <p>
-You can nominate one rule from the list to help decide whether or not to have a
-rule and what that rule will be. The rule that has the most nominations will be
-considered chosen and established as the rule. If there is a tie, then each
-tied nominated rule will receive an equal chance of getting selected at random.
+    <b>If there is a tie</b>, one of the tied options will be selected at random by
+    the computer.  Each of the tied strategies will have an equal chance of being
+    selected.
 </p>
+<h2>Implementation</h2>
+<hr>
+    <p>Neither the computer nor the experimenter will intervene to implement the
+        strategy.
+    </p>
+
+    <p>
+        <b>Do you have any questions?</b>  If you have any questions at this time,
+        raise your hand and someone will come over to your station and answer it.
+    </p>
     ]]>
 </entry>
 
 
 <entry key='voting-instructions'>
 <![CDATA[
-<h1>Instructions</h1>
+<h1>Strategy Nomination Instructions</h1>
 <hr>
 <p>
-To nominate a rule, click the radio button to the left of the one you choose, and
-then click "submit." The computer will tally the nominations and then report
-the results on the next screen. The results will be presented to each
-participant in your group and the experimenter.
+To nominate a strategy, click the button to the right of the one you choose, and
+then click "submit." The computer will tally the nominations and then report the
+results on the next screen. The results will be presented to each person in
+your group.
 </p>
-
+<h2>Your selection will be anonymous</h2>
+<hr>
 <p>
-The identity of people who nominated a particular rule will NOT be revealed.
-Therefore, neither you nor the experimenter will know who nominated a
-particular rule.
-</p>
-
+The identity of people who nominated a particular strategy will NOT be revealed.
+Therefore, neither you nor the experimenter will know who nominated a particular
+rule.
 </p>
 ]]>
 </entry>
@@ -74,18 +90,13 @@ particular rule.
     <hr>
         <p>
             Before we continue to the next round of the token task, we would like to ask you
-            some quick questions.  At the beginning of the survey you will need to enter:
-        </p>
-        <ul>
-            <li><b>Your survey ID</b>: {surveyId} </li>
-        </ul>
-        <p>
-            Please <a href='{surveyLink}'>click here</a> to begin the survey.
+            some quick questions.  Please <a href='{surveyUrl}&SURVEY_ID={surveyId}'>click here</a> to
+            begin the survey.
         </p>
     ]]>
 </entry>
 
-<entry key='survey-link'>
+<entry key='survey-url'>
     <![CDATA[
     https://qtrial.qualtrics.com/SE/?SID=SV_cLX7jnYikmD9eSM
     ]]>
@@ -97,7 +108,8 @@ particular rule.
 <entry key="sanction-multiplier">2</entry>
 <entry key='sanction-instructions'>
     <![CDATA[
-    <h1>Important New Instructions! Reducing other player's earnings.</h1>
+    <h1>Important New Instructions</h1>
+    <h2>Reducing Other Player's Earnings</h2>
     <hr>
 <p>
 Beginning with the upcoming round you will have the option to reduce the earnings of

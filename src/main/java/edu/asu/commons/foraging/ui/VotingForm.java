@@ -30,14 +30,14 @@ import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.ui.UserInterfaceUtils;
 
 /**
- *
- * @author alllee
+ * $Id$
+ * @author Allen Lee
  */
 public class VotingForm extends javax.swing.JPanel {
     
     private static final long serialVersionUID = 3871660663519284024L;
 
-    public final static String NAME = "Voting form";
+    public final static String NAME = "Strategy voting form";
     
     private ForagingClient client;
 
@@ -71,15 +71,15 @@ public class VotingForm extends javax.swing.JPanel {
         rightHeaderLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
         horizontalButtonParallelGroup.addComponent(rightHeaderLabel);
         
-        JLabel ruleHeaderLabel = new JLabel("Rule");
-        ruleHeaderLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
-        horizontalLabelParallelGroup.addComponent(ruleHeaderLabel);
+        JLabel strategyHeaderLabel = new JLabel("Strategy");
+        strategyHeaderLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
+        horizontalLabelParallelGroup.addComponent(strategyHeaderLabel);
         
-        verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleHeaderLabel).addGap(10).addComponent(rightHeaderLabel));
+        verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(strategyHeaderLabel).addGap(10).addComponent(rightHeaderLabel));
         int ruleIndex = 0;
         for (ForagingRule rule: rules) {
             ruleIndex++;
-            JLabel ruleLabel = new JLabel(String.format("Rule %d: %s", ruleIndex, rule));
+            JLabel ruleLabel = new JLabel(String.format("Strategy %d: %s", ruleIndex, rule));
             ruleLabel.setFont(UserInterfaceUtils.DEFAULT_PLAIN_FONT);
             horizontalLabelParallelGroup.addComponent(ruleLabel);
             JComponent component = null;
@@ -113,7 +113,7 @@ public class VotingForm extends javax.swing.JPanel {
             public void actionPerformed(ActionEvent e) {
                 ButtonModel model = buttonGroup.getSelection();
                 if (model == null) {
-                    JOptionPane.showMessageDialog(VotingForm.this, "Please select a rule.");
+                    JOptionPane.showMessageDialog(VotingForm.this, "Please select a strategy.");
                     return;
                 }
                 ForagingRule selectedRule = ForagingRule.valueOf(model.getActionCommand());

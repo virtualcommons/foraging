@@ -51,6 +51,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     private static final double DEFAULT_TOKEN_BIRTH_PROBABILITY = 0.01d;
 
+    private List<ForagingRule> selectedRules;
+
     public double getTrustGamePayoffIncrement() {
         return getDoubleProperty("trust-game-payoff", 0.25d);
     }
@@ -290,13 +292,15 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      */
     public String getInstructions() {
         ST template = createStringTemplate(getProperty("instructions", getParentConfiguration().getSameRoundAsPreviousInstructions()));
-        // FIXME: see if it's possible to simplify usage here so bean properties are transparently accessed within a templatized instruction.
+        // FIXME: this isn't ideal, figure out how to get any bean properties transparently accessible within a templatized instruction
+        // could do it via  1. reflection 2. annotations 3. ???   
         template.add("resourceWidth", getResourceWidth());
         template.add("resourceDepth", getResourceDepth());
         template.add("duration", inMinutes(getDuration()) + " minutes");
         template.add("roundNumber", getRoundNumber());
         template.add("clientsPerGroup", getClientsPerGroup());
         template.add("dollarsPerToken", NumberFormat.getCurrencyInstance().format(getDollarsPerToken()));
+        template.add("initialDistribution", NumberFormat.getPercentInstance().format(getInitialDistribution()));
         return template.render();
     }
 
@@ -637,13 +641,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public StringBuilder addAllSpecialInstructions(StringBuilder instructionsBuilder) {
-        // FIXME: refactor this convoluted conditional logic if possible
+        // FIXME: refactor this convoluted conditional logic, use StringTemplate
         StringBuilder builder = new StringBuilder();
         if (isFieldOfVisionEnabled()) {
             addSpecialInstructions(builder, getFieldOfVisionInstructions());
-        }
-        if (isSanctioningEnabled()) {
-            addSpecialInstructions(builder, getSanctionInstructions());
         }
         if (isInRoundChatEnabled()) {
             addSpecialInstructions(builder, getInRoundChatInstructions());
@@ -706,20 +707,19 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("survey-instructions");
     }
 
-    public String getSurveyLink() {
-        return getProperty("survey-link", "https://qtrial.qualtrics.com/SE/?SID=SV_38lReBOv0Wk7wgY");
+    public String getSurveyUrl() {
+        return getProperty("survey-url", "https://qtrial.qualtrics.com/SE/?SID=SV_38lReBOv0Wk7wgY");
     }
 
     public String getSurveyInstructions(Identifier id) {
         String surveyInstructions = getSurveyInstructions();
         ST template = createStringTemplate(surveyInstructions); 
-        template.add("surveyLink", getSurveyLink());
-        template.add("participantId", id);
+        template.add("surveyLink", getSurveyUrl());
         template.add("surveyId", id.getSurveyId());
         return template.render();
     }
     
-    public String getVotingNominationInstructions(List<ForagingRule> selectedRules) {
+    public String getVotingNominationInstructions() {
         // FIXME: move to template style construction
         StringBuilder builder = new StringBuilder("<h1>Voting Results</h1><hr>");
         if (selectedRules.size() > 1) {
@@ -748,5 +748,9 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
             template.add("incorrect_" + incorrectQuestionNumber, String.format("Your answer, %s, was incorrect.", actualAnswers.get(incorrectQuestionNumber)));
         }
         return template.render();
+    }
+
+    public void setSelectedRules(List<ForagingRule> selectedRules) {
+        this.selectedRules = selectedRules;
     }
 }

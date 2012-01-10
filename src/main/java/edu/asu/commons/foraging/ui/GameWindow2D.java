@@ -773,7 +773,9 @@ public class GameWindow2D implements GameWindow {
                 votingPanel.remove(votingForm);
                 votingPanel.add(resultsForm);
                 votingPanel.revalidate();
-                votingInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getVotingNominationInstructions(selectedRules));
+                RoundConfiguration currentRoundConfiguration = client.getCurrentRoundConfiguration();
+                currentRoundConfiguration.setSelectedRules(selectedRules);
+                votingInstructionsEditorPane.setText(currentRoundConfiguration.getVotingNominationInstructions());
                 showPanel(VotingForm.NAME);
             }
         });
