@@ -59,7 +59,7 @@ are told to do so.
 <h2>Your Earnings</h2>
 <hr>
 <p>
-You have already earned 5 dollars by showing up at this experiment.  You can
+    You have already earned {showUpPayment} by showing up at this experiment.  You can
 earn more, up to a maximum of about $15-$40, by participating in this experiment
 which will take about an hour to an hour and a half. The amount of money you earn
 depends on your decisions as well as the decisions of your group members.</p>
@@ -68,7 +68,7 @@ depends on your decisions as well as the decisions of your group members.</p>
 <p>
     Today's experiment is on the computer.  In the experiment, you can collect green
     diamond shaped tokens <img src="@CODEBASE_URL@/images/gem-token.gif"></img>, and
-    you will earn <b>two cents</b> for each token you collect.  When the token task
+    you will earn <b>{dollarsPerToken}</b> for each token you collect.  When the token task
     begins, you will appear on the screen as a yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif"></img>.  
     To collect a token, move your yellow dot over a green token and <b>press the
     space bar</b>.  If you move over a token without pressing the space bar you will
@@ -167,6 +167,16 @@ You will see other participants labeled as "1", "2","3", "4", or "5" in the chat
 box.  You can send a chat message by typing into the textfield and pressing the
 enter key.
 </p>
+]]>
+</entry>
+
+<entry key="sameRoundAsPreviousInstructions">
+<![CDATA[
+<h3>Round {roundNumber} Instructions</h3>
+<hr>
+<p>Round {roundNumber} is the same as the previous round.</p>
+<p>The length of this round is {duration}.</p>
+<p>If you have any questions please raise your hand.  <b>Do you have any questions so far?</b></p>
 ]]>
 </entry>
 

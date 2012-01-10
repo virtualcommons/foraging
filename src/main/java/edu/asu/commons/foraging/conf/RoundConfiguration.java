@@ -18,6 +18,7 @@ import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
 import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.net.Identifier;
+import edu.asu.commons.util.Duration;
 
 
 /**
@@ -63,6 +64,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
                 return NONE;
             }
         }
+    }
+    
+    public enum PositionType {
+        LINE, SQUARE;
     }
 
     private final static Map<String, ExperimentType> experimentTypeMap = new HashMap<String, ExperimentType>(3);
@@ -281,13 +286,17 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     /**
-     * Returns the instructions for this round.
+     * Returns the instructions for this round.  If undefined at the round level it uses default instructions at the parent ServerConfiguration level.
      */
     public String getInstructions() {
-        ST template = createStringTemplate(getProperty("instructions"));
+        ST template = createStringTemplate(getProperty("instructions", getParentConfiguration().getSameRoundAsPreviousInstructions()));
         // FIXME: see if it's possible to simplify usage here so bean properties are transparently accessed within a templatized instruction.
         template.add("resourceWidth", getResourceWidth());
         template.add("resourceDepth", getResourceDepth());
+        template.add("duration", inMinutes(getDuration()) + " minutes");
+        template.add("roundNumber", getRoundNumber());
+        template.add("clientsPerGroup", getClientsPerGroup());
+        template.add("dollarsPerToken", NumberFormat.getCurrencyInstance().format(getDollarsPerToken()));
         return template.render();
     }
 
@@ -303,6 +312,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         ST template = createStringTemplate(getProperty("chat-instructions"));
         template.add("chatDuration", inMinutes(getChatDuration()) + " minutes");
         return template.render();
+    }
+    
+    public long inMinutes(Duration duration) {
+        return inMinutes(duration.getTimeLeftInSeconds());
     }
     
     public long inMinutes(long seconds) {
@@ -707,6 +720,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
     
     public String getVotingNominationInstructions(List<ForagingRule> selectedRules) {
+        // FIXME: move to template style construction
         StringBuilder builder = new StringBuilder("<h1>Voting Results</h1><hr>");
         if (selectedRules.size() > 1) {
             // tiebreaker
@@ -728,13 +742,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
     
     public String getQuizResults(List<String> incorrectQuestionNumbers, Map<Object, Object> actualAnswers) {
-//        if (incorrectQuestionNumbers.isEmpty()) {
-//             notify the server and also notify the participant.
-//            builder.append("<p>You have answered all questions correctly. Please see below for more details.</p><hr>");
-//        }
-//        else {
-//            builder.append("<p>At least one of your answers was incorrect.  Please see below for more details.</p><hr>");
-//        }
         ST template = createStringTemplate(getProperty("quiz-results"));
         template.add("allCorrect", incorrectQuestionNumbers.isEmpty());
         for (String incorrectQuestionNumber : incorrectQuestionNumbers) {

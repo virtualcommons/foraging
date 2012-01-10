@@ -22,11 +22,10 @@
     task.
 </p>
 <p>
-    During the practice round, you will have four minutes to practice with the
+    During the practice round, you will have {duration} to practice with the
     experimental environment. The decisions you make in this round will NOT
     influence your earnings.  At the beginning of the practice round a quarter of the
-    cells are occupied with green tokens.  The environment is a 13 x 13 grid of
-    cells.
+    cells are occupied with green tokens.  The environment is a {resourceWidth} x {resourceDepth} grid of cells.
 </p>
 <p>
 During this practice round, and <b>only during</b> this practice round, you are able
@@ -45,7 +44,7 @@ cells with green tokens.
 <p>
     In a moment, you will do a practice round of the token task.  Before we go to
     the practice round, answer the following questions to make sure you understand
-    the instructions.  You will earn $0.50 for each correct answer.
+    the instructions.  You will earn {quizCorrectAnswerReward} for each correct answer.
 </p>
 <br><br>
 <form>

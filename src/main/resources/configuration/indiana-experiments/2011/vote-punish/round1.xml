@@ -13,12 +13,12 @@
 
 <entry key="instructions">
 <![CDATA[
-<h3>Instructions for Round 1</h3>
+<h3>Instructions for Round {roundNumber}</h3>
 <hr>
 <p>
     The first round of the experiment will begin in a moment. The length of the
-    round is 4 minutes. As in the practice round you can collect green tokens.
-    This time you will earn <b>two cents</b> for each token collected.  This time
+    round is {duration}. As in the practice round you can collect green tokens.
+    This time you will earn <b>{dollarsPerToken}</b> for each token collected.  This time
     you <b>cannot</b> reset the distribution of green tokens. 
 </p>
 <h3>Groups</h3>
@@ -28,7 +28,7 @@ In this round the renewable resource will become five times bigger.  You will sh
 larger environment with three other random players in this room .  In particular,
 each of you in this room has been randomly assigned to one of several equal-sized 4
 person groups and everyone in your group has been randomly assigned a number from 1
-to 4.  You will stay in the same group for the entire experiment, and each person's
+to {clientsPerGroup}.  You will stay in the same group for the entire experiment, and each person's
 number from 1 to 4 will remain the same throughout the experiment. The other three people in your group will appear
 on the screen as blue dots <img src="@CODEBASE_URL@/images/gem-other.gif"> with a
 white number embedded in the dot.

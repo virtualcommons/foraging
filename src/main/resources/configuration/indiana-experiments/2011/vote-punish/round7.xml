@@ -45,8 +45,9 @@
 <h3>Instructions</h3>
 <hr>
 <p>
-From this point forward, participants will NOT have the option to reduce the earnings of another participant.  The length of this round is four minutes.
+From this point forward, participants will NOT have the option to reduce the earnings of another participant. 
 </p>
+<p>The length of this round is {duration}.</p>
 <p>
 If you have any questions please raise your hand.  <b>Do you have any
 questions so far?</b>

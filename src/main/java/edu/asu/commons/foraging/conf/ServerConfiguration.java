@@ -1,5 +1,9 @@
 package edu.asu.commons.foraging.conf;
 
+import java.text.NumberFormat;
+
+import org.stringtemplate.v4.ST;
+
 import edu.asu.commons.conf.ExperimentConfiguration;
 
 /**
@@ -20,10 +24,13 @@ import edu.asu.commons.conf.ExperimentConfiguration;
  * @version $Revision$
  */
 public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfiguration> {
-
+    
     private static final long serialVersionUID = -1737412253553943902L;
     
-    private final static String DEFAULT_LOG_FILE_DESTINATION = "foraging-server.log";
+    private static final double DEFAULT_SHOW_UP_PAYMENT = 5.0d;
+    private static final double DEFAULT_QUIZ_CORRECT_ANSWER_REWARD = 0.50d;
+    private static final String SAME_ROUND_AS_PREVIOUS_INSTRUCTIONS = "<h3>Round {roundNumber} Instructions</h3><hr><p>Round {roundNumber} is the same as the previous round.</p><p>The length of this round is {duration}.</p><p>If you have any questions please raise your hand.  <b>Do you have any questions so far?</b></p>";
+    private static final String DEFAULT_LOG_FILE_DESTINATION = "foraging-server.log";
     private static final double DEFAULT_DOLLARS_PER_TOKEN = .02d;
 
     public ServerConfiguration() {
@@ -69,11 +76,11 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     }
     
     public double getShowUpPayment() {
-        return assistant.getDoubleProperty("show-up-payment", 5.0d);
+        return assistant.getDoubleProperty("show-up-payment", DEFAULT_SHOW_UP_PAYMENT);
     }
 
     public double getQuizCorrectAnswerReward() {
-        return assistant.getDoubleProperty("quiz-correct-answer-reward", 0.50d);
+        return assistant.getDoubleProperty("quiz-correct-answer-reward", DEFAULT_QUIZ_CORRECT_ANSWER_REWARD);
     }
     
     public String getWelcomeInstructions() {
@@ -81,7 +88,15 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     }
     
     public String getGeneralInstructions() {
-        return assistant.getStringProperty("general-instructions", "");
+        ST st = createStringTemplate(assistant.getStringProperty("general-instructions", ""));
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+        st.add("showUpPayment", formatter.format(getShowUpPayment()));
+        st.add("dollarsPerToken", formatter.format(getDollarsPerToken()));
+        return st.render();
+    }
+    
+    public String getSameRoundAsPreviousInstructions() {
+        return assistant.getStringProperty("sameRoundAsPreviousInstructions", SAME_ROUND_AS_PREVIOUS_INSTRUCTIONS);
     }
     
     public String getFieldOfVisionInstructions() {
