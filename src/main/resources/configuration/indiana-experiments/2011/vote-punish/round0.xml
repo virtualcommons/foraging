@@ -69,9 +69,9 @@ you will reset the distribution of the tokens to randomly occupying
     <hr>
         <p>
             {if (allCorrect)}
-            You have answered all the questions correctly.  For more details, see below.
+            You have answered all the questions correctly.
             {else}
-            At least one of your answers was incorrect.  Questions you've answered
+            You answered {numberCorrect}/{totalQuestions} questions correctly.  Questions you've answered
             incorrectly are highlighted in red.  Please see below for more details.
             {endif}
         </p>

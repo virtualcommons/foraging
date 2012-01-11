@@ -142,15 +142,13 @@ strategy.
     <hr>
         <p>
             Before we continue to the next round of the token task, we would like to ask you
-            some quick questions.  Please <a href='{surveyUrl}&SURVEY_ID={surveyId}'>click here</a> to
+            some quick questions.  Please <a href='{surveyUrl}'>click here</a> to
             begin the survey.
         </p>
     ]]>
 </entry>
 <entry key='survey-url'>
-    <![CDATA[
-    https://qtrial.qualtrics.com/SE/?SID=SV_cLX7jnYikmD9eSM
-    ]]>
+    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_cLX7jnYikmD9eSM&SURVEY_ID={surveyId}]]>
 </entry>
 
 <entry key='sanction-type'>real-time</entry>

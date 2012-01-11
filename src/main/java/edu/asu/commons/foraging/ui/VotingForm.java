@@ -10,6 +10,7 @@
  */
 package edu.asu.commons.foraging.ui;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import edu.asu.commons.foraging.client.ForagingClient;
@@ -33,7 +35,7 @@ import edu.asu.commons.ui.UserInterfaceUtils;
  * $Id$
  * @author Allen Lee
  */
-public class VotingForm extends javax.swing.JPanel {
+public class VotingForm extends JPanel {
     
     private static final long serialVersionUID = 3871660663519284024L;
 
@@ -76,10 +78,10 @@ public class VotingForm extends javax.swing.JPanel {
         horizontalLabelParallelGroup.addComponent(strategyHeaderLabel);
         
         verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(strategyHeaderLabel).addGap(10).addComponent(rightHeaderLabel));
-        int ruleIndex = 0;
+        Dimension oneByOne = new Dimension(1, 1);
         for (ForagingRule rule: rules) {
-            ruleIndex++;
-            JLabel ruleLabel = new JLabel(String.format("Strategy %d: %s", ruleIndex, rule));
+            JLabel ruleLabel = new JLabel("<html" + rule.getDescription() + "</html>");
+            ruleLabel.setPreferredSize(oneByOne);
             ruleLabel.setFont(UserInterfaceUtils.DEFAULT_PLAIN_FONT);
             horizontalLabelParallelGroup.addComponent(ruleLabel);
             JComponent component = null;

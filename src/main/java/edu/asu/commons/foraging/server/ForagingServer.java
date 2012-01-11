@@ -768,7 +768,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     // persister MUST be initialized early so that we store pre-round events like QuizResponseEvent, ChatEvent, and the various Ranking
                     // requests.
                     persister.initialize(getCurrentRoundConfiguration());
-                    getLogger().info("Initialized persister, waiting for facilitator signal to start next round.");
+                    sendFacilitatorMessage("Ready to show instructions and the start next round.");
                     if (getCurrentRoundConfiguration().isQuizEnabled()) {
                         getLogger().info("Waiting for all quizzes to be submitted.");
                         Utils.waitOn(quizSignal);

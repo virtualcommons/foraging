@@ -709,15 +709,16 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("survey-instructions");
     }
 
-    public String getSurveyUrl() {
-        return getProperty("survey-url", "https://qtrial.qualtrics.com/SE/?SID=SV_38lReBOv0Wk7wgY");
+    public String getSurveyUrl(Identifier id) {
+        ST template = createStringTemplate(getProperty("survey-url", "https://qtrial.qualtrics.com/SE/?SID=SV_38lReBOv0Wk7wgY"));
+        template.add("surveyId", id.getSurveyId());
+        return template.render();
     }
 
     public String getSurveyInstructions(Identifier id) {
         String surveyInstructions = getSurveyInstructions();
         ST template = createStringTemplate(surveyInstructions); 
-        template.add("surveyUrl", getSurveyUrl());
-        template.add("surveyId", id.getSurveyId());
+        template.add("surveyUrl", getSurveyUrl(id));
         return template.render();
     }
 
@@ -732,20 +733,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         template.add("tiebreaker", selectedRules.size() > 1);
         template.add("selectedRules", selectedRules);
         return template.render();
-        /*
-        StringBuilder builder = new StringBuilder("<h1>Voting Results</h1><hr>");
-        if (selectedRules.size() > 1) {
-            // tiebreaker
-            builder.append("<p><b>NOTE:</b> There was a tie and the first rule listed here was randomly selected as the winner.</p><ul>");
-            for (ForagingRule rule: selectedRules) {
-                builder.append("<li>").append(rule.toString());
-            }
-            builder.append("</ul>");
-        }
-        builder.append("<h1>Selected Rule</h1><hr>");
-        builder.append("<p><b>").append(selectedRules.get(0)).append("</b></p>");
-        return builder.toString();
-        */
     }
     
     @Override
@@ -756,7 +743,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     
     public String getQuizResults(List<String> incorrectQuestionNumbers, Map<Object, Object> actualAnswers) {
         ST template = createStringTemplate(getProperty("quiz-results"));
+        // FIXME: actual answers includes the submit button, so there's an off-by-one that we need to deal with.
+        int totalQuestions = actualAnswers.size() - 1;
         template.add("allCorrect", incorrectQuestionNumbers.isEmpty());
+        template.add("numberCorrect", totalQuestions - incorrectQuestionNumbers.size());
+        template.add("totalQuestions", totalQuestions);
         for (String incorrectQuestionNumber : incorrectQuestionNumbers) {
             template.add("incorrect_" + incorrectQuestionNumber, String.format("Your answer, %s, was incorrect.", actualAnswers.get(incorrectQuestionNumber)));
         }
