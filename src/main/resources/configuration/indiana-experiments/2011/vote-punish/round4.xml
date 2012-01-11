@@ -15,15 +15,67 @@
 <entry key='voting-enabled'>true</entry>
 <entry key="instructions">
     <![CDATA[
+    <h1>Important New Instructions</h1>
+    <h2>Reducing Other Player's Earnings</h2>
+    <hr>
 <p>
-    Round {roundNumber} is about to begin.  You have the option to reduce the
-    earnings of another participant at a cost to your own earnings by typing that
-    participants' number key from 1 to {clientsPerGroup}.
+Round {roundNumber} is about to begin.  You have the option to reduce the
+earnings of another participant at a cost to your own earnings by typing that
+participants' number key from 1 to {clientsPerGroup}.
 </p>
+    <ul>
+        <li>Each player in your group has a number from 1 to {clientsPerGroup}.  If
+            you press a number key 1-{clientsPerGroup}, you will reduce the number
+            of tokens that player has collected during the round by
+            {sanctionPenalty} tokens. This will also reduce your own token amount by
+            {sanctionCost} token. The decision whether or when to use this option is
+            up to you. 
+        </li>
+        <li>When you reduce the number of tokens of another participant, they will
+            receive a message stating that you have reduced their tokens. Likewise, if
+            another participant reduces your number of tokens, you will also receive a
+            message. These messages will be displayed on the bottom of your screen.
+        </li>
+        <li>If your tokens are being reduced or you are reducing another participant's
+            tokens, you will receive some visual cues.  When your tokens are being reduced
+            your yellow dot will turn red briefly with a blue background.  The participant
+            currently reducing your tokens will turn purple with a white background.
+        </li>
+        <li>You may reduce the earnings of other participants as long as (1) there are
+            tokens remaining on the screen and (2) both you and the other participant
+            have a positive number of tokens collected during the round.  <b>Each time</b>
+            you press the numeric key corresponding to another participant your token
+            amount is reduced by <b>{sanctionCost}</b>, and their token amount is reduced by
+            <b>{sanctionPenalty}</b>.  
+        </li>
+    </ul>
+<h2>Strategy Reminder</h2>
+<hr>
+    <p>
+        {selectedStrategy}
+    </p>
+
 <p>
     <b>Do you have any questions?</b> If you have any questions at this time, raise
     your hand and someone will come over to your station and answer it.
 </p>
+    ]]>
+</entry>
+
+<entry key='voting-results'>
+    <![CDATA[
+    <h1>Voting Results</h1>
+    <h2>Selected Strategy</h2>
+    <hr>
+    <p><b> {first(selectedRules)} </b></p>
+    {if (tiebreaker)}
+    <p><b>NOTE:</b> There was a tie and selected strategy listed here was randomly selected as the winner.</p>
+    <h2>Other Nominated Strategies</h2>
+    <hr>
+        <ol>
+            {rest(selectedRules): {selectedRule | <li> <b>{selectedRule}</b></li>}}
+        </ol>
+    {endif}
     ]]>
 </entry>
 
@@ -78,7 +130,7 @@ your group.
 <p>
 The identity of people who nominated a particular strategy will NOT be revealed.
 Therefore, neither you nor the experimenter will know who nominated a particular
-rule.
+strategy.
 </p>
 ]]>
 </entry>
@@ -95,53 +147,17 @@ rule.
         </p>
     ]]>
 </entry>
-
 <entry key='survey-url'>
     <![CDATA[
     https://qtrial.qualtrics.com/SE/?SID=SV_cLX7jnYikmD9eSM
     ]]>
 </entry>
 
-
 <entry key='sanction-type'>real-time</entry>
 <entry key="sanction-cost">1</entry>
 <entry key="sanction-multiplier">2</entry>
 <entry key='sanction-instructions'>
     <![CDATA[
-    <h1>Important New Instructions</h1>
-    <h2>Reducing Other Player's Earnings</h2>
-    <hr>
-<p>
-Beginning with the upcoming round you will have the option to reduce the earnings of
-another participant at a cost to your own earnings.
-</p>
-    <ul>
-        <li>Each player in your group has a number from 1 to {clientsPerGroup}.  If
-            you press a number key 1-{clientsPerGroup}, you will reduce the number
-            of tokens that player has collected during the round by
-            {sanctionPenalty} tokens. This will also reduce your own token amount by
-            {sanctionCost} token. The decision whether or when to use this option is
-            up to you. 
-        </li>
-        <li>When you reduce the number of tokens of another participant, they will
-            receive a message stating that you have reduced their tokens. Likewise, if
-            another participant reduces your number of tokens, you will also receive a
-            message. These messages will be displayed on the bottom of your screen.
-        </li>
-        <li>If your tokens are being reduced or you are reducing another participant's
-            tokens, you will receive some visual cues.  When your tokens are being reduced
-            your yellow dot will turn red briefly with a blue background.  The participant
-            currently reducing your tokens will turn purple with a white background.
-        </li>
-        <li>You may reduce the earnings of other participants as long as (1) there are
-            tokens remaining on the screen and (2) both you and the other participant
-            have a positive number of tokens collected during the round.  <b>Each time</b>
-            you press the numeric key corresponding to another participant your token
-            amount is reduced by <b>{sanctionCost}</b>, and their token amount is reduced by
-            <b>{sanctionPenalty}</b>.  
-        </li>
-    </ul>
     ]]>
 </entry>
-
 </properties>

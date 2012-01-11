@@ -558,7 +558,9 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getInitialVotingInstructions() {
-        return getProperty("initial-voting-instructions", "<h1>Notice</h1><hr><p>You will be given the ability to vote for rules in the next screen.</p>");
+        ST template = createStringTemplate(getProperty("initial-voting-instructions", "<h1>Notice</h1><hr><p>You will be given the ability to vote for rules in the next screen.</p>"));
+        template.add("clientsPerGroup", getClientsPerGroup());
+        return template.render();
     }
     
     public List<ForagingRule> getForagingRules() {
@@ -729,7 +731,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         ST template = createStringTemplate(getProperty("voting-results"));
         template.add("tiebreaker", selectedRules.size() > 1);
         template.add("selectedRules", selectedRules);
-        template.add("selectedRule", selectedRules.get(0));
         return template.render();
         /*
         StringBuilder builder = new StringBuilder("<h1>Voting Results</h1><hr>");
