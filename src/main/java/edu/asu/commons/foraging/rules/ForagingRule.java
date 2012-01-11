@@ -3,20 +3,20 @@ package edu.asu.commons.foraging.rules;
 /**
  * $Id$
  * 
- * A set of rules for the Indiana experiments run by Daniel DeCaro, Fall 2011.  
+ * A set of rules for the Indiana experiments run by Daniel DeCaro in 2011/2012.
  * 
- * Split into a .iu subpackage if it turns out these aren't generic enough.
+ * Split into an .iu or other subpackage if it turns out these aren't generic enough.
  * 
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
  * @version $Rev$
  */
 public enum ForagingRule {
-    WAIT_TWO_MINUTES("Wait 2 minutes for the screen to fill up with green tokens. Then everyone collect tokens for the remaining amount of time."),
-    PRIVATE_PROPERTY("Each person gets a set area within which they can do whatever they want with the green tokens. With four people, each person gets one of the four corners."),
-    LIMITED_COLLECTION_RATE("Each person collects green tokens at a certain rate: 1 token every 3 seconds (i.e., count to 3 between each token you collect)."),
-    MAINTAIN_TOKEN_CLUSTERS("When someone collects from a cluster of green tokens (i.e., 3 or more tokens that are touching each other) that person leaves at least 2 tokens touching each other."),
-    LEAVE_TEN_FOR_REGROWTH("Collect green tokens until only about 10 are left; at that point, everyone must wait at least 1 minute before collecting any more tokens."),
-    NONE("No rule (Everyone can do whatever they want).");
+    WAIT_ONE_MINUTE("Wait 60 seconds for the screen to fill up with tokens (the timer will have {remainingTime} left). Then everyone collects tokens for the remaining amount of time."),
+    PRIVATE_PROPERTY("Players divide the field up into four equally-sized areas and can do whatever they want within their area. With four people, each person takes an area around one of the four corners."),
+    LIMITED_COLLECTION_RATE("Each person collects tokens at a rate of 1 token every 4 seconds."),
+    MAINTAIN_TOKEN_CLUSTERS("Players leave two tokens untouched when the tokens are in a cluster of three or more that surround an empty cell."),
+    LEAVE_TEN_FOR_REGROWTH("Collect tokens until only 10 are left; at that point, everyone must wait at least 30 seconds before collecting any more tokens."),
+    NONE("Everyone can do whatever they want.");
     
     private final String description;
     
