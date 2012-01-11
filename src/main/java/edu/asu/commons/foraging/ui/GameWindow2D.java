@@ -750,6 +750,7 @@ public class GameWindow2D implements GameWindow {
     private VotingForm votingForm;
 
     private HtmlEditorPane votingInstructionsEditorPane;
+
     private JPanel getVotingPanel() {
         if (votingPanel == null) {
             votingPanel = new JPanel();
@@ -774,8 +775,7 @@ public class GameWindow2D implements GameWindow {
                 votingPanel.add(resultsForm);
                 votingPanel.revalidate();
                 RoundConfiguration currentRoundConfiguration = client.getCurrentRoundConfiguration();
-                currentRoundConfiguration.setSelectedRules(selectedRules);
-                votingInstructionsEditorPane.setText(currentRoundConfiguration.getVotingNominationInstructions());
+                votingInstructionsEditorPane.setText(currentRoundConfiguration.getVotingResults(selectedRules));
                 showPanel(VotingForm.NAME);
             }
         });
@@ -895,8 +895,7 @@ public class GameWindow2D implements GameWindow {
     }
 
     public void ruleVoteSubmitted() {
-        // TODO Auto-generated method stub
-        setInstructions("<h1>Submitted</h1><hr><p>Thank you for submitting your vote.  Please wait while we tally the rest of the votes from the other members of your group.</p>");
+        setInstructions(dataModel.getRoundConfiguration().getSubmittedVoteInstructions());
         switchInstructionsPane();
     }
 

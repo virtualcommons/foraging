@@ -718,9 +718,20 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         template.add("surveyId", id.getSurveyId());
         return template.render();
     }
+
+    public String getSubmittedVoteInstructions() {
+        return getProperty("submitted-vote-instructions", "<h1>Submitted</h1><hr><p>Thank you for submitting your vote.  Please wait while we tally the rest of the votes from the other members of your group.</p>"); 
+    }
     
-    public String getVotingNominationInstructions() {
+    public String getVotingResults(List<ForagingRule> selectedRules) {
+        setSelectedRules(selectedRules);
         // FIXME: move to template style construction
+        ST template = createStringTemplate(getProperty("voting-results"));
+        template.add("tiebreaker", selectedRules.size() > 1);
+        template.add("selectedRules", selectedRules);
+        template.add("selectedRule", selectedRules.get(0));
+        return template.render();
+        /*
         StringBuilder builder = new StringBuilder("<h1>Voting Results</h1><hr>");
         if (selectedRules.size() > 1) {
             // tiebreaker
@@ -733,6 +744,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         builder.append("<h1>Selected Rule</h1><hr>");
         builder.append("<p><b>").append(selectedRules.get(0)).append("</b></p>");
         return builder.toString();
+        */
     }
     
     @Override
