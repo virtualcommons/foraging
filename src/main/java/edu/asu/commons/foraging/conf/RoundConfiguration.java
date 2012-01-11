@@ -716,7 +716,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String getSurveyInstructions(Identifier id) {
         String surveyInstructions = getSurveyInstructions();
         ST template = createStringTemplate(surveyInstructions); 
-        template.add("surveyLink", getSurveyUrl());
+        template.add("surveyUrl", getSurveyUrl());
         template.add("surveyId", id.getSurveyId());
         return template.render();
     }
