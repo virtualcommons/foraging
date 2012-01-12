@@ -16,6 +16,7 @@ import edu.asu.commons.conf.ExperimentRoundParameters;
 import edu.asu.commons.foraging.graphics.Point3D;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
+import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
@@ -38,6 +39,12 @@ import edu.asu.commons.util.Duration;
  * @version $Rev: 534 $
  */
 public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerConfiguration> {
+
+    private static final double DEFAULT_PATCHY_BOTTOM_INITIAL_DISTRIBUTION = 0.25;
+
+    private static final double DEFAULT_PATCHY_TOP_INITIAL_DISTRIBUTION = 0.50;
+
+    private static final double DEFAULT_TOP_REGROWTH_RATE = 0.02;
 
     private final static long serialVersionUID = 8575239803733029326L;
 
@@ -430,23 +437,23 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public double getTopRegrowthScalingFactor() {
-        return getDoubleProperty("top-rate", 0.02);
+        return getDoubleProperty("top-rate", DEFAULT_TOP_REGROWTH_RATE);
     }
 
     public double getBottomRegrowthScalingFactor() {
-        return getDoubleProperty("bottom-rate", 0.01);
+        return getDoubleProperty("bottom-rate", DEFAULT_REGROWTH_RATE);
     }
 
     public double getTopInitialResourceDistribution() {
-        return getDoubleProperty("top-initial-distribution", 0.50);
+        return getDoubleProperty("top-initial-distribution", DEFAULT_PATCHY_TOP_INITIAL_DISTRIBUTION);
     }
 
     public double getBottomInitialResourceDistribution() {
-        return getDoubleProperty("bottom-initial-distribution", 0.25);
+        return getDoubleProperty("bottom-initial-distribution", DEFAULT_PATCHY_BOTTOM_INITIAL_DISTRIBUTION);
     }
 
     public String getResourceGeneratorType() {
-        return getProperty("resource-generator", "density-dependent");
+        return getProperty("resource-generator", ResourceDispenser.Type.DENSITY_DEPENDENT.toString());
     }
 
     public int getWorldWidth() {

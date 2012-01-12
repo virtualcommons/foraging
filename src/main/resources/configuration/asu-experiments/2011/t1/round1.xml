@@ -15,7 +15,7 @@
 
 <entry key="instructions">
 <![CDATA[
-<h3>Round {roundNumber} Instructions</h3>
+<h1>Round {roundNumber} Instructions</h1>
 <hr>
 <p>
     This is the first round of the experiment. The length of the round is
@@ -26,14 +26,15 @@
 <h3>Groups</h3>
 <hr>
 <p>
-In this round the renewable resource will become five times bigger.  You will share this
-larger environment with four other random players in this room.  In particular,
-each of you in this room has been randomly assigned to one of several equal-sized {clientsPerGroup}
-person groups and everyone in your group has been randomly assigned a number from 1
-to {clientsPerGroup}.  You will stay in the same group for the entire experiment, and each person's
-number from 1 to {clientsPerGroup} will remain the same throughout the experiment.
-The other three people in your group will appear on the screen as blue dots 
-<img src="@CODEBASE_URL@/images/gem-other.gif"> with a white number embedded in the dot.
+In this round the renewable resource will become five times bigger.  You will share
+this larger environment with four other random players in this room.  Each
+participant in the room has been randomly assigned to one of several equal-sized
+{clientsPerGroup} person groups and everyone in your group has been randomly
+assigned a number from 1 to {clientsPerGroup}.  You will stay in the same group for
+the entire experiment, and each person's number from 1 to {clientsPerGroup} will
+remain the same throughout the experiment. The other members of your group will
+appear on the screen as blue dots <img src="@CODEBASE_URL@/images/gem-other.gif">
+with a white number embedded in the dot.
 </p>
 <p>
     In each round of the token task, you can see how many tokens each player has
@@ -54,25 +55,6 @@ The other three people in your group will appear on the screen as blue dots
         Each group has its own set of token resources.
     </p>
 <p><b>Do you have any questions so far?</b>  If you have any questions at this time, raise your hand and someone will come over to your station and answer it.</p>
-]]>
-</entry>
-<entry key="chat-instructions">
-<![CDATA[
-<p>
-You can chat with the other participants in your group during this round.
-You may communicate about any aspect of the experiment that you would like to
-discuss with other participants with whom you have been matched. You may not promise
-them side-payments after the experiment is completed or threaten them with any
-consequence after the experiment is finished. We are monitoring the chat traffic
-while you chat. If we see that somebody reveals his or her identity, we have to stop
-the experiment and remove the whole group from which this person is a member out of
-this room.
-</p>
-<p>
-    You will see other participants labeled from 1 to {clientsPerGroup} in the chat
-    window.  You can send a chat message by typing into the textfield and pressing
-    the enter key.
-</p>
 ]]>
 </entry>
 </properties>

@@ -167,18 +167,18 @@ You may discuss any aspect of the experiment with the other participants in your
     <li>You <b>may not promise side-payments after the experiment is completed or threaten anyone with any consequence after the experiment is finished</b>.</li>
     <li>You <b>may not reveal your actual identity</b></li>
 </ol>
+<p>
 We are monitoring the chat traffic while you chat. If we detect any violation of the
-rules we will have to stop the the experiment and remove the group where the offense
-occurred from the room.
+rules we will have to stop the experiment and remove the offending group from the
+room.
 </p>
 <p>
-You will see other participants labeled as "1", "2","3", "4", or "5" in the chat
-box.  You can send a chat message by typing into the textfield and pressing the
-enter key.
+    You will see other participants labeled from 1 to {clientsPerGroup} in the chat
+    window.  You can send a chat message by typing into the textfield and pressing
+    the enter key.
 </p>
 ]]>
 </entry>
-
 <entry key="sameRoundAsPreviousInstructions">
 <![CDATA[
 <h3>Round {roundNumber} Instructions</h3>
@@ -188,5 +188,4 @@ enter key.
 <p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
 ]]>
 </entry>
-
 </properties>
