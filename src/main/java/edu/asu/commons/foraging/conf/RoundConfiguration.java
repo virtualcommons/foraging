@@ -320,6 +320,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String getChatInstructions() {
         ST template = createStringTemplate(getProperty("chat-instructions"));
         template.add("chatDuration", inMinutes(getChatDuration()) + " minutes");
+        template.add("clientsPerGroup", getClientsPerGroup());
         return template.render();
     }
     

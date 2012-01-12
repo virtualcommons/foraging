@@ -20,11 +20,11 @@
 
 <entry key="instructions">
 <![CDATA[
-<h3>Round 4 Instructions</h3>
+<h3>Round {roundNumber} Instructions</h3>
 <hr>
 <p>
-    Round 4 is the same as the previous rounds with one exception.  You will be able
-    to communicate with the other participants in your group <b>during</b> the
+    This round is the same as the previous rounds with one exception.  You will be
+    able to communicate with the other participants in your group <b>during</b> the
     round.  To communicate, hit the enter key, type your message, and then hit the
     enter key again.  You must hit the enter key before every message you type,
     otherwise control will return to the game screen where you can use the arrow
@@ -32,32 +32,9 @@
 </p>
 
 <p>
-The length of this round is four minutes.
+    The length of this round is {duration}.
 </p>
-<p>
-If you have any questions please raise your hand.  <b>Do you have any
-questions so far?</b>
-</p>
-]]>
-</entry>
-
-<entry key="chat-instructions">
-<![CDATA[
-<p>
-You can chat with the other participants in your group during this round.
-You may communicate about any aspect of the experiment that you would like to
-discuss with other participants with whom you have been matched. You may not promise
-them side-payments after the experiment is completed or threaten them with any
-consequence after the experiment is finished. We are monitoring the chat traffic
-while you chat. If we see that somebody reveals his or her identity, we have to stop
-the experiment and remove the whole group from which this person is a member out of
-this room.
-</p>
-<p>
-You will see other participants labeled as "1", "2","3", "4", or "5" in the chat
-box.  You can send a chat message by typing into the textfield and pressing the
-enter key.
-</p>
+<p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
 ]]>
 </entry>
 </properties>

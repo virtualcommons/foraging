@@ -178,4 +178,14 @@ enter key.
 ]]>
 </entry>
 
+<entry key="sameRoundAsPreviousInstructions">
+<![CDATA[
+<h3>Round {roundNumber} Instructions</h3>
+<hr>
+<p>Round {roundNumber} is the same as the previous round.</p>
+<p>The length of this round is {duration}.</p>
+<p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
+]]>
+</entry>
+
 </properties>

@@ -17,22 +17,6 @@
 <entry key='trust-game'>true</entry>
 
 
-<entry key="instructions">
-<![CDATA[
-<h3>Round 6 Instructions</h3>
-<hr>
-<p>
-Round 6 is the same as round 5.</p>
-<p>
-The length of this round is again four minutes.
-</p>
-<p>
-If you have any questions please raise your hand.  <b>Do you have any
-questions so far?</b>
-</p>
-]]>
-</entry>
-
 <entry key="last-round-debriefing">
 <![CDATA[
 <p>
@@ -51,24 +35,4 @@ Please answer the survey carefully and thank you for participating.
 </p>
 ]]>
 </entry>
-<entry key="chat-instructions">
-<![CDATA[
-<p>
-You can chat with the other participants in your group during this round.
-You may communicate about any aspect of the experiment that you would like to
-discuss with other participants with whom you have been matched. You may not promise
-them side-payments after the experiment is completed or threaten them with any
-consequence after the experiment is finished. We are monitoring the chat traffic
-while you chat. If we see that somebody reveals his or her identity, we have to stop
-the experiment and remove the whole group from which this person is a member out of
-this room.
-</p>
-<p>
-You will see other participants labeled as "1", "2","3", "4", or "5" in the chat
-box.  You can send a chat message by typing into the textfield and pressing the
-enter key.
-</p>
-]]>
-</entry>
-
 </properties>
