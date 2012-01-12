@@ -13,5 +13,6 @@
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
 <entry key="in-round-chat-enabled">true</entry>
+<entry key='resource-generator'>top-bottom-patchy</entry>
 
 </properties>

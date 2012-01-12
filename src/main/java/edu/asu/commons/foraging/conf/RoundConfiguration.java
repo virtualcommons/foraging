@@ -336,8 +336,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("regulation-instructions");
     }
 
-    public String getLastRoundDebriefing() {
-        return getProperty("last-round-debriefing");
+    public String getLastRoundDebriefing(Identifier id) {
+        ST template = createStringTemplate(getProperty("last-round-debriefing"));
+        template.add("id", id);
+        return template.render();
     }
 
     /**
@@ -751,9 +753,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         ST template = createStringTemplate(getProperty("quiz-results"));
         // FIXME: actual answers includes the submit button, so there's an off-by-one that we need to deal with.
         int totalQuestions = actualAnswers.size() - 1;
+        int numberCorrect = totalQuestions - incorrectQuestionNumbers.size();
         template.add("allCorrect", incorrectQuestionNumbers.isEmpty());
-        template.add("numberCorrect", totalQuestions - incorrectQuestionNumbers.size());
+        template.add("numberCorrect", numberCorrect);
         template.add("totalQuestions", totalQuestions);
+        template.add("totalQuizEarnings", NumberFormat.getCurrencyInstance().format(getQuizCorrectAnswerReward() * numberCorrect));
         for (String incorrectQuestionNumber : incorrectQuestionNumbers) {
             template.add("incorrect_" + incorrectQuestionNumber, String.format("Your answer, %s, was incorrect.", actualAnswers.get(incorrectQuestionNumber)));
         }

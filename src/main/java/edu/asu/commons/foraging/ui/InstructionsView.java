@@ -64,7 +64,7 @@ public class InstructionsView {
         instructionsBuilder.append(String.format("Your <b>total income</b> so far (including a $%3.2f bonus for showing up) is : $%3.2f<hr>",
                 showUpPayment, dataModel.getTotalIncome() + showUpPayment));
         if (lastRound) {
-            instructionsBuilder.append(roundConfiguration.getLastRoundDebriefing());
+            instructionsBuilder.append(dataModel.getLastRoundDebriefing());
         }
         setInstructions(instructionsBuilder.toString());
     }

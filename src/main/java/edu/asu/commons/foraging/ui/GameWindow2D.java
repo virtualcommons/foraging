@@ -633,7 +633,7 @@ public class GameWindow2D implements GameWindow {
 //            for (String trustGameLog : event.getTrustGameLog()) {
 //                instructionsBuilder.append(trustGameLog);
 //            }
-            instructionsBuilder.append(client.getDataModel().getRoundConfiguration().getLastRoundDebriefing());
+            instructionsBuilder.append(client.getDataModel().getLastRoundDebriefing());
             timeLeftLabel.setText("The experiment is now over.");
         }
         setInstructions(instructionsBuilder.toString());
@@ -662,7 +662,7 @@ public class GameWindow2D implements GameWindow {
         instructionsBuilder.append(String.format("Your <b>total income</b> so far is: $%3.2f<hr>",
                 getIncome(clientData.getTotalTokens())));
         if (event.isLastRound()) {
-            instructionsBuilder.append(client.getDataModel().getRoundConfiguration().getLastRoundDebriefing());
+            instructionsBuilder.append(client.getDataModel().getLastRoundDebriefing());
         }
         setInstructions(instructionsBuilder.toString());
 

@@ -56,6 +56,7 @@ Please <b>wait quietly</b> and <b>do not close this window, open any other appli
 <entry key="general-instructions">
 <![CDATA[
 <h1>General Instructions</h1>
+<hr>
 <p>
     <b>Welcome</b>. You have already earned {showUpPayment} dollars just for showing up at this experiment. 
 </p>
@@ -100,10 +101,10 @@ than the middle cell in Image 2.  When all neighboring cells are empty, there is
 </tr>
 <tr>
 <td align="center">
-    <img src="@CODEBASE_URL@/images/8neighbors.jpg" alt="image 1"></img>
+    <img src="@CODEBASE_URL@/images/8neighbors.jpg" alt="image 1">
 </td>
 <td align="center">
-    <img src="@CODEBASE_URL@/images/5neighbors.jpg" alt="image 2"></img>
+    <img src="@CODEBASE_URL@/images/5neighbors.jpg" alt="image 2">
 </td>
 </tr>
 </table>
@@ -117,7 +118,7 @@ empty cell as possible.  However, you also need empty cells to benefit from this
 regrowth.  The best arrangement of tokens that maximizes overall regrowth is the
 checkerboard diagram shown below.
 <br>
-<img src="@CODEBASE_URL@/images/foraging-checkerboard.png" alt="Checkerboard Resource"></img>
+<img src="@CODEBASE_URL@/images/foraging-checkerboard.png" alt="Checkerboard Resource">
 </p>
 ]]>
 </entry>

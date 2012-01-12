@@ -69,9 +69,9 @@ press the <b>R</b> key you will reset the distribution of the tokens to randomly
     <hr>
         <p>
             {if (allCorrect)}
-            You have answered all the questions correctly.  
+            You have answered all the questions correctly and earned <b>{totalQuizEarnings}</b>.  
             {else}
-            YOu answered {numberCorrect}/{totalQuestions} questions correctly.  Questions you've answered
+            You answered {numberCorrect} out of {totalQuestions} questions correctly and earned <b>{totalQuizEarnings}</b>.  Questions you've answered
             incorrectly are highlighted in red.  Please see below for more details.
             {endif}
         </p>

@@ -18,6 +18,8 @@
 <entry key='in-round-chat-enabled'>true</entry>
 <entry key="initial-distribution">.25</entry>
 
+<entry key='resource-generator'>top-bottom-patchy</entry>
+
 <entry key="instructions">
 <![CDATA[
 <h3>Round {roundNumber} Instructions</h3>
