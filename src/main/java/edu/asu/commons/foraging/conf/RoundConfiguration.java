@@ -301,6 +301,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         template.add("clientsPerGroup", getClientsPerGroup());
         template.add("dollarsPerToken", NumberFormat.getCurrencyInstance().format(getDollarsPerToken()));
         template.add("initialDistribution", NumberFormat.getPercentInstance().format(getInitialDistribution()));
+        template.add("sanctionCost", getSanctionCost());
+        template.add("sanctionPenalty", getSanctionPenalty());
+        if (selectedRules != null && ! selectedRules.isEmpty()) {
+            template.add("selectedRule", selectedRules.get(0));
+        }
         return template.render();
     }
 

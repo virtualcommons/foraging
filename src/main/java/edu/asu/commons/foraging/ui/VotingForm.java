@@ -10,7 +10,9 @@
  */
 package edu.asu.commons.foraging.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -26,6 +28,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.WindowConstants;
 
 import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.rules.ForagingRule;
@@ -56,8 +60,9 @@ public class VotingForm extends JPanel {
     
     private void initForm(Map<ForagingRule, Integer> votingResults) {
         ForagingRule[] rules = ForagingRule.values();
-        GroupLayout groupLayout = new GroupLayout(this);
-        setLayout(groupLayout);
+        JPanel panel = new JPanel();
+        GroupLayout groupLayout = new GroupLayout(panel);
+        panel.setLayout(groupLayout);
         groupLayout.setAutoCreateGaps(true);
         groupLayout.setAutoCreateContainerGaps(true);
         GroupLayout.SequentialGroup horizontalGroup = groupLayout.createSequentialGroup();
@@ -68,7 +73,7 @@ public class VotingForm extends JPanel {
         horizontalGroup.addGroup(horizontalButtonParallelGroup);
         
         GroupLayout.SequentialGroup verticalGroup = groupLayout.createSequentialGroup();
-        String rightColumnHeader = votingResults.isEmpty() ? "Select one" : "Nominations";
+        String rightColumnHeader = votingResults.isEmpty() ? "Select" : "Nominations";
         JLabel rightHeaderLabel = new JLabel(rightColumnHeader);
         rightHeaderLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
         horizontalButtonParallelGroup.addComponent(rightHeaderLabel);
@@ -77,12 +82,12 @@ public class VotingForm extends JPanel {
         strategyHeaderLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
         horizontalLabelParallelGroup.addComponent(strategyHeaderLabel);
         
-        verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(strategyHeaderLabel).addGap(10).addComponent(rightHeaderLabel));
-        Dimension oneByOne = new Dimension(1, 1);
+        verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(strategyHeaderLabel).addGap(20).addComponent(rightHeaderLabel));
+        Dimension labelDimension = new Dimension(800, 100);
         for (ForagingRule rule: rules) {
-            JLabel ruleLabel = new JLabel("<html" + rule.getDescription() + "</html>");
-            ruleLabel.setPreferredSize(oneByOne);
+            JLabel ruleLabel = new JLabel("<html>" + rule.getDescription() + "</html>");
             ruleLabel.setFont(UserInterfaceUtils.DEFAULT_PLAIN_FONT);
+            ruleLabel.setMaximumSize(labelDimension);
             horizontalLabelParallelGroup.addComponent(ruleLabel);
             JComponent component = null;
             if (votingResults.isEmpty()) {
@@ -107,6 +112,9 @@ public class VotingForm extends JPanel {
         }
         groupLayout.setHorizontalGroup(horizontalGroup);
         groupLayout.setVerticalGroup(verticalGroup);
+        JScrollPane scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        setLayout(new BorderLayout());
+        add(scrollPane, BorderLayout.CENTER);
     }
     
     private JButton getSubmitButton() {
@@ -143,6 +151,8 @@ public class VotingForm extends JPanel {
         JFrame frame = new JFrame();
         frame.add(new VotingForm(null));
         frame.pack();
+        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
         
     }
