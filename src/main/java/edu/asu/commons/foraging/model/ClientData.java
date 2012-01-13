@@ -398,15 +398,15 @@ public class ClientData implements Serializable {
         }
     }
     
-    public void setCollecting() {
-        collecting = true;
-    }
+//    public void setCollecting() {
+//        collecting = true;
+//    }
 
     public void collectToken() {
-        if (collecting) {
-            getGroupDataModel().collectToken(this);
-        }
-        collecting = false;
+//        if (collecting) {
+        getGroupDataModel().collectToken(this);
+//        }
+//        collecting = false;
     }
 
     public boolean isExplicitCollectionMode() {

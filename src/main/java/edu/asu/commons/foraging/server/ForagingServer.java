@@ -17,7 +17,6 @@ import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import edu.asu.commons.command.Command;
 import edu.asu.commons.event.BeginRoundRequest;
 import edu.asu.commons.event.ChatEvent;
 import edu.asu.commons.event.ChatRequest;
@@ -190,17 +189,26 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
     protected StateMachine getStateMachine() {
         return stateMachine;
     }
-    
+
     private RoundConfiguration getCurrentRoundConfiguration() {
         return getConfiguration().getCurrentParameters();
     }
 
     enum ServerState {
-        WAITING, ROUND_IN_PROGRESS
-    };
+        WAITING_FOR_CONNECTIONS, IN_BETWEEN_ROUNDS, ROUND_IN_PROGRESS;
+        public boolean isWaiting() {
+            switch (this) {
+                case WAITING_FOR_CONNECTIONS:
+                case IN_BETWEEN_ROUNDS:
+                    return true;
+                default:
+                    return false;
+            }
+
+        }
+    }
 
     private class ForagingStateMachine implements StateMachine {
-        private Command roundProcessor;
         private ServerDataModel serverDataModel;
         private ResourceDispenser resourceDispenser;
         private ServerState serverState;
@@ -211,32 +219,12 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
          * Initializes the state machine before the experiment ever begins.
          */
         public void initialize() {
-            serverState = ServerState.WAITING;
+            serverState = ServerState.WAITING_FOR_CONNECTIONS;
             serverDataModel = new ServerDataModel(getEventChannel());
-            // these two seem to be paired up frequently.
             serverDataModel.setRoundConfiguration(getCurrentRoundConfiguration());
-            initializeRoundProcessor();
             resourceDispenser = new ResourceDispenser(serverDataModel);
             initializeClientHandlers();
             initializeFacilitatorHandlers();
-        }
-
-        // FIXME: remove this as we phase out the 3d environment
-        private void initializeRoundProcessor() {
-            if (serverDataModel.getRoundConfiguration().is2dExperiment()) {
-                roundProcessor = new Command() {
-                    public void execute() {
-                        processRound2d();
-                    }
-                };
-            }
-            else {
-                roundProcessor = new Command() {
-                    public void execute() {
-                        processRound3d();
-                    }
-                };
-            }
         }
 
         private void initializeClientHandlers() {
@@ -287,7 +275,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         sendFacilitatorMessage("configuration doesn't allow for chat but received " + request);
                         return;
                     }
-                    relayChatRequest(request);                    
+                    relayChatRequest(request);
                 }
             });
             addEventProcessor(new EventTypeProcessor<FacilitatorCensoredChatRequest>(FacilitatorCensoredChatRequest.class) {
@@ -340,6 +328,82 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     }
                 }
             });
+            addEventProcessor(new EventTypeProcessor<ClientMovementRequest>(ClientMovementRequest.class) {
+                public void handle(ClientMovementRequest event) {
+                    if (serverState == ServerState.IN_BETWEEN_ROUNDS)
+                        return;
+                    Identifier id = event.getId();
+                    Direction direction = event.getDirection();
+                    serverDataModel.moveClient(id, direction);
+                }
+            });
+
+            addEventProcessor(new EventTypeProcessor<ExplicitCollectionModeRequest>(ExplicitCollectionModeRequest.class) {
+                public void handleInExperimentThread(ExplicitCollectionModeRequest event) {
+                    clients.get(event.getId()).setExplicitCollectionMode(event.isExplicitCollectionMode());
+                }
+            });
+            addEventProcessor(new EventTypeProcessor<CollectTokenRequest>(CollectTokenRequest.class) {
+                @Override
+                public void handleInExperimentThread(CollectTokenRequest event) {
+                    ClientData clientData = clients.get(event.getId());
+                    clientData.collectToken();
+                    // clientData.setCollecting();
+                }
+            });
+            addEventProcessor(new EventTypeProcessor<ResetTokenDistributionRequest>(ResetTokenDistributionRequest.class) {
+                public void handleInExperimentThread(ResetTokenDistributionRequest event) {
+                    resourceDispenser.resetTokenDistribution(event);
+                }
+            });
+            addEventProcessor(new EventTypeProcessor<RuleVoteRequest>(RuleVoteRequest.class) {
+                int votesReceived = 0;
+
+                @Override
+                public void handle(RuleVoteRequest request) {
+                    sendFacilitatorMessage("Received vote rule request: " + request);
+                    ClientData client = clients.get(request.getId());
+                    client.setVotedRule(request.getRule());
+                    votesReceived++;
+                    if (votesReceived >= clients.size()) {
+                        // calculate votes
+                        for (GroupDataModel group : serverDataModel.getGroups()) {
+                            Map<ForagingRule, Integer> votingResults = group.generateVotingResults();
+                            List<ForagingRule> selectedRules = group.getSelectedRules();
+                            for (Identifier id : group.getClientIdentifiers()) {
+                                sendFacilitatorMessage(String.format(
+                                        "%s selected [%s] from all rules (%s)",
+                                        group, selectedRules, votingResults));
+                                transmit(new RuleSelectedUpdateEvent(id, selectedRules, votingResults));
+                            }
+
+                        }
+                    }
+                }
+            });
+            addEventProcessor(new EventTypeProcessor<RealTimeSanctionRequest>(RealTimeSanctionRequest.class) {
+                @Override
+                public void handleInExperimentThread(final RealTimeSanctionRequest request) {
+                    handleRealTimeSanctionRequest(request);
+                    // validate request
+                    // a user can sanction iff the following hold:
+                    // 1. sanctioning is enabled or they are the monitor
+                    // 2. the sanctioner has tokens
+                    // 3. the resource distribution is non-empty
+                    // if (getCurrentRoundConfiguration().isVotingAndRegulationEnabled()) {
+                    // handleEnforcementSanctionRequest(request);
+                    // }
+                    // else {
+
+                    // }
+                }
+            });
+
+        }
+
+        @Deprecated
+        @SuppressWarnings("unused")
+        private void initialize3DHandlers() {
             // 3d handlers
             addEventProcessor(new EventTypeProcessor<AgentInfoRequest>(AgentInfoRequest.class) {
                 public void handle(AgentInfoRequest event) {
@@ -357,78 +421,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     }
                 }
             });
-
-            addEventProcessor(new EventTypeProcessor<ClientMovementRequest>(ClientMovementRequest.class) {
-                public void handle(ClientMovementRequest event) {
-                    if (serverState == ServerState.WAITING)
-                        return;
-                    Identifier id = event.getId();
-                    Direction direction = event.getDirection();
-                    serverDataModel.moveClient(id, direction);
-                }
-            });
-            addEventProcessor(new EventTypeProcessor<ExplicitCollectionModeRequest>(ExplicitCollectionModeRequest.class) {
-                public void handleInExperimentThread(ExplicitCollectionModeRequest event) {
-                    clients.get(event.getId()).setExplicitCollectionMode(event.isExplicitCollectionMode());
-                }
-            });
-            addEventProcessor(new EventTypeProcessor<CollectTokenRequest>(CollectTokenRequest.class) {
-                public void handle(CollectTokenRequest event) {
-                    ClientData clientData = clients.get(event.getId());
-                    // FIXME: change this to collect the token immediately
-                    clientData.setCollecting();
-                }
-            });
-            addEventProcessor(new EventTypeProcessor<ResetTokenDistributionRequest>(ResetTokenDistributionRequest.class) {
-                public void handleInExperimentThread(ResetTokenDistributionRequest event) {
-                    resourceDispenser.resetTokenDistribution(event);
-                }
-            });
-            addEventProcessor(new EventTypeProcessor<RuleVoteRequest>(RuleVoteRequest.class) {
-                int votesReceived = 0;
-                @Override
-                public void handle(RuleVoteRequest request) {
-                    sendFacilitatorMessage("Received vote rule request: " + request);
-                    ClientData client = clients.get(request.getId());
-                    client.setVotedRule(request.getRule());
-                    votesReceived++;
-                    if (votesReceived >= clients.size()) {
-                        // calculate votes
-                        for (GroupDataModel group: serverDataModel.getGroups()) {
-                            Map<ForagingRule, Integer> votingResults = group.generateVotingResults();
-                            List<ForagingRule> selectedRules = group.getSelectedRules();
-                            for (Identifier id: group.getClientIdentifiers()) {
-                                sendFacilitatorMessage(String.format(
-                                        "%s selected [%s] from all rules (%s)",
-                                        group, selectedRules, votingResults));
-                                transmit(new RuleSelectedUpdateEvent(id, selectedRules, votingResults));
-                            }
-                            
-                        }
-                    }
-
-
-                }
-            });
-            addEventProcessor(new EventTypeProcessor<RealTimeSanctionRequest>(RealTimeSanctionRequest.class) {
-                @Override
-                public void handleInExperimentThread(final RealTimeSanctionRequest request) {
-                    // validate request
-                    // a user can sanction iff the following hold:
-                    // 1. sanctioning is enabled or they are the monitor
-                    // 2. the sanctioner has tokens
-                    // 3. the resource distribution is non-empty
-                    if (getCurrentRoundConfiguration().isVotingAndRegulationEnabled()) {
-                        handleEnforcementSanctionRequest(request);
-                    }
-                    else {
-                        handleRealTimeSanctionRequest(request);
-                    }
-                }
-            });
             addEventProcessor(new EventTypeProcessor<ClientPoseUpdate>(ClientPoseUpdate.class) {
                 public void handleInExperimentThread(ClientPoseUpdate event) {
-                    if (serverState == ServerState.WAITING)
+                    if (serverState == ServerState.IN_BETWEEN_ROUNDS)
                         return;
                     ClientData client = clients.get(event.getId());
                     client.setPosition(event.getPosition());
@@ -437,10 +432,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     client.setAnimationActiveFlag(event.isAnimationActive());
                 }
             });
-            // FIXME: turn into lockResource/unlockResource?
             addEventProcessor(new EventTypeProcessor<LockResourceRequest>(LockResourceRequest.class) {
                 public void handleInExperimentThread(LockResourceRequest event) {
-                    if (serverState == ServerState.WAITING)
+                    if (serverState == ServerState.IN_BETWEEN_ROUNDS)
                         return;
                     boolean successfullyLocked = serverDataModel.lockResource(event);
                     transmit(new LockResourceEvent(event.getId(), event.getResource(), successfullyLocked));
@@ -448,27 +442,29 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<UnlockResourceRequest>(UnlockResourceRequest.class) {
                 public void handleInExperimentThread(UnlockResourceRequest event) {
-                    if (serverState == ServerState.WAITING)
+                    if (serverState == ServerState.IN_BETWEEN_ROUNDS)
                         return;
                     serverDataModel.unlockResource(event);
                 }
             });
             addEventProcessor(new EventTypeProcessor<HarvestResourceRequest>(HarvestResourceRequest.class) {
                 public void handleInExperimentThread(HarvestResourceRequest event) {
-                    if (serverState == ServerState.WAITING)
+                    if (serverState == ServerState.IN_BETWEEN_ROUNDS)
                         return;
                     serverDataModel.harvestResource(event);
                 }
             });
             addEventProcessor(new EventTypeProcessor<HarvestFruitRequest>(HarvestFruitRequest.class) {
                 public void handleInExperimentThread(HarvestFruitRequest event) {
-                    if (serverState == ServerState.WAITING)
+                    if (serverState == ServerState.IN_BETWEEN_ROUNDS)
                         return;
                     serverDataModel.harvestFruits(event);
                 }
             });
         }
 
+        @SuppressWarnings("unused")
+        @Deprecated
         private void handleEnforcementSanctionRequest(RealTimeSanctionRequest request) {
             ClientData sourceClient = clients.get(request.getSource());
             ClientData targetClient = clients.get(request.getTarget());
@@ -519,7 +515,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             ClientData targetClient = clients.get(request.getTarget());
             // validate request
             // FIXME:Added a new test condition to check for the simplified version of sanctioning
-            boolean invalidSanctionRequest = sourceClient.getCurrentTokens() == 0 || targetClient.getCurrentTokens() == 0 || sourceClient.getGroupDataModel().isResourceDistributionEmpty();
+            boolean invalidSanctionRequest = sourceClient.getCurrentTokens() == 0 || targetClient.getCurrentTokens() == 0
+                    || sourceClient.getGroupDataModel().isResourceDistributionEmpty();
             if (invalidSanctionRequest) {
                 // ignore the sanction request, send a message to the sanctioner.
                 logger.warning("Ignoring token reduction request, sending new client error message event to : " + sourceClient.getId());
@@ -560,6 +557,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                             sourceClient.getAssignedNumber(),
                             subtractedTokens)));
         }
+
         @SuppressWarnings("rawtypes")
         private void initializeFacilitatorHandlers() {
             // facilitator handlers
@@ -576,10 +574,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 @Override
                 public void handle(ShowRequest request) {
                     if (request.getId().equals(facilitatorId)) {
-                        for (Identifier id: clients.keySet()) {
+                        for (Identifier id : clients.keySet()) {
                             transmit(request.copy(id));
                         }
-//                        sendFacilitatorMessage("Received " + request + " from facilitator, copied & broadcast to all clients.");
+                        // sendFacilitatorMessage("Received " + request + " from facilitator, copied & broadcast to all clients.");
                     }
                     else {
                         sendFacilitatorMessage("Ignoring show request from non facilitator id: " + request.getId());
@@ -596,8 +594,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         }
                         else {
                             sendFacilitatorMessage(String.format(
-                                    "Couldn't start round, waiting on %d of %d quizzes", 
-                                    numberOfSubmittedQuizzes, 
+                                    "Couldn't start round, waiting on %d of %d quizzes",
+                                    numberOfSubmittedQuizzes,
                                     clients.size()));
                         }
                     }
@@ -620,9 +618,11 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     synchronized (clients) {
                         ClientData clientData = clients.get(request.getId());
                         String surveyId = request.getSurveyId();
-                        for (ClientData data: clients.values()) {
+                        for (ClientData data : clients.values()) {
                             if (surveyId.equals(data.getSurveyId())) {
-                                sendFacilitatorMessage(String.format("WARNING: survey id %s was already assigned to client %s but is now also being assigned to %s", surveyId, data, clientData));
+                                sendFacilitatorMessage(String.format(
+                                        "WARNING: survey id %s was already assigned to client %s but is now also being assigned to %s", surveyId, data,
+                                        clientData));
                             }
                         }
                         clientData.getId().setSurveyId(request.getSurveyId());
@@ -632,6 +632,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<TrustGameSubmissionRequest>(TrustGameSubmissionRequest.class) {
                 int numberOfSubmissions = 0;
+
                 @Override
                 public void handle(TrustGameSubmissionRequest request) {
                     if (getCurrentRoundConfiguration().isTrustGameEnabled()) {
@@ -642,14 +643,15 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         persister.store(request);
                         transmit(new TrustGameSubmissionEvent(facilitatorId, request));
                         numberOfSubmissions++;
-                        sendFacilitatorMessage(String.format("%d trust game submissions (%s)", numberOfSubmissions, request));
+                        sendFacilitatorMessage(String.format("Received trust game submission %s (%d total)", request, numberOfSubmissions));
                     }
+                    // FIXME: groups have not been assigned in the transition between practice round and this round..
                     if (numberOfSubmissions >= clients.size()) {
                         // once all clients have submitted their decisions, execute the trust game.
                         for (GroupDataModel group : serverDataModel.getGroups()) {
                             LinkedList<ClientData> clientList = new LinkedList<ClientData>(group.getClientDataMap().values());
                             Collections.shuffle(clientList);
-                            // FIXME: arbitrary choice to save the first one to pair up with the last one as well.
+                            logger.info("TRUST GAME shuffled client list: " + clientList);
                             ClientData first = clientList.getFirst();
                             for (Iterator<ClientData> iter = clientList.iterator(); iter.hasNext();) {
                                 ClientData playerOne = iter.next();
@@ -657,8 +659,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                                 if (iter.hasNext()) {
                                     playerTwo = iter.next();
                                 }
+                                logger.info("TRUST GAME: about to pair " + playerOne + " with " + playerTwo);
                                 String trustGameResults = serverDataModel.calculateTrustGame(playerOne, playerTwo);
-                                sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in: %s", playerOne, playerTwo, trustGameResults));
+                                sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in: %s", playerOne, playerTwo,
+                                        trustGameResults));
                             }
                         }
                         numberOfSubmissions = 0;
@@ -673,7 +677,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         // - at that point the clients haven't been added to any groups yet.
                         // another way to handle this is to have the clients added
                         // to groups when the show instructions request is handled..
-                        initializeGroups();
                         sendFacilitatorMessage("Sending begin chat round request to all participants");
                         for (Map.Entry<Identifier, ClientData> entry : clients.entrySet()) {
                             Identifier id = entry.getKey();
@@ -688,7 +691,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
         protected boolean isReadyToStartRound() {
             if (getCurrentRoundConfiguration().isQuizEnabled()) {
-                return numberOfSubmittedQuizzes >= clients.size(); 
+                return numberOfSubmittedQuizzes >= clients.size();
             }
             return true;
         }
@@ -726,7 +729,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 transmit(chatEvent);
             }
         }
-        
+
         private void sendFacilitatorMessage(String message) {
             logger.info(message);
             if (facilitatorId != null) {
@@ -749,25 +752,25 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         stopRound();
                         break;
                     }
+                    processRound();
 
-                    roundProcessor.execute();
                     // Thread.yield();
                     Utils.sleep(SERVER_SLEEP_INTERVAL);
                     break;
-                case WAITING:
+                case IN_BETWEEN_ROUNDS:
                     // FIXME: there is an inherent nastiness going on with this model of control flow
-                    // the problem is this: when we first spin up the server, there are no connected clients.  control flow
+                    // the problem is this: when we first spin up the server, there are no connected clients. control flow
                     // enters here, we initialize the round (with no participants, etc.) and then wait on the quiz signal
-                    
+
                     // the issue is that we need to initialize the groups at some clear, well-defined time.
                     // we have to do it after all the clients are connected, so perhaps showInstructions can be the time to do it?
                     // the previous way which I've been slowly refactoring was to do it on the beginning of the first round (as a special case)
-                    // in the handler for BeginRoundRequest) and to do it at the end of every round.  Probably better to do it in round initialization
-                    
+                    // in the handler for BeginRoundRequest) and to do it at the end of every round. Probably better to do it in round initialization
+
                     // initialize persister first so we store all relevant events.
                     // persister MUST be initialized early so that we store pre-round events like QuizResponseEvent, ChatEvent, and the various Ranking
                     // requests.
-                    persister.initialize(getCurrentRoundConfiguration());
+                    setupRound();
                     sendFacilitatorMessage("Ready to show instructions and the start next round.");
                     if (getCurrentRoundConfiguration().isQuizEnabled()) {
                         getLogger().info("Waiting for all quizzes to be submitted.");
@@ -775,7 +778,17 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     }
                     // then wait for the signal from the facilitator to actually start the round (a chat session might occur or a voting session).
                     Utils.waitOn(roundSignal);
-
+                    startRound();
+                    break;
+                case WAITING_FOR_CONNECTIONS:
+                    sendFacilitatorMessage("Ready to show instructions and the start next round.");
+                    if (getCurrentRoundConfiguration().isQuizEnabled()) {
+                        getLogger().info("Waiting for all quizzes to be submitted.");
+                        Utils.waitOn(quizSignal);
+                    }
+                    // then wait for the signal from the facilitator to actually start the round (a chat session might occur or a voting session).
+                    Utils.waitOn(roundSignal);
+                    setupRound();
                     startRound();
                     break;
                 default:
@@ -783,29 +796,54 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             }
         }
 
-        private void processRound3d() {
-            boolean secondHasPassed = secondTick.hasExpired();
-            if (secondHasPassed) {
-                int secondsPerYear = getConfiguration().getCurrentParameters().getResourceAgingSecondsPerYear();
-                for (GroupDataModel group : serverDataModel.getGroups()) {
-                    // update resource age
-                    if (secondTick.getStartCount() % secondsPerYear == 0) {
-                        resourceDispenser.updateResourceAge(group);
-                    }
-                    // renew resources
-                    resourceDispenser.generateResources(group);
-                }
-                secondTick.restart();
-            }
-            // send new information to each client
-            long timeLeft = currentRoundDuration.getTimeLeft();
-            for (ClientData data : clients.values()) {
-                transmit(new SynchronizeClientEvent(data, timeLeft));
-            }
-            serverDataModel.clearDiffLists();
+        private void setupRound() {
+            persister.initialize(getCurrentRoundConfiguration());
+            initializeGroups();
         }
 
-        private void processRound2d() {
+        private void stopRound() {
+            serverState = ServerState.IN_BETWEEN_ROUNDS;
+            sendEndRoundEvents();
+            if (getCurrentRoundConfiguration().isPostRoundSanctioningEnabled()) {
+                // stop most of the round but don't persist/cleanup yet.
+                // block until we receive all postround sanctioning events.
+                // FIXME: use new java.util.concurrent constructs? CountDownLatch or CyclicBarrier?
+                // postRoundSanctionLatch = new CountDownLatch(clients.size());
+                // try { postRoundSanctionLatch.await(); }
+                // catch (InterruptedException ignored) {}
+                Utils.waitOn(postRoundSanctioningSignal);
+            }
+            persister.persist(serverDataModel);
+            cleanupRound();
+            // FIXME: make sure this is needed and document.
+            // Utils.sleep(2000);
+            advanceToNextRound();
+        }
+
+        private void cleanupRound() {
+            numberOfSubmittedQuizzes = 0;
+            groupsInitialized = false;
+            serverDataModel.cleanupRound();
+            for (ClientData clientData : clients.values()) {
+                clientData.reset();
+            }
+        }
+
+        private void advanceToNextRound() {
+            if (getConfiguration().isLastRound()) {
+                return;
+            }
+            RoundConfiguration nextRoundConfiguration = getConfiguration().nextRound();
+            serverDataModel.setRoundConfiguration(nextRoundConfiguration);
+            logger.info("Advancing to round # " + getConfiguration().getCurrentRoundNumber());
+            // send the next round configuration to each client
+            for (Identifier id : clients.keySet()) {
+                transmit(new SetConfigurationEvent<RoundConfiguration>(id, nextRoundConfiguration));
+            }
+            transmit(new SetConfigurationEvent<RoundConfiguration>(facilitatorId, nextRoundConfiguration));
+        }
+
+        private void processRound() {
             boolean secondHasPassed = secondTick.hasExpired();
             if (secondHasPassed) {
                 // handle rotating monitors.
@@ -827,29 +865,31 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 resourceDispenser.generateResources();
                 secondTick.restart();
             }
+            // FIXME: commented out since we're now collecting tokens as the requests come in..
+//            for (GroupDataModel group : serverDataModel.getGroups()) {
+//                for (ClientData clientData : group.getClientDataMap().values()) {
+//                    // ask each client if it wants to grab a token, wherever it is.
+//                    clientData.collectToken();
+//                }
+//            }
             for (GroupDataModel group : serverDataModel.getGroups()) {
-                for (ClientData clientData : group.getClientDataMap().values()) {
-                    // ask each client if it wants to grab a token, wherever it is.
-                    clientData.collectToken();
-                }
-            }
-            for (GroupDataModel group: serverDataModel.getGroups()) {
                 Set<Resource> addedTokensSet = group.getAddedResources();
                 Resource[] addedResources = addedTokensSet.toArray(new Resource[addedTokensSet.size()]);
                 Set<Resource> removedTokensSet = group.getRemovedResources();
                 Resource[] removedResources = removedTokensSet.toArray(new Resource[removedTokensSet.size()]);
                 Map<Identifier, Integer> clientTokens = group.getClientTokens();
                 Map<Identifier, Point> clientPositions = group.getClientPositions();
-                for (ClientData data: group.getClientDataMap().values()) {
+                for (ClientData data : group.getClientDataMap().values()) {
                     if (shouldSynchronize(data.getAssignedNumber())) {
                         transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
                     }
                     else {
-                        transmit(new ClientPositionUpdateEvent(data, addedResources, removedResources, clientTokens, clientPositions, currentRoundDuration.getTimeLeft()));
+                        transmit(new ClientPositionUpdateEvent(data, addedResources, removedResources, clientTokens, clientPositions,
+                                currentRoundDuration.getTimeLeft()));
                     }
                 }
             }
-            // FIXME: refine this, send basic info to the facilitator (how many resources left, etc.) 
+            // FIXME: refine this, send basic info to the facilitator (how many resources left, etc.)
             if (shouldUpdateFacilitator()) {
                 transmit(new FacilitatorUpdateEvent(facilitatorId, serverDataModel, currentRoundDuration.getTimeLeft()));
             }
@@ -867,25 +907,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             return (startCount < 3) || ((startCount % SYNCHRONIZATION_FREQUENCY) == (assignedNumber * 10));
         }
 
-        private void stopRound() {
-            serverState = ServerState.WAITING;
-            sendEndRoundEvents();
-            if (getCurrentRoundConfiguration().isPostRoundSanctioningEnabled()) {
-                // stop most of the round but don't persist/cleanup yet.
-                // block until we receive all postround sanctioning events.
-                // FIXME: use new java.util.concurrent constructs? CountDownLatch or CyclicBarrier?
-                // postRoundSanctionLatch = new CountDownLatch(clients.size());
-                // try { postRoundSanctionLatch.await(); }
-                // catch (InterruptedException ignored) {}
-                Utils.waitOn(postRoundSanctioningSignal);
-            }
-            persistRound();
-            cleanupRound();
-            // FIXME: make sure this is needed and document.
-            Utils.sleep(2000);
-            advanceToNextRound();
-        }
-
         private void sendEndRoundEvents() {
             // send each client some debriefing information:
             // 1. avg number of tokens collected in this round for the group
@@ -900,39 +921,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             }
         }
 
-        private void persistRound() {
-            persister.persist(serverDataModel);
-        }
-
-        private void cleanupRound() {
-            numberOfSubmittedQuizzes = 0;
-            groupsInitialized = false;
-            serverDataModel.cleanupRound();
-            for (ClientData clientData : clients.values()) {
-                clientData.reset();
-            }
-        }
-
-        private void advanceToNextRound() {
-            if (getConfiguration().isLastRound()) {
-                // stop the experiment.
-                serverState = ServerState.WAITING;
-                return;
-            }
-            RoundConfiguration nextRoundConfiguration = getConfiguration().nextRound();
-            serverDataModel.setRoundConfiguration(nextRoundConfiguration);
-            initializeRoundProcessor();
-            logger.info("Advancing to round # " + getConfiguration().getCurrentRoundNumber());
-            // send the next round configuration to each client
-            for (Identifier id : clients.keySet()) {
-                transmit(new SetConfigurationEvent<RoundConfiguration>(id, nextRoundConfiguration));
-            }
-            transmit(new SetConfigurationEvent<RoundConfiguration>(facilitatorId, nextRoundConfiguration));
-        }
-
         private boolean shouldShuffleParticipants() {
             // guard to ensure that we don't shuffle participants twice in a round (in the event there was a chat round preceding the normal game round)
-            if (groupsInitialized) return false;
+            if (groupsInitialized)
+                return false;
             RoundConfiguration currentRoundConfiguration = getCurrentRoundConfiguration();
             RoundConfiguration previousRoundConfiguration = getConfiguration().getPreviousRoundConfiguration();
             // we shuffle participants:
@@ -963,7 +955,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 clientData.initializePosition();
             }
         }
-        
+
         private void initializeGroups() {
             // reset group linkages if necessary
             if (shouldShuffleParticipants()) {
@@ -985,9 +977,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private void startRound() {
             RoundConfiguration roundConfiguration = getCurrentRoundConfiguration();
             // actually start the round once we receive the facilitator signal.
-            getLogger().info("Initializing groups.");
-            // FIXME: what if we want groups before the round actually begins..?
-            initializeGroups();
             // send RoundStartedEvents to all connected clients
             for (Map.Entry<Identifier, ClientData> entry : clients.entrySet()) {
                 Identifier id = entry.getKey();

@@ -88,7 +88,7 @@ A. Your decisions of where to collect tokens affects the regeneration of tokens.
 B. When you have collected all tokens on the screen, no new tokens will appear.<br>
 C. Tokens grow from the middle of the screen.<br>
 D. To collect a token you need to press the space bar while your yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif"></img> is on a cell with a token.<br>
-<br><br>
+<br>
 <span class='q2'>Q2. Which sequence of situations is not possible?</span> <br>
     <b>
         {incorrect_q2} 

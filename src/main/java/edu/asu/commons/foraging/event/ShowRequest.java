@@ -12,8 +12,5 @@ import edu.asu.commons.net.Identifier;
  * @version $Rev$
  */
 public interface ShowRequest<T extends ShowRequest<T>> extends FacilitatorRequest {
-    
-    
     public T copy(Identifier id);
-
 }
