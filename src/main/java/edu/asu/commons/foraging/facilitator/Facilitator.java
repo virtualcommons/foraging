@@ -198,7 +198,6 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
 
     public static void main(String[] args) {
         Runnable createGuiRunnable = new Runnable() {
-
             public void run() {
                 Dimension dimension = new Dimension(700, 700);
                 Facilitator facilitator = Facilitator.getInstance();

@@ -292,40 +292,44 @@ public class FacilitatorWindow extends JPanel {
     }
 
     public void displayDebriefing(FacilitatorEndRoundEvent event) {
-        Map<Identifier, ClientData> clientDataMap = event.getClientDataMap();
+    	// FIXME: use StringTemplate instead
+
+//        Map<Identifier, ClientData> clientDataMap = event.getClientDataMap();
         // this is the round that was just played.
         RoundConfiguration roundConfiguration = facilitator.getCurrentRoundConfiguration();
-        instructionsBuilder = new StringBuilder();
+    	System.out.println("Displaying debriefing for round " + roundConfiguration);
+    	instructionsBuilder = new StringBuilder(roundConfiguration.generateFacilitatorDebriefing(event.getServerDataModel()));
+//        instructionsBuilder = new StringBuilder();
         
-        instructionsBuilder.append(String.format("<h3>%s Results</h3>", roundConfiguration.isPracticeRound() ? "Practice round" : "Round " + roundConfiguration.getRoundNumber()));
-        List<String> headers = Arrays.asList("Participant", "Current tokens", "Current income", "Quiz earnings", "Trust game earnings", "Total income");
-        instructionsBuilder.append("<table><thead>");
-        for (String header : headers) {
-            instructionsBuilder.append("<th>").append(header).append("</th>");
-        }
-        instructionsBuilder.append("</thead><tbody>");
-        TreeSet<Identifier> orderedSet = new TreeSet<Identifier>(clientDataMap.keySet());
-        for (Identifier clientId : orderedSet) {
-            ClientData data = clientDataMap.get(clientId);
-            instructionsBuilder.append(String.format(
-                            "<tr><td>%s</td>" +
-                            "<td align='center'>%d</td>" +
-                            "<td align='center'>$%3.2f</td>" +
-                            "<td align='center'>$%3.2f</td>" +
-                            "<td align='center'>$%3.2f</td>" +
-                            "<td align='center'>$%3.2f</td>" +
-                            "</tr>",
-                            clientId.toString(), 
-                            data.getCurrentTokens(), 
-                            getIncome(data.getCurrentTokens()),
-                            getQuizEarnings(data),
-                            data.getTrustGameEarnings(),
-                            getTotalIncome(data)));
-        }
-        instructionsBuilder.append("</tbody></table><hr>");
-        if (event.isLastRound()) {
-            instructionsBuilder.append("<h2><font color='blue'>The experiment is over.  Please prepare payments.</font></h2>");
-        }
+//        instructionsBuilder.append(String.format("<h3>%s Results</h3>", roundConfiguration.isPracticeRound() ? "Practice round" : "Round " + roundConfiguration.getRoundNumber()));
+//        List<String> headers = Arrays.asList("Participant", "Current tokens", "Current income", "Quiz earnings", "Trust game earnings", "Total income");
+//        instructionsBuilder.append("<table><thead>");
+//        for (String header : headers) {
+//            instructionsBuilder.append("<th>").append(header).append("</th>");
+//        }
+//        instructionsBuilder.append("</thead><tbody>");
+//        TreeSet<Identifier> orderedSet = new TreeSet<Identifier>(clientDataMap.keySet());
+//        for (Identifier clientId : orderedSet) {
+//            ClientData data = clientDataMap.get(clientId);
+//            instructionsBuilder.append(String.format(
+//                            "<tr><td>%s</td>" +
+//                            "<td align='center'>%d</td>" +
+//                            "<td align='center'>$%3.2f</td>" +
+//                            "<td align='center'>$%3.2f</td>" +
+//                            "<td align='center'>$%3.2f</td>" +
+//                            "<td align='center'>$%3.2f</td>" +
+//                            "</tr>",
+//                            clientId.toString(), 
+//                            data.getCurrentTokens(), 
+//                            getIncome(data.getCurrentTokens()),
+//                            getQuizEarnings(data),
+//                            data.getTrustGameEarnings(),
+//                            getTotalIncome(data)));
+//        }
+//        instructionsBuilder.append("</tbody></table><hr>");
+//        if (event.isLastRound()) {
+//            instructionsBuilder.append("<h2><font color='blue'>The experiment is over.  Please prepare payments.</font></h2>");
+//        }
 
         showInstructionsMenuItem.setEnabled(true);
         stopRoundMenuItem.setEnabled(false);
@@ -334,7 +338,7 @@ public class FacilitatorWindow extends JPanel {
     private double getTotalIncome(ClientData data) {
         ServerConfiguration serverConfiguration = facilitator.getServerConfiguration();
         double quizEarnings = getQuizEarnings(data);
-        double trustGameEarnings = data.getTrustGameEarnings();
+        double trustGameEarnings = data.getTrustGameIncome();
         return data.getTotalIncome() + serverConfiguration.getShowUpPayment() + quizEarnings + trustGameEarnings;
     }
     
@@ -351,6 +355,7 @@ public class FacilitatorWindow extends JPanel {
     }
 
     public void endRound(FacilitatorEndRoundEvent endRoundEvent) {
+    	System.out.println("Ending round: " + endRoundEvent);
         displayDebriefing(endRoundEvent);
         if (endRoundEvent.isLastRound()) {
             facilitator.endExperiment();

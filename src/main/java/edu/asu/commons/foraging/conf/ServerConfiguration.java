@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 import org.stringtemplate.v4.ST;
 
 import edu.asu.commons.conf.ExperimentConfiguration;
+import edu.asu.commons.foraging.model.ClientData;
 
 /**
  * $Id$
@@ -110,6 +111,18 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
 
     public double getDollarsPerToken() {
         return DEFAULT_DOLLARS_PER_TOKEN;
+    }
+
+	public String getFacilitatorDebriefing() {
+		return assistant.getProperty("facilitator-debriefing");
+	}
+	
+	public double getTotalIncome(ClientData data) {
+		 return data.getTotalIncome() + getShowUpPayment() + getQuizEarnings(data) + data.getTrustGameIncome();
+	}
+	
+	public double getQuizEarnings(ClientData data) {
+        return data.getCorrectQuizAnswers() * getQuizCorrectAnswerReward();
     }
 		
 }

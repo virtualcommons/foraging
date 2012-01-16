@@ -40,7 +40,6 @@ public class ClientData implements Serializable {
     
     private ForagingRole foragingRole = ForagingRole.HARVEST;
     
-    private double totalIncome;
     private int totalTokens;
     private int currentTokens;
     private int tokensCollectedLastRound;
@@ -70,8 +69,14 @@ public class ClientData implements Serializable {
     
     private ForagingRule votedRule;
     private ArrayList<String> trustGameLog = new ArrayList<String>();
+
+    private String grandTotalIncome;
+    private String currentIncome;
+    private String quizEarnings;
+    private String trustGameEarnings;
     
-    private double trustGameEarnings = 0.0d;
+    private double totalIncome = 0.0d;
+    private double trustGameIncome = 0.0d;
     private int correctQuizAnswers = 0;
 
     public void setTrustGamePlayerOneAmountToKeep(double trustGamePlayerOneAmountToKeep) {
@@ -398,9 +403,9 @@ public class ClientData implements Serializable {
         }
     }
     
-//    public void setCollecting() {
-//        collecting = true;
-//    }
+    public void setCollecting() {
+        collecting = true;
+    }
 
     public void collectToken() {
 //        if (collecting) {
@@ -584,14 +589,14 @@ public class ClientData implements Serializable {
     }
 
     public void addTrustGameEarnings(double trustGameEarnings) {
-        this.trustGameEarnings += trustGameEarnings;
+        this.trustGameIncome += trustGameEarnings;
     }
     
-    public double getTrustGameEarnings() {
-        return trustGameEarnings;
+    public double getTrustGameIncome() {
+        return trustGameIncome;
     }
 
-    public void logTrustGameEarnings(String log) {
+    public void logTrustGame(String log) {
         trustGameLog.add(log);
     }
 
@@ -618,5 +623,38 @@ public class ClientData implements Serializable {
     public String getSurveyId() {
         return getId().getSurveyId();
     }
-    
+
+	public String getGrandTotalIncome() {
+		return grandTotalIncome;
+	}
+
+	public void setGrandTotalIncome(String grandTotalIncome) {
+		this.grandTotalIncome = grandTotalIncome;
+	}
+
+	public String getCurrentIncome() {
+		return currentIncome;
+	}
+
+	public void setCurrentIncome(String currentIncome) {
+		this.currentIncome = currentIncome;
+	}
+
+	public String getQuizEarnings() {
+		return quizEarnings;
+	}
+
+	public void setQuizEarnings(String quizEarnings) {
+		this.quizEarnings = quizEarnings;
+	}
+
+	public void setTrustGameEarnings(String trustGameEarnings) {
+		this.trustGameEarnings = trustGameEarnings;
+	}
+
+	public String getTrustGameEarnings() {
+		return trustGameEarnings;
+	}
+
+
 }

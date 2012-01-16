@@ -11,12 +11,14 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroupString;
 
 import edu.asu.commons.conf.ExperimentRoundParameters;
 import edu.asu.commons.foraging.graphics.Point3D;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
 import edu.asu.commons.foraging.model.ResourceDispenser;
+import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
@@ -750,6 +752,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return template.render();
     }
     
+    public String getFacilitatorDebriefing() {
+    	return getProperty("facilitator-debriefing", getParentConfiguration().getFacilitatorDebriefing());
+    }
+    
     @Override
     public String toString() {
         List<RoundConfiguration> allParameters = getParentConfiguration().getAllParameters();
@@ -774,4 +780,23 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public void setSelectedRules(List<ForagingRule> selectedRules) {
         this.selectedRules = selectedRules;
     }
+    
+    public double tokensToDollars(int tokens) {
+    	return isPracticeRound() ? 0.0d : tokens * getDollarsPerToken();
+    }
+
+	public String generateFacilitatorDebriefing(ServerDataModel serverDataModel) {
+		ST template = createStringTemplate(getFacilitatorDebriefing());
+		template.add("lastRound", serverDataModel.isLastRound());
+		ServerConfiguration serverConfiguration = getParentConfiguration();
+		NumberFormat formatter = NumberFormat.getCurrencyInstance();
+		for (ClientData data: serverDataModel.getClientDataMap().values()) {
+			data.setGrandTotalIncome(formatter.format(serverConfiguration.getTotalIncome(data)));
+			data.setCurrentIncome(formatter.format(tokensToDollars(data.getCurrentTokens())));
+			data.setQuizEarnings(formatter.format(serverConfiguration.getQuizEarnings(data)));
+			data.setTrustGameEarnings(formatter.format(data.getTrustGameIncome()));
+		}
+		template.add("clientDataList", serverDataModel.getClientDataMap().values());
+		return template.render();
+	}
 }

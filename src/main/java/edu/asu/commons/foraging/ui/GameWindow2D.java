@@ -630,6 +630,7 @@ public class GameWindow2D implements GameWindow {
             instructionsBuilder.append(trustGameLog);
         }
         if (event.isLastRound()) {
+        	// FIXME: show final round debriefing explicitly
 //            for (String trustGameLog : event.getTrustGameLog()) {
 //                instructionsBuilder.append(trustGameLog);
 //            }

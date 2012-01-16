@@ -4,6 +4,7 @@ package edu.asu.commons.foraging.model;
 import java.awt.Point;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,6 +53,8 @@ public class ServerDataModel extends ForagingDataModel {
     private static final long serialVersionUID = 8166812955398387600L;
 
     private transient Logger logger = Logger.getLogger( getClass().getName() );
+    
+    private final static NumberFormat CURRENCY_FORMATTER = NumberFormat.getCurrencyInstance();
 
     private transient Random random = new Random();
 
@@ -401,16 +404,18 @@ public class ServerDataModel extends ForagingDataModel {
 
     public String calculateTrustGame(ClientData playerOne, ClientData playerTwo) {
         if (playerOne.getId().equals(playerTwo.getId())) {
-            return "Tried to calculate trust game with self, aborting";
+        	String errorMessage = playerOne + " tried to calculate trust game with self, aborting";
+        	logger.warning(errorMessage);
+        	return errorMessage;
         }
-        double p1AmountToKeep = playerOne.getTrustGamePlayerOneAmountToKeep();
-        double[] p2AmountsToKeep = playerTwo.getTrustGamePlayerTwoAmountsToKeep();
+        double playerOneAmountToKeep = playerOne.getTrustGamePlayerOneAmountToKeep();
+        double[] playerTwoAmountsToKeep = playerTwo.getTrustGamePlayerTwoAmountsToKeep();
         
-        double amountSent = 1.0d - p1AmountToKeep;
+        double amountSent = 1.0d - playerOneAmountToKeep;
         StringBuilder builder = new StringBuilder();
-        builder.append(String.format("Player one (%s) sent %s to player two (%s)\n", playerOne, amountSent, playerTwo));
+        builder.append(String.format("%s (Player 1) sent %s to %s (Player 2)\n", playerOne, CURRENCY_FORMATTER.format(amountSent), playerTwo));
         if (amountSent > 0) {
-            double p2AmountToKeep = 0.0d;
+            double playerTwoEarnings = 0.0d;
             int index = 0;
             if (amountSent == 0.25d) {
                 index = 0;
@@ -421,23 +426,28 @@ public class ServerDataModel extends ForagingDataModel {
             } else if (amountSent == 1.0d) {
                 index = 3;
             }
-            p2AmountToKeep = p2AmountsToKeep[index];
+            playerTwoEarnings = playerTwoAmountsToKeep[index];
             double totalAmountSent = 3 * amountSent;
-            double amountReturnedToP1 = totalAmountSent - p2AmountToKeep;
-            String playerOneLog = String.format("Player one (%s) earned %s + %s = %s", playerOne, p1AmountToKeep, amountReturnedToP1, p1AmountToKeep + amountReturnedToP1);
+            double amountReturnedToP1 = totalAmountSent - playerTwoEarnings;
+            double playerOneEarnings = playerOneAmountToKeep + amountReturnedToP1;
+            String playerOneLog = String.format("%s (Player 1) kept %s and received %s back from Player two for a total of %s", 
+            		playerOne, 
+            		CURRENCY_FORMATTER.format(playerOneAmountToKeep), 
+            		CURRENCY_FORMATTER.format(amountReturnedToP1), 
+            		CURRENCY_FORMATTER.format(playerOneEarnings));
             builder.append(playerOneLog).append("\n");
-            playerOne.logTrustGameEarnings(playerOneLog);
-            playerOne.addTrustGameEarnings(p1AmountToKeep + amountReturnedToP1);
-            String playerTwoLog = String.format("Player two (%s) earned %s", playerTwo, p2AmountToKeep);
+            playerOne.logTrustGame(playerOneLog);
+            playerOne.addTrustGameEarnings(playerOneAmountToKeep + amountReturnedToP1);
+            String playerTwoLog = String.format("%s (Player 2) and earned %s", playerTwo, playerTwoEarnings);
             builder.append(playerTwoLog).append("\n");
-            playerTwo.logTrustGameEarnings(playerTwoLog);
-            playerTwo.addTrustGameEarnings(p2AmountToKeep);
+            playerTwo.logTrustGame(playerTwoLog);
+            playerTwo.addTrustGameEarnings(playerTwoEarnings);
         }
         else {
-            String playerOneLog = "Player one " + playerOne + " didn't send any money and kept: " + p1AmountToKeep;
-            playerOne.logTrustGameEarnings(playerOneLog);
-            playerOne.addTrustGameEarnings(p1AmountToKeep);
-            playerTwo.logTrustGameEarnings(playerOneLog + " - you were player two and didn't receive anything.");
+            String playerOneLog = String.format("%s (Player 1) sent nothing to Player 2 and earned %s", playerOne, playerOneAmountToKeep);
+            playerOne.logTrustGame(playerOneLog);
+            playerOne.addTrustGameEarnings(playerOneAmountToKeep);
+            playerTwo.logTrustGame(playerOneLog + " - you were player two and didn't receive anything.");
         }
         return builder.toString();
     }

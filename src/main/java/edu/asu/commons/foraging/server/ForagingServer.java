@@ -661,10 +661,11 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                                 }
                                 logger.info("TRUST GAME: about to pair " + playerOne + " with " + playerTwo);
                                 String trustGameResults = serverDataModel.calculateTrustGame(playerOne, playerTwo);
-                                sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in: %s", playerOne, playerTwo,
+                                sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in:\n\t %s", playerOne, playerTwo,
                                         trustGameResults));
                             }
                         }
+                        transmit(new FacilitatorEndRoundEvent(facilitatorId, serverDataModel));
                         numberOfSubmissions = 0;
                     }
                 }
@@ -846,22 +847,22 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private void processRound() {
             boolean secondHasPassed = secondTick.hasExpired();
             if (secondHasPassed) {
-                // handle rotating monitors.
-                if (getCurrentRoundConfiguration().isRotatingMonitorEnabled()
-                        && currentRoundDuration.getElapsedTimeInSeconds() % monitorRotationInterval == 0)
-                {
-                    for (GroupDataModel group : serverDataModel.getGroups()) {
-                        boolean rotated = group.rotateMonitorIfNecessary();
-                        if (rotated) {
-                            // send new roles to all clients
-                            // FIXME: this is inefficient, we could synchronize twice.
-                            for (ClientData clientData : group.getClientDataMap().values()) {
-                                transmit(new SynchronizeClientEvent(clientData, currentRoundDuration.getTimeLeft()));
-                            }
-                        }
-
-                    }
-                }
+                // XXX: rotating monitor handling currently disabled, find a new place for this logic.
+//                if (getCurrentRoundConfiguration().isRotatingMonitorEnabled()
+//                        && currentRoundDuration.getElapsedTimeInSeconds() % monitorRotationInterval == 0)
+//                {
+//                    for (GroupDataModel group : serverDataModel.getGroups()) {
+//                        boolean rotated = group.rotateMonitorIfNecessary();
+//                        if (rotated) {
+//                            // send new roles to all clients
+//                            // FIXME: this is inefficient, we could synchronize twice.
+//                            for (ClientData clientData : group.getClientDataMap().values()) {
+//                                transmit(new SynchronizeClientEvent(clientData, currentRoundDuration.getTimeLeft()));
+//                            }
+//                        }
+//
+//                    }
+//                }
                 resourceDispenser.generateResources();
                 secondTick.restart();
             }
