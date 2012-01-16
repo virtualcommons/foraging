@@ -188,4 +188,18 @@ room.
 <p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
 ]]>
 </entry>
+<entry key='facilitator-debriefing'>
+<![CDATA[
+<h1>Round {cfg.roundNumber} results</h1>
+<hr>
+<table border=1 cellspacing=3 cellpadding=3>
+<tr>
+<th>Participant</th><th>Current tokens</th><th>Current income</th><th>Quiz earnings</th><th>Trust game earnings</th><th>Total income</th>
+</tr>
+{clientDataList: {data | 
+<tr><td>{data.id}</td><td>{data.currentTokens}</td><td>{data.currentIncome}</td><td>{data.quizEarnings}</td><td>{data.trustGameEarnings}</td><td>{data.grandTotalIncome}</td></tr>
+}}
+</table>
+]]>
+</entry>
 </properties>
