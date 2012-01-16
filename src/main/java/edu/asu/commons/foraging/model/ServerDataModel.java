@@ -40,13 +40,13 @@ import edu.asu.commons.foraging.graphics.FractalTerrain;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: ServerDataModel.java 508 2010-04-19 08:02:04Z alllee $
+ * $Id$
  * 
  * The ForagerServerGameState is the data model needed on the server side.
  * 
  * 
  * @author Allen Lee, Deepali Bhagvat
- * @version $Revision: 508 $
+ * @version $Revision$
  */
 public class ServerDataModel extends ForagingDataModel {
 

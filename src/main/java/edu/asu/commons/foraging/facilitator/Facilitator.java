@@ -30,10 +30,10 @@ import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.model.ServerDataModel;
 
 /**
- * $Id: Facilitator.java 529 2010-08-17 00:08:01Z alllee $
+ * $Id$
  * 
  * @author <a href='anonymouslee@gmail.com'>Allen Lee</a>, Deepali Bhagvat
- * @version $Revision: 529 $
+ * @version $Revision$
  */
 public class Facilitator extends BaseFacilitator<ServerConfiguration> {
 
