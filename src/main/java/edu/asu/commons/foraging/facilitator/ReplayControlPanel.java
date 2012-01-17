@@ -37,7 +37,7 @@ import edu.asu.commons.foraging.model.ServerDataModel;
  *  Basic replay control panel for csan experiment.  Only works for 2D version (and probably broken right now)...
  *
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 384 $
+ * @version $Revision$
  */
 
 public class ReplayControlPanel extends JPanel {
