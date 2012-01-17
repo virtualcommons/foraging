@@ -10,10 +10,10 @@ import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: ResourceDispenserTest.java 76 2009-02-25 18:02:38Z alllee $
+ * $Id$
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 76 $
+ * @version $Revision$
  */
 public class ResourceDispenserTest {
     
