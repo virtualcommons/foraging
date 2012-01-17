@@ -26,6 +26,7 @@ import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
 import edu.asu.commons.foraging.event.ShowVotingInstructionsRequest;
+import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.model.ServerDataModel;
 
@@ -50,11 +51,16 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
     public Facilitator(ServerConfiguration configuration) {
         super(configuration);
         addEventProcessor(new EventTypeProcessor<SetConfigurationEvent>(SetConfigurationEvent.class) {
-
             public void handle(SetConfigurationEvent event) {
                 RoundConfiguration configuration = (RoundConfiguration) event.getParameters();
                 setServerConfiguration(configuration.getParentConfiguration());
             }
+        });
+        addEventProcessor(new EventTypeProcessor<TrustGameResultsFacilitatorEvent>(TrustGameResultsFacilitatorEvent.class){
+        	@Override
+        	public void handle(TrustGameResultsFacilitatorEvent event) {
+        		facilitatorWindow.updateTrustGame(event);
+        	}
         });
         addEventProcessor(new EventTypeProcessor<FacilitatorUpdateEvent>(FacilitatorUpdateEvent.class) {
 
@@ -179,10 +185,6 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
         return facilitatorWindow;
     }
 
-    public ServerDataModel getServerGameState() {
-        return serverDataModel;
-    }
-
     public void setRoundParameters(
             List<RoundConfiguration> roundConfiguration) {
         getServerConfiguration().setAllParameters(roundConfiguration);
@@ -220,7 +222,7 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration> {
         return getServerConfiguration().getCurrentParameters();
     }
 
-    public void setServerGameState(ServerDataModel serverGameState) {
+    public void setServerDataModel(ServerDataModel serverGameState) {
         this.serverDataModel = serverGameState;
     }
 

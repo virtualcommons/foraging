@@ -1,10 +1,9 @@
 package edu.asu.commons.foraging.event;
 
 import java.util.List;
-import java.util.Map;
 
 import edu.asu.commons.event.AbstractPersistableEvent;
-import edu.asu.commons.foraging.model.ClientData;
+import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.net.Identifier;
 
 /**
@@ -14,12 +13,12 @@ public class TrustGameResultsFacilitatorEvent extends AbstractPersistableEvent {
 
 	private static final long serialVersionUID = 5834548819829135618L;
 	private List<String> allTrustGameResults;
-	private Map<Identifier, ClientData> clientDataMap;
+	private ServerDataModel serverDataModel;
 	public TrustGameResultsFacilitatorEvent(Identifier facilitatorId,
-			Map<Identifier, ClientData> clientDataMap, List<String> allTrustGameResults) {
+			ServerDataModel serverDataModel, List<String> allTrustGameResults) {
 		super(facilitatorId);
 		this.allTrustGameResults = allTrustGameResults;
-		this.clientDataMap = clientDataMap;
+		this.serverDataModel = serverDataModel;
 	}
 	public List<String> getAllTrustGameResults() {
 		return allTrustGameResults;
@@ -27,11 +26,12 @@ public class TrustGameResultsFacilitatorEvent extends AbstractPersistableEvent {
 	public void setAllTrustGameResults(List<String> allTrustGameResults) {
 		this.allTrustGameResults = allTrustGameResults;
 	}
-	public Map<Identifier, ClientData> getClientDataMap() {
-		return clientDataMap;
+	public ServerDataModel getServerDataModel() {
+		return serverDataModel;
 	}
-	public void setClientDataMap(Map<Identifier, ClientData> clientDataMap) {
-		this.clientDataMap = clientDataMap;
+	public void setServerDataModel(ServerDataModel serverDataModel) {
+		this.serverDataModel = serverDataModel;
 	}
+
 	
 }

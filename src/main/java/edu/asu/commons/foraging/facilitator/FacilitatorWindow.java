@@ -5,8 +5,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -21,12 +19,13 @@ import javax.swing.JSplitPane;
 import javax.swing.text.BadLocationException;
 
 import edu.asu.commons.foraging.conf.RoundConfiguration;
-import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.event.FacilitatorEndRoundEvent;
 import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.QuizCompletedEvent;
+import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.model.ClientData;
+import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.HtmlEditorPane;
 import edu.asu.commons.ui.UserInterfaceUtils;
@@ -61,8 +60,11 @@ public class FacilitatorWindow extends JPanel {
 
     private JMenuItem startChatMenuItem;
     private JMenuItem showTrustGameMenuItem;
-    private JMenuItem showVotingInstructionsMenuItem;
+    @SuppressWarnings("unused")
+	private JMenuItem showVotingInstructionsMenuItem;
+    @SuppressWarnings("unused")
     private JMenuItem showVoteScreenMenuItem;
+    @SuppressWarnings("unused")
     private JMenuItem showSurveyInstructionsMenuItem;
 
     private HtmlEditorPane messageEditorPane;
@@ -265,7 +267,7 @@ public class FacilitatorWindow extends JPanel {
         repaint();
     }
     
-    // FXIME: get rid of duplication here & displayDebriefing..
+    // FIXME: get rid of duplication here & displayDebriefing..
     public void updateDebriefing(FacilitatorSanctionUpdateEvent event) {
         Map<Identifier, ClientData> clientDataMap = event.getClientDataMap();
         StringBuilder buffer = new StringBuilder();
@@ -291,59 +293,33 @@ public class FacilitatorWindow extends JPanel {
         informationEditorPane.setText(buffer.toString());
     }
 
-    public void displayDebriefing(FacilitatorEndRoundEvent event) {
-    	// FIXME: use StringTemplate instead
-
-//        Map<Identifier, ClientData> clientDataMap = event.getClientDataMap();
-        // this is the round that was just played.
-        RoundConfiguration roundConfiguration = facilitator.getCurrentRoundConfiguration();
-    	System.out.println("Displaying debriefing for round " + roundConfiguration);
-    	instructionsBuilder = new StringBuilder(roundConfiguration.generateFacilitatorDebriefing(event.getServerDataModel()));
-//        instructionsBuilder = new StringBuilder();
-        
-//        instructionsBuilder.append(String.format("<h3>%s Results</h3>", roundConfiguration.isPracticeRound() ? "Practice round" : "Round " + roundConfiguration.getRoundNumber()));
-//        List<String> headers = Arrays.asList("Participant", "Current tokens", "Current income", "Quiz earnings", "Trust game earnings", "Total income");
-//        instructionsBuilder.append("<table><thead>");
-//        for (String header : headers) {
-//            instructionsBuilder.append("<th>").append(header).append("</th>");
-//        }
-//        instructionsBuilder.append("</thead><tbody>");
-//        TreeSet<Identifier> orderedSet = new TreeSet<Identifier>(clientDataMap.keySet());
-//        for (Identifier clientId : orderedSet) {
-//            ClientData data = clientDataMap.get(clientId);
-//            instructionsBuilder.append(String.format(
-//                            "<tr><td>%s</td>" +
-//                            "<td align='center'>%d</td>" +
-//                            "<td align='center'>$%3.2f</td>" +
-//                            "<td align='center'>$%3.2f</td>" +
-//                            "<td align='center'>$%3.2f</td>" +
-//                            "<td align='center'>$%3.2f</td>" +
-//                            "</tr>",
-//                            clientId.toString(), 
-//                            data.getCurrentTokens(), 
-//                            getIncome(data.getCurrentTokens()),
-//                            getQuizEarnings(data),
-//                            data.getTrustGameEarnings(),
-//                            getTotalIncome(data)));
-//        }
-//        instructionsBuilder.append("</tbody></table><hr>");
-//        if (event.isLastRound()) {
-//            instructionsBuilder.append("<h2><font color='blue'>The experiment is over.  Please prepare payments.</font></h2>");
-//        }
-
+    public void displayDebriefing(ServerDataModel serverDataModel) {
+    	RoundConfiguration roundConfiguration = serverDataModel.getRoundConfiguration();
+    	System.err.println("Displaying debriefing: " + roundConfiguration);
+    	instructionsBuilder = new StringBuilder(roundConfiguration.generateFacilitatorDebriefing(serverDataModel));
         showInstructionsMenuItem.setEnabled(true);
         stopRoundMenuItem.setEnabled(false);
-    }
-
-    private double getTotalIncome(ClientData data) {
-        ServerConfiguration serverConfiguration = facilitator.getServerConfiguration();
-        double quizEarnings = getQuizEarnings(data);
-        double trustGameEarnings = data.getTrustGameIncome();
-        return data.getTotalIncome() + serverConfiguration.getShowUpPayment() + quizEarnings + trustGameEarnings;
-    }
-    
-    private double getQuizEarnings(ClientData data) {
-        return data.getCorrectQuizAnswers() * facilitator.getServerConfiguration().getQuizCorrectAnswerReward();
+        if (serverDataModel.isLastRound()) {
+        	instructionsBuilder.append(facilitator.getServerConfiguration().getFinalRoundFacilitatorInstructions());
+        }
+        else {
+        	RoundConfiguration upcomingRound = roundConfiguration.nextRound();
+        	boolean showInstructionsNext = true;
+            if (upcomingRound.isTrustGameEnabled()) {
+                showTrustGameMenuItem.setEnabled(true);
+                instructionsBuilder.append("<h2>TRUST GAME: Run a trust game next.  Click on the Round menu and select Show Trust Game</h2>");
+                showInstructionsNext = false;
+            }
+            if (upcomingRound.isChatRoundEnabled()) {
+                startChatMenuItem.setEnabled(true);
+                instructionsBuilder.append("<h2>COMMUNICATION ROUND: There is a communication round configured to run at the end of this round.  Click on the Round menu and select Start Chat Round</h2>");
+                showInstructionsNext = false;
+            }
+            if (showInstructionsNext) {
+                instructionsBuilder.append("<h2>SHOW INSTRUCTIONS: Click on the Round menu and select Show instructions when ready.</h2>");
+            }
+        }
+        informationEditorPane.setText(instructionsBuilder.toString());
     }
 
     private double getIncome(float numTokens) {
@@ -356,31 +332,14 @@ public class FacilitatorWindow extends JPanel {
 
     public void endRound(FacilitatorEndRoundEvent endRoundEvent) {
     	System.out.println("Ending round: " + endRoundEvent);
-        displayDebriefing(endRoundEvent);
-        if (endRoundEvent.isLastRound()) {
-            facilitator.endExperiment();
-        }
-        else {
-            // FIXME: doesn't allow for very first round to be chat-enabled or trust-game-enabled
-            RoundConfiguration roundConfiguration = facilitator.getServerConfiguration().nextRound();
-            boolean showInstructionsNext = true;
-            if (roundConfiguration.isTrustGameEnabled()) {
-                showTrustGameMenuItem.setEnabled(true);
-                instructionsBuilder.append("<h2>TRUST GAME: Run a trust game next.  Click on the Round menu and select Show Trust Game</h2>");
-                showInstructionsNext = false;
-            }
-            if (roundConfiguration.isChatRoundEnabled()) {
-                startChatMenuItem.setEnabled(true);
-                instructionsBuilder.append("<h2>COMMUNICATION ROUND: There is a communication round configured to run at the end of this round.  Click on the Round menu and select Start Chat Round</h2>");
-                showInstructionsNext = false;
-            }
-            if (showInstructionsNext) {
-                instructionsBuilder.append("<h2>SHOW INSTRUCTIONS: Click on the Round menu and select Show instructions when ready.</h2>");
-            }
-            informationEditorPane.setText(instructionsBuilder.toString());
-        }
+    	ServerDataModel serverDataModel = endRoundEvent.getServerDataModel();
+        displayDebriefing(serverDataModel);
         completedQuizzes = 0;
         completedTrustGames = 0;
+    }
+    
+    public void setRoundConfiguration(RoundConfiguration roundConfiguration) {
+
     }
 
     public void configureForReplay() {
@@ -394,7 +353,7 @@ public class FacilitatorWindow extends JPanel {
     
     public void addMessage(String message) {
         try {
-            messageEditorPane.getDocument().insertString(0, message + "\n", null);
+            messageEditorPane.getDocument().insertString(0, "-----\n" + message + "\n", null);
         }
         catch (BadLocationException exception) {
             exception.printStackTrace();
@@ -410,5 +369,13 @@ public class FacilitatorWindow extends JPanel {
         completedTrustGames++;
         addMessage(String.format("%d completed trust games (%s)", completedTrustGames, event));
     }
+
+	public void updateTrustGame(TrustGameResultsFacilitatorEvent event) {
+		addMessage("Received new trust game payment data, recalculating debriefing.");
+		displayDebriefing(event.getServerDataModel());
+		for (String result: event.getAllTrustGameResults()) {
+			addMessage(result);
+		}
+	}
 
 }

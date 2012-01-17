@@ -112,6 +112,11 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     public double getDollarsPerToken() {
         return DEFAULT_DOLLARS_PER_TOKEN;
     }
+    
+    public String getFinalRoundFacilitatorInstructions() {
+    	return assistant.getProperty("facilitator-payment-instructions", 
+    			"<h3>The experiment has ended and participant payments are listed above.  We recommend that you copy and paste it into a text editor for your records.</h3>");
+    }
 
 	public String getFacilitatorDebriefing() {
 		return assistant.getProperty("facilitator-debriefing");

@@ -11,7 +11,6 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupString;
 
 import edu.asu.commons.conf.ExperimentRoundParameters;
 import edu.asu.commons.foraging.graphics.Point3D;
@@ -759,7 +758,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     @Override
     public String toString() {
         List<RoundConfiguration> allParameters = getParentConfiguration().getAllParameters();
-        return String.format("Round %d of %d\n\t%s", allParameters.indexOf(this) + 1, allParameters.size(), getProperties());
+        return String.format("Round %d of %d", allParameters.indexOf(this) + 1, allParameters.size());
+    }
+    
+    public String fullStatus() {
+    	return toString() + "\n\t" + getProperties();
     }
     
     public String getQuizResults(List<String> incorrectQuestionNumbers, Map<Object, Object> actualAnswers) {
@@ -798,5 +801,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 		}
 		template.add("clientDataList", serverDataModel.getClientDataMap().values());
 		return template.render();
+	}
+	
+	// returns the next round configuration without advancing the pointer in ServerConfiguration
+	public RoundConfiguration nextRound() {
+		return getParentConfiguration().getNextRoundConfiguration();
 	}
 }

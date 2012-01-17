@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -129,8 +128,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
     private volatile boolean experimentStarted;
     
-    private Random random = new Random();
-
     // FIXME: add the ability to reconfigure an already instantiated server
     public ForagingServer() {
         this(new ServerConfiguration());
@@ -720,7 +717,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         					trustGameResult));
         		}
         	}
-			transmitAndStore(new TrustGameResultsFacilitatorEvent(facilitatorId, serverDataModel.getClientDataMap(), allTrustGameResults));
+			transmitAndStore(new TrustGameResultsFacilitatorEvent(facilitatorId, serverDataModel, allTrustGameResults));
 		}
 
         protected boolean isReadyToStartRound() {
