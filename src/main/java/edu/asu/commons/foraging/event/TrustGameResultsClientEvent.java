@@ -10,6 +10,7 @@ public class TrustGameResultsClientEvent extends AbstractEvent {
 	private static final long serialVersionUID = -9129989958983083574L;
 	
 	private final ClientData clientData;
+	
 	public TrustGameResultsClientEvent(ClientData clientData, String log) {
 		super(clientData.getId(), log);
 		this.clientData = clientData;

@@ -30,6 +30,8 @@ import edu.asu.commons.event.RoundStartedMarkerEvent;
 import edu.asu.commons.event.SetConfigurationEvent;
 import edu.asu.commons.event.SocketIdentifierUpdateRequest;
 import edu.asu.commons.experiment.AbstractExperiment;
+import edu.asu.commons.experiment.IPersister;
+import edu.asu.commons.experiment.Persister;
 import edu.asu.commons.experiment.StateMachine;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
@@ -114,7 +116,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
     private StateMachine stateMachine = new ForagingStateMachine();
 
-    private ForagingPersister persister;
+    private Persister<ServerConfiguration, RoundConfiguration> persister;
 
     private volatile int numberOfSubmittedQuizzes;
     private volatile int numberOfCompletedSanctions;
@@ -643,7 +645,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 @Override
                 public void handle(TrustGameSubmissionRequest request) {
                     if (getCurrentRoundConfiguration().isTrustGameEnabled()) {
-                        // basic sanity check
                         ClientData clientData = clients.get(request.getId());
                         clientData.setTrustGamePlayerOneAmountToKeep(request.getPlayerOneAmountToKeep());
                         clientData.setTrustGamePlayerTwoAmountsToKeep(request.getPlayerTwoAmountsToKeep());
@@ -652,7 +653,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         numberOfSubmissions++;
                         sendFacilitatorMessage(String.format("Received trust game submission %s (%d total)", request, numberOfSubmissions));
                     }
-                    // FIXME: groups have not been assigned in the transition between practice round and this round..
+                    else {
+                    	warnFacilitator("Received trust game submission request but trust game wasn't enabled: " + request);
+                    }
                     if (numberOfSubmissions >= clients.size()) {
                     	// once all clients have submitted their decisions, execute the trust game.
                     	processTrustGame();
@@ -717,8 +720,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         					trustGameResult));
         		}
         	}
-    		// FIXME: update facilitator AND clients if it is the last round of the experiment
-			transmit(new TrustGameResultsFacilitatorEvent(facilitatorId, serverDataModel.getClientDataMap(), allTrustGameResults));
+			transmitAndStore(new TrustGameResultsFacilitatorEvent(facilitatorId, serverDataModel.getClientDataMap(), allTrustGameResults));
 		}
 
         protected boolean isReadyToStartRound() {
@@ -766,6 +768,13 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             logger.info(message);
             if (facilitatorId != null) {
                 transmit(new FacilitatorMessageEvent(facilitatorId, message));
+            }
+        }
+        
+        private void warnFacilitator(String message) {
+            logger.warning(message);
+            if (facilitatorId != null) {
+                transmit(new FacilitatorMessageEvent(facilitatorId, "!. " + message));
             }
         }
 
@@ -1043,4 +1052,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         server.start();
         server.repl();
     }
+
+	@Override
+	public IPersister<ServerConfiguration, RoundConfiguration> getPersister() {
+		return persister;
+	}
+
 }

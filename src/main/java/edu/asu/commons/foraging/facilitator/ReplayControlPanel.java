@@ -19,7 +19,7 @@ import javax.swing.SwingUtilities;
 
 import edu.asu.commons.event.EventChannelFactory;
 import edu.asu.commons.event.PersistableEvent;
-import edu.asu.commons.experiment.Persister;
+import edu.asu.commons.experiment.IPersister;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.event.AddClientEvent;
@@ -87,7 +87,7 @@ public class ReplayControlPanel extends JPanel {
      * Initializes the replay control panel with a directory containing a persisted experiment run.
      * @param replayFilePath
      */
-    public void init(File replayFilePath, Persister<ServerConfiguration, RoundConfiguration> persister) {
+    public void init(File replayFilePath, IPersister<ServerConfiguration, RoundConfiguration> persister) {
         this.replayFile = replayFilePath;
         replayExperimentFilePath.setText(replayFile.getAbsolutePath()); 
         replayRoundThread = new ReplayRoundThread(persister);
@@ -244,7 +244,7 @@ public class ReplayControlPanel extends JPanel {
         
         private volatile PersistableEvent currentPersistableEvent;
 
-        public ReplayRoundThread(Persister<ServerConfiguration, RoundConfiguration> persister) {
+        public ReplayRoundThread(IPersister<ServerConfiguration, RoundConfiguration> persister) {
             this.actions = new ArrayList<PersistableEvent>(persister.getActions());
             // FIXME: provide data model restore functionality in persister
 //            this.serverDataModel = persister.restoreInitialGameState();
