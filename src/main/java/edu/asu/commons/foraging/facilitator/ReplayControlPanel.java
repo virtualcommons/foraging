@@ -249,7 +249,7 @@ public class ReplayControlPanel extends JPanel {
             // FIXME: provide data model restore functionality in persister
 //            this.serverDataModel = persister.restoreInitialGameState();
             this.serverDataModel = new ServerDataModel(EventChannelFactory.create());
-            facilitatorWindow.getFacilitator().setServerGameState(serverDataModel);
+            facilitatorWindow.getFacilitator().setServerDataModel(serverDataModel);
         }
         
         public void nextFrame() {
