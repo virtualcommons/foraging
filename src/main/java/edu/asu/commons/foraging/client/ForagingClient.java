@@ -40,6 +40,7 @@ import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
 import edu.asu.commons.foraging.event.ShowVotingInstructionsRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
+import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
 import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.foraging.ui.GameWindow;
@@ -225,6 +226,13 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
                 getGameWindow().update(event.getTimeLeft());
             }
         });
+        addEventProcessor(new EventTypeProcessor<TrustGameResultsClientEvent>(TrustGameResultsClientEvent.class) {
+            @Override
+            public void handle(TrustGameResultsClientEvent event) {
+                getGameWindow2D().updateTrustGame(event);
+            }
+            
+        });
         initialize2DEventProcessors();
 //        initialize3DEventProcessors();
         messageQueue = new MessageQueue();
@@ -305,19 +313,21 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
             });
         	channel.add(this, new EventTypeProcessor<ClientMovementRequest>(ClientMovementRequest.class) {
                 public void handle(ClientMovementRequest request) {
-                    add(request);
+                    if (isRoundInProgress()) {
+                        add(request);
+                    }
                 }
         	});
         	channel.add(this, new EventTypeProcessor<CollectTokenRequest>(CollectTokenRequest.class) {
         	    public void handle(CollectTokenRequest request) {
-        	        if (state == ClientState.RUNNING) {
+        	        if (isRoundInProgress()) {
         	            transmit(request);
         	        }
         	    }
         	});
         	channel.add(this, new EventTypeProcessor<ResetTokenDistributionRequest>(ResetTokenDistributionRequest.class) {
                 public void handle(ResetTokenDistributionRequest event) {
-                    if (state == ClientState.RUNNING && dataModel.getRoundConfiguration().isPracticeRound()) {
+                    if (isRoundInProgress() && dataModel.getRoundConfiguration().isPracticeRound()) {
                         transmit(event);
                     }
                 }
@@ -440,5 +450,10 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
     public void sendRuleVoteRequest(ForagingRule selectedRule) {
         transmit(new RuleVoteRequest(getId(), selectedRule));
         getGameWindow2D().ruleVoteSubmitted();
+    }
+
+
+    public boolean isRoundInProgress() {
+        return state == ClientState.RUNNING;
     }
 }
