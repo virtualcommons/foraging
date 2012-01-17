@@ -16,9 +16,6 @@
 <entry key='max-cell-occupancy'>1</entry>
 <entry key='trust-game'>true</entry>
 
-
-<entry key='resource-generator'>top-bottom-patchy</entry>
-
 <entry key="last-round-debriefing">
 <![CDATA[
 <h2>Survey</h2>
