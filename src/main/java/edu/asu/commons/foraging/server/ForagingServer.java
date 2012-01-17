@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -62,6 +63,8 @@ import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.ShowRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
+import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
+import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
@@ -123,6 +126,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
     // private Duration chatDuration;
 
     private volatile boolean experimentStarted;
+    
+    private Random random = new Random();
 
     // FIXME: add the ability to reconfigure an already instantiated server
     public ForagingServer() {
@@ -247,7 +252,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 public void handle(ConnectionEvent event) {
                     // handle incoming connections
                     if (experimentStarted) {
-                        // do not allow any new connections
+                        // currently not allowing any new connections
+                    	// FIXME: would be nice to allow for reconnection / reassociation of clients to ids and data. 
+                    	// should be logged however so we can remember the context of the data
                         transmit(new ClientMessageEvent(event.getId(), "The experiment has already started, we cannot add you at this time."));
                         return;
                     }
@@ -647,37 +654,17 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     }
                     // FIXME: groups have not been assigned in the transition between practice round and this round..
                     if (numberOfSubmissions >= clients.size()) {
-                        // once all clients have submitted their decisions, execute the trust game.
-                        for (GroupDataModel group : serverDataModel.getGroups()) {
-                            LinkedList<ClientData> clientList = new LinkedList<ClientData>(group.getClientDataMap().values());
-                            Collections.shuffle(clientList);
-                            logger.info("TRUST GAME shuffled client list: " + clientList);
-                            ClientData first = clientList.getFirst();
-                            for (Iterator<ClientData> iter = clientList.iterator(); iter.hasNext();) {
-                                ClientData playerOne = iter.next();
-                                ClientData playerTwo = first;
-                                if (iter.hasNext()) {
-                                    playerTwo = iter.next();
-                                }
-                                logger.info("TRUST GAME: about to pair " + playerOne + " with " + playerTwo);
-                                String trustGameResults = serverDataModel.calculateTrustGame(playerOne, playerTwo);
-                                sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in:\n\t %s", playerOne, playerTwo,
-                                        trustGameResults));
-                            }
-                        }
-                        transmit(new FacilitatorEndRoundEvent(facilitatorId, serverDataModel));
+                    	// once all clients have submitted their decisions, execute the trust game.
+                    	processTrustGame();
                         numberOfSubmissions = 0;
                     }
                 }
+
             });
 
             addEventProcessor(new EventTypeProcessor<BeginChatRoundRequest>(BeginChatRoundRequest.class) {
                 public void handle(BeginChatRoundRequest request) {
                     if (getCurrentRoundConfiguration().isChatEnabled()) {
-                        // FIXME: need to handle properly corner case where chat is enabled before the first round
-                        // - at that point the clients haven't been added to any groups yet.
-                        // another way to handle this is to have the clients added
-                        // to groups when the show instructions request is handled..
                         sendFacilitatorMessage("Sending begin chat round request to all participants");
                         for (Map.Entry<Identifier, ClientData> entry : clients.entrySet()) {
                             Identifier id = entry.getKey();
@@ -689,6 +676,45 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             // FIXME: handle reconfiguration requests from facilitator
         }
+        
+		protected void processTrustGame() {
+			List<String> allTrustGameResults = new ArrayList<String>();
+        	for (GroupDataModel group : serverDataModel.getGroups()) {
+        		LinkedList<ClientData> clientList = new LinkedList<ClientData>(group.getClientDataMap().values());
+        		Collections.shuffle(clientList);
+        		logger.info("TRUST GAME shuffled client list: " + clientList);
+        		ClientData first = clientList.getFirst();
+
+        		// using an iterator to consume both players and ensure that a player doesn't
+        		// have the trust game calculated on them twice (except as a player 2 selection)
+                
+        		boolean lastRound = getConfiguration().isLastRound();
+        		for (ListIterator<ClientData> iter = clientList.listIterator(); iter.hasNext();) {
+        			ClientData playerOne = iter.next();
+        			ClientData playerTwo = first;
+        			if (iter.hasNext()) {
+        				playerTwo = iter.next();
+        			}
+        			else {
+        				// clumsy, see if we can express this differently
+        				// why doesn't listIterator offer a currentIndex() method as well?
+        				playerTwo = clientList.get(random.nextInt(iter.previousIndex() + 1));
+        			}
+        			logger.info("TRUST GAME: about to pair " + playerOne + " with " + playerTwo);
+        			String trustGameResult = serverDataModel.calculateTrustGame(playerOne, playerTwo);
+        			allTrustGameResults.add(trustGameResult);
+        			if (lastRound) {
+        				transmit(new TrustGameResultsClientEvent(playerOne, trustGameResult));
+        				transmit(new TrustGameResultsClientEvent(playerTwo, trustGameResult));
+        			}
+
+        			sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in:\n\t %s", playerOne, playerTwo,
+        					trustGameResult));
+        		}
+        	}
+    		// FIXME: update facilitator AND clients if it is the last round of the experiment
+			transmit(new TrustGameResultsFacilitatorEvent(facilitatorId, serverDataModel.getClientDataMap(), allTrustGameResults));
+		}
 
         protected boolean isReadyToStartRound() {
             if (getCurrentRoundConfiguration().isQuizEnabled()) {
@@ -772,6 +798,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     // persister MUST be initialized early so that we store pre-round events like QuizResponseEvent, ChatEvent, and the various Ranking
                     // requests.
                     setupRound();
+                    initializeGroups();
                     sendFacilitatorMessage("Ready to show instructions and the start next round.");
                     if (getCurrentRoundConfiguration().isQuizEnabled()) {
                         getLogger().info("Waiting for all quizzes to be submitted.");
@@ -782,6 +809,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     startRound();
                     break;
                 case WAITING_FOR_CONNECTIONS:
+                	// while waiting for connections we must defer group initialization till all clients
+                	// are connected (which is unknown, we allow clients to connect until the experiment has started)
+                    setupRound();
                     sendFacilitatorMessage("Ready to show instructions and the start next round.");
                     if (getCurrentRoundConfiguration().isQuizEnabled()) {
                         getLogger().info("Waiting for all quizzes to be submitted.");
@@ -789,7 +819,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     }
                     // then wait for the signal from the facilitator to actually start the round (a chat session might occur or a voting session).
                     Utils.waitOn(roundSignal);
-                    setupRound();
+                    initializeGroups();
                     startRound();
                     break;
                 default:
@@ -799,7 +829,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
         private void setupRound() {
             persister.initialize(getCurrentRoundConfiguration());
-            initializeGroups();
         }
 
         private void stopRound() {
@@ -870,7 +899,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 //            for (GroupDataModel group : serverDataModel.getGroups()) {
 //                for (ClientData clientData : group.getClientDataMap().values()) {
 //                    // ask each client if it wants to grab a token, wherever it is.
-//                    clientData.collectToken();
+//                    group.collectToken(clientData);
 //                }
 //            }
             for (GroupDataModel group : serverDataModel.getGroups()) {

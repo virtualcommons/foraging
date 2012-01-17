@@ -585,7 +585,7 @@ public class ClientData implements Serializable {
     }
 
     public String toString() {
-        return String.format("id (%s) assigned number (%d)", id, assignedNumber);
+        return String.format("[%s #%d]", id, assignedNumber);
     }
 
     public void addTrustGameEarnings(double trustGameEarnings) {

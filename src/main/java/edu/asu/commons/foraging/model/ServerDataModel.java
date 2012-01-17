@@ -414,8 +414,11 @@ public class ServerDataModel extends ForagingDataModel {
         double amountSent = 1.0d - playerOneAmountToKeep;
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("%s (Player 1) sent %s to %s (Player 2)\n", playerOne, CURRENCY_FORMATTER.format(amountSent), playerTwo));
+        
+        double playerOneEarnings = playerOneAmountToKeep;
+        double playerTwoEarnings = 0.0d;
+        double amountReturnedToPlayerOne = 0.0d;
         if (amountSent > 0) {
-            double playerTwoEarnings = 0.0d;
             int index = 0;
             if (amountSent == 0.25d) {
                 index = 0;
@@ -428,28 +431,42 @@ public class ServerDataModel extends ForagingDataModel {
             }
             playerTwoEarnings = playerTwoAmountsToKeep[index];
             double totalAmountSent = 3 * amountSent;
-            double amountReturnedToP1 = totalAmountSent - playerTwoEarnings;
-            double playerOneEarnings = playerOneAmountToKeep + amountReturnedToP1;
-            String playerOneLog = String.format("%s (Player 1) kept %s and received %s back from Player two for a total of %s", 
-            		playerOne, 
-            		CURRENCY_FORMATTER.format(playerOneAmountToKeep), 
-            		CURRENCY_FORMATTER.format(amountReturnedToP1), 
-            		CURRENCY_FORMATTER.format(playerOneEarnings));
-            builder.append(playerOneLog).append("\n");
-            playerOne.logTrustGame(playerOneLog);
-            playerOne.addTrustGameEarnings(playerOneAmountToKeep + amountReturnedToP1);
-            String playerTwoLog = String.format("%s (Player 2) and earned %s", playerTwo, playerTwoEarnings);
-            builder.append(playerTwoLog).append("\n");
-            playerTwo.logTrustGame(playerTwoLog);
-            playerTwo.addTrustGameEarnings(playerTwoEarnings);
+            amountReturnedToPlayerOne = totalAmountSent - playerTwoEarnings;
+            playerOneEarnings += amountReturnedToPlayerOne;
         }
-        else {
-            String playerOneLog = String.format("%s (Player 1) sent nothing to Player 2 and earned %s", playerOne, playerOneAmountToKeep);
-            playerOne.logTrustGame(playerOneLog);
-            playerOne.addTrustGameEarnings(playerOneAmountToKeep);
-            playerTwo.logTrustGame(playerOneLog + " - you were player two and didn't receive anything.");
+        String playerOneLog = String.format("Player 1 kept %s and received %s back from Player 2 for a total of %s", 
+        		CURRENCY_FORMATTER.format(playerOneAmountToKeep), 
+        		CURRENCY_FORMATTER.format(amountReturnedToPlayerOne), 
+        		CURRENCY_FORMATTER.format(playerOneEarnings));
+        playerOne.logTrustGame("You were player one. " + playerOneLog);
+        playerOne.addTrustGameEarnings(playerOneEarnings);
+        builder.append(playerOne).append(playerOneLog).append("\n");
+        if (shouldLogPlayerTwo(playerOne, playerTwo)) {
+        	String playerTwoLog = String.format("Player 2 received %s and sent back %s to Player 1, earning %s", 
+        			CURRENCY_FORMATTER.format(amountSent),
+        			CURRENCY_FORMATTER.format(amountSent - playerTwoEarnings),
+        			CURRENCY_FORMATTER.format(playerTwoEarnings));
+        	playerTwo.logTrustGame(playerTwoLog);
+        	playerTwo.addTrustGameEarnings(playerTwoEarnings);
+        	builder.append(playerTwoLog).append("\n");
         }
         return builder.toString();
+    }
+    
+    /**
+     * Returns true if player two has not yet participated in the trust game as a player one, in which case their trust game log
+     * would already have an entry and so its size would be equivalent to the size of the player one log.  In most cases it should 
+     * always be 1 smaller than the player one trust game log
+     * 
+     * @param playerOne
+     * @param playerTwo
+     * @return
+     */
+    private boolean shouldLogPlayerTwo(ClientData playerOne, ClientData playerTwo) {
+    	logger.info(String.format("%s (P1) log: %s vs. %s (P2) log: %s", playerOne, playerOne.getTrustGameLog(), 
+    			playerTwo, playerTwo.getTrustGameLog()));
+    	// is this sufficient? 
+    	return playerTwo.getTrustGameLog().size() < playerOne.getTrustGameLog().size();
     }
 
     @Override
