@@ -190,7 +190,7 @@ room.
 </entry>
 <entry key='facilitator-debriefing'>
 <![CDATA[
-<h1>Round {cfg.roundNumber} results</h1>
+<h1>Round {self.roundNumber} results</h1>
 <hr>
 <table border=1 cellspacing=3 cellpadding=3>
 <tr>
