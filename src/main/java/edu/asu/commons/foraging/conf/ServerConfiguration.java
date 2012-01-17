@@ -122,6 +122,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
 		return assistant.getProperty("facilitator-debriefing");
 	}
 	
+	public String getClientDebriefing() {
+	    return assistant.getProperty("client-debriefing");
+	}
+	
 	public double getTotalIncome(ClientData data) {
 		 return data.getTotalIncome() + getShowUpPayment() + getQuizEarnings(data) + data.getTrustGameIncome();
 	}
