@@ -1,10 +1,7 @@
 package edu.asu.commons.foraging.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -133,17 +130,17 @@ public class ChatPanel extends JPanel {
                     }
                 }
             });
-            chatField.addFocusListener(new FocusListener() {
-                @Override
-                public void focusGained(FocusEvent e) {
-                    chatField.setBackground(Color.YELLOW);
-                }
-                @Override
-                public void focusLost(FocusEvent e) {
-                    chatField.setBackground(Color.WHITE);
-                }
-                
-            });
+//            chatField.addFocusListener(new FocusListener() {
+//                @Override
+//                public void focusGained(FocusEvent e) {
+//                    chatField.setBackground(Color.YELLOW);
+//                }
+//                @Override
+//                public void focusLost(FocusEvent e) {
+//                    chatField.setBackground(Color.WHITE);
+//                }
+//                
+//            });
             JLabel headerLabel = new JLabel("Chat");
             headerLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
             add(headerLabel, BorderLayout.NORTH);

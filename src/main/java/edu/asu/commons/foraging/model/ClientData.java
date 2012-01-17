@@ -70,6 +70,7 @@ public class ClientData implements Serializable {
     private ForagingRule votedRule;
     private ArrayList<String> trustGameLog = new ArrayList<String>();
 
+    // String fields to be set and formatted for use in templates.
     private String grandTotalIncome;
     private String currentIncome;
     private String quizEarnings;

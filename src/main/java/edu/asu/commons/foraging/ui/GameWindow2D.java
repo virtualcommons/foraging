@@ -51,6 +51,7 @@ import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
+import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.rules.ForagingRule;
@@ -417,6 +418,9 @@ public class GameWindow2D implements GameWindow {
             // FIXME: refactor this method if possible.
             @Override
             public void keyPressed(KeyEvent keyEvent) {
+                if (! client.isRoundInProgress()) {
+                    return;
+                }
                 int keyChar = (int) keyEvent.getKeyChar();
                 int keyCode = keyEvent.getKeyCode();
                 Event event = null;
@@ -608,35 +612,10 @@ public class GameWindow2D implements GameWindow {
         }
         return dataModel.getRoundConfiguration().getDollarsPerToken() * numTokens;
     }
-
-    private void addDebriefingText(EndRoundEvent event) {
+    
+    public void showDebriefing(ClientData clientData) {
         instructionsBuilder.delete(0, instructionsBuilder.length());
-        // FIXME: should be round-specific? We're not resetting correct quiz answers either.
-        int correctQuizAnswers = event.getClientData().getCorrectQuizAnswers();
-        double quizReward = correctQuizAnswers * dataModel.getRoundConfiguration().getQuizCorrectAnswerReward();
-        instructionsBuilder.append(
-                String.format("<h3>Your stats in this round:</h3>" +
-                        "<ul>" +
-                        "<li>Tokens collected: %d</li>" +
-                        "<li>Income: $%3.2f</li>" +
-                        "<li>Quiz questions answered correctly: %d (adds $%3.2f to your total)</li>" +
-                        "</ul>",
-                        event.getCurrentTokens(), getIncome(event.getCurrentTokens()), correctQuizAnswers, quizReward)
-                );
-        double showUpPayment = dataModel.getRoundConfiguration().getParentConfiguration().getShowUpPayment();
-        instructionsBuilder.append(String.format("Your <b>total income</b> so far (including a $%3.2f bonus for showing up) is : $%3.2f<hr>",
-                showUpPayment, dataModel.getTotalIncome() + showUpPayment + quizReward));
-        for (String trustGameLog : event.getTrustGameLog()) {
-            instructionsBuilder.append(trustGameLog);
-        }
-        if (event.isLastRound()) {
-        	// FIXME: show final round debriefing explicitly
-//            for (String trustGameLog : event.getTrustGameLog()) {
-//                instructionsBuilder.append(trustGameLog);
-//            }
-            instructionsBuilder.append(client.getDataModel().getLastRoundDebriefing());
-            timeLeftLabel.setText("The experiment is now over.");
-        }
+        instructionsBuilder.append(dataModel.getRoundConfiguration().generateClientDebriefing(clientData));
         setInstructions(instructionsBuilder.toString());
     }
 
@@ -840,7 +819,7 @@ public class GameWindow2D implements GameWindow {
                     switchInstructionsPane();
                 }
                 // generate debriefing text from data culled from the Event
-                addDebriefingText(event);
+                showDebriefing(event.getClientData());
             }
         };
         try {
@@ -899,6 +878,10 @@ public class GameWindow2D implements GameWindow {
     public void ruleVoteSubmitted() {
         setInstructions(dataModel.getRoundConfiguration().getSubmittedVoteInstructions());
         switchInstructionsPane();
+    }
+
+    public void updateTrustGame(TrustGameResultsClientEvent event) {
+        showDebriefing(event.getClientData());
     }
 
 
