@@ -807,6 +807,7 @@ public class GameWindow2D implements GameWindow {
         JPanel panel = getPanel();
         cardLayout.show(panel, panelName);
         panel.repaint();
+        mainPanel.requestFocusInWindow();
     }
 
     public void updateDebriefing(final PostRoundSanctionUpdateEvent event) {
@@ -886,7 +887,7 @@ public class GameWindow2D implements GameWindow {
 
     @Override
     public void requestFocusInWindow() {
-        getPanel().requestFocusInWindow();
+        mainPanel.requestFocusInWindow();
         
     }
 

@@ -677,6 +677,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             // FIXME: handle reconfiguration requests from facilitator
         }
         
+        /**
+         * Performs a random pairing of every member in the group to generate trust game payment results.
+         */
 		protected void processTrustGame() {
 			List<String> allTrustGameResults = new ArrayList<String>();
         	for (GroupDataModel group : serverDataModel.getGroups()) {
@@ -687,7 +690,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
         		// using an iterator to consume both players and ensure that a player doesn't
         		// have the trust game calculated on them twice (except as a player 2 selection)
-                
         		boolean lastRound = getConfiguration().isLastRound();
         		for (ListIterator<ClientData> iter = clientList.listIterator(); iter.hasNext();) {
         			ClientData playerOne = iter.next();
@@ -695,11 +697,14 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         			if (iter.hasNext()) {
         				playerTwo = iter.next();
         			}
-        			else {
+        			// FIXME: upon second thought, this isn't strictly necessary as the list is already
+        			// being shuffled and the random strategy needed to complete the pairings
+        			// doesn't need to be doubly randomized
+//        			else {
         				// clumsy, see if we can express this differently
         				// why doesn't listIterator offer a currentIndex() method as well?
-        				playerTwo = clientList.get(random.nextInt(iter.previousIndex() + 1));
-        			}
+//        				playerTwo = clientList.get(random.nextInt(iter.previousIndex() + 1));
+//        			}
         			logger.info("TRUST GAME: about to pair " + playerOne + " with " + playerTwo);
         			String trustGameResult = serverDataModel.calculateTrustGame(playerOne, playerTwo);
         			allTrustGameResults.add(trustGameResult);

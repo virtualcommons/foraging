@@ -418,6 +418,7 @@ public class ServerDataModel extends ForagingDataModel {
         double playerOneEarnings = playerOneAmountToKeep;
         double playerTwoEarnings = 0.0d;
         double amountReturnedToPlayerOne = 0.0d;
+        double totalAmountSent = amountSent * 3.0d;
         if (amountSent > 0) {
             int index = 0;
             if (amountSent == 0.25d) {
@@ -430,25 +431,30 @@ public class ServerDataModel extends ForagingDataModel {
                 index = 3;
             }
             playerTwoEarnings = playerTwoAmountsToKeep[index];
-            double totalAmountSent = 3 * amountSent;
             amountReturnedToPlayerOne = totalAmountSent - playerTwoEarnings;
             playerOneEarnings += amountReturnedToPlayerOne;
         }
-        String playerOneLog = String.format("Player 1 kept %s and received %s back from Player 2 for a total of %s", 
-        		CURRENCY_FORMATTER.format(playerOneAmountToKeep), 
+        String playerOneLog = String.format("Player 1 kept %s, sent %s, and received %s back from Player 2 for a total of %s", 
+        		CURRENCY_FORMATTER.format(playerOneAmountToKeep),
+        		CURRENCY_FORMATTER.format(amountSent),
         		CURRENCY_FORMATTER.format(amountReturnedToPlayerOne), 
         		CURRENCY_FORMATTER.format(playerOneEarnings));
         playerOne.logTrustGame("You were player one. " + playerOneLog);
         playerOne.addTrustGameEarnings(playerOneEarnings);
         builder.append(playerOne).append(playerOneLog).append("\n");
         if (shouldLogPlayerTwo(playerOne, playerTwo)) {
-        	String playerTwoLog = String.format("Player 2 received %s and sent back %s to Player 1, earning %s", 
-        			CURRENCY_FORMATTER.format(amountSent),
-        			CURRENCY_FORMATTER.format(amountSent - playerTwoEarnings),
+        	String playerTwoLog = String.format("Player 2: received %s from Player 1 and sent back %s, earning %s", 
+        			CURRENCY_FORMATTER.format(totalAmountSent),
+        			CURRENCY_FORMATTER.format(totalAmountSent - playerTwoEarnings),
         			CURRENCY_FORMATTER.format(playerTwoEarnings));
-        	playerTwo.logTrustGame(playerTwoLog);
+        	playerTwo.logTrustGame("You were player two. " + playerTwoLog);
         	playerTwo.addTrustGameEarnings(playerTwoEarnings);
-        	builder.append(playerTwoLog).append("\n");
+        	builder.append(playerTwo).append(playerTwoLog).append("\n");
+        }
+        else {
+        	builder.append(
+        			String.format("Player 2: (%s) already participated in the trust game and was only used as a strategy to respond to Player 1.", 
+        					playerTwo));
         }
         return builder.toString();
     }
