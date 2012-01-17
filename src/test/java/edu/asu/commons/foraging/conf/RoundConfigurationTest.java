@@ -14,7 +14,7 @@ public class RoundConfigurationTest {
     
     @Before
     public void setUp() {
-        ServerConfiguration serverConfiguration = new ServerConfiguration("configuration/indiana-experiments/fall-2011/pretest");
+        ServerConfiguration serverConfiguration = new ServerConfiguration("configuration/indiana-experiments/2011/vote-punish");
         roundConfiguration = serverConfiguration.getAllParameters().get(4);
     }
 
