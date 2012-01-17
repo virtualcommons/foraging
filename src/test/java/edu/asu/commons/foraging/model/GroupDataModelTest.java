@@ -1,9 +1,12 @@
 package edu.asu.commons.foraging.model;
 
-import java.util.ArrayList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +14,6 @@ import org.junit.Test;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.net.Identifier;
-import static org.junit.Assert.*;
 
 public class GroupDataModelTest {
     
@@ -39,7 +41,9 @@ public class GroupDataModelTest {
                     data.setVotedRule(rule);
                 }
                 // verify that this is the rule in place.
-                assertEquals(rule, group.generateVotingResults());
+                Map<ForagingRule, Integer> votingResults = group.generateVotingResults();
+                assertEquals(1, votingResults.size());
+                assertEquals(rule, group.getSelectedRule());
             }
         }
     }
@@ -59,7 +63,12 @@ public class GroupDataModelTest {
                 ForagingRule votedRule = rules.get(index);
                 data.setVotedRule(votedRule);
             }
-            assertTrue(tieBreakerRules.contains(group.generateVotingResults()));
+            Map<ForagingRule, Integer> votingResults = group.generateVotingResults();
+            assertEquals("There should be 3 rules voted on, total" + votingResults, 3, votingResults.size());
+            for (ForagingRule tieBreaker: tieBreakerRules) {
+            	assertEquals(2, votingResults.get(tieBreaker).intValue()); 
+            }
+            assertTrue(tieBreakerRules.contains(group.getSelectedRule()));
         }
     }
 
