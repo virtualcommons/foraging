@@ -267,7 +267,7 @@ public class FacilitatorWindow extends JPanel {
         JLabel messagePanelLabel = new JLabel("System messages");
         messagePanelLabel.setFont(UserInterfaceUtils.DEFAULT_PLAIN_FONT);
         messagePanel.add(messagePanelLabel, BorderLayout.NORTH);
-        Dimension minimumSize = new Dimension(600, 200);
+        Dimension minimumSize = new Dimension(600, 50);
         messagePanel.setMinimumSize(minimumSize);
         informationScrollPane.setMinimumSize(minimumSize);
         messageEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
@@ -275,7 +275,7 @@ public class FacilitatorWindow extends JPanel {
         messagePanel.add(messageScrollPane, BorderLayout.CENTER);
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, informationScrollPane, messagePanel);
         add(splitPane, BorderLayout.CENTER);
-        double proportion = 0.6d;
+        double proportion = 0.7d;
         splitPane.setDividerLocation(proportion);
         splitPane.setResizeWeight(proportion);
         // add censored chat component if necessary
@@ -341,17 +341,16 @@ public class FacilitatorWindow extends JPanel {
             boolean showInstructionsNext = true;
             if (upcomingRound.isTrustGameEnabled()) {
                 showTrustGameMenuItem.setEnabled(true);
-                instructionsBuilder.append("<h2>TRUST GAME: Run a trust game next.  Click on the Round menu and select Show Trust Game</h2>");
+                addMessage("TRUST GAME: Run a trust game next.  Click on the Round menu and select Show Trust Game<");
                 showInstructionsNext = false;
             }
             if (upcomingRound.isChatRoundEnabled()) {
                 startChatMenuItem.setEnabled(true);
-                instructionsBuilder
-                        .append("<h2>COMMUNICATION ROUND: There is a communication round configured to run at the end of this round.  Click on the Round menu and select Start Chat Round</h2>");
+                addMessage("COMMUNICATION ROUND: There is a communication round configured to run at the end of this round.  Click on the Round menu and select Start Chat Round");
                 showInstructionsNext = false;
             }
             if (showInstructionsNext) {
-                instructionsBuilder.append("<h2>SHOW INSTRUCTIONS: Click on the Round menu and select Show instructions when ready.</h2>");
+                addMessage("SHOW INSTRUCTIONS: Click on the Round menu and select Show instructions when ready.");
             }
         }
         informationEditorPane.setText(instructionsBuilder.toString());
