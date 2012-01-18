@@ -270,8 +270,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 @Override
                 public void handle(DisconnectionRequest event) {
                     synchronized (clients) {
-                        logger.warning("Disconnecting client, removing " + event.getId() + " from clients " + clients.keySet());
-                        clients.remove(event.getId());
+                    	Identifier id = event.getId();
+                        logger.warning("Disconnecting client, removing " + id + " from clients " + clients.keySet());
+                        clients.remove(id);
+                        serverDataModel.removeClient(id);
                     }
                 }
             });

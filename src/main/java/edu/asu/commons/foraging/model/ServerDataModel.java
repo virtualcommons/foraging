@@ -142,7 +142,9 @@ public class ServerDataModel extends ForagingDataModel {
 
     public synchronized void removeClient(Identifier id) {
         GroupDataModel groupDataModel = clientsToGroups.remove(id);
-        groupDataModel.removeClient(id);
+        if (groupDataModel != null) {
+        	groupDataModel.removeClient(id);
+        }
     }
 
     public synchronized void addClient(ClientData clientData) {
