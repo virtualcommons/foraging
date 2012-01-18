@@ -2,10 +2,18 @@ package edu.asu.commons.foraging.facilitator;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -42,7 +50,7 @@ public class FacilitatorWindow extends JPanel {
     private static final long serialVersionUID = -9067316316468488000L;
 
     private Facilitator facilitator;
-    
+
     private FacilitatorChatPanel facilitatorChatPanel;
 
     private JScrollPane informationScrollPane;
@@ -50,11 +58,11 @@ public class FacilitatorWindow extends JPanel {
     private JEditorPane informationEditorPane;
 
     private JLabel timeLeftLabel;
-    
+
     private JMenuItem copyToClipboardMenuItem;
 
     private JMenuItem showInstructionsMenuItem;
-    
+
     private JMenuItem startRoundMenuItem;
 
     private JMenuItem stopRoundMenuItem;
@@ -66,7 +74,7 @@ public class FacilitatorWindow extends JPanel {
     private JMenuItem startChatMenuItem;
     private JMenuItem showTrustGameMenuItem;
     @SuppressWarnings("unused")
-	private JMenuItem showVotingInstructionsMenuItem;
+    private JMenuItem showVotingInstructionsMenuItem;
     @SuppressWarnings("unused")
     private JMenuItem showVoteScreenMenuItem;
     @SuppressWarnings("unused")
@@ -77,7 +85,7 @@ public class FacilitatorWindow extends JPanel {
     private StringBuilder instructionsBuilder;
     private int completedQuizzes;
     private int completedTrustGames;
-    
+
     private ClipboardService clipboardService;
 
     public FacilitatorWindow(Dimension dimension, Facilitator facilitator) {
@@ -86,24 +94,24 @@ public class FacilitatorWindow extends JPanel {
         createMenu();
         // FIXME: only applicable for standalone java app version - also
         // seems to be causing a NPE for some reason
-        //        centerOnScreen();
-        //        frame.setVisible(true);	
+        // centerOnScreen();
+        // frame.setVisible(true);
     }
-    
+
     public void initializeReplay() {
         throw new UnsupportedOperationException("Replay currently unimplemented.");
     }
-    
+
     public void initializeReplayRound() {
         throw new UnsupportedOperationException("Replay currently unimplemented.");
     }
 
     /*
-     * This method gets called after the end of each round 
+     * This method gets called after the end of each round
      */
     public void displayInstructions() {
-        
-//        repaint();
+
+        // repaint();
     }
 
     /*
@@ -111,26 +119,26 @@ public class FacilitatorWindow extends JPanel {
      */
     public void displayGame() {
         startChatMenuItem.setEnabled(false);
-    	showInstructionsMenuItem.setEnabled(false);
+        showInstructionsMenuItem.setEnabled(false);
         startRoundMenuItem.setEnabled(false);
         stopRoundMenuItem.setEnabled(true);
     }
 
     private JMenuBar createMenu() {
         menuBar = new JMenuBar();
-        //Round menu
+        // Round menu
         JMenu menu = new JMenu("Round");
         menu.setMnemonic(KeyEvent.VK_R);
 
         startChatMenuItem = new JMenuItem("Start chat");
         startChatMenuItem.setEnabled(true);
         startChatMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-        		facilitator.sendBeginChatRoundRequest();
-        	}
+            public void actionPerformed(ActionEvent e) {
+                facilitator.sendBeginChatRoundRequest();
+            }
         });
         menu.add(startChatMenuItem);
-        
+
         showInstructionsMenuItem = new JMenuItem("Show Instructions");
         showInstructionsMenuItem.setMnemonic(KeyEvent.VK_I);
         showInstructionsMenuItem.addActionListener(new ActionListener() {
@@ -141,17 +149,15 @@ public class FacilitatorWindow extends JPanel {
             }
         });
         menu.add(showInstructionsMenuItem);
-        
+
         showTrustGameMenuItem = new JMenuItem("Show Trust Game");
         showTrustGameMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                facilitator.sendShowTrustGameRequest();                
+                facilitator.sendShowTrustGameRequest();
             }
         });
         menu.add(showTrustGameMenuItem);
 
-
-        
         startRoundMenuItem = new JMenuItem("Start");
         startRoundMenuItem.setMnemonic(KeyEvent.VK_T);
         startRoundMenuItem.setEnabled(false);
@@ -172,10 +178,10 @@ public class FacilitatorWindow extends JPanel {
         });
         menu.add(stopRoundMenuItem);
         menuBar.add(menu);
-        
+
         // voting menu
         menu = new JMenu("Voting");
-        
+
         showVotingInstructionsMenuItem = createMenuItem(menu, "Show voting instructions", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 facilitator.sendShowVotingInstructionsRequest();
@@ -187,7 +193,7 @@ public class FacilitatorWindow extends JPanel {
             }
         });
         menuBar.add(menu);
-        
+
         // survey menu
         menu = new JMenu("Survey");
         showSurveyInstructionsMenuItem = createMenuItem(menu, "Show survey instructions", new ActionListener() {
@@ -197,7 +203,7 @@ public class FacilitatorWindow extends JPanel {
         });
         menuBar.add(menu);
 
-        //Configuration menu
+        // Configuration menu
         menu = new JMenu("Configuration");
         menu.setMnemonic(KeyEvent.VK_C);
 
@@ -209,14 +215,14 @@ public class FacilitatorWindow extends JPanel {
             }
         });
         menu.add(menuItem);
-        
+
         copyToClipboardMenuItem = createMenuItem(menu, "Copy to clipboard", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String text = messageEditorPane.getSelectedText();
+                String text = informationEditorPane.getSelectedText();
                 if (text == null || text.trim().isEmpty()) {
                     addMessage("No text selected, copying all text in the editor pane to the clipboard.");
-                    text = messageEditorPane.getText();
+                    text = informationEditorPane.getText();
                     if (text == null || text.trim().isEmpty()) {
                         // if text is still empty, give up
                         JOptionPane.showMessageDialog(FacilitatorWindow.this, "Unable to find any text to copy to the clipboard.");
@@ -225,16 +231,17 @@ public class FacilitatorWindow extends JPanel {
                 }
                 ClipboardService service = getClipboardService();
                 if (service != null) {
-                    service.setContents(new StringSelection(text));
+                    HtmlSelection selection = new HtmlSelection(text);
+                    service.setContents(selection);
                 }
             }
         });
-        
+
         menuBar.add(menu);
 
         return menuBar;
     }
-    
+
     private JMenuItem createMenuItem(JMenu menu, String name, ActionListener listener) {
         JMenuItem menuItem = new JMenuItem(name);
         menuItem.addActionListener(listener);
@@ -245,13 +252,12 @@ public class FacilitatorWindow extends JPanel {
     public JMenuBar getMenuBar() {
         return menuBar;
     }
+
     private void initGuiComponents() {
         setLayout(new BorderLayout(3, 3));
-        //		setBackground(Color.WHITE);
+        // setBackground(Color.WHITE);
 
         informationEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
-
-
 
         informationScrollPane = new JScrollPane(informationEditorPane);
 
@@ -294,7 +300,7 @@ public class FacilitatorWindow extends JPanel {
         timeLeftLabel.setText("Time left: " + (timeLeft / 1000));
         repaint();
     }
-    
+
     // FIXME: get rid of duplication here & displayDebriefing..
     public void updateDebriefing(FacilitatorSanctionUpdateEvent event) {
         Map<Identifier, ClientData> clientDataMap = event.getClientDataMap();
@@ -305,34 +311,34 @@ public class FacilitatorWindow extends JPanel {
         for (Identifier clientId : orderedSet) {
             ClientData data = clientDataMap.get(clientId);
             buffer.append(String.format(
-                            "<tr><td>%s</td>" +
+                    "<tr><td>%s</td>" +
                             "<td align='center'>%d</td>" +
                             "<td align='center'>$%3.2f</td>" +
                             "<td align='center'>$%3.2f</td></tr>",
-                            clientId.toString(), 
-                            data.getCurrentTokens(), 
-                            getIncome(data.getCurrentTokens()),
-                            getIncome(data.getTotalTokens())));
+                    clientId.toString(),
+                    data.getCurrentTokens(),
+                    getIncome(data.getCurrentTokens()),
+                    getIncome(data.getTotalTokens())));
         }
         buffer.append("</tbody></table><hr>");
         if (event.isLastRound()) {
             buffer.append("<h2><font color='blue'>The experiment is over.  Please prepare payments.</font></h2>");
-        } 
+        }
         informationEditorPane.setText(buffer.toString());
     }
 
     public void displayDebriefing(ServerDataModel serverDataModel) {
-    	RoundConfiguration roundConfiguration = serverDataModel.getRoundConfiguration();
-    	System.err.println("Displaying debriefing: " + roundConfiguration);
-    	instructionsBuilder = new StringBuilder(roundConfiguration.generateFacilitatorDebriefing(serverDataModel));
+        RoundConfiguration roundConfiguration = serverDataModel.getRoundConfiguration();
+        System.err.println("Displaying debriefing: " + roundConfiguration);
+        instructionsBuilder = new StringBuilder(roundConfiguration.generateFacilitatorDebriefing(serverDataModel));
         showInstructionsMenuItem.setEnabled(true);
         stopRoundMenuItem.setEnabled(false);
         if (serverDataModel.isLastRound()) {
-        	instructionsBuilder.append(facilitator.getServerConfiguration().getFinalRoundFacilitatorInstructions());
+            instructionsBuilder.append(facilitator.getServerConfiguration().getFinalRoundFacilitatorInstructions());
         }
         else {
-        	RoundConfiguration upcomingRound = roundConfiguration.nextRound();
-        	boolean showInstructionsNext = true;
+            RoundConfiguration upcomingRound = roundConfiguration.nextRound();
+            boolean showInstructionsNext = true;
             if (upcomingRound.isTrustGameEnabled()) {
                 showTrustGameMenuItem.setEnabled(true);
                 instructionsBuilder.append("<h2>TRUST GAME: Run a trust game next.  Click on the Round menu and select Show Trust Game</h2>");
@@ -340,7 +346,8 @@ public class FacilitatorWindow extends JPanel {
             }
             if (upcomingRound.isChatRoundEnabled()) {
                 startChatMenuItem.setEnabled(true);
-                instructionsBuilder.append("<h2>COMMUNICATION ROUND: There is a communication round configured to run at the end of this round.  Click on the Round menu and select Start Chat Round</h2>");
+                instructionsBuilder
+                        .append("<h2>COMMUNICATION ROUND: There is a communication round configured to run at the end of this round.  Click on the Round menu and select Start Chat Round</h2>");
                 showInstructionsNext = false;
             }
             if (showInstructionsNext) {
@@ -359,63 +366,106 @@ public class FacilitatorWindow extends JPanel {
     }
 
     public void endRound(FacilitatorEndRoundEvent endRoundEvent) {
-    	System.out.println("Ending round: " + endRoundEvent);
-    	ServerDataModel serverDataModel = endRoundEvent.getServerDataModel();
+        System.out.println("Ending round: " + endRoundEvent);
+        ServerDataModel serverDataModel = endRoundEvent.getServerDataModel();
         displayDebriefing(serverDataModel);
         completedQuizzes = 0;
         completedTrustGames = 0;
     }
-    
+
     public void setRoundConfiguration(RoundConfiguration roundConfiguration) {
 
     }
 
     public void configureForReplay() {
-        //Enable the replay menus
+        // Enable the replay menus
         loadExperimentMenuItem.setEnabled(true);
 
-        //Disable all other menus
+        // Disable all other menus
         startRoundMenuItem.setEnabled(false);
         stopRoundMenuItem.setEnabled(false);
     }
-    
+
     public void addMessage(String message) {
         try {
             messageEditorPane.getDocument().insertString(0, "-----\n" + message + "\n", null);
-        }
-        catch (BadLocationException exception) {
+        } catch (BadLocationException exception) {
             exception.printStackTrace();
-        }        
+        }
     }
 
     public void quizCompleted(QuizCompletedEvent event) {
         completedQuizzes++;
         addMessage(String.format("%d completed quizzes (%s)", completedQuizzes, event));
     }
-    
+
     public void trustGameSubmitted(TrustGameSubmissionEvent event) {
         completedTrustGames++;
         addMessage(String.format("%d completed trust games (%s)", completedTrustGames, event));
     }
 
-	public void updateTrustGame(TrustGameResultsFacilitatorEvent event) {
-		addMessage("Received new trust game payment data, recalculating debriefing.");
-		displayDebriefing(event.getServerDataModel());
-		for (String result: event.getTrustGameLog()) {
-			addMessage(result);
-		}
-	}
-	
-	public ClipboardService getClipboardService() {
-	    if (clipboardService == null) {
-	        try {
+    public void updateTrustGame(TrustGameResultsFacilitatorEvent event) {
+        addMessage("Received new trust game payment data, recalculating debriefing.");
+        displayDebriefing(event.getServerDataModel());
+        for (String result : event.getTrustGameLog()) {
+            addMessage(result);
+        }
+    }
+
+    public ClipboardService getClipboardService() {
+        if (clipboardService == null) {
+            try {
                 clipboardService = (ClipboardService) ServiceManager.lookup(JAVAX_JNLP_CLIPBOARD_SERVICE);
             } catch (UnavailableServiceException e) {
                 e.printStackTrace();
                 addMessage("Unable to load the ClipboardService for all your clipboard needs.  Sorry!");
             }
-	    }
-	    return clipboardService;
-	}
+        }
+        return clipboardService;
+    }
+
+    private static class HtmlSelection implements Transferable {
+
+        private static DataFlavor[] htmlFlavors = new DataFlavor[3];
+        private final String html;
+        static {
+            try {
+                htmlFlavors[0] = new DataFlavor("text/html;class=java.lang.String");
+                htmlFlavors[1] = new DataFlavor("text/html;class=java.io.Reader");
+                htmlFlavors[2] = new DataFlavor("text/html;charset=unicode;class=java.io.InputStream");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public HtmlSelection(String html) {
+            this.html = html;
+        }
+
+        @Override
+        public DataFlavor[] getTransferDataFlavors() {
+            return htmlFlavors;
+        }
+
+        @Override
+        public boolean isDataFlavorSupported(DataFlavor flavor) {
+            return Arrays.asList(htmlFlavors).contains(flavor);
+        }
+
+        @Override
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+            if (String.class.equals(flavor.getRepresentationClass())) {
+                return html;
+            } 
+            else if (Reader.class.equals(flavor.getRepresentationClass())) {
+                return new StringReader(html);
+            } 
+            else if (InputStream.class.equals(flavor.getRepresentationClass())) {
+                return new ByteArrayInputStream(html.getBytes());
+            }
+            throw new UnsupportedFlavorException(flavor);
+        }
+
+    }
 
 }
