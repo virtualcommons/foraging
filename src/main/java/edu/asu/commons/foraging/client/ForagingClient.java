@@ -198,7 +198,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
 
         addEventProcessor(new EventTypeProcessor<EndRoundEvent>(EndRoundEvent.class) {
             public void handle(final EndRoundEvent event) {
-                if (state == ClientState.RUNNING) {
+                if (isRoundInProgress()) {
                     dataModel.setGroupDataModel(event.getGroupDataModel());
                     getGameWindow().endRound(event);
                     if (dataModel.is2dExperiment()) {
@@ -210,7 +210,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         });
         addEventProcessor(new EventTypeProcessor<ClientPositionUpdateEvent>(ClientPositionUpdateEvent.class) {
             public void handle(ClientPositionUpdateEvent event) {
-                if (state == ClientState.RUNNING) {
+                if (isRoundInProgress()) {
                     dataModel.update(event);
                     getGameWindow().update(event.getTimeLeft());
                 }
@@ -231,7 +231,6 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
             public void handle(TrustGameResultsClientEvent event) {
                 getGameWindow2D().updateTrustGame(event);
             }
-            
         });
         initialize2DEventProcessors();
 //        initialize3DEventProcessors();
