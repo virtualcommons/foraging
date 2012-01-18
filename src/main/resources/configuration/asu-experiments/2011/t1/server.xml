@@ -209,35 +209,35 @@ room.
 <ul>
 <li>Tokens collected in this round: {clientData.currentTokens}</li>
 <li>Income from tokens collected: {clientData.currentIncome}</li>
-<li>Total tokens: {clientData.totalTokens}</li>
 <li>Quiz earnings: {clientData.quizEarnings}</li>
 <li>Show up payment: {showUpPayment}</li>
 </ul>
-{if (self.lastRound && ! clientData.trustGameLog.empty) }
+{if (showExitInstructions && !clientData.trustGameLog.empty) }
 <h2>Trust Game Earnings</h2>
 <hr>
-<ol>
+<ul>
 {clientData.trustGameLog: {trustGameLog|
 <li>Trust Game #{i}: {trustGameLog}</li>
 }}
-</ol>
+</ul>
+Your total trust game earnings: <b>{clientData.trustGameEarnings}</b>.
 {endif}
 <h2>Total Income</h2>
 <hr>
 <p>
-Your <b>total income across all rounds</b> is {clientData.grandTotalIncome}.
+Your <b>total income across all rounds</b> is <b>{clientData.grandTotalIncome}</b>.
 </p>
-{if (self.lastRound)}
+{if (showExitInstructions)}
 <h2>Exit Survey</h2>
 <hr>
 <p>
-This was the last round, but not the end of the experiment. We will now determine your payments. While we are doing this, we request that you carefully fill out a brief survey.
+This was the last round, but not the end of the experiment. We ask that you pease carefully fill out a brief survey as we prepare your payments.
 </p>
-<h2>Payments</h2>
+<h2>Payment</h2>
 <hr>
-<p>NOTE: Your computer number is <b>{id}</b></p>
+<p>NOTE: Your computer number is <b>{clientData.id}</b></p>
 <p>
-When the payments are ready we will call you one by one and pay you in private. Please wait until your computer number, <b>{id}</b>, is called before you come up and turn in your survey.  Please answer the survey carefully and thank you for participating. 
+When the payments are ready we will call you one by one and pay you in private. Please wait until your computer number, <b>{clientData.id}</b>, is called before you come up and turn in your survey.  Please answer the survey carefully and thank you for participating. 
 </p>
 {endif}
 
