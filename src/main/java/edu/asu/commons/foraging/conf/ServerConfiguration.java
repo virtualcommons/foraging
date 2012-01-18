@@ -127,7 +127,12 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
 	}
 	
 	public double getTotalIncome(ClientData data) {
-		 return data.getTotalIncome() + getShowUpPayment() + getQuizEarnings(data) + data.getTrustGameIncome();
+	    return getTotalIncome(data, false);
+	}
+	
+	public double getTotalIncome(ClientData data, boolean includeTrustGame) {
+	    double totalIncome = data.getTotalIncome() + getShowUpPayment() + getQuizEarnings(data);
+	    return (includeTrustGame) ? totalIncome + data.getTrustGameIncome() : totalIncome;
 	}
 	
 	public double getQuizEarnings(ClientData data) {

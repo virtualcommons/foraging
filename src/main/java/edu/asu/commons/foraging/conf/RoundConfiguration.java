@@ -792,20 +792,18 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("client-debriefing", getParentConfiguration().getClientDebriefing());
     }
     
-    public String generateClientDebriefing(ClientData data) {
+    public String generateClientDebriefing(ClientData data, boolean showExitInstructions) {
         ST st = createStringTemplate(getClientDebriefing());
-        populateClientEarnings(data);
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+        populateClientEarnings(data, getParentConfiguration(), formatter, showExitInstructions);
         st.add("clientData", data);
-        st.add("showUpPayment", NumberFormat.getCurrencyInstance().format(getParentConfiguration().getShowUpPayment()));
+        st.add("showExitInstructions", showExitInstructions);
+        st.add("showUpPayment", formatter.format(getParentConfiguration().getShowUpPayment()));
         return st.render();
     }
 
-    private void populateClientEarnings(ClientData data) {
-        populateClientEarnings(data, getParentConfiguration(), NumberFormat.getCurrencyInstance());
-    }
-    
-    private void populateClientEarnings(ClientData data, ServerConfiguration serverConfiguration, NumberFormat formatter) {
-        data.setGrandTotalIncome(formatter.format(serverConfiguration.getTotalIncome(data)));
+    private void populateClientEarnings(ClientData data, ServerConfiguration serverConfiguration, NumberFormat formatter, boolean includeTrustGame) {
+        data.setGrandTotalIncome(formatter.format(serverConfiguration.getTotalIncome(data, includeTrustGame)));
         data.setCurrentIncome(formatter.format(tokensToDollars(data.getCurrentTokens())));
         data.setQuizEarnings(formatter.format(serverConfiguration.getQuizEarnings(data)));
         data.setTrustGameEarnings(formatter.format(data.getTrustGameIncome()));
@@ -817,7 +815,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 		ServerConfiguration serverConfiguration = getParentConfiguration();
 		NumberFormat formatter = NumberFormat.getCurrencyInstance();
 		for (ClientData data: serverDataModel.getClientDataMap().values()) {
-		    populateClientEarnings(data, serverConfiguration, formatter);
+		    populateClientEarnings(data, serverConfiguration, formatter, true);
 		}
 		template.add("clientDataList", serverDataModel.getClientDataMap().values());
 		return template.render();
