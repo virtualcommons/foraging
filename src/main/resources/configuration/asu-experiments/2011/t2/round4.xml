@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="display-group-tokens">true</entry>
+<entry key="clients-per-group">5</entry>
+<entry key="resource-depth">29</entry>
+<entry key="resource-width">29</entry>
+<entry key="duration">240</entry>
+
+<!-- have a trust game before this round begins -->
+<entry key='trust-game'>true</entry>
+<!-- enable field of vision for tokens and subjects -->
+
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+
+<entry key="initial-distribution">.25</entry>
+
+<entry key="instructions">
+<![CDATA[
+<h3>Round {roundNumber} Instructions</h3>
+<hr>
+<p>
+    This round is the same as the previous rounds with one exception.  You will no
+    longer able to communicate with the other participants in your group
+    <b>during</b> the round.  
+</p>
+
+<p>
+    The length of this round is {duration}.
+</p>
+<p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
+]]>
+</entry>
+</properties>

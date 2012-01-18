@@ -244,6 +244,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     }
                     SocketIdentifier clientSocketId = (SocketIdentifier) clientData.getId();
                     clientSocketId.setStationNumber(request.getStationNumber());
+                    sendFacilitatorMessage(String.format("Updating %s with station number %s", clientSocketId, request.getStationNumber()));
                 }
             });
             // client handlers
