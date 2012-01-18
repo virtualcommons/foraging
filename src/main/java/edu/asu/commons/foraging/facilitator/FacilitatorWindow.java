@@ -2,17 +2,22 @@ package edu.asu.commons.foraging.facilitator;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Map;
 import java.util.TreeSet;
 
+import javax.jnlp.ClipboardService;
+import javax.jnlp.ServiceManager;
+import javax.jnlp.UnavailableServiceException;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -30,9 +35,9 @@ import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.HtmlEditorPane;
 import edu.asu.commons.ui.UserInterfaceUtils;
 
-
-
 public class FacilitatorWindow extends JPanel {
+
+    private static final String JAVAX_JNLP_CLIPBOARD_SERVICE = "javax.jnlp.ClipboardService";
 
     private static final long serialVersionUID = -9067316316468488000L;
 
@@ -45,6 +50,8 @@ public class FacilitatorWindow extends JPanel {
     private JEditorPane informationEditorPane;
 
     private JLabel timeLeftLabel;
+    
+    private JMenuItem copyToClipboardMenuItem;
 
     private JMenuItem showInstructionsMenuItem;
     
@@ -55,8 +62,6 @@ public class FacilitatorWindow extends JPanel {
     private JMenuItem loadExperimentMenuItem;
 
     private JMenuBar menuBar;
-
-    private int completedQuizzes;
 
     private JMenuItem startChatMenuItem;
     private JMenuItem showTrustGameMenuItem;
@@ -70,8 +75,10 @@ public class FacilitatorWindow extends JPanel {
     private HtmlEditorPane messageEditorPane;
 
     private StringBuilder instructionsBuilder;
-
+    private int completedQuizzes;
     private int completedTrustGames;
+    
+    private ClipboardService clipboardService;
 
     public FacilitatorWindow(Dimension dimension, Facilitator facilitator) {
         this.facilitator = facilitator;
@@ -80,7 +87,7 @@ public class FacilitatorWindow extends JPanel {
         // FIXME: only applicable for standalone java app version - also
         // seems to be causing a NPE for some reason
         //        centerOnScreen();
-        //        frame.setVisible(true);		
+        //        frame.setVisible(true);	
     }
     
     public void initializeReplay() {
@@ -202,6 +209,27 @@ public class FacilitatorWindow extends JPanel {
             }
         });
         menu.add(menuItem);
+        
+        copyToClipboardMenuItem = createMenuItem(menu, "Copy to clipboard", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = messageEditorPane.getSelectedText();
+                if (text == null || text.trim().isEmpty()) {
+                    addMessage("No text selected, copying all text in the editor pane to the clipboard.");
+                    text = messageEditorPane.getText();
+                    if (text == null || text.trim().isEmpty()) {
+                        // if text is still empty, give up
+                        JOptionPane.showMessageDialog(FacilitatorWindow.this, "Unable to find any text to copy to the clipboard.");
+                        return;
+                    }
+                }
+                ClipboardService service = getClipboardService();
+                if (service != null) {
+                    service.setContents(new StringSelection(text));
+                }
+            }
+        });
+        
         menuBar.add(menu);
 
         return menuBar;
@@ -376,6 +404,18 @@ public class FacilitatorWindow extends JPanel {
 		for (String result: event.getTrustGameLog()) {
 			addMessage(result);
 		}
+	}
+	
+	public ClipboardService getClipboardService() {
+	    if (clipboardService == null) {
+	        try {
+                clipboardService = (ClipboardService) ServiceManager.lookup(JAVAX_JNLP_CLIPBOARD_SERVICE);
+            } catch (UnavailableServiceException e) {
+                e.printStackTrace();
+                addMessage("Unable to load the ClipboardService for all your clipboard needs.  Sorry!");
+            }
+	    }
+	    return clipboardService;
 	}
 
 }
