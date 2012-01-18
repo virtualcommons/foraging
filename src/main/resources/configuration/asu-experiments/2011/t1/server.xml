@@ -225,19 +225,18 @@ Your total trust game earnings: <b>{clientData.trustGameEarnings}</b>.
 <h2>Total Income</h2>
 <hr>
 <p>
-Your <b>total income across all rounds</b> is <b>{clientData.grandTotalIncome}</b>.
+Your <b>total income</b> is <b>{clientData.grandTotalIncome}</b>.
 </p>
 {if (showExitInstructions)}
 <h2>Exit Survey</h2>
 <hr>
 <p>
-This was the last round, but not the end of the experiment. We ask that you pease carefully fill out a brief survey as we prepare your payments.
+This was the last round, but not the end of the experiment. We ask that you please carefully fill out a brief survey as we prepare your payments.
 </p>
 <h2>Payment</h2>
 <hr>
-<p>NOTE: Your computer number is <b>{clientData.id}</b></p>
 <p>
-When the payments are ready we will call you one by one and pay you in private. Please wait until your computer number, <b>{clientData.id}</b>, is called before you come up and turn in your survey.  Please answer the survey carefully and thank you for participating. 
+When payments are ready we will call you up one by one. Please wait until your computer number, <b>{clientData.id}</b>, is called to turn in your survey and receive payment.  Please answer the survey carefully and thank you for participating. 
 </p>
 {endif}
 

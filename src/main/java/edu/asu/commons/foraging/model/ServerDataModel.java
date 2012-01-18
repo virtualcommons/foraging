@@ -436,26 +436,26 @@ public class ServerDataModel extends ForagingDataModel {
             playerOneEarnings += amountReturnedToPlayerOne;
         }
         StringBuilder builder = new StringBuilder();
-        String playerOneLog = String.format("Player 1 kept %s, sent %s, and received %s back from Player 2 for a total earnings of %s", 
+        String playerOneLog = String.format(" Player 1 kept %s, sent %s, and received %s back from Player 2 for a total earnings of %s", 
         		CURRENCY_FORMATTER.format(playerOneAmountToKeep),
         		CURRENCY_FORMATTER.format(amountSent),
         		CURRENCY_FORMATTER.format(amountReturnedToPlayerOne), 
         		CURRENCY_FORMATTER.format(playerOneEarnings));
-        playerOne.logTrustGame("You were player one. " + playerOneLog);
+        playerOne.logTrustGame("You were Player 1." + playerOneLog);
         playerOne.addTrustGameEarnings(playerOneEarnings);
         builder.append(playerOne).append(playerOneLog).append("\n");
         if (shouldLogPlayerTwo(playerOne, playerTwo)) {
-        	String playerTwoLog = String.format("Player 2 received %s from Player 1 and sent back %s for a total earnings of %s", 
+        	String playerTwoLog = String.format(" Player 2 received %s from Player 1 and sent back %s for a total earnings of %s", 
         			CURRENCY_FORMATTER.format(totalAmountSent),
         			CURRENCY_FORMATTER.format(totalAmountSent - playerTwoEarnings),
         			CURRENCY_FORMATTER.format(playerTwoEarnings));
-        	playerTwo.logTrustGame("You were player two. " + playerTwoLog);
+        	playerTwo.logTrustGame("You were Player 2." + playerTwoLog);
         	playerTwo.addTrustGameEarnings(playerTwoEarnings);
         	builder.append(playerTwo).append(playerTwoLog).append("\n");
         }
         else {
         	builder.append(
-        			String.format("Player 2: (%s) already participated in the trust game and was only used as a strategy to respond to Player 1.", 
+        			String.format("%s already participated in the trust game and was only used as a Player 2 strategy to respond to Player 1.", 
         					playerTwo));
         }
         result.setPlayerOneEarnings(playerOneEarnings);
