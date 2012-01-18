@@ -373,7 +373,7 @@ public class FacilitatorWindow extends JPanel {
 	public void updateTrustGame(TrustGameResultsFacilitatorEvent event) {
 		addMessage("Received new trust game payment data, recalculating debriefing.");
 		displayDebriefing(event.getServerDataModel());
-		for (String result: event.getAllTrustGameResults()) {
+		for (String result: event.getTrustGameLog()) {
 			addMessage(result);
 		}
 	}

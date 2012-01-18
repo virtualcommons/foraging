@@ -402,19 +402,20 @@ public class ServerDataModel extends ForagingDataModel {
         logger.warning("unapply() not implemented yet: " + persistableEvent);
     }
 
-    public String calculateTrustGame(ClientData playerOne, ClientData playerTwo) {
+    public TrustGameResult calculateTrustGame(ClientData playerOne, ClientData playerTwo) {
+    	TrustGameResult result = new TrustGameResult(playerOne, playerTwo);
         if (playerOne.getId().equals(playerTwo.getId())) {
         	String errorMessage = playerOne + " tried to calculate trust game with self, aborting";
         	logger.warning(errorMessage);
-        	return errorMessage;
+        	result.setLog(errorMessage);
+        	return result;
         }
         double playerOneAmountToKeep = playerOne.getTrustGamePlayerOneAmountToKeep();
+        result.setPlayerOneAmountToKeep(playerOneAmountToKeep);
         double[] playerTwoAmountsToKeep = playerTwo.getTrustGamePlayerTwoAmountsToKeep();
-        
+        result.setPlayerTwoAmountsToKeep(playerTwoAmountsToKeep);
         double amountSent = 1.0d - playerOneAmountToKeep;
-        StringBuilder builder = new StringBuilder();
-        builder.append(String.format("%s (Player 1) sent %s to %s (Player 2)\n", playerOne, CURRENCY_FORMATTER.format(amountSent), playerTwo));
-        
+
         double playerOneEarnings = playerOneAmountToKeep;
         double playerTwoEarnings = 0.0d;
         double amountReturnedToPlayerOne = 0.0d;
@@ -434,7 +435,8 @@ public class ServerDataModel extends ForagingDataModel {
             amountReturnedToPlayerOne = totalAmountSent - playerTwoEarnings;
             playerOneEarnings += amountReturnedToPlayerOne;
         }
-        String playerOneLog = String.format("Player 1 kept %s, sent %s, and received %s back from Player 2 for a total of %s", 
+        StringBuilder builder = new StringBuilder();
+        String playerOneLog = String.format("Player 1 kept %s, sent %s, and received %s back from Player 2 for a total earnings of %s", 
         		CURRENCY_FORMATTER.format(playerOneAmountToKeep),
         		CURRENCY_FORMATTER.format(amountSent),
         		CURRENCY_FORMATTER.format(amountReturnedToPlayerOne), 
@@ -443,7 +445,7 @@ public class ServerDataModel extends ForagingDataModel {
         playerOne.addTrustGameEarnings(playerOneEarnings);
         builder.append(playerOne).append(playerOneLog).append("\n");
         if (shouldLogPlayerTwo(playerOne, playerTwo)) {
-        	String playerTwoLog = String.format("Player 2: received %s from Player 1 and sent back %s, earning %s", 
+        	String playerTwoLog = String.format("Player 2 received %s from Player 1 and sent back %s for a total earnings of %s", 
         			CURRENCY_FORMATTER.format(totalAmountSent),
         			CURRENCY_FORMATTER.format(totalAmountSent - playerTwoEarnings),
         			CURRENCY_FORMATTER.format(playerTwoEarnings));
@@ -456,7 +458,10 @@ public class ServerDataModel extends ForagingDataModel {
         			String.format("Player 2: (%s) already participated in the trust game and was only used as a strategy to respond to Player 1.", 
         					playerTwo));
         }
-        return builder.toString();
+        result.setPlayerOneEarnings(playerOneEarnings);
+        result.setPlayerTwoEarnings(playerTwoEarnings);
+        result.setLog(builder.toString());
+        return result;
     }
     
     /**

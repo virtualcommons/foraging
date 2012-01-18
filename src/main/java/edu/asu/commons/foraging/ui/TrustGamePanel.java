@@ -496,7 +496,6 @@ public class TrustGamePanel extends JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_submitButtonActionPerformed
-    // TODO add your handling code here:
         ButtonModel model = playerOneActionButtonGroup.getSelection();
         // default player action is to keep everything
         

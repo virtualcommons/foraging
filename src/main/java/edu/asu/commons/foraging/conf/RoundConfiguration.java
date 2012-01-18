@@ -826,4 +826,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 	public RoundConfiguration nextRound() {
 		return getParentConfiguration().getNextRoundConfiguration();
 	}
+
+	public boolean shouldWaitForFacilitatorSignal() {
+		return isPostRoundSanctioningEnabled() || (isTrustGameEnabled() && isLastRound());
+	}
 }

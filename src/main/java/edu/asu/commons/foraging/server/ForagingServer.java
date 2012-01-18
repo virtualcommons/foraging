@@ -76,6 +76,7 @@ import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
+import edu.asu.commons.foraging.model.TrustGameResult;
 import edu.asu.commons.foraging.rules.ForagingRule;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Dispatcher;
@@ -108,7 +109,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
     // FIXME: use java.util.concurrent constructs instead? CountDownLatch / CyclicBarrier?
     private final Object roundSignal = new Object();
     private final Object quizSignal = new Object();
-    private final Object postRoundSanctioningSignal = new Object();
+    private final Object facilitatorSignal = new Object();
     private final Object agentDesignSignal = new Object();
     // FIXME: these latches don't quite do what we want. We need a way to reset them at each round.
     // private CountDownLatch postRoundSanctionLatch;
@@ -158,7 +159,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             System.out.println("Notifying all signals.");
             Utils.notify(quizSignal);
             Utils.notify(roundSignal);
-            Utils.notify(postRoundSanctioningSignal);
+            Utils.notify(facilitatorSignal);
         }
         else if (input.equals("skip-quiz")) {
             System.out.println("skipping quiz");
@@ -171,7 +172,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         }
         else if (input.equals("skip-post-round-sanction")) {
             System.out.println("Skipping post round sanctioning");
-            Utils.notify(postRoundSanctioningSignal);
+            Utils.notify(facilitatorSignal);
         }
         else if (input.equals("process-savefiles")) {
             System.out.print("Please enter the save directory path: ");
@@ -329,7 +330,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         }
                         // update the facilitator
                         transmit(new FacilitatorSanctionUpdateEvent(facilitatorId, clients, lastRound));
-                        Utils.notify(postRoundSanctioningSignal);
+                        Utils.notify(facilitatorSignal);
                         numberOfCompletedSanctions = 0;
                     }
                 }
@@ -681,7 +682,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
          * Performs a random pairing of every member in the group to generate trust game payment results.
          */
 		protected void processTrustGame() {
-			List<String> allTrustGameResults = new ArrayList<String>();
+			List<TrustGameResult> allTrustGameResults = new ArrayList<TrustGameResult>();
         	for (GroupDataModel group : serverDataModel.getGroups()) {
         		LinkedList<ClientData> clientList = new LinkedList<ClientData>(group.getClientDataMap().values());
         		Collections.shuffle(clientList);
@@ -706,18 +707,19 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 //        				playerTwo = clientList.get(random.nextInt(iter.previousIndex() + 1));
 //        			}
         			logger.info("TRUST GAME: about to pair " + playerOne + " with " + playerTwo);
-        			String trustGameResult = serverDataModel.calculateTrustGame(playerOne, playerTwo);
-        			allTrustGameResults.add(trustGameResult);
+        			TrustGameResult trustGameLog = serverDataModel.calculateTrustGame(playerOne, playerTwo);
+        			allTrustGameResults.add(trustGameLog);
         			if (lastRound) {
-        				transmit(new TrustGameResultsClientEvent(playerOne, trustGameResult));
-        				transmit(new TrustGameResultsClientEvent(playerTwo, trustGameResult));
+        				transmit(new TrustGameResultsClientEvent(playerOne, trustGameLog));
+        				transmit(new TrustGameResultsClientEvent(playerTwo, trustGameLog));
         			}
 
-        			sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in:\n\t %s", playerOne, playerTwo,
-        					trustGameResult));
+        			sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in:\n%s", playerOne, playerTwo,
+        					trustGameLog));
         		}
         	}
 			transmitAndStore(new TrustGameResultsFacilitatorEvent(facilitatorId, serverDataModel, allTrustGameResults));
+			Utils.notify(facilitatorSignal);
 		}
 
         protected boolean isReadyToStartRound() {
@@ -845,14 +847,14 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private void stopRound() {
             serverState = ServerState.IN_BETWEEN_ROUNDS;
             sendEndRoundEvents();
-            if (getCurrentRoundConfiguration().isPostRoundSanctioningEnabled()) {
+            if (getCurrentRoundConfiguration().shouldWaitForFacilitatorSignal()) {
                 // stop most of the round but don't persist/cleanup yet.
                 // block until we receive all postround sanctioning events.
                 // FIXME: use new java.util.concurrent constructs? CountDownLatch or CyclicBarrier?
                 // postRoundSanctionLatch = new CountDownLatch(clients.size());
                 // try { postRoundSanctionLatch.await(); }
                 // catch (InterruptedException ignored) {}
-                Utils.waitOn(postRoundSanctioningSignal);
+                Utils.waitOn(facilitatorSignal);
             }
             persister.persist(serverDataModel);
             cleanupRound();
