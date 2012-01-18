@@ -26,6 +26,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -211,7 +212,12 @@ public class GameWindow2D implements GameWindow {
                 for (Map.Entry<String, String> entry : quizAnswers.entrySet()) {
                     String questionNumber = entry.getKey();
                     String expectedAnswer = entry.getValue();
-                    if (expectedAnswer.equals(actualAnswers.getProperty(questionNumber))) {
+                    String actualAnswer = actualAnswers.getProperty(questionNumber);
+                    if (actualAnswer == null) {
+                    	JOptionPane.showMessageDialog(getPanel(), "Please enter a quiz answer for question " + questionNumber.toUpperCase() + ".");
+                    	return;
+                    }
+                    if (expectedAnswer.equals(actualAnswer)) {
                         correctAnswers.add(questionNumber);
                     }
                     else {
