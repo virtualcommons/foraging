@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- JNLP File for CSAN 2D Facilitator -->
+<!-- JNLP File for foraging facilitator -->
 <jnlp spec="1.6+" codebase="@CODEBASE_URL@" href="facilitator.jnlp">
   <information>
     <title>Virtual Commons Experiment</title>
-    <vendor>The Virtual Commons, Center for the Study of Institutional Diversity, School of Human Evolution and Social Change, Dr. Marco Janssen, Allen Lee, Deepali Bhagvat</vendor>
+    <vendor>The Virtual Commons, a software initiative led by the Center for the Study of Institutional Diversity at Arizona State University</vendor>
     <homepage href="http://commons.asu.edu"/>
     <description>Foraging 2D facilitator interface to control the Foraging 2D experiment.</description>
     <icon href="commons.gif"/> 
