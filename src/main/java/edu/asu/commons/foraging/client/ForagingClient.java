@@ -185,14 +185,9 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         });
         addEventProcessor(new EventTypeProcessor<RoundStartedEvent>(RoundStartedEvent.class) {
             public void handle(RoundStartedEvent event) {
-                System.err.println("client starting round: " + dataModel.is2dExperiment());
-                dataModel.initialize(event.getGroupDataModel());
+            	dataModel.initialize(event.getGroupDataModel());
                 setId(event.getId());
-                getGameWindow().startRound();
-                if (dataModel.is2dExperiment()) {
-                    messageQueue.start();
-                }
-                state = ClientState.RUNNING;
+                messageQueue.start();
             }
         });
 
@@ -229,7 +224,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         addEventProcessor(new EventTypeProcessor<TrustGameResultsClientEvent>(TrustGameResultsClientEvent.class) {
             @Override
             public void handle(TrustGameResultsClientEvent event) {
-                getGameWindow2D().updateTrustGame(event);
+                getGameWindow2D().updateDebriefingWith(event);
             }
         });
         initialize2DEventProcessors();
@@ -361,6 +356,8 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
         }
 
         public void run() {
+            getGameWindow().startRound();
+            state = ClientState.RUNNING;
             secondTick.start();
             while (running) {
                 Event request = get();

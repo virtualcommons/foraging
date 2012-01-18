@@ -797,6 +797,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         populateClientEarnings(data, getParentConfiguration(), formatter, showExitInstructions);
         st.add("clientData", data);
+        // FIXME: replace showExitInstructions within client debriefing with a ExitInstructions template?
         st.add("showExitInstructions", showExitInstructions);
         st.add("showUpPayment", formatter.format(getParentConfiguration().getShowUpPayment()));
         return st.render();

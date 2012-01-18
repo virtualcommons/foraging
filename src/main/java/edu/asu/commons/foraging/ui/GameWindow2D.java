@@ -164,7 +164,7 @@ public class GameWindow2D implements GameWindow {
      * 
      * @param event
      */
-    public void init() {
+    public synchronized void init() {
         final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -541,7 +541,7 @@ public class GameWindow2D implements GameWindow {
     // getPanel().repaint();
     // }
 
-    public void startRound() {
+    public synchronized void startRound() {
         final RoundConfiguration configuration = dataModel.getRoundConfiguration();
         if (timer != null) {
             timer.stop();
@@ -798,7 +798,7 @@ public class GameWindow2D implements GameWindow {
         SwingUtilities.invokeLater(runnable);
     }
 
-    public void endRound(final EndRoundEvent event) {
+    public synchronized void endRound(final EndRoundEvent event) {
         Runnable runnable = new Runnable() {
             public void run() {
                 if (inRoundChatPanel != null) {
@@ -817,7 +817,9 @@ public class GameWindow2D implements GameWindow {
                     instructionsEditorPane.setText("Waiting for updated round totals from the server...");
                     switchInstructionsPane();
                 }
-                showDebriefing(event.getClientData(), false);
+                // FIXME: replace with facilitator driven show exit instructions signal? 
+                boolean showExitInstructions = event.isLastRound() && ! roundConfiguration.isTrustGameEnabled();
+                showDebriefing(event.getClientData(), showExitInstructions);
             }
         };
         try {
@@ -878,8 +880,11 @@ public class GameWindow2D implements GameWindow {
         switchInstructionsPane();
     }
 
-    public void updateTrustGame(TrustGameResultsClientEvent event) {
-        // show last round
+    public void updateDebriefingWith(TrustGameResultsClientEvent event) {
+        // FIXME: currently hard coded to always show exit instructions in this case 
+    	// should change this to either have an explicit show exit instructions fired off by the
+    	// facilitator or figure out a cleaner way of distinguishing between "we have to wait for 
+    	// some final calculation to occur before showing the final debriefing + exit instructions"
         showDebriefing(event.getClientData(), true);
     }
 
