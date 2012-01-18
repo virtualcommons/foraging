@@ -130,17 +130,6 @@ public class ChatPanel extends JPanel {
                     }
                 }
             });
-//            chatField.addFocusListener(new FocusListener() {
-//                @Override
-//                public void focusGained(FocusEvent e) {
-//                    chatField.setBackground(Color.YELLOW);
-//                }
-//                @Override
-//                public void focusLost(FocusEvent e) {
-//                    chatField.setBackground(Color.WHITE);
-//                }
-//                
-//            });
             JLabel headerLabel = new JLabel("Chat");
             headerLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
             add(headerLabel, BorderLayout.NORTH);

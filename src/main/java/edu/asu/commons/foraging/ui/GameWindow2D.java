@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -296,8 +297,8 @@ public class GameWindow2D implements GameWindow {
         }
         else {
             int tokensConsumed = dataModel.getCurrentTokens();
-            return String.format("Income: $%3.2f  |  Tokens collected: %d     ",
-                    getIncome(tokensConsumed),
+            return String.format("Income: %s  |  Tokens collected: %d     ",
+                    NumberFormat.getCurrencyInstance().format(getIncome(tokensConsumed)),
                     tokensConsumed);
         }
     }
@@ -484,7 +485,7 @@ public class GameWindow2D implements GameWindow {
                             if (dataModel.getRoundConfiguration().isInRoundChatEnabled()) {
                                 getInRoundChatPanel().setTextFieldFocus();
                             }
-                            break;
+                            return;
                         case KeyEvent.VK_R:
                             if (canResetTokenDistribution()) {
                                 event = new ResetTokenDistributionRequest(client.getId());
@@ -606,19 +607,17 @@ public class GameWindow2D implements GameWindow {
                 .addStyle("italic", defaultStyle), true);
     }
 
-    private double getIncome(float numTokens) {
-        if (dataModel.getRoundConfiguration().isPracticeRound()) {
-            return 0.0f;
-        }
-        return dataModel.getRoundConfiguration().getDollarsPerToken() * numTokens;
+    private double getIncome(int numTokens) {
+        return dataModel.getRoundConfiguration().tokensToDollars(numTokens);
     }
     
-    public void showDebriefing(ClientData clientData) {
+    public void showDebriefing(ClientData clientData, boolean showExitInstructions) {
         instructionsBuilder.delete(0, instructionsBuilder.length());
-        instructionsBuilder.append(dataModel.getRoundConfiguration().generateClientDebriefing(clientData));
+        instructionsBuilder.append(dataModel.getRoundConfiguration().generateClientDebriefing(clientData, showExitInstructions));
         setInstructions(instructionsBuilder.toString());
     }
 
+    // FIXME: replace with StringTemplate
     private void postSanctionDebriefingText(final PostRoundSanctionUpdateEvent event) {
         instructionsBuilder.delete(0, instructionsBuilder.length());
         ClientData clientData = event.getClientData();
@@ -804,7 +803,7 @@ public class GameWindow2D implements GameWindow {
             public void run() {
                 if (inRoundChatPanel != null) {
                     getPanel().remove(inRoundChatPanel);
-                    inRoundChatPanel = null;
+//                    inRoundChatPanel = null;
                 }
                 RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
                 if (roundConfiguration.isPostRoundSanctioningEnabled()) {
@@ -818,8 +817,7 @@ public class GameWindow2D implements GameWindow {
                     instructionsEditorPane.setText("Waiting for updated round totals from the server...");
                     switchInstructionsPane();
                 }
-                // generate debriefing text from data culled from the Event
-                showDebriefing(event.getClientData());
+                showDebriefing(event.getClientData(), false);
             }
         };
         try {
@@ -881,7 +879,8 @@ public class GameWindow2D implements GameWindow {
     }
 
     public void updateTrustGame(TrustGameResultsClientEvent event) {
-        showDebriefing(event.getClientData());
+        // show last round
+        showDebriefing(event.getClientData(), true);
     }
 
 
