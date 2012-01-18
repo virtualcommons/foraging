@@ -730,15 +730,15 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private void relayChatRequest(ChatRequest request) {
             Identifier source = request.getSource();
             Identifier target = request.getTarget();
+            ClientData clientData = clients.get(source);
+            sendFacilitatorMessage(String.format("CHAT: %s: [ %s ]", clientData.toString(), request));
             if (Identifier.ALL.equals(target)) {
                 // relay to all clients in this client's group.
-                ClientData clientData = clients.get(source);
-                getLogger().info(String.format("chat from %s: [ %s ]", clientData.toString(), request));
-                // check for field of vision
+
                 RoundConfiguration currentConfiguration = getCurrentRoundConfiguration();
+                // check for field of vision
                 if (currentConfiguration.isFieldOfVisionEnabled()) {
                     // FIXME: replace with clientData.getFieldOfVision?
-
                     Circle circle = new Circle(clientData.getPosition(), currentConfiguration.getViewSubjectsRadius());
                     sendChatEvent(request, clientData.getGroupDataModel().getClientIdentifiersWithin(circle));
                 }
