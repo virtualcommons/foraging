@@ -23,39 +23,4 @@
 <!-- before this round begins, we have a chat session -->
 <entry key='censored-chat-enabled'>true</entry>
 <entry key='chat-enabled'>true</entry>
-
-<entry key="instructions">
-<![CDATA[
-<h3>Round 6 Instructions</h3>
-<hr>
-<p>
-Round 6 is the same as round 5.</p>
-<p>
-The length of this round is again four minutes.
-</p>
-<p>
-If you have any questions please raise your hand.  <b>Do you have any
-questions so far?</b>
-</p>
-]]>
-</entry>
-
-<entry key="last-round-debriefing">
-<![CDATA[
-<p>
-This was the last round, but not the end of the experiment. We will now
-determine your payments. While we are doing this, we request that you
-carefully fill out a brief survey.
-</p>
-<p>
-When we are ready we will call you one by one to the room next door. We will
-pay you there in private. Please wait until your computer number is called,
-and then proceed to the room next door to turn in your computer number and
-your survey. 
-</p>
-<p>
-Please answer the survey carefully and thank you for participating. 
-</p>
-]]>
-</entry>
 </properties>
