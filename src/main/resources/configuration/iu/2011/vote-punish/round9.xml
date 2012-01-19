@@ -8,9 +8,6 @@
 <entry key="resource-width">26</entry>
 <entry key="duration">240</entry>
 
-<entry key='tokens-field-of-vision'>true</entry>
-<entry key='subjects-field-of-vision'>true</entry>
-
 <entry key="initial-distribution">.25</entry>
 
 <entry key='always-explicit'>true</entry>
@@ -24,38 +21,15 @@
     <hr>
         <p>
             Before we continue to the next round of the token task, we would like to ask you
-            some quick questions.  At the beginning of the survey you will need to enter:
-        </p>
-        <ul>
-            <li>Your participant ID: {participantId} </li>
-            <li>Your survey ID: {surveyId} </li>
-        </ul>
-        <p>
-            Please <a href='{surveyLink}'>click here</a> to begin the survey.
+            some quick questions.  Please <a href='{surveyUrl}'>click here</a> to
+            begin the survey.
         </p>
     ]]>
 </entry>
-
-<entry key='survey-link'>
-    <![CDATA[
-    https://qtrial.qualtrics.com/SE/?SID=SV_e8rPe7yyhue5OVm
-    ]]>
+<entry key='survey-url'>
+    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_e8rPe7yyhue5OVm&SURVEY_ID={surveyId}]]>
 </entry>
 
-
-<entry key="instructions">
-<![CDATA[
-<h3>Instructions</h3>
-<hr>
-<p>
-    This is the last round of the experiment.
-</p>
-<p>
-If you have any questions please raise your hand.  <b>Do you have any
-questions so far?</b>
-</p>
-]]>
-</entry>
 <entry key="last-round-debriefing">
     <![CDATA[
     <p>
