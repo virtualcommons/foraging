@@ -20,9 +20,18 @@
     <h1>Survey</h1>
     <hr>
         <p>
-            Before we continue to the next round of the token task, we would like to ask you
+            This was the final round of the token task.  To wrap up we would like to again ask you
             some quick questions.  Please <a href='{surveyUrl}'>click here</a> to
             begin the survey.
+        </p>
+        <p>
+            We will continue with the rest of the experiment after all of the
+            surveys have been completed by all the participants in the room.  Please
+            press the "Continue" button at the bottom of the screen after you have
+            successfully completed the survey.  
+        </p>
+        <p>
+            If you encounter any problems with the survey <b>please inform the experimenter</b>.
         </p>
     ]]>
 </entry>
@@ -38,8 +47,7 @@
         carefully fill out a brief survey.
     </p>
     <p>
-        When we are ready we will call you one by one to the room next door. We
-        will
+        When we are ready we will call you one by one to the room next door. We will
         pay you there in private. Please wait until your computer number is called,
         and then proceed to the room next door to turn in your computer number and
         your survey. 

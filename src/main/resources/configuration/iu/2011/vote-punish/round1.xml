@@ -24,17 +24,18 @@
 <h3>Groups</h3>
 <hr>
 <p>
-In this round the renewable resource will become five times bigger.  You will share this
-larger environment with three other random players in this room.  In particular,
-each of you in this room has been randomly assigned to one of several equal-sized {self.clientsPerGroup}
-person groups and everyone in your group has been randomly assigned a number from 1
-to {self.clientsPerGroup}.  You will stay in the same group for the entire experiment, and each person's
-number from 1 to {self.clientsPerGroup} will remain the same throughout the experiment.
-The other three people in your group will appear on the screen as blue dots 
+In this round the renewable resource will become five times bigger.  You will share
+this larger environment with three other random players in this room.  In
+particular, each of you in this room has been randomly assigned to one of several
+equal-sized {self.clientsPerGroup} person groups and everyone in your group has been
+randomly assigned a number from 1 to {self.clientsPerGroup}.  <b>You will stay in
+the same group for the entire experiment</b>, and each person's number from 1 to
+{self.clientsPerGroup} will remain the same throughout the experiment. The other
+members of your group will appear on the screen as blue dots 
 <img src="@CODEBASE_URL@/images/gem-other.gif"> with a white number embedded in the dot.
 </p>
 <p>
-    In each round of the token task, you can see how many tokens each player has
+    In each round of the token task you can see how many tokens each player has
     collected at the top right corner of the screen.  On the top left corner of the
     screen you will see the remaining time in the round.
 </p>

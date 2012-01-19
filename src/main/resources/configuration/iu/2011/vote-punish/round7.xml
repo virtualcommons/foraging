@@ -24,6 +24,15 @@
             some quick questions.  Please <a href='{surveyUrl}'>click here</a> to
             begin the survey.
         </p>
+        <p>
+            We will continue with the rest of the experiment after all of the
+            surveys have been completed by all the participants in the room.  Please
+            press the "Continue" button at the bottom of the screen after you have
+            successfully completed the survey.  
+        </p>
+        <p>
+            If you encounter any problems with the survey <b>please inform the experimenter</b>.
+        </p>
     ]]>
 </entry>
 <entry key='survey-url'>
