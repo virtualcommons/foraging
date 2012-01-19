@@ -48,24 +48,28 @@ Your messages must first be approved before they will be relayed to the rest of 
 <entry key="chat-instructions">
 <![CDATA[
 <p>
-    You can now chat with the other participants in your group for {chatDuration}
-    minutes total. During the chat round, you may communicate about any aspect of
-    the experiment that you would like to discuss with other participants with whom
-    you have been matched. You may not promise them side-payments after the
-    experiment is completed or threaten them with any consequence after the
-    experiment is finished. We are monitoring the chat traffic while you chat. If we
-    detect any violation of these rules, we will stop the experiment and remove the
-    offending group from the room.
+    You can now chat with the other participants in your group for
+    {chatDurationInMinutes}. 
+    You may discuss any aspect of the experiment with the other participants in your group with two exceptions:
 </p>
-<p>
-    You will see other participants labeled from 1 to {clientsPerGroup} in the chat
-    box.  You can send a chat message by typing into the textfield at the bottom of
-    the screen and pressing the "enter" key on your keyboard.  
-</p>
-<p>
-    NOTE: Your messages must first be approved before they will be relayed to the
-    rest of your group.
-</p>
+    <ol>
+        <li>You <b>may not promise side-payments after the experiment is completed or threaten anyone with any consequence after the experiment is finished</b>.</li>
+        <li>You <b>may not reveal your actual identity</b></li>
+    </ol>
+    <p>
+        We are monitoring the chat traffic while you chat. If we detect any violation of the
+        rules we will have to stop the experiment and remove the offending group from the
+        room.
+    </p>
+    <p>
+        You will see other participants labeled from A to {self.lastChatHandle} in the chat
+        window.  You can send a chat message by typing into the textfield and pressing
+        the enter key.
+    </p>
+    <p>
+        <b>NOTE:</b> Your messages must first be approved before they will be relayed to the
+        rest of your group.
+    </p>
 ]]>
 </entry>
 

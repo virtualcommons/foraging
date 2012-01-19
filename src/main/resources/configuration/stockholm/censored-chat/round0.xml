@@ -27,8 +27,8 @@
 During the practice round, you will have {duration} to practice with the
 experimental environment. The decisions you make in this round will NOT influence
 your earnings.  At the beginning of the practice round {initialDistribution} of the
-cells are occupied with green tokens.  The environment is a {resourceWidth} x
-{resourceDepth} grid of cells.
+cells are occupied with green tokens.  The environment is a {self.resourceWidth} x
+{self.resourceDepth} grid of cells.
 </p>
 <p>
 During this practice round, and <b>only during</b> this practice round, you are able
