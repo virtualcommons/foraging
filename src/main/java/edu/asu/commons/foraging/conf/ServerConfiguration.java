@@ -89,7 +89,7 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     }
     
     public String getGeneralInstructions() {
-        ST st = createStringTemplate(assistant.getStringProperty("general-instructions", ""));
+        ST st = createStringTemplate(assistant.getStringProperty("general-instructions"));
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         st.add("showUpPayment", formatter.format(getShowUpPayment()));
         st.add("dollarsPerToken", formatter.format(getDollarsPerToken()));
