@@ -46,7 +46,7 @@ press the <b>R</b> key you will reset the distribution of the tokens to randomly
     the practice round, answer the following questions to make sure you understand
     the instructions.  You will earn {quizCorrectAnswerReward} for each correct answer.
 </p>
-<br><br>
+<br>
 <form>
 <span class='q1'>Q1. Which of these statements is NOT correct?</span> <br>
 <input type="radio" name="q1" value="A">A. Your decisions of where to collect tokens affects the regeneration of tokens.<br>

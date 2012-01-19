@@ -20,18 +20,4 @@
 
 <!-- resource regrowth parameters -->
 <entry key="initial-distribution">.25</entry>
-
-<entry key="instructions">
-<![CDATA[
-<h3>Round 3 Instructions</h3>
-<hr>
-<p>
-Round 3 is the same as round 2.
-</p>
-<p>
-If you have any questions please raise your hand.  <b>Do you have any
-questions so far?</b>
-</p>
-]]>
-</entry>
 </properties>
