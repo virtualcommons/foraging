@@ -102,7 +102,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
     private final Map<Identifier, ClientData> clients = new HashMap<Identifier, ClientData>();
 
     public final static int SYNCHRONIZATION_FREQUENCY = 60;
-    public final static int SERVER_SLEEP_INTERVAL = 100;
+    public final static int SERVER_SLEEP_INTERVAL = 150;
 
     private Identifier facilitatorId;
 
@@ -932,6 +932,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     else {
                         transmit(new ClientPositionUpdateEvent(data, addedResources, removedResources, clientTokens, clientPositions,
                                 currentRoundDuration.getTimeLeft()));
+                        data.clearCollectedTokens();
                     }
                 }
             }

@@ -22,6 +22,7 @@ import edu.asu.commons.event.Event;
 import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.event.EventTypeChannel;
 import edu.asu.commons.event.PersistableEvent;
+import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.AddClientEvent;
 import edu.asu.commons.foraging.event.ExplicitCollectionModeRequest;
 import edu.asu.commons.foraging.event.HarvestFruitRequest;
@@ -62,7 +63,7 @@ public class ServerDataModel extends ForagingDataModel {
     
     private transient boolean dirty = false;
     
-    private final static String[] CHAT_HANDLES = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S" };
+
 
 
 	// Maps client Identifiers to the GroupDataModel that the client belongs to 
@@ -164,7 +165,7 @@ public class ServerDataModel extends ForagingDataModel {
     public synchronized void addClientToGroup(ClientData clientData, GroupDataModel group) {
         group.addClient(clientData);
         clientsToGroups.put(clientData.getId(), group);
-        clientData.getId().setChatHandle(CHAT_HANDLES[group.size() - 1]);
+        clientData.getId().setChatHandle(RoundConfiguration.CHAT_HANDLES[group.size() - 1]);
         channel.handle(new AddClientEvent(clientData, group, clientData.getPosition()));
     }
 
@@ -280,7 +281,7 @@ public class ServerDataModel extends ForagingDataModel {
     public GroupDataModel getGroup(Identifier id) {
         GroupDataModel group = clientsToGroups.get(id);
         if (group == null) {
-            throw new IllegalArgumentException("No group available for id:" + id);
+            logger.warning("No group available for id:" + id);
         }
         return group;
     }

@@ -26,6 +26,7 @@ public class ClientPositionUpdateEvent extends AbstractEvent {
 
     private static final long serialVersionUID = -128693557750400520L;
 
+    private final Point[] collectedTokenPositions;
     private final Resource[] addedResources;
     private final Resource[] removedResources;
     // FIXME: merge these two using a Pair
@@ -40,16 +41,15 @@ public class ClientPositionUpdateEvent extends AbstractEvent {
             Resource[] addedResources, Resource[] removedResources, 
             Map<Identifier, Integer> clientTokens,
             Map<Identifier, Point> clientPositions, 
-//            List<Point> collectedTokens, 
             long timeLeft) {
         super(data.getId());
         this.addedResources = addedResources;
         this.removedResources = removedResources;
         this.clientTokens = clientTokens;
         this.clientPositions = clientPositions;
-//        this.collectedTokens = collectedTokens;
         this.timeLeft = timeLeft;
         this.latestSanctions = data.getLatestSanctions();
+        this.collectedTokenPositions = data.getCollectedTokenPositions().toArray(new Point[0]);
     }
 
     public int getCurrentTokens() {
@@ -90,5 +90,9 @@ public class ClientPositionUpdateEvent extends AbstractEvent {
 
     public Map<Identifier, Integer> getClientTokens() {
         return clientTokens;
+    }
+
+    public Point[] getCollectedTokenPositions() {
+        return collectedTokenPositions;
     }
 }

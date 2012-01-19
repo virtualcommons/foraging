@@ -497,7 +497,7 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
         if (resourceDistribution.containsKey(position)) {
             getRemovedResources().add( resourceDistribution.remove(position) );
             tokensCollectedDuringInterval++;
-            clientData.addToken();
+            clientData.addToken(position);
             serverDataModel.getEventChannel().handle(new TokenCollectedEvent(clientData.getId(), position));
         }
     }

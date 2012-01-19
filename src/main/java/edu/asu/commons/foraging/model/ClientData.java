@@ -69,6 +69,7 @@ public class ClientData implements Serializable {
     
     private ForagingRule votedRule;
     private ArrayList<String> trustGameLog = new ArrayList<String>();
+    private ArrayList<Point> collectedTokenPositions = new ArrayList<Point>();
 
     // String fields to be set and formatted for use in templates.
     private String grandTotalIncome;
@@ -181,8 +182,21 @@ public class ClientData implements Serializable {
     	}
     }
     
-    public void addToken() {
+    public void addToken(Point position) {
         addTokens(1);
+        synchronized (collectedTokenPositions) {
+            collectedTokenPositions.add(position);
+        }
+    }
+    
+    public void clearCollectedTokens() {
+        synchronized (collectedTokenPositions) {
+            collectedTokenPositions.clear();
+        }
+    }
+    
+    public List<Point> getCollectedTokenPositions() {
+        return collectedTokenPositions;
     }
     
     public int applyMonitorTax() {
