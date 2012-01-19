@@ -14,10 +14,6 @@
 
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
-
-<entry key='censored-chat-enabled'>true</entry>
-<entry key='chat-enabled'>true</entry>
-
 <!-- resource regrowth parameters -->
 <entry key="initial-distribution">.25</entry>
 </properties>

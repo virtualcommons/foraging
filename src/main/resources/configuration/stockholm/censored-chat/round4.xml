@@ -27,8 +27,8 @@
 
 <entry key="initial-distribution">.25</entry>
 
-<!-- enable quiz -->
-<entry key='quiz'>true</entry>
+<!-- sanctioning quiz -->
+<entry key='quiz'>false</entry>
 <entry key='q1'>B</entry>
 <entry key='q2'>C</entry>
 <entry key='q3'>B</entry>
@@ -96,6 +96,58 @@
 
 <entry key="quiz-instructions">                       
 <![CDATA[                                             
+<h1>Important New Changes</h1>
+<hr>
+<p>
+    Round {self.roundNumber} is the same as the previous rounds with two exceptions.  
+    <ol>
+        <li>
+            Before the next round starts you can anonymously communicate via text
+            messages for {self.chatDurationInMinutes} with the other participants in your group. You
+            can use this opportunity to discuss the experiment and coordinate your
+            actions to improve your earnings. You may not promise side-payments
+            after the experiment is completed or make any threats. You are also not
+            allowed to reveal your real identity. We are monitoring the chat traffic
+            while you chat.
+        </li>
+        <li>
+            During the next round you will have the option to reduce the earnings of another
+            participant at a cost to your own earnings.
+            <ul>
+                <li>If you press the numeric key 1-{clientsPerGroup} corresponding
+                    to another participant, you will reduce the number of tokens
+                    they have collected in this round by
+                    <b>{self.sanctionPenalty}</b> token(s). This will also
+                    reduce your own token amount by <b>{self.sanctionCost}</b>
+                    token. The decision whether or when to use this option is up to
+                    you. 
+                </li>
+                <li>When you reduce the number of tokens of another participant,
+                    they will receive a message stating that you have reduced their
+                    tokens. Likewise, if another participant reduces your number of
+                    tokens, you will also receive a message. These messages will be
+                    displayed on the bottom of your screen. 
+                </li>
+                <li>If your tokens are being reduced or you are reducing another
+                    participant's tokens, you will receive some visual cues.  When
+                    your tokens are being reduced your yellow dot will turn red
+                    briefly with a blue background.  The participant reducing your
+                    tokens will turn purple with a white background. 
+                </li>
+                <li>You may only reduce other participants' tokens as long as there
+                    are tokens remaining on the screen and while both you and the
+                    other participant have a positive number of tokens collected
+                    during the round.  <b>Each time</b> you press the numeric key
+                    corresponding to another participant your token amount is
+                    reduced by <b>{self.sanctionCost}</b>, and their token amount is reduced by
+                    <b>{self.sanctionPenalty}</b>.  <b>Note:</b> You can only remove
+                    tokens from a participant that is visible to you. 
+                </li>
+            </ul>
+        </li>
+    </ol>
+</p>
+
 <h1>Quiz</h1>
 <hr>
     <p>Please answer the following questions to make sure you understand the

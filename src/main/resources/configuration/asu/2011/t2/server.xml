@@ -173,7 +173,7 @@ rules we will have to stop the experiment and remove the offending group from th
 room.
 </p>
 <p>
-    You will see other participants labeled from 1 to {clientsPerGroup} in the chat
+    You will see other participants labeled from A to {self.lastChatHandle} in the chat
     window.  You can send a chat message by typing into the textfield and pressing
     the enter key.
 </p>

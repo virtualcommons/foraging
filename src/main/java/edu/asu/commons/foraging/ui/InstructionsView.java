@@ -20,7 +20,7 @@ import edu.asu.commons.ui.UserInterfaceUtils;
  * @author <a href='Allen.Lee@asu.edu'>Allen Lee</a>, Deepali Bhagvat
  * @version $Revision$
  */
-
+@Deprecated
 public class InstructionsView {
 
     private JPanel mainPanel;
