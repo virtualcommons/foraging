@@ -10,6 +10,8 @@
 <entry key="quiz">true</entry>
 <entry key="q1">C</entry>
 <entry key="q2">B</entry>
+<entry key='tokens-field-of-vision'>true</entry>
+<entry key='subjects-field-of-vision'>true</entry>
 <entry key='instructions'>
 <![CDATA[
 <h2>Practice Round Instructions</h2>
@@ -34,6 +36,7 @@ press the <b>R</b> key you will reset the distribution of the tokens to randomly
 <p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
 ]]>
 </entry>
+
 <entry key="quiz-instructions">
 <![CDATA[
 <h2>Quiz</h2>

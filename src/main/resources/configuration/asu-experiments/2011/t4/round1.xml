@@ -8,9 +8,11 @@
 <entry key="resource-depth">29</entry>
 <entry key="resource-width">29</entry>
 <entry key='trust-game'>true</entry>
-<entry key='in-round-chat-enabled'>true</entry>
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
+<entry key='in-round-chat-enabled'>true</entry>
+<entry key='tokens-field-of-vision'>true</entry>
+<entry key='subjects-field-of-vision'>true</entry>
 <entry key="instructions">
 <![CDATA[
 <h1>Round {roundNumber} Instructions</h1>
@@ -39,16 +41,6 @@ with a white number embedded in the dot.
     collected at the top right corner of the screen.  On the top left corner of the
     screen you will see the remaining time in the round.
 </p>
-<h3>In round chat</h3>
-<hr>
-    <p>
-        You will be able to communicate with the other participants in your group
-        <b>during</b> the round.  To communicate, hit the enter key, type your
-        message, and then hit the enter key again.  You must hit the enter key
-        before every message you type, otherwise control will return to the game
-        screen where you can use the arrow keys to move around.
-    </p>
-
 <h3>Anonymity</h3>
 <hr>
 <p>

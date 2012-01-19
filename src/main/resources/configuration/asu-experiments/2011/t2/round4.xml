@@ -7,16 +7,11 @@
 <entry key="resource-depth">29</entry>
 <entry key="resource-width">29</entry>
 <entry key="duration">240</entry>
-
 <!-- have a trust game before this round begins -->
 <entry key='trust-game'>true</entry>
-<!-- enable field of vision for tokens and subjects -->
-
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
-
 <entry key="initial-distribution">.25</entry>
-
 <entry key="instructions">
 <![CDATA[
 <h3>Round {roundNumber} Instructions</h3>

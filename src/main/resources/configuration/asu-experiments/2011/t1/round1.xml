@@ -7,12 +7,9 @@
 <entry key="duration">240</entry>
 <entry key="resource-depth">29</entry>
 <entry key="resource-width">29</entry>
-
 <entry key='trust-game'>true</entry>
-
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
-
 <entry key="instructions">
 <![CDATA[
 <h1>Round {roundNumber} Instructions</h1>

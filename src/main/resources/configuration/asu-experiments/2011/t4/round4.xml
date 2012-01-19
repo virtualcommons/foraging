@@ -10,10 +10,13 @@
 
 <!-- have a trust game before this round begins -->
 <entry key='trust-game'>true</entry>
+<!-- enable field of vision for tokens and subjects -->
+<entry key='tokens-field-of-vision'>true</entry>
+<entry key='subjects-field-of-vision'>true</entry>
+
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
 
-<entry key='in-round-chat-enabled'>true</entry>
 <entry key="initial-distribution">.25</entry>
 
 <entry key="instructions">
