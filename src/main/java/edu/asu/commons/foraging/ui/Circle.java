@@ -26,7 +26,7 @@ public class Circle implements Serializable {
     
     public boolean contains(Point point) {
         if (point == null) {
-            throw new IllegalArgumentException("Null point passed to Circle.contains()");
+            return false;
         }
         return center.distance(point) <= radius;
     }
