@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.image.ImageObserver;
 import java.io.IOException;
 import java.util.Collection;
@@ -34,8 +35,8 @@ public abstract class GridView extends JPanel {
      */
     protected Image tokenImage, otherSubjectImage, selfImage, selfExplicitCollectionModeImage, beingSanctionedImage, sanctioningImage, monitorImage;
 
-    protected Image scaledTokenImage, scaledOtherSubjectImage, scaledSelfImage, 
-    scaledSelfExplicitCollectionModeImage, scaledBeingSanctionedImage, scaledSanctioningImage, scaledMonitorImage;
+    protected Image scaledTokenImage, scaledOtherSubjectImage, scaledSelfImage,
+            scaledSelfExplicitCollectionModeImage, scaledBeingSanctionedImage, scaledSanctioningImage, scaledMonitorImage;
 
     /**
      * Represents the width and height of a grid cell, respectively.
@@ -52,8 +53,11 @@ public abstract class GridView extends JPanel {
 
     // how big the entire screen is.
     protected Dimension screenSize;
+    
+    protected int actualWidth;
+    protected int actualHeight;
 
-    // the size of the actual resource board.
+    // the conceptual size of the resource grid (e.g., 13 x 13)
     protected Dimension boardSize;
 
     public GridView(Dimension screenSize) {
@@ -72,9 +76,12 @@ public abstract class GridView extends JPanel {
         // stretch board to the max
         dw = (availableWidth / boardSize.getWidth());
         dh = (availableHeight / boardSize.getHeight());
-        // ensure square proportions
+        // FIXME: this forces square proportions on all views.
         dw = dh = Math.min(dw, dh);
+        
+        actualWidth = actualHeight = (int) Math.min(availableWidth, availableHeight);
 
+        // centered on the screen so we divide by 2 to take into account both sides of the screen.
         xoffset = (int) Math.floor((availableWidth - (dw * boardSize.getWidth())) / 2);
         yoffset = (int) Math.floor((availableHeight - (dh * boardSize.getHeight())) / 2);
 
@@ -84,8 +91,8 @@ public abstract class GridView extends JPanel {
         setPreferredSize(screenSize);
         //FIXME: reduce code duplication
         // get scaled instances of the originals
-        int cellWidth = getCellWidth();
-        int cellHeight = getCellHeight();
+        int cellWidth = (int) dw;
+        int cellHeight = (int) dh;
         scaledTokenImage = tokenImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledOtherSubjectImage = otherSubjectImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledSelfImage = selfImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
@@ -93,6 +100,10 @@ public abstract class GridView extends JPanel {
         scaledBeingSanctionedImage = beingSanctionedImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledSanctioningImage = sanctioningImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledMonitorImage = monitorImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        System.err.println("cell width: " + dw);
+        System.err.println("cell height: " + dh);
+        System.err.println("x offset: " + xoffset);
+        System.err.println("y offset: " + yoffset);
     }
 
     /**
@@ -160,7 +171,7 @@ public abstract class GridView extends JPanel {
 
     protected void paintComponent(Graphics graphics) {
         Graphics2D graphics2D = (Graphics2D) graphics;
-//        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // FIXME: can be made more efficient.  
         // Could just update the parts that have changed (tokens removed, subjects moved) 
         // paint the background
@@ -228,14 +239,12 @@ public abstract class GridView extends JPanel {
     protected abstract void paintSubjects(Graphics2D graphics2D);
 
     /**
-     * Called only when running, this method should be overidden for a custom
+     * Invoked via paintComponent, this method should be overidden for a custom
      * background.
      */
     protected void paintBackground(Graphics2D graphics2D) {
         graphics2D.setColor(Color.BLACK);
-        graphics2D.fillRect(xoffset, yoffset,
-                (int) (boardSize.getWidth() * dw),
-                (int) (boardSize.getHeight() * dh));
+        graphics2D.fillRect(xoffset, yoffset, actualWidth, actualHeight);
     }
 
 }

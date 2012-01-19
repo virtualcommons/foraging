@@ -41,22 +41,17 @@ import edu.asu.commons.util.Duration;
  */
 public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerConfiguration> {
 
-    private static final double DEFAULT_PATCHY_BOTTOM_INITIAL_DISTRIBUTION = 0.25;
+    private static final long serialVersionUID = 8575239803733029326L;
 
-    private static final double DEFAULT_PATCHY_TOP_INITIAL_DISTRIBUTION = 0.50;
-
-    private static final double DEFAULT_TOP_REGROWTH_RATE = 0.02;
-
-    private final static long serialVersionUID = 8575239803733029326L;
-
+    public final static String[] CHAT_HANDLES = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S" };
     public final static double DEFAULT_REGROWTH_RATE = 0.01;
-
     public final static int DEFAULT_ROUND_TIME = 5 * 60;
-
+    
+    private static final double DEFAULT_PATCHY_BOTTOM_INITIAL_DISTRIBUTION = 0.25;
+    private static final double DEFAULT_PATCHY_TOP_INITIAL_DISTRIBUTION = 0.50;
+    private static final double DEFAULT_TOP_REGROWTH_RATE = 0.02;
     private static final int DEFAULT_SANCTION_FLASH_DURATION = 3;
-
     private static final double DEFAULT_TOKEN_MOVEMENT_PROBABILITY = 0.2d;
-
     private static final double DEFAULT_TOKEN_BIRTH_PROBABILITY = 0.01d;
 
     private List<ForagingRule> selectedRules;
@@ -300,20 +295,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      */
     public String getInstructions() {
         ST template = createStringTemplate(getProperty("instructions", getParentConfiguration().getSameRoundAsPreviousInstructions()));
-        // FIXME: this isn't ideal, figure out how to get any bean properties transparently accessible within a templatized instruction
-        // could do it via  1. reflection 2. annotations 3. ???   
-        template.add("resourceWidth", getResourceWidth());
-        template.add("resourceDepth", getResourceDepth());
+        // FIXME: probably should just lift these out into methods on RoundConfiguration
+        // and refer to them as self.durationInMinutes or self.dollarsPerTokenCurrencyString, etc.
         template.add("duration", inMinutes(getDuration()) + " minutes");
-        template.add("roundNumber", getRoundNumber());
-        template.add("clientsPerGroup", getClientsPerGroup());
-        template.add("dollarsPerToken", NumberFormat.getCurrencyInstance().format(getDollarsPerToken()));
+        template.add("dollarsPerToken", toCurrencyString(getDollarsPerToken()));
         template.add("initialDistribution", NumberFormat.getPercentInstance().format(getInitialDistribution()));
-        template.add("sanctionCost", getSanctionCost());
-        template.add("sanctionPenalty", getSanctionPenalty());
-        if (selectedRules != null && ! selectedRules.isEmpty()) {
-            template.add("selectedRule", selectedRules.get(0));
-        }
         return template.render();
     }
 
@@ -326,10 +312,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getChatInstructions() {
-        ST st = createStringTemplate(getProperty("chat-instructions"));
-        st.add("chatDuration", inMinutes(getChatDuration()) + " minutes");
-        st.add("clientsPerGroup", getClientsPerGroup());
-        return st.render();
+        return createStringTemplate(getProperty("chat-instructions")).render();
     }
     
     public long inMinutes(Duration duration) {
@@ -358,11 +341,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String getQuizInstructions() {
         // FIXME: cache?
         ST template = createStringTemplate(getProperty("quiz-instructions"));
-        template.add("quizCorrectAnswerReward", asCurrency(getQuizCorrectAnswerReward()));
+        template.add("quizCorrectAnswerReward", toCurrencyString(getQuizCorrectAnswerReward()));
         return template.render();
     }
     
-    public String asCurrency(double amount) {
+    public String toCurrencyString(double amount) {
         return NumberFormat.getCurrencyInstance().format(amount);
     }
 
@@ -773,11 +756,15 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         template.add("allCorrect", incorrectQuestionNumbers.isEmpty());
         template.add("numberCorrect", numberCorrect);
         template.add("totalQuestions", totalQuestions);
-        template.add("totalQuizEarnings", NumberFormat.getCurrencyInstance().format(getQuizCorrectAnswerReward() * numberCorrect));
+        template.add("totalQuizEarnings", toCurrencyString(getQuizCorrectAnswerReward() * numberCorrect));
         for (String incorrectQuestionNumber : incorrectQuestionNumbers) {
             template.add("incorrect_" + incorrectQuestionNumber, String.format("Your answer, %s, was incorrect.", actualAnswers.get(incorrectQuestionNumber)));
         }
         return template.render();
+    }
+    
+    public List<ForagingRule> getSelectedRules() {
+        return selectedRules;
     }
 
     public void setSelectedRules(List<ForagingRule> selectedRules) {
@@ -829,5 +816,17 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
 	public boolean shouldWaitForFacilitatorSignal() {
 		return isPostRoundSanctioningEnabled() || (isTrustGameEnabled() && isLastRound());
+	}
+	
+	public String getLastChatHandle() {
+	    return CHAT_HANDLES[getClientsPerGroup() - 1];
+	}
+	
+	public String getChatDurationInMinutes() {
+	    return inMinutes(getChatDuration()) + " minutes";
+	}
+	
+	public String getDurationInMinutes() {
+	    return inMinutes(getDuration()) + " minutes";
 	}
 }

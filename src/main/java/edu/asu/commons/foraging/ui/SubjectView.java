@@ -36,6 +36,8 @@ import edu.asu.commons.util.Duration;
  */
 public class SubjectView extends GridView {
 
+    private static final long COLLECTED_TOKEN_ANIMATION_DURATION = 2000L;
+
     private static final long serialVersionUID = 8215577330876498459L;
 
     private final ClientDataModel dataModel;
@@ -57,9 +59,7 @@ public class SubjectView extends GridView {
 
     private Circle viewSubjectsField;
 
-    private double fieldOfVisionYOffset;
-
-    private double fieldOfVisionXOffset;
+    private double fieldOfVisionOffset;
 
     public SubjectView(Dimension screenSize, ClientDataModel dataModel) {
         super(screenSize);
@@ -85,17 +85,20 @@ public class SubjectView extends GridView {
             if (subjectFieldOfVision) {
                 viewSubjectsRadius = configuration.getViewSubjectsRadius();
                 viewSubjectsField = new Circle(dataModel.getCurrentPosition(), viewSubjectsRadius);
-                // FIXME: get rid of these magic numbers and figure out how to adjust it properly.
-                fieldOfVisionXOffset = (dw / 3.0d);
-                fieldOfVisionYOffset = (dh / 3.0d);
             }
         }
         super.setup(configuration);
+        if (tokenFieldOfVision || subjectFieldOfVision) {
+            fieldOfVisionOffset = (dw / 2.0d);
+            System.err.println("field of vision offset: " + fieldOfVisionOffset);
+        }
     }
 
-    public void collectToken(Point p) {
+    public void collectTokens(Point ... positions) {
         synchronized (collectedTokens) {
-            collectedTokens.put(p, Duration.create(3000L));
+            for (Point position: positions) {
+                collectedTokens.put(position, Duration.create(COLLECTED_TOKEN_ANIMATION_DURATION));
+            }
         }
     }
 
@@ -157,20 +160,16 @@ public class SubjectView extends GridView {
             int radius = viewSubjectsRadius;
             viewSubjectsField.setCenter(currentPosition);
             Point topLeftCorner = new Point(currentPosition.x - radius, currentPosition.y - radius);
-            // for some reason 
-            double x = scaleXDouble(topLeftCorner.x) + fieldOfVisionXOffset;
-            double y = scaleYDouble(topLeftCorner.y) + fieldOfVisionYOffset;
-            double diameter = radius * 2.0d;
-            diameter = Math.min(scaleXDouble(diameter), scaleYDouble(diameter)) + (dw * 0.85);
+            double x = scaleXDouble(topLeftCorner.x) + fieldOfVisionOffset;
+            double y = scaleYDouble(topLeftCorner.y) + fieldOfVisionOffset;
+            double diameter = (dw * radius * 2.0d) + fieldOfVisionOffset;
             Ellipse2D.Double circle = new Ellipse2D.Double(x, y, diameter, diameter);
             // clip the rendered part of the Field of vision circle that crosses the playing boundary 
             graphics2D.setClip(circle);
-            // this is actually a bit too tall, fine-tune & investigate later
             Rectangle bounds = new Rectangle(getPreferredSize());
             graphics2D.clip(bounds);
             Paint originalPaint = graphics2D.getPaint();
             graphics2D.setPaint(FIELD_OF_VISION_COLOR);
-//            graphics2D.fillOval((int) x, (int) y, (int) diameter, (int) diameter);
             graphics2D.fill(circle);
             graphics2D.setPaint(originalPaint);
         }

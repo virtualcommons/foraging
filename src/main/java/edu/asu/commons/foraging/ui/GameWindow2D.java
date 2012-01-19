@@ -241,8 +241,8 @@ public class GameWindow2D implements GameWindow {
      * 
      * @param position
      */
-    public void collectToken(Point position) {
-        subjectView.collectToken(position);
+    public void collectTokens(Point ... positions) {
+        subjectView.collectTokens(positions);
     }
 
     private void startChatTimer() {

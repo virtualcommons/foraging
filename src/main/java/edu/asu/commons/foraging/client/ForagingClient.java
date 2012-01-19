@@ -207,6 +207,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
             public void handle(ClientPositionUpdateEvent event) {
                 if (isRoundInProgress()) {
                     dataModel.update(event);
+                    getGameWindow2D().collectTokens(event.getCollectedTokenPositions());
                     getGameWindow().update(event.getTimeLeft());
                 }
             }
@@ -365,7 +366,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
 //                    moveClient(request);
                     transmit(request);
                 }
-                Utils.sleep(50);
+                Utils.sleep(100);
                 Thread.yield();
             }
         }
