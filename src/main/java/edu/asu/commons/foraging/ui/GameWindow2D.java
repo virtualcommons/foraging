@@ -53,6 +53,7 @@ import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
+import edu.asu.commons.foraging.event.SurveyCompletedEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
@@ -65,34 +66,25 @@ import edu.asu.commons.util.Duration;
 /**
  * $Id$
  * 
- * The client-side view for forager - can be used by standalone Java
- * applications or Applets.
+ * Primary client-side view for foraging experiment that can be used by standalone Java applications or Applets.
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  * @version $Revision$
  */
 public class GameWindow2D implements GameWindow {
-
-    private final ClientDataModel dataModel;
-
-    // instructions panel
     private final static String INSTRUCTIONS_PANEL_NAME = "instructions screen panel";
-    // game board panel
     private final static String GAME_PANEL_NAME = "foraging game panel";
     private final static String TRUST_GAME_PANEL_NAME = "trust game panel";
-    // standalone chat panel
     private final static String CHAT_PANEL_NAME = "standalone chat panel";
-    // survey id panel
+    private final static String POST_ROUND_SANCTIONING_PANEL_NAME = "post round sanctioning panel";
     private final static String SURVEY_ID_PANEL_NAME = "survey id panel";
-
-    protected static final String POST_ROUND_SANCTIONING_PANEL_NAME = null;
-
     private String currentCardPanel = INSTRUCTIONS_PANEL_NAME;
-
-    // private Component currentCenterComponent;
+    
+    private final StringBuilder instructionsBuilder = new StringBuilder();
+    private final ClientDataModel dataModel;
+    private EventChannel channel;
 
     private JPanel mainPanel;
-
     // instructions components.
     private JScrollPane instructionsScrollPane;
     private HtmlEditorPane instructionsEditorPane;
@@ -104,9 +96,6 @@ public class GameWindow2D implements GameWindow {
     private JPanel labelPanel;
     
     private JPanel surveyIdPanel;
-
-    // FIXME: this shouldn't be public
-    public static Duration duration;
 
     private ChatPanel chatPanel;
 
@@ -120,15 +109,16 @@ public class GameWindow2D implements GameWindow {
 
     private SubjectView subjectView;
 
-    public Timer timer;
-
-    private final StringBuilder instructionsBuilder = new StringBuilder();
-
-    private EventChannel channel;
-
     private CardLayout cardLayout;
 
     private ChatPanel inRoundChatPanel;
+    
+    private Timer timer;
+    
+    // voting components
+    private JPanel votingPanel;
+    private VotingForm votingForm;
+    private HtmlEditorPane votingInstructionsEditorPane;
 
     // private EnergyLevel energyLevel;
 
@@ -197,6 +187,17 @@ public class GameWindow2D implements GameWindow {
             String styleString = String.format(".%s { color: %s; }", questionNumber, color);
             styleSheet.addRule(styleString);
         }
+    }
+    
+    private ActionListener createSurveyFinishedListener() {
+    	return new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				client.transmit(new SurveyCompletedEvent(client.getId()));
+				showInstructions();
+				instructionsEditorPane.setActionListener(null);
+			}
+    	};
     }
 
     private ActionListener createQuizListener(final RoundConfiguration configuration) {
@@ -670,7 +671,7 @@ public class GameWindow2D implements GameWindow {
     }
 
     public void showTrustGame() {
-        RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
+    	final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
         if (roundConfiguration.isTrustGameEnabled()) {
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
@@ -678,17 +679,12 @@ public class GameWindow2D implements GameWindow {
                     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
                     JEditorPane trustGameInstructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
                     JScrollPane scrollPane = new JScrollPane(trustGameInstructionsEditorPane);
-                    trustGameInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getTrustGameInstructions());
+                    trustGameInstructionsEditorPane.setText(roundConfiguration.getTrustGameInstructions());
                     panel.add(scrollPane);
-
                     TrustGamePanel trustGamePanel = new TrustGamePanel(client);
-                    // trustGamePanel.setPreferredSize(new Dimension(300, 400));
                     JScrollPane trustGameScrollPane = new JScrollPane(trustGamePanel);
                     panel.add(trustGameScrollPane);
                     panel.setName(TRUST_GAME_PANEL_NAME);
-                    // addCenterComponent(panel);
-                    // panel.revalidate();
-                    // panel.repaint();
                     add(panel);
                     showPanel(TRUST_GAME_PANEL_NAME);
                 }
@@ -697,7 +693,8 @@ public class GameWindow2D implements GameWindow {
     }
     
     public void trustGameSubmitted() {
-        instructionsBuilder.append("<h1>Submission successful</h1><hr><p>Please wait while the rest of the submissions are gathered.</p>");
+    	// FIXME: replace HTML strings with configuration template
+        instructionsBuilder.append("<h3>Submission successful</h3><hr><p>Please wait while the rest of the submissions are gathered.</p>");
         setInstructions(instructionsBuilder.toString());
         switchInstructionsPane();
     }
@@ -730,11 +727,6 @@ public class GameWindow2D implements GameWindow {
         });
     }
 
-    private JPanel votingPanel;
-
-    private VotingForm votingForm;
-
-    private HtmlEditorPane votingInstructionsEditorPane;
 
     private JPanel getVotingPanel() {
         if (votingPanel == null) {
@@ -775,12 +767,14 @@ public class GameWindow2D implements GameWindow {
     public void showSurveyInstructions() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+            	instructionsEditorPane.setActionListener(null);
+            	instructionsEditorPane.setActionListener(createSurveyFinishedListener());
                 setInstructions(dataModel.getRoundConfiguration().getSurveyInstructions(dataModel.getId()));
+                
                 switchInstructionsPane();
             }
         });
     }
-
 
     public void switchInstructionsPane() {
         showPanel(INSTRUCTIONS_PANEL_NAME);

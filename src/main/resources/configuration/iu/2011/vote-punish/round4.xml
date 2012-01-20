@@ -156,6 +156,10 @@ strategy.
         <p>
             If you encounter any problems with the survey <b>please inform the experimenter</b>.
         </p>
+        <br>
+        <form>
+        <input type="submit" value="Continue" name="continue">
+        </form>
     ]]>
 </entry>
 <entry key='survey-url'>
