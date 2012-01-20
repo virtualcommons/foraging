@@ -62,6 +62,7 @@ import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.ShowRequest;
+import edu.asu.commons.foraging.event.SurveyCompletedEvent;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
@@ -247,15 +248,15 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     sendFacilitatorMessage(String.format("Updating %s with station number %s", clientSocketId, request.getStationNumber()));
                 }
             });
-            // client handlers
             addEventProcessor(new EventTypeProcessor<ConnectionEvent>(ConnectionEvent.class) {
                 @Override
                 public void handle(ConnectionEvent event) {
-                    // handle incoming connections
+                    // handles incoming connections
                     if (experimentStarted) {
-                        // currently not allowing any new connections
-                    	// FIXME: would be nice to allow for reconnection / reassociation of clients to ids and data. 
-                    	// should be logged however so we can remember the context of the data
+                        // currently not allowing any new connections 
+                        // FIXME: would be nice to allow for reconnection /
+                        // reassociation of clients to ids and data. should be
+                        // logged however so we can remember the context of the data
                         transmit(new ClientMessageEvent(event.getId(), "The experiment has already started, we cannot add you at this time."));
                         return;
                     }
@@ -297,6 +298,20 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     }
                     else {
                         sendFacilitatorMessage("WARNING: received censored chat request but censored chat isn't enabled, bug in configuration.");
+                    }
+                }
+            });
+            addEventProcessor(new EventTypeProcessor<SurveyCompletedEvent>(SurveyCompletedEvent.class) {
+                private int submittedSurveys = 0;
+                @Override
+                public void handle(SurveyCompletedEvent event) {
+                    if (getCurrentRoundConfiguration().isExternalSurveyEnabled()) {
+                        submittedSurveys++;
+                        sendFacilitatorMessage(String.format("Received %d of %d surveys: %s", submittedSurveys, clients.size(), event));
+                        if (submittedSurveys >= clients.size()) {
+                            sendFacilitatorMessage("All surveys have been reported as completed, ready to continue.");
+                            submittedSurveys = 0;
+                        }
                     }
                 }
             });
