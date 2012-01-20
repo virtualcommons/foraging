@@ -5,7 +5,7 @@ import edu.asu.commons.event.ClientRequest;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: QuizResponseEvent.java 522 2010-06-30 19:17:48Z alllee $
+ * $Id$
  * 
  * Signals that a client has completed the survey for the given round.
  * 

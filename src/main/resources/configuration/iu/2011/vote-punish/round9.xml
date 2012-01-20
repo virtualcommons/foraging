@@ -15,26 +15,6 @@
 
 
 <entry key='external-survey-enabled'>true</entry>
-<entry key='survey-instructions'>
-    <![CDATA[
-    <h1>Survey</h1>
-    <hr>
-        <p>
-            This was the final round of the token task.  To wrap up we would like to again ask you
-            some quick questions.  Please <a href='{surveyUrl}'>click here</a> to
-            begin the survey.
-        </p>
-        <p>
-            We will continue with the rest of the experiment after all of the
-            surveys have been completed by all the participants in the room.  Please
-            press the "Continue" button at the bottom of the screen after you have
-            successfully completed the survey.  
-        </p>
-        <p>
-            If you encounter any problems with the survey <b>please inform the experimenter</b>.
-        </p>
-    ]]>
-</entry>
 <entry key='survey-url'>
     <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_e8rPe7yyhue5OVm&SURVEY_ID={surveyId}]]>
 </entry>

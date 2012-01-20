@@ -705,7 +705,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getSurveyInstructions() {
-        return getProperty("survey-instructions");
+        return getProperty("survey-instructions", getParentConfiguration().getSurveyInstructions());
     }
 
     public String getSurveyUrl(Identifier id) {

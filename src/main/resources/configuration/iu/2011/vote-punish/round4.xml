@@ -138,30 +138,6 @@ strategy.
 </entry>
 
 <entry key='external-survey-enabled'>true</entry>
-<entry key='survey-instructions'>
-    <![CDATA[
-    <h1>Survey</h1>
-    <hr>
-        <p>
-            Before we continue to the next round of the token task, we would like to ask you
-            some quick questions.  Please <a href='{surveyUrl}'>click here</a> to
-            begin the survey.
-        </p>
-        <p>
-            We will continue with the rest of the experiment after all of the
-            surveys have been completed by all the participants in the room.  Please
-            press the "Continue" button at the bottom of the screen after you have
-            successfully completed the survey.  
-        </p>
-        <p>
-            If you encounter any problems with the survey <b>please inform the experimenter</b>.
-        </p>
-        <br>
-        <form>
-        <input type="submit" value="Continue" name="continue">
-        </form>
-    ]]>
-</entry>
 <entry key='survey-url'>
     <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_cLX7jnYikmD9eSM&SURVEY_ID={surveyId}]]>
 </entry>

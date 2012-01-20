@@ -118,25 +118,29 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     			"<h3>The experiment has ended and participant payments are listed above.  We recommend that you copy and paste it into a text editor for your records.</h3>");
     }
 
-	public String getFacilitatorDebriefing() {
-		return assistant.getProperty("facilitator-debriefing");
-	}
-	
-	public String getClientDebriefing() {
-	    return assistant.getProperty("client-debriefing");
-	}
-	
-	public double getTotalIncome(ClientData data) {
-	    return getTotalIncome(data, false);
-	}
-	
-	public double getTotalIncome(ClientData data, boolean includeTrustGame) {
-	    double totalIncome = data.getTotalIncome() + getShowUpPayment() + getQuizEarnings(data);
-	    return (includeTrustGame) ? totalIncome + data.getTrustGameIncome() : totalIncome;
-	}
-	
-	public double getQuizEarnings(ClientData data) {
+    public String getSurveyInstructions() {
+        return assistant.getProperty("survey-instructions");
+    }
+
+    public String getFacilitatorDebriefing() {
+        return assistant.getProperty("facilitator-debriefing");
+    }
+
+    public String getClientDebriefing() {
+        return assistant.getProperty("client-debriefing");
+    }
+
+    public double getTotalIncome(ClientData data) {
+        return getTotalIncome(data, false);
+    }
+
+    public double getTotalIncome(ClientData data, boolean includeTrustGame) {
+        double totalIncome = data.getTotalIncome() + getShowUpPayment() + getQuizEarnings(data);
+        return (includeTrustGame) ? totalIncome + data.getTrustGameIncome() : totalIncome;
+    }
+
+    public double getQuizEarnings(ClientData data) {
         return data.getCorrectQuizAnswers() * getQuizCorrectAnswerReward();
     }
-		
+
 }
