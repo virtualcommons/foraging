@@ -103,7 +103,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
     private final Map<Identifier, ClientData> clients = new HashMap<Identifier, ClientData>();
 
     public final static int SYNCHRONIZATION_FREQUENCY = 60;
-    public final static int SERVER_SLEEP_INTERVAL = 150;
+    public final static int SERVER_SLEEP_INTERVAL = 75;
 
     private Identifier facilitatorId;
 

@@ -43,6 +43,7 @@ import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
 import edu.asu.commons.foraging.rules.iu.ForagingRule;
+import edu.asu.commons.foraging.server.ForagingServer;
 import edu.asu.commons.foraging.ui.GameWindow;
 import edu.asu.commons.foraging.ui.GameWindow2D;
 import edu.asu.commons.foraging.ui.GameWindow3D;
@@ -366,7 +367,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
 //                    moveClient(request);
                     transmit(request);
                 }
-                Utils.sleep(100);
+                Utils.sleep(ForagingServer.SERVER_SLEEP_INTERVAL);
                 Thread.yield();
             }
         }
