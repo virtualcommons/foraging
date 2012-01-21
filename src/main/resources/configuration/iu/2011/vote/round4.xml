@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="display-group-tokens">true</entry>
+<entry key="clients-per-group">4</entry>
+<entry key="resource-depth">26</entry>
+<entry key="resource-width">26</entry>
+<entry key="duration">240</entry>
+
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+
+<entry key="initial-distribution">.25</entry>
+<entry key='voting-enabled'>true</entry>
+<entry key="instructions">
+    <![CDATA[
+    <h1>Round {self.roundNumber} Instructions</h1>
+    <hr>
+    <p>Round {self.roundNumber} is the same as the previous rounds.</p>
+    <p>The length of this round is {duration}.</p>
+    <h2>Strategy Reminder</h2>
+    <hr>
+    <p>The strategy your group voted for is:</p>
+    <ul>
+        <li><b>{first(self.selectedRules)}</b></li>
+    </ul>
+    <p><b>Do you have any questions?</b> If you have any questions at this time, raise your hand and someone will come over to your station and answer it.</p>
+    ]]>
+</entry>
+
+<entry key='voting-results'>
+    <![CDATA[
+    <h1>Voting Results</h1>
+    <h2>Selected Strategy</h2>
+    <hr>
+    <p><b> {first(selectedRules)} </b></p>
+    {if (tiebreaker)}
+    <p><b>NOTE:</b> There was a tie and selected strategy listed here was randomly selected as the winner.</p>
+    <h2>Other Nominated Strategies</h2>
+    <hr>
+        <ol>
+            {rest(selectedRules): {selectedRule | <li> <b>{selectedRule}</b></li>}}
+        </ol>
+    {endif}
+    ]]>
+</entry>
+
+<entry key='initial-voting-instructions'>
+    <![CDATA[
+<h1>Important New Instructions</h1>
+<h2>Strategies for managing how players collect tokens for the rest of the experiment</h2>
+<hr>
+<p>
+In a moment, you will have the option to implement one of six strategies for how you
+and the three other people in your group collect tokens for the rest of the
+experiment.
+</p>
+<h2>Procedure for Deciding the Strategy</h2>
+<hr>
+<p>
+    Each of the {clientsPerGroup} people in your group can nominate one of the six
+    potential strategies.  The single strategy that receives the most nominations
+    wins.
+</p>
+<p>
+    <b>If there is a tie</b>, one of the tied options will be selected at random by
+    the computer.  Each of the tied strategies will have an equal chance of being
+    selected.
+</p>
+<h2>Implementation</h2>
+<hr>
+    <p>Neither the computer nor the experimenter will intervene to implement the
+        strategy.
+    </p>
+
+    <p>
+        <b>Do you have any questions?</b>  If you have any questions at this time,
+        raise your hand and someone will come over to your station and answer it.
+    </p>
+    ]]>
+</entry>
+
+
+<entry key='voting-instructions'>
+<![CDATA[
+<h1>Strategy Nomination Instructions</h1>
+<hr>
+<p>
+To nominate a strategy, click the button to the right of the one you choose, and
+then click "submit." The computer will tally the nominations and then report the
+results on the next screen. The results will be presented to each person in
+your group.
+</p>
+<h2>Your selection will be anonymous</h2>
+<hr>
+<p>
+The identity of people who nominated a particular strategy will NOT be revealed.
+Therefore, neither you nor the experimenter will know who nominated a particular
+strategy.
+</p>
+]]>
+</entry>
+
+<entry key='external-survey-enabled'>true</entry>
+<entry key='survey-url'>
+    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_cLX7jnYikmD9eSM&SURVEY_ID={surveyId}]]>
+</entry>
+</properties>
