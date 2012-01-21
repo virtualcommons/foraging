@@ -42,7 +42,7 @@ import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
-import edu.asu.commons.foraging.rules.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingRule;
 import edu.asu.commons.foraging.ui.GameWindow;
 import edu.asu.commons.foraging.ui.GameWindow2D;
 import edu.asu.commons.foraging.ui.GameWindow3D;

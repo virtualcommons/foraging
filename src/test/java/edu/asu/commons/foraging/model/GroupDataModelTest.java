@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import edu.asu.commons.foraging.conf.RoundConfiguration;
-import edu.asu.commons.foraging.rules.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingRule;
 import edu.asu.commons.net.Identifier;
 
 public class GroupDataModelTest {

@@ -2,7 +2,7 @@ package edu.asu.commons.foraging.event;
 
 
 import edu.asu.commons.event.AbstractPersistableEvent;
-import edu.asu.commons.foraging.rules.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingRule;
 import edu.asu.commons.net.Identifier;
 
 /**

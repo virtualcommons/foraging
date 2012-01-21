@@ -57,7 +57,7 @@ import edu.asu.commons.foraging.event.SurveyCompletedEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
-import edu.asu.commons.foraging.rules.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingRule;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.HtmlEditorPane;
 import edu.asu.commons.ui.UserInterfaceUtils;
@@ -770,7 +770,6 @@ public class GameWindow2D implements GameWindow {
             	instructionsEditorPane.setActionListener(null);
             	instructionsEditorPane.setActionListener(createSurveyFinishedListener());
                 setInstructions(dataModel.getRoundConfiguration().getSurveyInstructions(dataModel.getId()));
-                
                 switchInstructionsPane();
             }
         });

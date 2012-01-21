@@ -42,8 +42,8 @@ public class SubjectView extends GridView {
 
     private final ClientDataModel dataModel;
     
-    private boolean tokenFieldOfVision;
-    private boolean subjectFieldOfVision;
+    private boolean tokenFieldOfVisionEnabled;
+    private boolean subjectFieldOfVisionEnabled;
     
     public final static Color FIELD_OF_VISION_COLOR = new Color(255, 255, 255, 150);
 
@@ -75,37 +75,39 @@ public class SubjectView extends GridView {
         viewTokensField = null;
         synchronized (collectedTokens) {
             collectedTokens.clear();
-            tokenFieldOfVision = configuration.isTokensFieldOfVisionEnabled();
-            if (tokenFieldOfVision) {
+            tokenFieldOfVisionEnabled = configuration.isTokensFieldOfVisionEnabled();
+            if (tokenFieldOfVisionEnabled) {
                 viewTokensRadius = configuration.getViewTokensRadius();
                 Point location = dataModel.getCurrentPosition();
                 viewTokensField = new Circle(location, viewTokensRadius);
             }
-            subjectFieldOfVision = configuration.isSubjectsFieldOfVisionEnabled();
-            if (subjectFieldOfVision) {
+            subjectFieldOfVisionEnabled = configuration.isSubjectsFieldOfVisionEnabled();
+            if (subjectFieldOfVisionEnabled) {
                 viewSubjectsRadius = configuration.getViewSubjectsRadius();
                 viewSubjectsField = new Circle(dataModel.getCurrentPosition(), viewSubjectsRadius);
             }
         }
         super.setup(configuration);
-        if (tokenFieldOfVision || subjectFieldOfVision) {
+        if (tokenFieldOfVisionEnabled || subjectFieldOfVisionEnabled) {
             fieldOfVisionOffset = (dw / 2.0d);
             System.err.println("field of vision offset: " + fieldOfVisionOffset);
         }
     }
 
     public void collectTokens(Point ... positions) {
-        synchronized (collectedTokens) {
-            for (Point position: positions) {
-                collectedTokens.put(position, Duration.create(COLLECTED_TOKEN_ANIMATION_DURATION));
-            }
-        }
+    	if (dataModel.getRoundConfiguration().showTokenAnimation()) {
+    		synchronized (collectedTokens) {
+    			for (Point position: positions) {
+    				collectedTokens.put(position, Duration.create(COLLECTED_TOKEN_ANIMATION_DURATION));
+    			}
+    		}
+    	}
     }
 
     protected void paintTokens(Graphics2D graphics2D) {
         // three cases - show all food on the game board, show all food within
         // visible radius of the current player, or don't show any food.
-        if (tokenFieldOfVision) {
+        if (tokenFieldOfVisionEnabled) {
             viewTokensField.setCenter(dataModel.getCurrentPosition());
             paintCollection(dataModel.getResourcePositions(), graphics2D, scaledTokenImage, this, viewTokensField);
         }
@@ -118,28 +120,30 @@ public class SubjectView extends GridView {
         int height = (int) dh;
         int offset = 1;
         // paint shrinking tokens that this client has consumed.
-        synchronized (collectedTokens) {
-            for (Iterator<Map.Entry<Point, Duration>> iter = collectedTokens.entrySet().iterator(); iter.hasNext();) {
-                Map.Entry<Point, Duration> entry = iter.next();
-                Point point = entry.getKey();
-                Duration duration = entry.getValue();
-                elapsedTime = duration.getElapsedTime();
-                // FIXME: offset should be proportional to the actual size.
-                if (elapsedTime < 333L) {
-                    offset = 1;
-                } else if (elapsedTime < 666L) {
-                    offset = 2;
-                } else if (elapsedTime < 1000L) {
-                    offset = 3;
-                } else {
-                    // After the time threshold has been exceeded, prune old food 
-                    // that shouldn't be displayed.
-                    iter.remove();
-                    continue;
-                }
-                // food pellets shrink over time
-                paintToken(point, graphics2D, width/offset, height/offset);
-            }
+        if (dataModel.getRoundConfiguration().showTokenAnimation()) {
+        	synchronized (collectedTokens) {
+        		for (Iterator<Map.Entry<Point, Duration>> iter = collectedTokens.entrySet().iterator(); iter.hasNext();) {
+        			Map.Entry<Point, Duration> entry = iter.next();
+        			Point point = entry.getKey();
+        			Duration duration = entry.getValue();
+        			elapsedTime = duration.getElapsedTime();
+        			// FIXME: offset should be proportional to the actual size.
+        			if (elapsedTime < 333L) {
+        				offset = 1;
+        			} else if (elapsedTime < 666L) {
+        				offset = 2;
+        			} else if (elapsedTime < 1000L) {
+        				offset = 3;
+        			} else {
+        				// After the time threshold has been exceeded, prune old food 
+        				// that shouldn't be displayed.
+        				iter.remove();
+        				continue;
+        			}
+        			// food pellets shrink over time
+        			paintToken(point, graphics2D, width/offset, height/offset);
+        		}
+        	}
         }
     }
 
@@ -155,7 +159,7 @@ public class SubjectView extends GridView {
         int characterHeight = fontMetrics.getAscent();
         int verticalCharacterSpacing = (int) ( (dh - characterHeight) / 2);
         Point currentPosition = dataModel.getCurrentPosition();
-        if (subjectFieldOfVision) {
+        if (subjectFieldOfVisionEnabled) {
             // paint a transparent circle centered on the current position of the subject.
             int radius = viewSubjectsRadius;
             viewSubjectsField.setCenter(currentPosition);

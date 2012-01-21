@@ -18,7 +18,7 @@ import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
-import edu.asu.commons.foraging.rules.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingRule;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 
@@ -557,9 +557,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getInitialVotingInstructions() {
-        ST template = createStringTemplate(getProperty("initial-voting-instructions", "<h1>Notice</h1><hr><p>You will be given the ability to vote for rules in the next screen.</p>"));
-        template.add("clientsPerGroup", getClientsPerGroup());
-        return template.render();
+        return createStringTemplate(getProperty("initial-voting-instructions", getParentConfiguration().getInitialVotingInstructions())).render();
     }
     
     public List<ForagingRule> getForagingRules() {
@@ -722,7 +720,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getSubmittedVoteInstructions() {
-        return getProperty("submitted-vote-instructions", "<h1>Submitted</h1><hr><p>Thank you for submitting your vote.  Please wait while we tally the rest of the votes from the other members of your group.</p>"); 
+        return getProperty("submitted-vote-instructions", "<h1>Submitted</h1><hr><p>Your nomination has been recorded.  The final results of the nomination will be shown once all the nominations in your group have been received.</p>"); 
     }
     
     public String getVotingResults(List<ForagingRule> selectedRules) {
@@ -828,5 +826,9 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 	
 	public String getDurationInMinutes() {
 	    return inMinutes(getDuration()) + " minutes";
+	}
+	
+	public boolean showTokenAnimation() {
+		return getBooleanProperty("show-token-animation", true);
 	}
 }

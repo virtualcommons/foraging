@@ -78,7 +78,7 @@ import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.model.TrustGameResult;
-import edu.asu.commons.foraging.rules.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingRule;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Dispatcher;
 import edu.asu.commons.net.Identifier;

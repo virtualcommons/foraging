@@ -18,7 +18,7 @@ import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.ForagingDataModel;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.Resource;
-import edu.asu.commons.foraging.rules.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingRule;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 /**

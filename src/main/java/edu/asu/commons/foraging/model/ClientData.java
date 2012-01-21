@@ -13,7 +13,7 @@ import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.RoundConfiguration.SanctionAction;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.graphics.Point3D;
-import edu.asu.commons.foraging.rules.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingRule;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;

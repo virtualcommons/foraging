@@ -32,7 +32,7 @@ import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
 import edu.asu.commons.foraging.client.ForagingClient;
-import edu.asu.commons.foraging.rules.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingRule;
 import edu.asu.commons.ui.UserInterfaceUtils;
 
 /**

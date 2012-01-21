@@ -143,4 +143,8 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
         return data.getCorrectQuizAnswers() * getQuizCorrectAnswerReward();
     }
 
+	public String getInitialVotingInstructions() {
+		return assistant.getProperty("initial-voting-instructions");
+	}
+
 }

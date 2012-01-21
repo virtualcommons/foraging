@@ -15,7 +15,7 @@
 <entry key='voting-enabled'>true</entry>
 <entry key="instructions">
     <![CDATA[
-    <h1>Important New Instructions</h1>
+    <h1>Important New Instructions!</h1>
     <h2>Reducing Other Player's Earnings</h2>
     <hr>
 <p>
@@ -55,7 +55,7 @@ participants' number key from 1 to {self.clientsPerGroup}.
 <h2>Strategy Reminder</h2>
 <hr>
     <p>
-        The strategy your group voted for is: 
+        Reminder: 
     </p>
         <ul>
             <li><b>{first(self.selectedRules)}</b></li>
@@ -66,12 +66,12 @@ participants' number key from 1 to {self.clientsPerGroup}.
 
 <entry key='voting-results'>
     <![CDATA[
-    <h1>Voting Results</h1>
+    <h1>Nomination Results</h1>
     <h2>Selected Strategy</h2>
     <hr>
     <p><b> {first(selectedRules)} </b></p>
     {if (tiebreaker)}
-    <p><b>NOTE:</b> There was a tie and selected strategy listed here was randomly selected as the winner.</p>
+    <p><b>NOTE:</b> There was a tie and the selected strategy listed here was randomly selected as the winner.</p>
     <h2>Other Nominated Strategies</h2>
     <hr>
         <ol>
@@ -83,18 +83,19 @@ participants' number key from 1 to {self.clientsPerGroup}.
 
 <entry key='initial-voting-instructions'>
     <![CDATA[
-<h1>Important New Instructions</h1>
+<h1>Important New Instructions!</h1>
 <h2>Strategies for managing how players collect tokens for the rest of the experiment</h2>
 <hr>
 <p>
-In a moment, you will have the option to implement one of six strategies for how you
+In a moment, you will have the option to implement one of five strategies for how you
 and the three other people in your group collect tokens for the rest of the
 experiment.
 </p>
+
 <h2>Procedure for Deciding the Strategy</h2>
 <hr>
 <p>
-    Each of the {clientsPerGroup} people in your group can nominate one of the six
+    Each of the {self.clientsPerGroup} people in your group can nominate one of the five
     potential strategies.  The single strategy that receives the most nominations
     wins.
 </p>
@@ -103,6 +104,7 @@ experiment.
     the computer.  Each of the tied strategies will have an equal chance of being
     selected.
 </p>
+
 <h2>Implementation</h2>
 <hr>
     <p>Neither the computer nor the experimenter will intervene to implement the
@@ -122,8 +124,7 @@ experiment.
 <h1>Strategy Nomination Instructions</h1>
 <hr>
 <p>
-To nominate a strategy, click the button to the right of the one you choose, and
-then click "submit." The computer will tally the nominations and then report the
+To nominate a strategy, click the radio button that is to the right of the one you choose; then click "submit". The computer will tally the nominations and then report the
 results on the next screen. The results will be presented to each person in
 your group.
 </p>

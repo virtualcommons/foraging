@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.asu.commons.event.AbstractPersistableEvent;
-import edu.asu.commons.foraging.rules.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingRule;
 import edu.asu.commons.net.Identifier;
 
 /**
