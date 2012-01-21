@@ -23,8 +23,8 @@
     <h1>Survey</h1>
     <hr>
         <p>
-            This was the final round of the token task.  To wrap up we would like to again ask you
-            some quick questions.  Please <a href='{surveyUrl}'>click here</a> to
+            Before we continue to the next round of the token task, we would like to ask you
+            some quick questions. Please <a href='{surveyUrl}'>click here</a> to
             begin the survey.
         </p>
         <p>
@@ -85,9 +85,9 @@ are told to do so.
 <hr>
 <p>
     You have already earned {showUpPayment} by showing up at this experiment.  You can
-earn more, up to a maximum of about $15-$40, by participating in this experiment
+earn more, up to a maximum of about $15-$50, by participating in this experiment
 which will take about an hour to an hour and a half. The amount of money you earn
-depends on your decisions as well as the decisions of your group members.</p>
+depends on your decisions, as well as the decisions of your group members during the nine rounds of the experiment.</p>
 <h2>The Token Task</h2>
 <hr>
 <p>
@@ -110,7 +110,7 @@ depends on your decisions as well as the decisions of your group members.</p>
 The tokens that you collect have the potential to regenerate.  After you have
 collected a green token, a new token can re-appear on that empty cell. The rate at
 which new tokens appear is dependent on the number of adjacent cells that still have
-tokens. The more tokens there are in the eight cells around  empty cell, the faster
+tokens. The more tokens there are in the eight cells around an empty cell, the faster
 a new token will appear on that empty cell.  
 </p>
 <p>
