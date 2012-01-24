@@ -18,7 +18,7 @@ import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: AggregateTokenSpatialDistributionProcessor.java 526 2010-08-06 01:25:27Z alllee $
+ * $Id$
  * 
  * 
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
