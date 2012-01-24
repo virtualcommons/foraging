@@ -146,5 +146,13 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
 	public String getInitialVotingInstructions() {
 		return assistant.getProperty("initial-voting-instructions");
 	}
+	
+	public String getVotingResults() {
+	    return assistant.getProperty("voting-results");
+	}
+	
+	public int getServerSleepInterval() {
+	    return assistant.getIntProperty("server-sleep-interval", 50);
+	}
 
 }

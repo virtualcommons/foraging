@@ -257,4 +257,12 @@ When payments are ready we will call you up one by one. Please wait until your c
 {endif}
 ]]>
 </entry>
+<entry key='voting-results'>
+    <![CDATA[
+    <h1>Nomination Results</h1>
+    <h2>Selected Strategy</h2>
+    <hr>
+    <p><b> {first(selectedRules)} </b></p>
+    ]]>
+</entry>
 </properties>

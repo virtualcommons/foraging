@@ -473,21 +473,19 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
             }
         }
     }
-
-    private int getOccupancy(Point position) {
-        int occupancy = 0;
-        for (ClientData data: clients.values()) {
-            if (data.getPosition().equals(position)) {
-                occupancy++;
-            }
-        }
-        return occupancy;
-    }
-
     
     private boolean isCellAvailable(Point position) {
         if (serverDataModel.getRoundConfiguration().shouldCheckOccupancy()) {
-            return getOccupancy(position) < serverDataModel.getRoundConfiguration().getMaximumOccupancyPerCell();
+            int maximumOccupancyPerCell = serverDataModel.getRoundConfiguration().getMaximumOccupancyPerCell();
+            int currentOccupancy = 0;
+            for (ClientData data: clients.values()) {
+                if (data.getPosition().equals(position)) {
+                    currentOccupancy++;
+                    if (currentOccupancy >= maximumOccupancyPerCell) {
+                        return false;
+                    }
+                }
+            }
         }
         return true;
     }
@@ -581,7 +579,7 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
         if ( isResourceOwner(id, resource) ) {
             ClientData clientData = clients.get(id);
             clientData.addTokens(getRoundConfiguration().getTokensPerFruits());
-            getResourceFromDistribution(resource).harvestFruits();
+            getResourceFromDistribution(resource).setAge(getRoundConfiguration().getMaximumResourceAge() - 1);
             resourceOwners.remove(id);
         }
     }

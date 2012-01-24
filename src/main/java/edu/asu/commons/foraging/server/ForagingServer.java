@@ -136,7 +136,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
     }
 
     public ForagingServer(ServerConfiguration configuration) {
-        setConfiguration(configuration);
+        super(configuration);
         persister = new ForagingPersister(getEventChannel(), configuration);
         try {
             Handler logHandler = new FileHandler(configuration.getLogFileDestination(), true);
@@ -942,22 +942,23 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 Map<Identifier, Point> clientPositions = group.getClientPositions();
                 for (ClientData data : group.getClientDataMap().values()) {
                     if (shouldSynchronize(data.getAssignedNumber())) {
+                        logger.info("full client sync: " + data);
                         transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
                     }
                     else {
                         transmit(new ClientPositionUpdateEvent(data, addedResources, removedResources, clientTokens, clientPositions,
                                 currentRoundDuration.getTimeLeft()));
-                        data.clearCollectedTokens();
                     }
+                    // post-process cleanup of transient data structures on ClientData
+                    data.clearCollectedTokens();
+                    data.resetLatestSanctions();
                 }
             }
             // FIXME: refine this, send basic info to the facilitator (how many resources left, etc.)
             if (shouldUpdateFacilitator()) {
                 transmit(new FacilitatorUpdateEvent(facilitatorId, serverDataModel, currentRoundDuration.getTimeLeft()));
             }
-            // post-process cleanup
-            // for now, the only thing we need to do is clear the food added/removed lists for each group.
-            serverDataModel.postProcessCleanup();
+
         }
 
         private boolean shouldUpdateFacilitator() {
@@ -966,7 +967,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
         private boolean shouldSynchronize(int assignedNumber) {
             long startCount = secondTick.getStartCount();
-            return (startCount < 3) || ((startCount % SYNCHRONIZATION_FREQUENCY) == (assignedNumber * 10));
+            return (startCount < 2) || ((startCount % SYNCHRONIZATION_FREQUENCY) == (assignedNumber * 10));
         }
 
         private void sendEndRoundEvents() {

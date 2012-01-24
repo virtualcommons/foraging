@@ -64,22 +64,6 @@ participants' number key from 1 to {self.clientsPerGroup}.
     ]]>
 </entry>
 
-<entry key='voting-results'>
-    <![CDATA[
-    <h1>Nomination Results</h1>
-    <h2>Selected Strategy</h2>
-    <hr>
-    <p><b> {first(selectedRules)} </b></p>
-    {if (tiebreaker)}
-    <p><b>NOTE:</b> There was a tie and the selected strategy listed here was randomly selected as the winner.</p>
-    <h2>Other Nominated Strategies</h2>
-    <hr>
-        <ol>
-            {rest(selectedRules): {selectedRule | <li> <b>{selectedRule}</b></li>}}
-        </ol>
-    {endif}
-    ]]>
-</entry>
 
 <entry key='initial-voting-instructions'>
     <![CDATA[

@@ -36,7 +36,7 @@ import edu.asu.commons.foraging.model.ServerDataModel;
  * @author <a href='anonymouslee@gmail.com'>Allen Lee</a>, Deepali Bhagvat
  * @version $Revision$
  */
-public class Facilitator extends BaseFacilitator<ServerConfiguration> {
+public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfiguration> {
 
     private final static Facilitator INSTANCE = new Facilitator();
     private ServerDataModel serverDataModel;

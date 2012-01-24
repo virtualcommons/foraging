@@ -725,14 +725,17 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     
     public String getVotingResults(List<ForagingRule> selectedRules) {
         setSelectedRules(selectedRules);
-        // FIXME: move to template style construction
-        ST template = createStringTemplate(getProperty("voting-results"));
+        ST template = createStringTemplate(getVotingResultsTemplate());
         template.add("tiebreaker", selectedRules.size() > 1);
         template.add("selectedRules", selectedRules);
         return template.render();
     }
     
-    public String getFacilitatorDebriefing() {
+    public String getVotingResultsTemplate() {
+        return getProperty("voting-results", getParentConfiguration().getVotingResults());
+    }
+    
+    public String getFacilitatorDebriefingTemplate() {
     	return getProperty("facilitator-debriefing", getParentConfiguration().getFacilitatorDebriefing());
     }
     
@@ -796,7 +799,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
 	public String generateFacilitatorDebriefing(ServerDataModel serverDataModel) {
-		ST template = createStringTemplate(getFacilitatorDebriefing());
+		ST template = createStringTemplate(getFacilitatorDebriefingTemplate());
 		template.add("lastRound", serverDataModel.isLastRound());
 		ServerConfiguration serverConfiguration = getParentConfiguration();
 		NumberFormat formatter = NumberFormat.getCurrencyInstance();

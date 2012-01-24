@@ -108,9 +108,11 @@ public class ResourceDispenser {
         }
     }
     
+    @Deprecated
     public void updateResourceAge(GroupDataModel group) {       
         for (Resource resource: group.getResourceDistribution().values()) {
-            resource.increaseAge();
+            // FIXME: needs to be modded to wraparound.
+            resource.setAge(resource.getAge() + 1);
         }
     }
     
@@ -348,8 +350,6 @@ public class ResourceDispenser {
                 logger.info("density dependent resource generator initialized with " + resources.size() + " resources.");
                 serverDataModel.addResources(group, resources);
             }
-            // FIXME: is this necessary?
-            Resource.setConfiguration(roundConfiguration);
         }
         
         public double getProbabilityForCell(GroupDataModel group, int currentX, int currentY) {

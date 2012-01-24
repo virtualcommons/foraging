@@ -62,7 +62,7 @@ import edu.asu.commons.util.Utils;
  * @version $Revision$
  */
 
-public class ForagingClient extends BaseClient<ServerConfiguration> {
+public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfiguration> {
 
     enum ClientState {
         // not connected to the server at all
@@ -94,7 +94,6 @@ public class ForagingClient extends BaseClient<ServerConfiguration> {
             gameWindow = new GameWindow3D(this);
         }
         clientPanel.add(gameWindow.getPanel(), BorderLayout.CENTER);    
-
     }
     
 

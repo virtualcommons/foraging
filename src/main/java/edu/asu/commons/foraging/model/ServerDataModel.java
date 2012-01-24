@@ -219,15 +219,6 @@ public class ServerDataModel extends ForagingDataModel {
         this.terrain = terrain;
     }
 
-    public void postProcessCleanup() {
-        for (GroupDataModel group : clientsToGroups.values()) {
-            group.clearDiffLists();
-            if (isSanctioningEnabled()) {
-                group.resetSanctionCounts();
-            }
-        }
-    }
-
     public void clear() {
         // XXX: we no longer remove the Groups from the ServerGameState since we want persistent groups.
         // This should be configurable?
