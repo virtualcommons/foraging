@@ -32,7 +32,7 @@ class CollectedTokenSpatialDistributionProcessor extends SaveFileProcessor.Base 
             ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
             SortedSet<PersistableEvent> actions = savedRoundData.getActions();
             Map<Identifier, ClientSpatialDistribution> clientSpatialDistributionMap = new HashMap<Identifier, ClientSpatialDistribution>();
-            Dimension boardSize = new Dimension(serverDataModel.getBoardWidth(), serverDataModel.getBoardHeight());
+            Dimension boardSize = serverDataModel.getRoundConfiguration().getBoardSize();
             for (ClientData clientData : serverDataModel.getClientDataMap().values()) {
                 clientSpatialDistributionMap.put(clientData.getId(), new ClientSpatialDistribution(boardSize));
             }
