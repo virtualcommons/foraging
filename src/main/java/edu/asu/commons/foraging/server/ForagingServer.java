@@ -979,7 +979,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private boolean shouldSynchronize(ClientData data) {
             long startCount = secondTick.getStartCount();
             int assignedNumber = data.getAssignedNumber(); 
-            logger.info("start count: " + startCount);
             return (startCount < 2) || ((startCount % SYNCHRONIZATION_FREQUENCY) == (assignedNumber * 10));
         }
 
