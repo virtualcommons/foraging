@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -101,6 +102,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     private final Map<Identifier, ClientData> clients = new HashMap<Identifier, ClientData>();
+    private final HashSet<Identifier> syncSet = new HashSet<Identifier>();
 
     public final static int SYNCHRONIZATION_FREQUENCY = 60;
     public final static int SERVER_SLEEP_INTERVAL = 75;
@@ -923,6 +925,13 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 //
 //                    }
 //                }
+            	for (ClientData data: clients.values()) {
+            		if (shouldSynchronize(data)) {
+            			logger.info("Sending full sync to: " + data);
+            			transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
+            			syncSet.add(data.getId());
+            		}
+            	}
                 resourceDispenser.generateResources();
                 secondTick.restart();
             }
@@ -941,14 +950,14 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 Map<Identifier, Integer> clientTokens = group.getClientTokens();
                 Map<Identifier, Point> clientPositions = group.getClientPositions();
                 for (ClientData data : group.getClientDataMap().values()) {
-                    if (shouldSynchronize(data.getAssignedNumber())) {
-                        logger.info("full client sync: " + data);
-                        transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
-                    }
-                    else {
-                        transmit(new ClientPositionUpdateEvent(data, addedResources, removedResources, clientTokens, clientPositions,
-                                currentRoundDuration.getTimeLeft()));
-                    }
+                	if (syncSet.contains(data.getId())) {
+                		// skip this update, then remove them from the sync set.
+                		syncSet.remove(data.getId());
+                	}
+                	else {
+                		transmit(new ClientPositionUpdateEvent(data, addedResources, removedResources, clientTokens, clientPositions,
+                				currentRoundDuration.getTimeLeft()));
+                	}
                     // post-process cleanup of transient data structures on ClientData
                     data.clearCollectedTokens();
                     data.resetLatestSanctions();
@@ -967,8 +976,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             return false;
         }
 
-        private boolean shouldSynchronize(int assignedNumber) {
+        private boolean shouldSynchronize(ClientData data) {
             long startCount = secondTick.getStartCount();
+            int assignedNumber = data.getAssignedNumber(); 
+            logger.info("start count: " + startCount);
             return (startCount < 2) || ((startCount % SYNCHRONIZATION_FREQUENCY) == (assignedNumber * 10));
         }
 
