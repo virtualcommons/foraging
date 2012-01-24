@@ -262,6 +262,9 @@ When payments are ready we will call you up one by one. Please wait until your c
     <h1>Nomination Results</h1>
     <h2>Selected Strategy</h2>
     <hr>
+    {if (tiebreaker)}
+    <p><b>NOTE:</b> There was a tie and the selected strategy listed here was randomly selected as the winner.</p>
+    {endif}
     <p><b> {first(selectedRules)} </b></p>
     ]]>
 </entry>
