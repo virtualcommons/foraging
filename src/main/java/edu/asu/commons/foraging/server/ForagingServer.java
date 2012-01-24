@@ -953,6 +953,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     data.clearCollectedTokens();
                     data.resetLatestSanctions();
                 }
+                // after transmitting all the changes to the group, make sure to cleanup
+                group.clearDiffLists();
             }
             // FIXME: refine this, send basic info to the facilitator (how many resources left, etc.)
             if (shouldUpdateFacilitator()) {

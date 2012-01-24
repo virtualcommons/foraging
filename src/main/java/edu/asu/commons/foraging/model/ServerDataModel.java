@@ -63,9 +63,6 @@ public class ServerDataModel extends ForagingDataModel {
     
     private transient boolean dirty = false;
     
-
-
-
 	// Maps client Identifiers to the GroupDataModel that the client belongs to 
     private final Map<Identifier, GroupDataModel> clientsToGroups = new HashMap<Identifier, GroupDataModel>();
 
@@ -316,12 +313,6 @@ public class ServerDataModel extends ForagingDataModel {
         Identifier id = event.getId();
         GroupDataModel group = clientsToGroups.get(id);
         group.harvestFruits(id, event.getResource());
-    }
-
-    public void clearDiffLists() {
-        for (GroupDataModel group : getGroups()) {
-            group.clearDiffLists();
-        }
     }
 
     public Queue<RealTimeSanctionRequest> getLatestSanctions(Identifier id) {

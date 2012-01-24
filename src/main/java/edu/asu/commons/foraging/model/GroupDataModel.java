@@ -312,17 +312,13 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
      * Perform all cleanup.
      */
     public void cleanupRound() {
-        clearResourceDistribution();
+        resourceDistribution.clear();
+        clearDiffLists();
         tokensCollectedDuringInterval = 0;
         activeEnforcementMechanism = EnforcementMechanism.NONE;
         activeSanctionMechanism = SanctionMechanism.NONE;
         submittedRegulations.clear();
         activeMonitor = null;
-    }
-    
-    public void clearResourceDistribution() {
-        resourceDistribution.clear();
-        clearDiffLists();
     }
     
     public boolean isResourceAt(Point position) {
