@@ -193,9 +193,18 @@ public class GameWindow2D implements GameWindow {
     	return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				client.transmit(new SurveyCompletedEvent(client.getId()));
-				showInstructions();
-				instructionsEditorPane.setActionListener(null);
+			    int selectedOption = JOptionPane.showConfirmDialog(getPanel(), 
+			            dataModel.getRoundConfiguration().getSurveyConfirmationMessage(), 
+			            "Confirm survey completion", JOptionPane.YES_NO_OPTION);
+			    switch (selectedOption) {
+			        case JOptionPane.YES_OPTION:
+		                showInstructions();
+		                client.transmit(new SurveyCompletedEvent(client.getId()));
+		                instructionsEditorPane.setActionListener(null);
+		                break;
+			        default:
+			            break;
+			    }
 			}
     	};
     }

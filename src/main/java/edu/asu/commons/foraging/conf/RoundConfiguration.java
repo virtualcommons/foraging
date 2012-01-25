@@ -834,4 +834,9 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 	public boolean showTokenAnimation() {
 		return getBooleanProperty("show-token-animation", true);
 	}
+
+    public String getSurveyConfirmationMessage() {
+        return getProperty("survey-confirmation-message", "Please make sure you have completed the survey before continuing.  Have you completed the survey?");
+
+    }
 }
