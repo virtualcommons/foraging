@@ -41,6 +41,27 @@ with a white number embedded in the dot.
     collected at the top right corner of the screen.  On the top left corner of the
     screen you will see the remaining time in the round.
 </p>
+<h3>Vision Range</h3>
+<hr>
+<p>You can only see other participants or resource units within your vision range.
+The figure below indicates the vision range compared to the entire environment.
+</p>
+<img src="@CODEBASE_URL@/images/vision-range.jpg">
+<h3>In round chat</h3>
+<hr>
+    <p>
+        You will be able to communicate with the other <b>visible</b> participants
+        in your group <b>during</b> the round.  If you cannot see another
+        participant in your vision range, you will not see their chats and they will
+        not see your chats.
+    </p>
+    <p>
+        To communicate, hit the enter key, type your message, and then hit the enter key
+        again.  You must hit the enter key before every message you type, otherwise
+        control will return to the game screen where you can use the arrow keys to move
+        around.  
+    </p>
+
 <h3>Anonymity</h3>
 <hr>
 <p>

@@ -22,15 +22,20 @@
 
 <entry key="instructions">
 <![CDATA[
-<h3>Round {roundNumber} Instructions</h3>
+<h3>Round {self.roundNumber} Instructions</h3>
 <hr>
 <p>
     This round is the same as the previous rounds with one exception.  You will be
-    able to communicate with the other participants in your group <b>during</b> the
-    round.  To communicate, hit the enter key, type your message, and then hit the
-    enter key again.  You must hit the enter key before every message you type,
-    otherwise control will return to the game screen where you can use the arrow
-    keys to move around.
+    able to communicate with the other <b>visible</b> participants in your group
+    <b>during</b> the round.  If you cannot see another participant in
+    your vision range, you will not see their chats and they will not see your
+    chats.
+</p>
+<p>
+    To communicate, hit the enter key, type your message, and then hit the enter key
+    again.  You must hit the enter key before every message you type, otherwise
+    control will return to the game screen where you can use the arrow keys to move
+    around.  
 </p>
 
 <p>

@@ -40,6 +40,13 @@ with a white number embedded in the dot.
     collected at the top right corner of the screen.  On the top left corner of the
     screen you will see the remaining time in the round.
 </p>
+<h3>Vision Range</h3>
+<hr>
+<p>You can only see other participants or resource units within your vision range.
+The figure below indicates the vision range compared to the entire environment.
+</p>
+<img src="@CODEBASE_URL@/images/vision-range.jpg">
+
 <h3>Anonymity</h3>
 <hr>
 <p>
