@@ -89,7 +89,7 @@ public class SubjectView extends GridView {
         }
         super.setup(configuration);
         if (tokenFieldOfVisionEnabled || subjectFieldOfVisionEnabled) {
-            fieldOfVisionOffset = (dw / 2.0d);
+            fieldOfVisionOffset = (dw * 0.3d);
             System.err.println("field of vision offset: " + fieldOfVisionOffset);
         }
     }
@@ -157,7 +157,7 @@ public class SubjectView extends GridView {
         graphics2D.setFont(font);
         FontMetrics fontMetrics = graphics2D.getFontMetrics(font); 
         int characterHeight = fontMetrics.getAscent();
-        int verticalCharacterSpacing = (int) ( (dh - characterHeight) / 2);
+        int verticalCharacterSpacing = (int) ((dh - characterHeight) * 0.5d);
         Point currentPosition = dataModel.getCurrentPosition();
         if (subjectFieldOfVisionEnabled) {
             // paint a transparent circle centered on the current position of the subject.
@@ -195,7 +195,7 @@ public class SubjectView extends GridView {
                 String subjectNumber = String.valueOf( dataModel.getAssignedNumber(id) );
                 //Calculate x and y so that the text is center aligned
                 int characterWidth = fontMetrics.stringWidth(subjectNumber);
-                int x = (int) (scaledX + ( (dw - characterWidth) / 2));
+                int x = (int) (scaledX + ( (dw - characterWidth) * 0.5d));
                 int y = (int) (scaledY + characterHeight - verticalCharacterSpacing);
                 graphics2D.drawString(subjectNumber, x, y);
             }
