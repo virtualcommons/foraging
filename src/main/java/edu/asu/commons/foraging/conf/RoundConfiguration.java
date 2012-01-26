@@ -294,7 +294,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      * Returns the instructions for this round.  If undefined at the round level it uses default instructions at the parent ServerConfiguration level.
      */
     public String getInstructions() {
-        ST template = createStringTemplate(getProperty("instructions", getParentConfiguration().getSameRoundAsPreviousInstructions()));
+        ST template = createStringTemplate(getProperty("instructions", getParentConfiguration().getSameAsPreviousRoundInstructions()));
         // FIXME: probably should just lift these out into methods on RoundConfiguration
         // and refer to them as self.durationInMinutes or self.dollarsPerTokenCurrencyString, etc.
         template.add("duration", inMinutes(getDuration()) + " minutes");
