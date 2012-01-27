@@ -20,6 +20,7 @@ import edu.asu.commons.event.EventTypeProcessor;
 import edu.asu.commons.experiment.DataModel;
 import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
+import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.event.FacilitatorCensoredChatRequest;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.UserInterfaceUtils;
@@ -109,7 +110,7 @@ public class ChatPanel extends JPanel {
         }
     }
 
-    public void initialize(DataModel<RoundConfiguration> dataModel) {
+    public void initialize(DataModel<ServerConfiguration, RoundConfiguration> dataModel) {
         this.participants = dataModel.getAllClientIdentifiers();
     }
     

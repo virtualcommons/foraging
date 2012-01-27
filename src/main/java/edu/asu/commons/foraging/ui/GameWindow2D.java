@@ -705,7 +705,7 @@ public class GameWindow2D implements GameWindow {
     	// FIXME: replace HTML strings with configuration template
         instructionsBuilder.append("<h3>Submission successful</h3><hr><p>Please wait while the rest of the submissions are gathered.</p>");
         setInstructions(instructionsBuilder.toString());
-        switchInstructionsPane();
+        showInstructionsPanel();
     }
 
     public void showInstructions() {
@@ -720,7 +720,7 @@ public class GameWindow2D implements GameWindow {
                     instructionsEditorPane.setActionListener(createQuizListener(roundConfiguration));
                 }
                 setInstructions(instructionsBuilder.toString());
-                switchInstructionsPane();
+                showInstructionsPanel();
                 instructionsEditorPane.setCaretPosition(0);
             }
         });
@@ -731,7 +731,7 @@ public class GameWindow2D implements GameWindow {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 setInstructions(dataModel.getRoundConfiguration().getInitialVotingInstructions());
-                switchInstructionsPane();
+                showInstructionsPanel();
             }
         });
     }
@@ -769,7 +769,9 @@ public class GameWindow2D implements GameWindow {
     
     
     public void showVoteScreen() {
-        add(getVotingPanel());
+        if (votingPanel == null) {
+            add(getVotingPanel());
+        }
         showPanel(VotingForm.NAME);
     }
 
@@ -779,12 +781,12 @@ public class GameWindow2D implements GameWindow {
             	instructionsEditorPane.setActionListener(null);
             	instructionsEditorPane.setActionListener(createSurveyFinishedListener());
                 setInstructions(dataModel.getRoundConfiguration().getSurveyInstructions(dataModel.getId()));
-                switchInstructionsPane();
+                showInstructionsPanel();
             }
         });
     }
 
-    public void switchInstructionsPane() {
+    public void showInstructionsPanel() {
         showPanel(INSTRUCTIONS_PANEL_NAME);
     }
 
@@ -800,10 +802,15 @@ public class GameWindow2D implements GameWindow {
         Runnable runnable = new Runnable() {
             public void run() {
                 postSanctionDebriefingText(event);
-                switchInstructionsPane();
+                showInstructionsPanel();
             }
         };
         SwingUtilities.invokeLater(runnable);
+    }
+    
+    public void showExitInstructions() {
+        showDebriefing(dataModel.getClientData(), true);
+        showInstructionsPanel();
     }
 
     public synchronized void endRound(final EndRoundEvent event) {
@@ -823,11 +830,9 @@ public class GameWindow2D implements GameWindow {
                 }
                 else {
                     instructionsEditorPane.setText("Waiting for updated round totals from the server...");
-                    switchInstructionsPane();
+                    showInstructionsPanel();
                 }
-                // FIXME: replace with facilitator driven show exit instructions signal? 
-                boolean showExitInstructions = event.isLastRound() && ! roundConfiguration.isTrustGameEnabled();
-                showDebriefing(event.getClientData(), showExitInstructions);
+                showDebriefing(event.getClientData(), false);
             }
         };
         try {
@@ -880,12 +885,12 @@ public class GameWindow2D implements GameWindow {
 
     public void surveyIdSubmitted() {
         setInstructions(dataModel.getRoundConfiguration().getWelcomeInstructions());
-        switchInstructionsPane();
+        showInstructionsPanel();
     }
 
     public void ruleVoteSubmitted() {
         setInstructions(dataModel.getRoundConfiguration().getSubmittedVoteInstructions());
-        switchInstructionsPane();
+        showInstructionsPanel();
     }
 
     public void updateDebriefingWith(TrustGameResultsClientEvent event) {

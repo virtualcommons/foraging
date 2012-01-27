@@ -28,6 +28,8 @@ import edu.asu.commons.event.FacilitatorMessageEvent;
 import edu.asu.commons.event.FacilitatorRegistrationRequest;
 import edu.asu.commons.event.RoundStartedMarkerEvent;
 import edu.asu.commons.event.SetConfigurationEvent;
+import edu.asu.commons.event.ShowExitInstructionsRequest;
+import edu.asu.commons.event.ShowRequest;
 import edu.asu.commons.event.SocketIdentifierUpdateRequest;
 import edu.asu.commons.experiment.AbstractExperiment;
 import edu.asu.commons.experiment.IPersister;
@@ -62,11 +64,9 @@ import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
-import edu.asu.commons.foraging.event.ShowRequest;
 import edu.asu.commons.foraging.event.SurveyCompletedEvent;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
-import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
@@ -711,7 +711,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
         		// using an iterator to consume both players and ensure that a player doesn't
         		// have the trust game calculated on them twice (except as a player 2 selection)
-        		boolean lastRound = getConfiguration().isLastRound();
         		for (ListIterator<ClientData> iter = clientList.listIterator(); iter.hasNext();) {
         			ClientData playerOne = iter.next();
         			ClientData playerTwo = first;
@@ -729,15 +728,16 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         			logger.info("TRUST GAME: about to pair " + playerOne + " with " + playerTwo);
         			TrustGameResult trustGameLog = serverDataModel.calculateTrustGame(playerOne, playerTwo);
         			allTrustGameResults.add(trustGameLog);
-        			if (lastRound) {
-        				transmit(new TrustGameResultsClientEvent(playerOne, trustGameLog));
-        				transmit(new TrustGameResultsClientEvent(playerTwo, trustGameLog));
-        			}
-
         			sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in:\n%s", playerOne, playerTwo,
         					trustGameLog));
         		}
         	}
+        	// show the exit instructions and update debriefing for all clients if this is the last round.
+            if (getConfiguration().isLastRound()) {
+                for (ClientData data: clients.values()) {
+                    transmit(new ShowExitInstructionsRequest(data.getId(), data.getGroupDataModel()));
+                }
+            }
 			transmitAndStore(new TrustGameResultsFacilitatorEvent(facilitatorId, serverDataModel, allTrustGameResults));
 			Utils.notify(facilitatorSignal);
 		}

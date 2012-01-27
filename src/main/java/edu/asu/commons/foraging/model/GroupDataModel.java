@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.experiment.DataModel;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
+import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
 import edu.asu.commons.foraging.event.EnforcementRankingRequest;
 import edu.asu.commons.foraging.event.LockResourceRequest;
@@ -42,7 +43,7 @@ import edu.asu.commons.net.Identifier;
  * @version $Revision$
  */
 
-public class GroupDataModel implements Serializable, Comparable<GroupDataModel>, DataModel<RoundConfiguration> {
+public class GroupDataModel implements Serializable, Comparable<GroupDataModel>, DataModel<ServerConfiguration, RoundConfiguration> {
 
     private static final long serialVersionUID = -4756267788191037505L;
 

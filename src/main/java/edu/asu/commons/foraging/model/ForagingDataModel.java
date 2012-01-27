@@ -5,6 +5,7 @@ import java.awt.Point;
 import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.experiment.DataModel;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
+import edu.asu.commons.foraging.conf.ServerConfiguration;
 
 
 
@@ -17,7 +18,7 @@ import edu.asu.commons.foraging.conf.RoundConfiguration;
  * @version $Revision$
  */
 
-public abstract class ForagingDataModel implements DataModel<RoundConfiguration> {
+public abstract class ForagingDataModel implements DataModel<ServerConfiguration, RoundConfiguration> {
 
     private final static long serialVersionUID = 7171398197039872068L;
     
