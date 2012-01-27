@@ -206,9 +206,6 @@
       <compilerarg value="-Xlint:unchecked"/>
       <classpath refid="project.classpath"/>
     </javac>
-    <copy todir="${build.dir}/data">
-      <fileset dir="${resources.dir}/data"/>
-    </copy>
     <copy todir="${build.dir}/images">
       <fileset dir="${resources.dir}/images"/>
     </copy>
