@@ -2,6 +2,7 @@ package edu.asu.commons.foraging.conf;
 
 import java.awt.Dimension;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import edu.asu.commons.foraging.model.EnforcementMechanism;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategyNomination;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 
@@ -558,7 +560,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getInitialVotingInstructions() {
-        return createStringTemplate(getProperty("initial-voting-instructions", getParentConfiguration().getInitialVotingInstructions())).render();
+        return createStringTemplate(getProperty("initial-voting-instructions")).render();
     }
     
     public List<ForagingStrategy> getForagingRules() {
@@ -725,7 +727,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
     
     public String generateVotingResults(List<ForagingStrategy> selectedRules, Map<ForagingStrategy, Integer> nominations) {
-        TreeMap<ForagingStrategy, Integer> sortedNominations = new TreeMap<ForagingStrategy, Integer>(nominations);
+    	List<ForagingStrategyNomination> sortedNominations = new ArrayList<ForagingStrategyNomination>();
+    	for (Map.Entry<ForagingStrategy, Integer> entry: new TreeMap<ForagingStrategy, Integer>(nominations).entrySet()) {
+    		ForagingStrategy strategy = entry.getKey();
+    		sortedNominations.add(new ForagingStrategyNomination(strategy, entry.getValue(), strategy.equals(selectedRules.get(0))));
+    	}
         setSelectedRules(selectedRules);
         ST template = createStringTemplate(getVotingResultsTemplate());
         template.add("nominations", sortedNominations);

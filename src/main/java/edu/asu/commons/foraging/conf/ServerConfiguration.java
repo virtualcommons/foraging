@@ -1,7 +1,6 @@
 package edu.asu.commons.foraging.conf;
 
 import java.text.NumberFormat;
-import java.util.Locale;
 
 import org.stringtemplate.v4.ST;
 
@@ -154,6 +153,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
 	
 	public int getServerSleepInterval() {
 	    return assistant.getIntProperty("server-sleep-interval", 50);
+	}
+
+	public String getWaitingRoomInstructions() {
+		return assistant.getProperty("waiting-room-instructions");
 	}
 
 }

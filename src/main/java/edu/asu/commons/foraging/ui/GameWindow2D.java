@@ -41,6 +41,7 @@ import javax.swing.text.StyledDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
+import edu.asu.commons.event.ClientReadyEvent;
 import edu.asu.commons.event.Event;
 import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.foraging.client.ClientDataModel;
@@ -53,7 +54,6 @@ import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
-import edu.asu.commons.foraging.event.SurveyCompletedEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
@@ -190,17 +190,18 @@ public class GameWindow2D implements GameWindow {
         }
     }
     
-    private ActionListener createSurveyFinishedListener() {
+    private ActionListener createClientReadyListener(final String confirmationMessage) {
     	return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 			    int selectedOption = JOptionPane.showConfirmDialog(getPanel(), 
-			            dataModel.getRoundConfiguration().getSurveyConfirmationMessage(), 
-			            "Confirm survey completion", JOptionPane.YES_NO_OPTION);
+			            confirmationMessage, 
+			            "Continue?", JOptionPane.YES_NO_OPTION);
 			    switch (selectedOption) {
 			        case JOptionPane.YES_OPTION:
-		                showInstructions();
-		                client.transmit(new SurveyCompletedEvent(client.getId()));
+		                setInstructions(dataModel.getExperimentConfiguration().getWaitingRoomInstructions());
+		                showInstructionsPanel();
+		                client.transmit(new ClientReadyEvent(client.getId(), confirmationMessage));
 		                instructionsEditorPane.setActionListener(null);
 		                break;
 			        default:
@@ -731,6 +732,8 @@ public class GameWindow2D implements GameWindow {
     public void showInitialVotingInstructions() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+//            	instructionsEditorPane.setActionListener(null);
+//            	instructionsEditorPane.setActionListener(createClientReadyListener("Are you ready to submit your nominations?"));
                 setInstructions(dataModel.getRoundConfiguration().getInitialVotingInstructions());
                 showInstructionsPanel();
             }
@@ -779,7 +782,7 @@ public class GameWindow2D implements GameWindow {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	instructionsEditorPane.setActionListener(null);
-            	instructionsEditorPane.setActionListener(createSurveyFinishedListener());
+            	instructionsEditorPane.setActionListener(createClientReadyListener(dataModel.getRoundConfiguration().getSurveyConfirmationMessage()));
                 setInstructions(dataModel.getRoundConfiguration().getSurveyInstructions(dataModel.getId()));
                 showInstructionsPanel();
             }

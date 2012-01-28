@@ -22,6 +22,7 @@ import edu.asu.commons.event.BeginRoundRequest;
 import edu.asu.commons.event.ChatEvent;
 import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.ClientMessageEvent;
+import edu.asu.commons.event.ClientReadyEvent;
 import edu.asu.commons.event.EndRoundRequest;
 import edu.asu.commons.event.EventTypeProcessor;
 import edu.asu.commons.event.FacilitatorMessageEvent;
@@ -64,7 +65,6 @@ import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
-import edu.asu.commons.foraging.event.SurveyCompletedEvent;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
@@ -301,18 +301,16 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     }
                 }
             });
-            addEventProcessor(new EventTypeProcessor<SurveyCompletedEvent>(SurveyCompletedEvent.class) {
-                private int submittedSurveys = 0;
+            addEventProcessor(new EventTypeProcessor<ClientReadyEvent>(ClientReadyEvent.class) {
+                private int readyClients = 0;
                 @Override
-                public void handle(SurveyCompletedEvent event) {
-                    if (getCurrentRoundConfiguration().isExternalSurveyEnabled()) {
-                        submittedSurveys++;
-                        sendFacilitatorMessage(String.format("Received %d of %d surveys: %s", submittedSurveys, clients.size(), event));
-                        if (submittedSurveys >= clients.size()) {
-                            sendFacilitatorMessage("All surveys have been reported as completed, ready to continue.");
-                            submittedSurveys = 0;
-                        }
-                    }
+                public void handle(ClientReadyEvent event) {
+                	readyClients++;
+                	sendFacilitatorMessage(String.format("%d of %d clients are ready: %s", readyClients, clients.size(), event));
+                	if (readyClients >= clients.size()) {
+                		sendFacilitatorMessage("All clients are ready to move on.");
+                		readyClients = 0;
+                	}
                 }
             });
 

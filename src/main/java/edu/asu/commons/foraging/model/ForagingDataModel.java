@@ -45,6 +45,13 @@ public abstract class ForagingDataModel implements DataModel<ServerConfiguration
     public int getBoardHeight() {
         return boardHeight;
     }
+    
+    public ServerConfiguration getExperimentConfiguration() {
+    	if (roundConfiguration != null) {
+        	return roundConfiguration.getParentConfiguration();    		
+    	}
+    	return null;
+    }
 
     public RoundConfiguration getRoundConfiguration() {
         return roundConfiguration;
