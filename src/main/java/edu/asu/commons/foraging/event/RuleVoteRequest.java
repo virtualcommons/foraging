@@ -2,7 +2,7 @@ package edu.asu.commons.foraging.event;
 
 
 import edu.asu.commons.event.AbstractPersistableEvent;
-import edu.asu.commons.foraging.rules.iu.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.net.Identifier;
 
 /**
@@ -18,14 +18,14 @@ import edu.asu.commons.net.Identifier;
 public class RuleVoteRequest extends AbstractPersistableEvent {
 
     private static final long serialVersionUID = 4360213814026474451L;
-    private ForagingRule rule;
+    private ForagingStrategy rule;
   
-    public RuleVoteRequest(Identifier id, ForagingRule rule) {
+    public RuleVoteRequest(Identifier id, ForagingStrategy rule) {
         super(id, rule.toString());
         this.rule = rule;
     }
     
-    public ForagingRule getRule() {
+    public ForagingStrategy getRule() {
         return rule;
     }
     

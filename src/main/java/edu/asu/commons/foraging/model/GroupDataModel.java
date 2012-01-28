@@ -26,7 +26,7 @@ import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
-import edu.asu.commons.foraging.rules.iu.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 
@@ -78,7 +78,7 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
 
     private ArrayList<RegulationData> submittedRegulations = new ArrayList<RegulationData>();
 
-    private ArrayList<ForagingRule> selectedRules;
+    private ArrayList<ForagingStrategy> selectedRules;
 
     public GroupDataModel(ServerDataModel serverDataModel) {
         this(serverDataModel, nextGroupId++);
@@ -766,19 +766,19 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
         return serverDataModel.getEventChannel();
     }
 
-    public Map<ForagingRule, Integer> generateVotingResults() {
-        Map<ForagingRule, Integer> tallyMap = new HashMap<ForagingRule, Integer>();
+    public Map<ForagingStrategy, Integer> generateVotingResults() {
+        Map<ForagingStrategy, Integer> tallyMap = new HashMap<ForagingStrategy, Integer>();
         for (ClientData client: clients.values()) {
-            ForagingRule rule = client.getVotedRule();
+            ForagingStrategy rule = client.getVotedRule();
             Integer count = tallyMap.get(rule);
             if (count == null) {
                 count = 0;
             }
             tallyMap.put(rule, count + 1);
         }
-        selectedRules = new ArrayList<ForagingRule>();
+        selectedRules = new ArrayList<ForagingStrategy>();
         Integer maxSeenValue = 0;
-        for (Map.Entry<ForagingRule, Integer> entry : tallyMap.entrySet()) {
+        for (Map.Entry<ForagingStrategy, Integer> entry : tallyMap.entrySet()) {
             Integer currentValue = entry.getValue();
 //            getLogger().info("rule : " + entry.getKey() + " has a vote value of " + currentValue);
 
@@ -800,12 +800,12 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
         return tallyMap;
     }
     
-    public List<ForagingRule> getSelectedRules() {
+    public List<ForagingStrategy> getSelectedRules() {
         return selectedRules;
     }
     
     
-    public ForagingRule getSelectedRule() {
+    public ForagingStrategy getSelectedRule() {
         return selectedRules.get(0);
     }
 

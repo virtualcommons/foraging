@@ -32,7 +32,7 @@ import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
 import edu.asu.commons.foraging.client.ForagingClient;
-import edu.asu.commons.foraging.rules.iu.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.ui.UserInterfaceUtils;
 
 /**
@@ -48,18 +48,18 @@ public class VotingForm extends JPanel {
     private ForagingClient client;
 
     public VotingForm(ForagingClient client) {
-        this(client, new HashMap<ForagingRule, Integer>());
+        this(client, new HashMap<ForagingStrategy, Integer>());
     }
     
-    public VotingForm(ForagingClient client, Map<ForagingRule, Integer> votingResults) {
+    public VotingForm(ForagingClient client, Map<ForagingStrategy, Integer> votingResults) {
         this.client = client;
         initComponents();
         initForm(votingResults);
         setName(NAME);
     }
     
-    private void initForm(Map<ForagingRule, Integer> votingResults) {
-        ForagingRule[] rules = ForagingRule.values();
+    private void initForm(Map<ForagingStrategy, Integer> votingResults) {
+        ForagingStrategy[] rules = ForagingStrategy.values();
         JPanel panel = new JPanel();
         GroupLayout groupLayout = new GroupLayout(panel);
         panel.setLayout(groupLayout);
@@ -84,7 +84,7 @@ public class VotingForm extends JPanel {
         
         verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(strategyHeaderLabel).addGap(20).addComponent(rightHeaderLabel));
         Dimension labelDimension = new Dimension(800, 100);
-        for (ForagingRule rule: rules) {
+        for (ForagingStrategy rule: rules) {
             JLabel ruleLabel = new JLabel("<html>" + rule.getDescription() + "</html>");
             ruleLabel.setFont(UserInterfaceUtils.DEFAULT_PLAIN_FONT);
             ruleLabel.setMaximumSize(labelDimension);
@@ -126,7 +126,7 @@ public class VotingForm extends JPanel {
                     JOptionPane.showMessageDialog(VotingForm.this, "Please select a strategy.");
                     return;
                 }
-                ForagingRule selectedRule = ForagingRule.valueOf(model.getActionCommand());
+                ForagingStrategy selectedRule = ForagingStrategy.valueOf(model.getActionCommand());
                 client.sendRuleVoteRequest(selectedRule);
             }
         });

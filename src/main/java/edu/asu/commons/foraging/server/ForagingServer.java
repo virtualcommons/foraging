@@ -79,7 +79,7 @@ import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.model.TrustGameResult;
-import edu.asu.commons.foraging.rules.iu.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Dispatcher;
 import edu.asu.commons.net.Identifier;
@@ -393,8 +393,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     if (votesReceived >= clients.size()) {
                         // calculate votes
                         for (GroupDataModel group : serverDataModel.getGroups()) {
-                            Map<ForagingRule, Integer> votingResults = group.generateVotingResults();
-                            List<ForagingRule> selectedRules = group.getSelectedRules();
+                            Map<ForagingStrategy, Integer> votingResults = group.generateVotingResults();
+                            List<ForagingStrategy> selectedRules = group.getSelectedRules();
                             for (Identifier id : group.getClientIdentifiers()) {
                                 sendFacilitatorMessage(String.format(
                                         "%s selected [%s] from all rules (%s)",

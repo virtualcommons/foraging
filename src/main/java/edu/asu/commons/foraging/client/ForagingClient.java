@@ -43,7 +43,7 @@ import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
 import edu.asu.commons.foraging.model.GroupDataModel;
-import edu.asu.commons.foraging.rules.iu.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.server.ForagingServer;
 import edu.asu.commons.foraging.ui.GameWindow;
 import edu.asu.commons.foraging.ui.GameWindow2D;
@@ -442,7 +442,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         getGameWindow2D().surveyIdSubmitted();
     }
 
-    public void sendRuleVoteRequest(ForagingRule selectedRule) {
+    public void sendRuleVoteRequest(ForagingStrategy selectedRule) {
         transmit(new RuleVoteRequest(getId(), selectedRule));
         getGameWindow2D().ruleVoteSubmitted();
     }

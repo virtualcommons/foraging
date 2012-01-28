@@ -19,7 +19,7 @@ import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
-import edu.asu.commons.foraging.rules.iu.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 
@@ -55,7 +55,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     private static final double DEFAULT_TOKEN_MOVEMENT_PROBABILITY = 0.2d;
     private static final double DEFAULT_TOKEN_BIRTH_PROBABILITY = 0.01d;
 
-    private List<ForagingRule> selectedRules;
+    private List<ForagingStrategy> selectedRules;
 
     public double getTrustGamePayoffIncrement() {
         return getDoubleProperty("trust-game-payoff", 0.25d);
@@ -561,8 +561,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return createStringTemplate(getProperty("initial-voting-instructions", getParentConfiguration().getInitialVotingInstructions())).render();
     }
     
-    public List<ForagingRule> getForagingRules() {
-        return Arrays.asList(ForagingRule.values());
+    public List<ForagingStrategy> getForagingRules() {
+        return Arrays.asList(ForagingStrategy.values());
 
     }
     public boolean isVotingAndRegulationEnabled() {
@@ -724,8 +724,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("submitted-vote-instructions", "<h1>Submitted</h1><hr><p>Your nomination has been recorded.  The final results of the nomination will be shown once all the nominations in your group have been received.</p>"); 
     }
     
-    public String generateVotingResults(List<ForagingRule> selectedRules, Map<ForagingRule, Integer> nominations) {
-        TreeMap<ForagingRule, Integer> sortedNominations = new TreeMap<ForagingRule, Integer>(nominations);
+    public String generateVotingResults(List<ForagingStrategy> selectedRules, Map<ForagingStrategy, Integer> nominations) {
+        TreeMap<ForagingStrategy, Integer> sortedNominations = new TreeMap<ForagingStrategy, Integer>(nominations);
         setSelectedRules(selectedRules);
         ST template = createStringTemplate(getVotingResultsTemplate());
         template.add("nominations", sortedNominations);
@@ -767,11 +767,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return template.render();
     }
     
-    public List<ForagingRule> getSelectedRules() {
+    public List<ForagingStrategy> getSelectedRules() {
         return selectedRules;
     }
 
-    public void setSelectedRules(List<ForagingRule> selectedRules) {
+    public void setSelectedRules(List<ForagingStrategy> selectedRules) {
         this.selectedRules = selectedRules;
     }
     
