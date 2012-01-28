@@ -109,13 +109,11 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
     private Identifier facilitatorId;
 
-    // FIXME: use java.util.concurrent constructs instead? CountDownLatch / CyclicBarrier?
+    // FIXME: investigate using java.util.concurrent constructs instead, e.g., CountDownLatch / CyclicBarrier
     private final Object roundSignal = new Object();
     private final Object quizSignal = new Object();
     private final Object facilitatorSignal = new Object();
     private final Object agentDesignSignal = new Object();
-    // FIXME: these latches don't quite do what we want. We need a way to reset them at each round.
-    // private CountDownLatch postRoundSanctionLatch;
 
     private StateMachine stateMachine = new ForagingStateMachine();
 

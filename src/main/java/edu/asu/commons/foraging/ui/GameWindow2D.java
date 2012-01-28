@@ -119,6 +119,7 @@ public class GameWindow2D implements GameWindow {
     private JPanel votingPanel;
     private VotingForm votingForm;
     private HtmlEditorPane votingInstructionsEditorPane;
+    private JScrollPane votingInstructionsScrollPane;
 
     // private EnergyLevel energyLevel;
 
@@ -742,9 +743,9 @@ public class GameWindow2D implements GameWindow {
             votingPanel = new JPanel();
             votingPanel.setLayout(new BoxLayout(votingPanel, BoxLayout.Y_AXIS));
             votingInstructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
-            JScrollPane scrollPane = new JScrollPane(votingInstructionsEditorPane);
+            votingInstructionsScrollPane = new JScrollPane(votingInstructionsEditorPane);
             votingInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getVotingInstructions());
-            votingPanel.add(scrollPane);
+            votingPanel.add(votingInstructionsScrollPane);
             votingForm = new VotingForm(client);
             votingPanel.add(votingForm);
             votingPanel.setName(VotingForm.NAME);
@@ -756,12 +757,11 @@ public class GameWindow2D implements GameWindow {
     public void showVotingResults(final List<ForagingRule> selectedRules, final Map<ForagingRule, Integer> votingResults) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                VotingForm resultsForm = new VotingForm(client, votingResults);
-                votingPanel.remove(votingForm);
-                votingPanel.add(resultsForm);
+                votingPanel.removeAll();
+                votingPanel.add(votingInstructionsScrollPane);
                 votingPanel.revalidate();
                 RoundConfiguration currentRoundConfiguration = client.getCurrentRoundConfiguration();
-                votingInstructionsEditorPane.setText(currentRoundConfiguration.getVotingResults(selectedRules));
+                votingInstructionsEditorPane.setText(currentRoundConfiguration.generateVotingResults(selectedRules, votingResults));
                 showPanel(VotingForm.NAME);
             }
         });

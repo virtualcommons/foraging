@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 import org.stringtemplate.v4.ST;
@@ -723,9 +724,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("submitted-vote-instructions", "<h1>Submitted</h1><hr><p>Your nomination has been recorded.  The final results of the nomination will be shown once all the nominations in your group have been received.</p>"); 
     }
     
-    public String getVotingResults(List<ForagingRule> selectedRules) {
+    public String generateVotingResults(List<ForagingRule> selectedRules, Map<ForagingRule, Integer> nominations) {
+        TreeMap<ForagingRule, Integer> sortedNominations = new TreeMap<ForagingRule, Integer>(nominations);
         setSelectedRules(selectedRules);
         ST template = createStringTemplate(getVotingResultsTemplate());
+        template.add("nominations", sortedNominations);
         template.add("tiebreaker", selectedRules.size() > 1);
         template.add("selectedRules", selectedRules);
         return template.render();

@@ -59,8 +59,6 @@ public class FacilitatorWindow extends JPanel {
 
     private JLabel timeLeftLabel;
 
-    private JMenuItem copyToClipboardMenuItem;
-
     private JMenuItem showInstructionsMenuItem;
 
     private JMenuItem startRoundMenuItem;
@@ -216,7 +214,8 @@ public class FacilitatorWindow extends JPanel {
         });
         menu.add(menuItem);
 
-        copyToClipboardMenuItem = createMenuItem(menu, "Copy to clipboard", new ActionListener() {
+        // create copy to clipboard menu item
+        createMenuItem(menu, "Copy to clipboard", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String text = informationEditorPane.getSelectedText();

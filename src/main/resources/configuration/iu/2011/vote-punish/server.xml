@@ -260,7 +260,14 @@ When payments are ready we will call you up one by one. Please wait until your c
 <entry key='voting-results'>
     <![CDATA[
     <h1>Nomination Results</h1>
-    <h2>Selected Strategy</h2>
+    <hr>
+    <table border=3 cellspacing=3 cellpadding=3>
+        <tr><th>Strategy</th><th>Nominations</th></tr>
+        {nominations.keys: { rule |
+        <tr bgcolor="#{if (rule.equals(first(selectedRules)))}FFFFCC{else}CCCCCC{endif}"><td>{rule}</td><td>{nominations.(rule)}</td></tr>
+        }}
+    </table>
+    <h1>Selected Strategy</h1>
     <hr>
     {if (tiebreaker)}
     <p><b>NOTE:</b> There was a tie and the selected strategy listed here was randomly selected as the winner.</p>
