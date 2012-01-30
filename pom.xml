@@ -71,6 +71,12 @@ vim:sts=2:sw=2
       <version>1.6.0_30</version>
     </dependency>
     <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.10</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>edu.asu.commons</groupId>
       <artifactId>csidex</artifactId>
       <version>0.3-SNAPSHOT</version>
