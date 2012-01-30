@@ -63,6 +63,7 @@ vim:sts=2:sw=2
       <releases><enabled>false</enabled></releases>
       <snapshots><enabled>true</enabled></snapshots>
     </repository>
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>javax.jnlp</groupId>
