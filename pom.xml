@@ -63,14 +63,6 @@ vim:sts=2:sw=2
       <releases><enabled>false</enabled></releases>
       <snapshots><enabled>true</enabled></snapshots>
     </repository>
-    <repository>
-      <id>dev.tdar.org</id>
-      <name>tDAR Maven2 repository</name>
-      <url>http://dev.tdar.org/archiva/repository/internal</url>
-      <releases><enabled>true</enabled></releases>
-      <snapshots><enabled>false</enabled></snapshots>
-    </repository>
-  </repositories>
   <dependencies>
     <dependency>
       <groupId>javax.jnlp</groupId>
