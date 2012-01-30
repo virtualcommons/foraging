@@ -13,6 +13,8 @@ import edu.asu.commons.event.EndRoundRequest;
 import edu.asu.commons.event.EventTypeProcessor;
 import edu.asu.commons.event.FacilitatorMessageEvent;
 import edu.asu.commons.event.SetConfigurationEvent;
+import edu.asu.commons.event.ShowExitInstructionsRequest;
+import edu.asu.commons.event.ShowInstructionsRequest;
 import edu.asu.commons.facilitator.BaseFacilitator;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
@@ -21,7 +23,6 @@ import edu.asu.commons.foraging.event.FacilitatorEndRoundEvent;
 import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.FacilitatorUpdateEvent;
 import edu.asu.commons.foraging.event.QuizCompletedEvent;
-import edu.asu.commons.foraging.event.ShowInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
@@ -38,7 +39,6 @@ import edu.asu.commons.foraging.model.ServerDataModel;
  */
 public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfiguration> {
 
-    private final static Facilitator INSTANCE = new Facilitator();
     private ServerDataModel serverDataModel;
     private FacilitatorWindow facilitatorWindow;
     private boolean experimentRunning = false;
@@ -50,6 +50,14 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
     @SuppressWarnings("rawtypes")
     public Facilitator(ServerConfiguration configuration) {
         super(configuration);
+    }
+
+    void createFacilitatorWindow(Dimension dimension) {
+        facilitatorWindow = new FacilitatorWindow(dimension, this);
+        if (getId() == null) {
+            // configure for unconnected functionality
+            facilitatorWindow.configureForReplay();
+        }
         addEventProcessor(new EventTypeProcessor<SetConfigurationEvent>(SetConfigurationEvent.class) {
             public void handle(SetConfigurationEvent event) {
                 RoundConfiguration configuration = (RoundConfiguration) event.getParameters();
@@ -57,10 +65,10 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
             }
         });
         addEventProcessor(new EventTypeProcessor<TrustGameResultsFacilitatorEvent>(TrustGameResultsFacilitatorEvent.class){
-        	@Override
-        	public void handle(TrustGameResultsFacilitatorEvent event) {
-        		facilitatorWindow.updateTrustGame(event);
-        	}
+            @Override
+            public void handle(TrustGameResultsFacilitatorEvent event) {
+                facilitatorWindow.updateTrustGame(event);
+            }
         });
         addEventProcessor(new EventTypeProcessor<FacilitatorUpdateEvent>(FacilitatorUpdateEvent.class) {
 
@@ -103,18 +111,6 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
 
     }
 
-    public static Facilitator getInstance() {
-        return INSTANCE;
-    }
-
-    void createFacilitatorWindow(Dimension dimension) {
-        facilitatorWindow = new FacilitatorWindow(dimension, this);
-        if (getId() == null) {
-            // configure for unconnected functionality
-            facilitatorWindow.configureForReplay();
-        }
-    }
-
     /*
      * Send a request to server to start an experiment
      */
@@ -146,6 +142,10 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
     public void sendShowSurveyInstructionsRequest() {
         transmit(new ShowSurveyInstructionsRequest(getId()));
     }
+    
+	public void sendShowExitInstructionsRequest() {
+		transmit(new ShowExitInstructionsRequest(getId()));
+	}
 
     /*
      * Send a request to start a round
@@ -185,8 +185,7 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
         return facilitatorWindow;
     }
 
-    public void setRoundParameters(
-            List<RoundConfiguration> roundConfiguration) {
+    public void setRoundParameters(List<RoundConfiguration> roundConfiguration) {
         getServerConfiguration().setAllParameters(roundConfiguration);
     }
 
@@ -199,14 +198,14 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
     }
 
     public static void main(String[] args) {
-        Runnable createGuiRunnable = new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 Dimension dimension = new Dimension(700, 700);
-                Facilitator facilitator = Facilitator.getInstance();
+                Facilitator facilitator = new Facilitator();
                 facilitator.connect();
                 JFrame frame = new JFrame();
-                frame.setTitle("Facilitator window: " + facilitator.getId());
-                frame.setSize((int) dimension.getWidth(), (int) dimension.getHeight());
+                frame.setTitle("Facilitator: " + facilitator.getId());
+                frame.setSize(dimension);
                 facilitator.createFacilitatorWindow(dimension);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.getContentPane().add(facilitator.getFacilitatorWindow());
@@ -214,8 +213,7 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
                 // frame.pack();
                 frame.setVisible(true);
             }
-        };
-        SwingUtilities.invokeLater(createGuiRunnable);
+        });
     }
 
     public RoundConfiguration getCurrentRoundConfiguration() {

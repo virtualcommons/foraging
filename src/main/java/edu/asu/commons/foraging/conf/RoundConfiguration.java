@@ -2,12 +2,14 @@ package edu.asu.commons.foraging.conf;
 
 import java.awt.Dimension;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 import org.stringtemplate.v4.ST;
@@ -18,7 +20,8 @@ import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
-import edu.asu.commons.foraging.rules.iu.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategyNomination;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 
@@ -54,7 +57,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     private static final double DEFAULT_TOKEN_MOVEMENT_PROBABILITY = 0.2d;
     private static final double DEFAULT_TOKEN_BIRTH_PROBABILITY = 0.01d;
 
-    private List<ForagingRule> selectedRules;
+    private List<ForagingStrategy> selectedRules;
 
     public double getTrustGamePayoffIncrement() {
         return getDoubleProperty("trust-game-payoff", 0.25d);
@@ -294,7 +297,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      * Returns the instructions for this round.  If undefined at the round level it uses default instructions at the parent ServerConfiguration level.
      */
     public String getInstructions() {
-        ST template = createStringTemplate(getProperty("instructions", getParentConfiguration().getSameRoundAsPreviousInstructions()));
+        ST template = createStringTemplate(getProperty("instructions", getParentConfiguration().getSameAsPreviousRoundInstructions()));
         // FIXME: probably should just lift these out into methods on RoundConfiguration
         // and refer to them as self.durationInMinutes or self.dollarsPerTokenCurrencyString, etc.
         template.add("duration", inMinutes(getDuration()) + " minutes");
@@ -557,11 +560,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getInitialVotingInstructions() {
-        return createStringTemplate(getProperty("initial-voting-instructions", getParentConfiguration().getInitialVotingInstructions())).render();
+        return createStringTemplate(getProperty("initial-voting-instructions")).render();
     }
     
-    public List<ForagingRule> getForagingRules() {
-        return Arrays.asList(ForagingRule.values());
+    public List<ForagingStrategy> getForagingRules() {
+        return Arrays.asList(ForagingStrategy.values());
 
     }
     public boolean isVotingAndRegulationEnabled() {
@@ -723,9 +726,15 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("submitted-vote-instructions", "<h1>Submitted</h1><hr><p>Your nomination has been recorded.  The final results of the nomination will be shown once all the nominations in your group have been received.</p>"); 
     }
     
-    public String getVotingResults(List<ForagingRule> selectedRules) {
+    public String generateVotingResults(List<ForagingStrategy> selectedRules, Map<ForagingStrategy, Integer> nominations) {
+    	List<ForagingStrategyNomination> sortedNominations = new ArrayList<ForagingStrategyNomination>();
+    	for (Map.Entry<ForagingStrategy, Integer> entry: new TreeMap<ForagingStrategy, Integer>(nominations).entrySet()) {
+    		ForagingStrategy strategy = entry.getKey();
+    		sortedNominations.add(new ForagingStrategyNomination(strategy, entry.getValue(), strategy.equals(selectedRules.get(0))));
+    	}
         setSelectedRules(selectedRules);
         ST template = createStringTemplate(getVotingResultsTemplate());
+        template.add("nominations", sortedNominations);
         template.add("tiebreaker", selectedRules.size() > 1);
         template.add("selectedRules", selectedRules);
         return template.render();
@@ -764,11 +773,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return template.render();
     }
     
-    public List<ForagingRule> getSelectedRules() {
+    public List<ForagingStrategy> getSelectedRules() {
         return selectedRules;
     }
 
-    public void setSelectedRules(List<ForagingRule> selectedRules) {
+    public void setSelectedRules(List<ForagingStrategy> selectedRules) {
         this.selectedRules = selectedRules;
     }
     

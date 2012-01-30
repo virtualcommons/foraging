@@ -41,6 +41,7 @@ import javax.swing.text.StyledDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
+import edu.asu.commons.event.ClientReadyEvent;
 import edu.asu.commons.event.Event;
 import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.foraging.client.ClientDataModel;
@@ -53,11 +54,10 @@ import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
-import edu.asu.commons.foraging.event.SurveyCompletedEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
-import edu.asu.commons.foraging.rules.iu.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.HtmlEditorPane;
 import edu.asu.commons.ui.UserInterfaceUtils;
@@ -119,6 +119,7 @@ public class GameWindow2D implements GameWindow {
     private JPanel votingPanel;
     private VotingForm votingForm;
     private HtmlEditorPane votingInstructionsEditorPane;
+    private JScrollPane votingInstructionsScrollPane;
 
     // private EnergyLevel energyLevel;
 
@@ -189,17 +190,18 @@ public class GameWindow2D implements GameWindow {
         }
     }
     
-    private ActionListener createSurveyFinishedListener() {
+    private ActionListener createClientReadyListener(final String confirmationMessage) {
     	return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 			    int selectedOption = JOptionPane.showConfirmDialog(getPanel(), 
-			            dataModel.getRoundConfiguration().getSurveyConfirmationMessage(), 
-			            "Confirm survey completion", JOptionPane.YES_NO_OPTION);
+			            confirmationMessage, 
+			            "Continue?", JOptionPane.YES_NO_OPTION);
 			    switch (selectedOption) {
 			        case JOptionPane.YES_OPTION:
-		                showInstructions();
-		                client.transmit(new SurveyCompletedEvent(client.getId()));
+		                setInstructions(dataModel.getExperimentConfiguration().getWaitingRoomInstructions());
+		                showInstructionsPanel();
+		                client.transmit(new ClientReadyEvent(client.getId(), confirmationMessage));
 		                instructionsEditorPane.setActionListener(null);
 		                break;
 			        default:
@@ -705,7 +707,7 @@ public class GameWindow2D implements GameWindow {
     	// FIXME: replace HTML strings with configuration template
         instructionsBuilder.append("<h3>Submission successful</h3><hr><p>Please wait while the rest of the submissions are gathered.</p>");
         setInstructions(instructionsBuilder.toString());
-        switchInstructionsPane();
+        showInstructionsPanel();
     }
 
     public void showInstructions() {
@@ -720,7 +722,7 @@ public class GameWindow2D implements GameWindow {
                     instructionsEditorPane.setActionListener(createQuizListener(roundConfiguration));
                 }
                 setInstructions(instructionsBuilder.toString());
-                switchInstructionsPane();
+                showInstructionsPanel();
                 instructionsEditorPane.setCaretPosition(0);
             }
         });
@@ -730,61 +732,55 @@ public class GameWindow2D implements GameWindow {
     public void showInitialVotingInstructions() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+//            	instructionsEditorPane.setActionListener(null);
+//            	instructionsEditorPane.setActionListener(createClientReadyListener("Are you ready to submit your nominations?"));
                 setInstructions(dataModel.getRoundConfiguration().getInitialVotingInstructions());
-                switchInstructionsPane();
+                showInstructionsPanel();
             }
         });
     }
-
-
-    private JPanel getVotingPanel() {
+    
+    public void showVotingScreen() {
         if (votingPanel == null) {
             votingPanel = new JPanel();
             votingPanel.setLayout(new BoxLayout(votingPanel, BoxLayout.Y_AXIS));
             votingInstructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
-            JScrollPane scrollPane = new JScrollPane(votingInstructionsEditorPane);
+            votingInstructionsScrollPane = new JScrollPane(votingInstructionsEditorPane);
             votingInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getVotingInstructions());
-            votingPanel.add(scrollPane);
+            votingPanel.add(votingInstructionsScrollPane);
             votingForm = new VotingForm(client);
             votingPanel.add(votingForm);
             votingPanel.setName(VotingForm.NAME);
+            add(votingPanel);
         }
-        return votingPanel;
+        showPanel(VotingForm.NAME);
     }
-    
 
-    public void showVotingResults(final List<ForagingRule> selectedRules, final Map<ForagingRule, Integer> votingResults) {
+    public void showVotingResults(final List<ForagingStrategy> selectedRules, final Map<ForagingStrategy, Integer> votingResults) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                VotingForm resultsForm = new VotingForm(client, votingResults);
-                votingPanel.remove(votingForm);
-                votingPanel.add(resultsForm);
+                votingPanel.removeAll();
+                votingPanel.add(votingInstructionsScrollPane);
                 votingPanel.revalidate();
                 RoundConfiguration currentRoundConfiguration = client.getCurrentRoundConfiguration();
-                votingInstructionsEditorPane.setText(currentRoundConfiguration.getVotingResults(selectedRules));
+                votingInstructionsEditorPane.setText(currentRoundConfiguration.generateVotingResults(selectedRules, votingResults));
                 showPanel(VotingForm.NAME);
             }
         });
     }
     
-    
-    public void showVoteScreen() {
-        add(getVotingPanel());
-        showPanel(VotingForm.NAME);
-    }
-
     public void showSurveyInstructions() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	instructionsEditorPane.setActionListener(null);
-            	instructionsEditorPane.setActionListener(createSurveyFinishedListener());
+            	instructionsEditorPane.setActionListener(createClientReadyListener(dataModel.getRoundConfiguration().getSurveyConfirmationMessage()));
                 setInstructions(dataModel.getRoundConfiguration().getSurveyInstructions(dataModel.getId()));
-                switchInstructionsPane();
+                showInstructionsPanel();
             }
         });
     }
 
-    public void switchInstructionsPane() {
+    public void showInstructionsPanel() {
         showPanel(INSTRUCTIONS_PANEL_NAME);
     }
 
@@ -800,10 +796,15 @@ public class GameWindow2D implements GameWindow {
         Runnable runnable = new Runnable() {
             public void run() {
                 postSanctionDebriefingText(event);
-                switchInstructionsPane();
+                showInstructionsPanel();
             }
         };
         SwingUtilities.invokeLater(runnable);
+    }
+    
+    public void showExitInstructions() {
+        showDebriefing(dataModel.getClientData(), true);
+        showInstructionsPanel();
     }
 
     public synchronized void endRound(final EndRoundEvent event) {
@@ -823,11 +824,9 @@ public class GameWindow2D implements GameWindow {
                 }
                 else {
                     instructionsEditorPane.setText("Waiting for updated round totals from the server...");
-                    switchInstructionsPane();
+                    showInstructionsPanel();
                 }
-                // FIXME: replace with facilitator driven show exit instructions signal? 
-                boolean showExitInstructions = event.isLastRound() && ! roundConfiguration.isTrustGameEnabled();
-                showDebriefing(event.getClientData(), showExitInstructions);
+                showDebriefing(event.getClientData(), false);
             }
         };
         try {
@@ -880,12 +879,12 @@ public class GameWindow2D implements GameWindow {
 
     public void surveyIdSubmitted() {
         setInstructions(dataModel.getRoundConfiguration().getWelcomeInstructions());
-        switchInstructionsPane();
+        showInstructionsPanel();
     }
 
     public void ruleVoteSubmitted() {
         setInstructions(dataModel.getRoundConfiguration().getSubmittedVoteInstructions());
-        switchInstructionsPane();
+        showInstructionsPanel();
     }
 
     public void updateDebriefingWith(TrustGameResultsClientEvent event) {

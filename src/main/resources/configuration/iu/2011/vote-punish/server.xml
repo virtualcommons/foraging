@@ -244,15 +244,16 @@ Your total trust game earnings: <b>{clientData.trustGameEarnings}</b>.
 Your <b>total income</b> is <b>{clientData.grandTotalIncome}</b>.
 </p>
 {if (showExitInstructions)}
-<h2>Exit Survey</h2>
+<h2>Final Round</h2>
 <hr>
-<p>
-This was the last round, but not the end of the experiment. We ask that you please carefully fill out a brief survey as we prepare your payments.
-</p>
+    <p>This was the last round of the experiment.</p>
 <h2>Payment</h2>
 <hr>
 <p>
-When payments are ready we will call you up one by one. Please wait until your computer number, <b>{clientData.id}</b>, is called to turn in your survey and receive payment.  Please answer the survey carefully and thank you for participating. 
+Please wait quietly while we prepare your payments.  When payments are ready we will
+call you up one by one. Please wait until your computer number,
+<b>{clientData.id}</b>, is called before coming up to receive payment.  Thank you
+for participating.
 </p>
 {endif}
 ]]>
@@ -260,7 +261,14 @@ When payments are ready we will call you up one by one. Please wait until your c
 <entry key='voting-results'>
     <![CDATA[
     <h1>Nomination Results</h1>
-    <h2>Selected Strategy</h2>
+    <hr>
+    <table border=3 cellspacing=3 cellpadding=3>
+        <tr><th>Strategy</th><th>Nominations</th></tr>
+        {nominations: { strategyNomination |
+        <tr bgcolor="#{if (strategyNomination.selected)}FFFFCC{else}CCCCCC{endif}"><td>{strategyNomination.strategy}</td><td>{strategyNomination.nominations}</td></tr>
+        }}
+    </table>
+    <h1>Selected Strategy</h1>
     <hr>
     {if (tiebreaker)}
     <p><b>NOTE:</b> There was a tie and the selected strategy listed here was randomly selected as the winner.</p>
@@ -268,4 +276,48 @@ When payments are ready we will call you up one by one. Please wait until your c
     <p><b> {first(selectedRules)} </b></p>
     ]]>
 </entry>
+<entry key='initial-voting-instructions'>
+    <![CDATA[
+<h1>Important New Instructions!</h1>
+<h2>Strategies for managing how players collect tokens for the rest of the experiment</h2>
+<hr>
+<p>
+In a moment, you will have the option to implement one of five strategies for how you
+and the three other people in your group collect tokens for the rest of the
+experiment.
+</p>
+
+<h2>Procedure for Deciding the Strategy</h2>
+<hr>
+<p>
+    Each of the {self.clientsPerGroup} people in your group can nominate one of the five
+    potential strategies.  The single strategy that receives the most nominations
+    wins.
+</p>
+<p>
+    <b>If there is a tie</b>, one of the tied options will be selected at random by
+    the computer.  Each of the tied strategies will have an equal chance of being
+    selected.
+</p>
+
+<h2>Implementation</h2>
+<hr>
+    <p>Neither the computer nor the experimenter will intervene to implement the
+        strategy.
+    </p>
+
+    <p>
+        <b>Do you have any questions?</b>  If you have any questions at this time,
+        raise your hand and someone will come over to your station and answer it.
+    </p>
+    ]]>
+</entry>
+<entry key='waiting-room-instructions'>
+<![CDATA[
+<h1>Please Wait</h1>
+<hr>
+<p>Please wait while the other participants complete their tasks.</p>
+]]>
+</entry>
+
 </properties>

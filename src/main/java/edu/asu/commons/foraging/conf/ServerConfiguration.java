@@ -30,10 +30,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     
     private static final double DEFAULT_SHOW_UP_PAYMENT = 5.0d;
     private static final double DEFAULT_QUIZ_CORRECT_ANSWER_REWARD = 0.50d;
-    private static final String SAME_ROUND_AS_PREVIOUS_INSTRUCTIONS = "<h3>Round {roundNumber} Instructions</h3><hr><p>Round {roundNumber} is the same as the previous round.</p><p>The length of this round is {duration}.</p><p>If you have any questions please raise your hand.  <b>Do you have any questions so far?</b></p>";
+    private static final String SAME_ROUND_AS_PREVIOUS_INSTRUCTIONS = "<h3>Round {self.roundNumber} Instructions</h3><hr><p>Round {self.roundNumber} is the same as the previous round.</p><p>The length of this round is {duration}.</p><p>If you have any questions please raise your hand.  <b>Do you have any questions so far?</b></p>";
     private static final String DEFAULT_LOG_FILE_DESTINATION = "foraging-server.log";
     private static final double DEFAULT_DOLLARS_PER_TOKEN = .02d;
-
+    
     public ServerConfiguration() {
         super();
     }
@@ -96,8 +96,8 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
         return st.render();
     }
     
-    public String getSameRoundAsPreviousInstructions() {
-        return assistant.getStringProperty("sameRoundAsPreviousInstructions", SAME_ROUND_AS_PREVIOUS_INSTRUCTIONS);
+    public String getSameAsPreviousRoundInstructions() {
+        return assistant.getStringProperty("same-as-previous-round-instructions", SAME_ROUND_AS_PREVIOUS_INSTRUCTIONS);
     }
     
     public String getFieldOfVisionInstructions() {
@@ -153,6 +153,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
 	
 	public int getServerSleepInterval() {
 	    return assistant.getIntProperty("server-sleep-interval", 50);
+	}
+
+	public String getWaitingRoomInstructions() {
+		return assistant.getProperty("waiting-room-instructions", "<h1>Please wait</h1><hr><p>Please wait while the rest of the participants complete the task.</p>");
 	}
 
 }

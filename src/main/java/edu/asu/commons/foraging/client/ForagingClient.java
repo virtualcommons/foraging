@@ -17,6 +17,8 @@ import edu.asu.commons.event.Event;
 import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.event.EventTypeProcessor;
 import edu.asu.commons.event.SetConfigurationEvent;
+import edu.asu.commons.event.ShowExitInstructionsRequest;
+import edu.asu.commons.event.ShowInstructionsRequest;
 import edu.asu.commons.event.SocketIdentifierUpdateRequest;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
@@ -33,16 +35,15 @@ import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
-import edu.asu.commons.foraging.event.ShowInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
 import edu.asu.commons.foraging.event.ShowVotingInstructionsRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
-import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
-import edu.asu.commons.foraging.rules.iu.ForagingRule;
+import edu.asu.commons.foraging.model.GroupDataModel;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.server.ForagingServer;
 import edu.asu.commons.foraging.ui.GameWindow;
 import edu.asu.commons.foraging.ui.GameWindow2D;
@@ -175,7 +176,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         });
         addEventProcessor(new EventTypeProcessor<ShowVoteScreenRequest>(ShowVoteScreenRequest.class) {
             public void handle(ShowVoteScreenRequest request) {
-                getGameWindow2D().showVoteScreen();
+                getGameWindow2D().showVotingScreen();
             }
         });
         addEventProcessor(new EventTypeProcessor<ShowSurveyInstructionsRequest>(ShowSurveyInstructionsRequest.class) {
@@ -215,17 +216,17 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         addEventProcessor(new EventTypeProcessor<SynchronizeClientEvent>(SynchronizeClientEvent.class) {
             public void handle(SynchronizeClientEvent event) {
                 dataModel.setGroupDataModel(event.getGroupDataModel());
-                
-//                if (dataModel.is2dExperiment()) {
-//                    dataModel.update(event, getGameWindow2D());
-//                }
                 getGameWindow().update(event.getTimeLeft());
             }
         });
-        addEventProcessor(new EventTypeProcessor<TrustGameResultsClientEvent>(TrustGameResultsClientEvent.class) {
+        addEventProcessor(new EventTypeProcessor<ShowExitInstructionsRequest>(ShowExitInstructionsRequest.class) {
             @Override
-            public void handle(TrustGameResultsClientEvent event) {
-                getGameWindow2D().updateDebriefingWith(event);
+            public void handle(ShowExitInstructionsRequest request) {
+            	GroupDataModel groupDataModel = (GroupDataModel) request.getDataModel();
+            	if (groupDataModel != null) {
+            		dataModel.setGroupDataModel((GroupDataModel) request.getDataModel());
+            	}
+                getGameWindow2D().showExitInstructions();
             }
         });
         initialize2DEventProcessors();
@@ -273,7 +274,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         	//System.out.println("Sending post round sanction request");
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    getGameWindow2D().switchInstructionsPane();        
+                    getGameWindow2D().showInstructionsPanel();        
                 }
             });
             super.transmit(request);
@@ -444,7 +445,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         getGameWindow2D().surveyIdSubmitted();
     }
 
-    public void sendRuleVoteRequest(ForagingRule selectedRule) {
+    public void sendRuleVoteRequest(ForagingStrategy selectedRule) {
         transmit(new RuleVoteRequest(getId(), selectedRule));
         getGameWindow2D().ruleVoteSubmitted();
     }

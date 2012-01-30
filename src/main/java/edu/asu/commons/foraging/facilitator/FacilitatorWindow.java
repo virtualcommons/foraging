@@ -59,8 +59,6 @@ public class FacilitatorWindow extends JPanel {
 
     private JLabel timeLeftLabel;
 
-    private JMenuItem copyToClipboardMenuItem;
-
     private JMenuItem showInstructionsMenuItem;
 
     private JMenuItem startRoundMenuItem;
@@ -87,6 +85,8 @@ public class FacilitatorWindow extends JPanel {
     private int completedTrustGames;
 
     private ClipboardService clipboardService;
+
+	private JMenuItem showExitInstructionsMenuItem;
 
     public FacilitatorWindow(Dimension dimension, Facilitator facilitator) {
         this.facilitator = facilitator;
@@ -129,15 +129,7 @@ public class FacilitatorWindow extends JPanel {
         // Round menu
         JMenu menu = new JMenu("Round");
         menu.setMnemonic(KeyEvent.VK_R);
-
-        startChatMenuItem = new JMenuItem("Start chat");
-        startChatMenuItem.setEnabled(true);
-        startChatMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendBeginChatRoundRequest();
-            }
-        });
-        menu.add(startChatMenuItem);
+        
 
         showInstructionsMenuItem = new JMenuItem("Show Instructions");
         showInstructionsMenuItem.setMnemonic(KeyEvent.VK_I);
@@ -149,15 +141,7 @@ public class FacilitatorWindow extends JPanel {
             }
         });
         menu.add(showInstructionsMenuItem);
-
-        showTrustGameMenuItem = new JMenuItem("Show Trust Game");
-        showTrustGameMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendShowTrustGameRequest();
-            }
-        });
-        menu.add(showTrustGameMenuItem);
-
+        
         startRoundMenuItem = new JMenuItem("Start");
         startRoundMenuItem.setMnemonic(KeyEvent.VK_T);
         startRoundMenuItem.setEnabled(false);
@@ -177,8 +161,35 @@ public class FacilitatorWindow extends JPanel {
             }
         });
         menu.add(stopRoundMenuItem);
-        menuBar.add(menu);
 
+        showExitInstructionsMenuItem = createMenuItem(menu, "Show exit instructions", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                facilitator.sendShowExitInstructionsRequest();
+            }
+        });
+        
+        startChatMenuItem = new JMenuItem("Start chat");
+        startChatMenuItem.setEnabled(true);
+        startChatMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                facilitator.sendBeginChatRoundRequest();
+            }
+        });
+        menu.add(startChatMenuItem);
+
+        showTrustGameMenuItem = new JMenuItem("Show Trust Game");
+        showTrustGameMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                facilitator.sendShowTrustGameRequest();
+            }
+        });
+        menu.add(showTrustGameMenuItem);
+
+        
+        
+        menuBar.add(menu);
+        
         // voting menu
         menu = new JMenu("Voting");
 
@@ -216,7 +227,8 @@ public class FacilitatorWindow extends JPanel {
         });
         menu.add(menuItem);
 
-        copyToClipboardMenuItem = createMenuItem(menu, "Copy to clipboard", new ActionListener() {
+        // create copy to clipboard menu item
+        createMenuItem(menu, "Copy to clipboard", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String text = informationEditorPane.getSelectedText();

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.asu.commons.event.AbstractPersistableEvent;
-import edu.asu.commons.foraging.rules.iu.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.net.Identifier;
 
 /**
@@ -21,20 +21,20 @@ import edu.asu.commons.net.Identifier;
 public class RuleSelectedUpdateEvent extends AbstractPersistableEvent {
 
     private static final long serialVersionUID = 4360213814026474451L;
-    private final List<ForagingRule> selectedRules;
-    private final Map<ForagingRule, Integer> votingResults;
+    private final List<ForagingStrategy> selectedRules;
+    private final Map<ForagingStrategy, Integer> votingResults;
   
-    public RuleSelectedUpdateEvent(Identifier id, List<ForagingRule> selectedRules, Map<ForagingRule, Integer> votingResults) {
+    public RuleSelectedUpdateEvent(Identifier id, List<ForagingStrategy> selectedRules, Map<ForagingStrategy, Integer> votingResults) {
         super(id, selectedRules.toString());
         this.selectedRules = selectedRules;
         this.votingResults = votingResults;
     }
     
-    public ForagingRule getSelectedRule() {
+    public ForagingStrategy getSelectedRule() {
         return selectedRules.get(0);
     }
     
-    public List<ForagingRule> getSelectedRules() {
+    public List<ForagingStrategy> getSelectedRules() {
         return selectedRules;
     }
     
@@ -43,7 +43,7 @@ public class RuleSelectedUpdateEvent extends AbstractPersistableEvent {
         return String.format("Selected first rule from %s", selectedRules);
     }
 
-    public Map<ForagingRule, Integer> getVotingResults() {
+    public Map<ForagingStrategy, Integer> getVotingResults() {
         return votingResults;
     }
 

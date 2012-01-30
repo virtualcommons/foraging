@@ -65,43 +65,6 @@ participants' number key from 1 to {self.clientsPerGroup}.
 </entry>
 
 
-<entry key='initial-voting-instructions'>
-    <![CDATA[
-<h1>Important New Instructions!</h1>
-<h2>Strategies for managing how players collect tokens for the rest of the experiment</h2>
-<hr>
-<p>
-In a moment, you will have the option to implement one of five strategies for how you
-and the three other people in your group collect tokens for the rest of the
-experiment.
-</p>
-
-<h2>Procedure for Deciding the Strategy</h2>
-<hr>
-<p>
-    Each of the {self.clientsPerGroup} people in your group can nominate one of the five
-    potential strategies.  The single strategy that receives the most nominations
-    wins.
-</p>
-<p>
-    <b>If there is a tie</b>, one of the tied options will be selected at random by
-    the computer.  Each of the tied strategies will have an equal chance of being
-    selected.
-</p>
-
-<h2>Implementation</h2>
-<hr>
-    <p>Neither the computer nor the experimenter will intervene to implement the
-        strategy.
-    </p>
-
-    <p>
-        <b>Do you have any questions?</b>  If you have any questions at this time,
-        raise your hand and someone will come over to your station and answer it.
-    </p>
-    ]]>
-</entry>
-
 
 <entry key='voting-instructions'>
 <![CDATA[

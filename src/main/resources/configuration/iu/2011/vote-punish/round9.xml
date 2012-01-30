@@ -19,22 +19,25 @@
     <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_e8rPe7yyhue5OVm&SURVEY_ID={surveyId}]]>
 </entry>
 
-<entry key="last-round-debriefing">
+<entry key='survey-instructions'>
     <![CDATA[
-    <p>
-        This was the last round, but not the end of the experiment. We will now
-        determine your payments. While we are doing this, we request that you
-        carefully fill out a brief survey.
-    </p>
-    <p>
-        When we are ready we will call you one by one to the room next door. We will
-        pay you there in private. Please wait until your computer number is called,
-        and then proceed to the room next door to turn in your computer number and
-        your survey. 
-    </p>
-    <p>
-        Please answer the survey carefully and thank you for participating. 
-    </p>
+    <h1>Survey</h1>
+    <hr>
+        <p>
+            We would like to again ask you some quick questions. Please <a href='{surveyUrl}'>click here</a> to begin the survey.
+        </p>
+        <p>
+            We will continue after all of the surveys have been completed by all the
+            participants in the room.  Please press the "Continue" button at the
+            bottom of the screen after you have successfully completed the survey.  
+        </p>
+        <p>
+            If you encounter any problems with the survey <b>please inform the experimenter</b>.
+        </p>
+        <br>
+        <form>
+        <input type="submit" value="Continue" name="continue">
+        </form>
     ]]>
 </entry>
 

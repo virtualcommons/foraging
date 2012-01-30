@@ -13,7 +13,7 @@ import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.RoundConfiguration.SanctionAction;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.graphics.Point3D;
-import edu.asu.commons.foraging.rules.iu.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
@@ -67,7 +67,7 @@ public class ClientData implements Serializable {
     private double trustGamePlayerOneAmountToKeep;
     private double[] trustGamePlayerTwoAmountsToKeep;
     
-    private ForagingRule votedRule;
+    private ForagingStrategy votedRule;
     private ArrayList<String> trustGameLog = new ArrayList<String>();
     private ArrayList<Point> collectedTokenPositions = new ArrayList<Point>();
 
@@ -627,11 +627,11 @@ public class ClientData implements Serializable {
         correctQuizAnswers += numberOfCorrectAnswers;
     }
 
-    public ForagingRule getVotedRule() {
+    public ForagingStrategy getVotedRule() {
         return votedRule;
     }
 
-    public void setVotedRule(ForagingRule votedRule) {
+    public void setVotedRule(ForagingStrategy votedRule) {
         this.votedRule = votedRule;
     }
     

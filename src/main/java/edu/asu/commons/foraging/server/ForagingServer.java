@@ -22,12 +22,15 @@ import edu.asu.commons.event.BeginRoundRequest;
 import edu.asu.commons.event.ChatEvent;
 import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.ClientMessageEvent;
+import edu.asu.commons.event.ClientReadyEvent;
 import edu.asu.commons.event.EndRoundRequest;
 import edu.asu.commons.event.EventTypeProcessor;
 import edu.asu.commons.event.FacilitatorMessageEvent;
 import edu.asu.commons.event.FacilitatorRegistrationRequest;
 import edu.asu.commons.event.RoundStartedMarkerEvent;
 import edu.asu.commons.event.SetConfigurationEvent;
+import edu.asu.commons.event.ShowExitInstructionsRequest;
+import edu.asu.commons.event.ShowRequest;
 import edu.asu.commons.event.SocketIdentifierUpdateRequest;
 import edu.asu.commons.experiment.AbstractExperiment;
 import edu.asu.commons.experiment.IPersister;
@@ -62,11 +65,8 @@ import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
-import edu.asu.commons.foraging.event.ShowRequest;
-import edu.asu.commons.foraging.event.SurveyCompletedEvent;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
-import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
@@ -79,7 +79,7 @@ import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.model.TrustGameResult;
-import edu.asu.commons.foraging.rules.iu.ForagingRule;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Dispatcher;
 import edu.asu.commons.net.Identifier;
@@ -109,13 +109,11 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
     private Identifier facilitatorId;
 
-    // FIXME: use java.util.concurrent constructs instead? CountDownLatch / CyclicBarrier?
+    // FIXME: investigate using java.util.concurrent constructs instead, e.g., CountDownLatch / CyclicBarrier
     private final Object roundSignal = new Object();
     private final Object quizSignal = new Object();
     private final Object facilitatorSignal = new Object();
     private final Object agentDesignSignal = new Object();
-    // FIXME: these latches don't quite do what we want. We need a way to reset them at each round.
-    // private CountDownLatch postRoundSanctionLatch;
 
     private StateMachine stateMachine = new ForagingStateMachine();
 
@@ -303,18 +301,16 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     }
                 }
             });
-            addEventProcessor(new EventTypeProcessor<SurveyCompletedEvent>(SurveyCompletedEvent.class) {
-                private int submittedSurveys = 0;
+            addEventProcessor(new EventTypeProcessor<ClientReadyEvent>(ClientReadyEvent.class) {
+                private int readyClients = 0;
                 @Override
-                public void handle(SurveyCompletedEvent event) {
-                    if (getCurrentRoundConfiguration().isExternalSurveyEnabled()) {
-                        submittedSurveys++;
-                        sendFacilitatorMessage(String.format("Received %d of %d surveys: %s", submittedSurveys, clients.size(), event));
-                        if (submittedSurveys >= clients.size()) {
-                            sendFacilitatorMessage("All surveys have been reported as completed, ready to continue.");
-                            submittedSurveys = 0;
-                        }
-                    }
+                public void handle(ClientReadyEvent event) {
+                	readyClients++;
+                	sendFacilitatorMessage(String.format("%d of %d clients are ready: %s", readyClients, clients.size(), event));
+                	if (readyClients >= clients.size()) {
+                		sendFacilitatorMessage("All clients are ready to move on.");
+                		readyClients = 0;
+                	}
                 }
             });
 
@@ -395,8 +391,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     if (votesReceived >= clients.size()) {
                         // calculate votes
                         for (GroupDataModel group : serverDataModel.getGroups()) {
-                            Map<ForagingRule, Integer> votingResults = group.generateVotingResults();
-                            List<ForagingRule> selectedRules = group.getSelectedRules();
+                            Map<ForagingStrategy, Integer> votingResults = group.generateVotingResults();
+                            List<ForagingStrategy> selectedRules = group.getSelectedRules();
                             for (Identifier id : group.getClientIdentifiers()) {
                                 sendFacilitatorMessage(String.format(
                                         "%s selected [%s] from all rules (%s)",
@@ -600,14 +596,18 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             addEventProcessor(new EventTypeProcessor<ShowRequest>(ShowRequest.class, true) {
                 @Override
                 public void handle(ShowRequest request) {
-                    if (request.getId().equals(facilitatorId)) {
-                        for (Identifier id : clients.keySet()) {
-                            transmit(request.copy(id));
-                        }
-                        // sendFacilitatorMessage("Received " + request + " from facilitator, copied & broadcast to all clients.");
-                    }
-                    else {
+                	// validity checks: request from facilitator?
+                    if (! request.getId().equals(facilitatorId)) {
                         sendFacilitatorMessage("Ignoring show request from non facilitator id: " + request.getId());
+                        return;
+                    }
+                    // if this is a ShowExitInstructionsRequest, is this the last round at least?
+                    if (request instanceof ShowExitInstructionsRequest && ! getCurrentRoundConfiguration().isLastRound()) {
+                    	sendFacilitatorMessage("Ignoring request to show exit instructions, we are not at the last round yet.");
+                    	return;
+                    }
+                    for (Identifier id : clients.keySet()) {
+                    	transmit(request.copy(id));
                     }
                 }
             });
@@ -711,7 +711,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
         		// using an iterator to consume both players and ensure that a player doesn't
         		// have the trust game calculated on them twice (except as a player 2 selection)
-        		boolean lastRound = getConfiguration().isLastRound();
         		for (ListIterator<ClientData> iter = clientList.listIterator(); iter.hasNext();) {
         			ClientData playerOne = iter.next();
         			ClientData playerTwo = first;
@@ -729,15 +728,16 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         			logger.info("TRUST GAME: about to pair " + playerOne + " with " + playerTwo);
         			TrustGameResult trustGameLog = serverDataModel.calculateTrustGame(playerOne, playerTwo);
         			allTrustGameResults.add(trustGameLog);
-        			if (lastRound) {
-        				transmit(new TrustGameResultsClientEvent(playerOne, trustGameLog));
-        				transmit(new TrustGameResultsClientEvent(playerTwo, trustGameLog));
-        			}
-
         			sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in:\n%s", playerOne, playerTwo,
         					trustGameLog));
         		}
         	}
+        	// show the exit instructions and update debriefing for all clients if this is the last round.
+            if (getConfiguration().isLastRound()) {
+                for (ClientData data: clients.values()) {
+                    transmit(new ShowExitInstructionsRequest(data.getId(), data.getGroupDataModel()));
+                }
+            }
 			transmitAndStore(new TrustGameResultsFacilitatorEvent(facilitatorId, serverDataModel, allTrustGameResults));
 			Utils.notify(facilitatorSignal);
 		}

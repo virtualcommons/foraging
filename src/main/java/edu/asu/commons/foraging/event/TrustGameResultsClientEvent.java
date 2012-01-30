@@ -2,6 +2,7 @@ package edu.asu.commons.foraging.event;
 
 import edu.asu.commons.event.AbstractEvent;
 import edu.asu.commons.foraging.model.ClientData;
+import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.TrustGameResult;
 
 /**
@@ -17,6 +18,9 @@ public class TrustGameResultsClientEvent extends AbstractEvent {
 		super(clientData.getId(), result.getLog());
 		this.clientData = clientData;
 		this.trustGameResult = result;
+	}
+	public GroupDataModel getGroupDataModel() {
+	    return clientData.getGroupDataModel();
 	}
 	public ClientData getClientData() {
 		return clientData;
