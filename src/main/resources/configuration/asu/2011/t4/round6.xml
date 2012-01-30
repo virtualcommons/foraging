@@ -16,31 +16,4 @@
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
 <entry key='trust-game'>true</entry>
-
-<entry key="last-round-debriefing">
-<![CDATA[
-<h2>Survey</h2>
-<hr>
-<p>
-This was the last round, but not the end of the experiment. We will now
-determine your payments. While we are doing this, we request that you
-carefully fill out a brief survey.
-</p>
-<h2>Payments</h2>
-<hr>
-    <p>NOTE: Your computer number is <b>{id}</b></p>
-<p>
-When we are ready we will call you one by one to the room next door. We will
-pay you there in private. Please wait until your computer number, <b>{id}</b>, is
-called, and then proceed to the room next door to turn in your computer number and
-your survey. 
-</p>
-<p>
-Please answer the survey carefully and thank you for participating. 
-</p>
-
-
-
-]]>
-</entry>
 </properties>
