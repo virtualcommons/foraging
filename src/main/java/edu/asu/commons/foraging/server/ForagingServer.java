@@ -596,14 +596,18 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             addEventProcessor(new EventTypeProcessor<ShowRequest>(ShowRequest.class, true) {
                 @Override
                 public void handle(ShowRequest request) {
-                    if (request.getId().equals(facilitatorId)) {
-                        for (Identifier id : clients.keySet()) {
-                            transmit(request.copy(id));
-                        }
-                        // sendFacilitatorMessage("Received " + request + " from facilitator, copied & broadcast to all clients.");
-                    }
-                    else {
+                	// validity checks: request from facilitator?
+                    if (! request.getId().equals(facilitatorId)) {
                         sendFacilitatorMessage("Ignoring show request from non facilitator id: " + request.getId());
+                        return;
+                    }
+                    // if this is a ShowExitInstructionsRequest, is this the last round at least?
+                    if (request instanceof ShowExitInstructionsRequest && ! getCurrentRoundConfiguration().isLastRound()) {
+                    	sendFacilitatorMessage("Ignoring request to show exit instructions, we are not at the last round yet.");
+                    	return;
+                    }
+                    for (Identifier id : clients.keySet()) {
+                    	transmit(request.copy(id));
                     }
                 }
             });

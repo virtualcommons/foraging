@@ -13,6 +13,7 @@ import edu.asu.commons.event.EndRoundRequest;
 import edu.asu.commons.event.EventTypeProcessor;
 import edu.asu.commons.event.FacilitatorMessageEvent;
 import edu.asu.commons.event.SetConfigurationEvent;
+import edu.asu.commons.event.ShowExitInstructionsRequest;
 import edu.asu.commons.event.ShowInstructionsRequest;
 import edu.asu.commons.facilitator.BaseFacilitator;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
@@ -146,6 +147,10 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
     public void sendShowSurveyInstructionsRequest() {
         transmit(new ShowSurveyInstructionsRequest(getId()));
     }
+    
+	public void sendShowExitInstructionsRequest() {
+		transmit(new ShowExitInstructionsRequest(getId()));
+	}
 
     /*
      * Send a request to start a round

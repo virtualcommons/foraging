@@ -222,7 +222,10 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         addEventProcessor(new EventTypeProcessor<ShowExitInstructionsRequest>(ShowExitInstructionsRequest.class) {
             @Override
             public void handle(ShowExitInstructionsRequest request) {
-                dataModel.setGroupDataModel((GroupDataModel) request.getDataModel());
+            	GroupDataModel groupDataModel = (GroupDataModel) request.getDataModel();
+            	if (groupDataModel != null) {
+            		dataModel.setGroupDataModel((GroupDataModel) request.getDataModel());
+            	}
                 getGameWindow2D().showExitInstructions();
             }
         });

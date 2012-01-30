@@ -86,6 +86,8 @@ public class FacilitatorWindow extends JPanel {
 
     private ClipboardService clipboardService;
 
+	private JMenuItem showExitInstructionsMenuItem;
+
     public FacilitatorWindow(Dimension dimension, Facilitator facilitator) {
         this.facilitator = facilitator;
         initGuiComponents();
@@ -175,6 +177,15 @@ public class FacilitatorWindow extends JPanel {
             }
         });
         menu.add(stopRoundMenuItem);
+        
+        showExitInstructionsMenuItem = createMenuItem(menu, "Show exit instructions", new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				facilitator.sendShowExitInstructionsRequest();
+			}
+        });
+        
+        
         menuBar.add(menu);
 
         // voting menu

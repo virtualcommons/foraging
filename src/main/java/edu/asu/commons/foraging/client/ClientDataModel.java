@@ -149,6 +149,7 @@ public class ClientDataModel extends ForagingDataModel {
     }
 
     public void setGroupDataModel(GroupDataModel groupDataModel) {
+    	if (groupDataModel == null) return;
         this.clientData = groupDataModel.getClientData(getId());
         this.resourceDistribution = groupDataModel.getResourceDistribution();
         update(groupDataModel.getClientTokens(), groupDataModel.getClientPositions(), clientData.getLatestSanctions(), null, null);
