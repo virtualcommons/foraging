@@ -11,7 +11,7 @@ import edu.asu.commons.foraging.util.Tuple3i;
 /**
  * The Fruit class represents fruits grown on the trees in the forestry experiment.
  * @author <a href='deepali.bhagvat@asu.edu'>Deepali Bhagvat</a>
- * @version $Revision: 4 $
+ * @version $Revision$
  *
  */
 public class Fruit {

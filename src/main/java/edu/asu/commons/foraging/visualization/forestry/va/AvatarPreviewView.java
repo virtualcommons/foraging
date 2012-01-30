@@ -15,7 +15,7 @@ import edu.asu.commons.foraging.visualization.forestry.AvatarDesignPanel;
 /**
  * The AvatarPreviewView class displays avatar preview while designing the avatar.
  * @author <a href='deepali.bhagvat@asu.edu'>Deepali Bhagvat</a>
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 public class AvatarPreviewView extends GameView3d {
 

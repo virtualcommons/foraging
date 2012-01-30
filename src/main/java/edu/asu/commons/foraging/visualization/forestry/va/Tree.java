@@ -19,7 +19,7 @@ import edu.asu.commons.foraging.visualization.GameView3d;
 /**
  * The Tree class encapulates a growing tree in the forestry experiment visualization. The trees represent resources in the common pool resource.  
  * @author <a href='deepali.bhagvat@asu.edu'>Deepali Bhagvat</a>
- * @version $Revision: 4 $
+ * @version $Revision$
  *
  */
 public class Tree{	
