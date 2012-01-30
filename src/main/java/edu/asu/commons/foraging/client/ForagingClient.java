@@ -176,7 +176,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         });
         addEventProcessor(new EventTypeProcessor<ShowVoteScreenRequest>(ShowVoteScreenRequest.class) {
             public void handle(ShowVoteScreenRequest request) {
-                getGameWindow2D().showVoteScreen();
+                getGameWindow2D().showVotingScreen();
             }
         });
         addEventProcessor(new EventTypeProcessor<ShowSurveyInstructionsRequest>(ShowSurveyInstructionsRequest.class) {

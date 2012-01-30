@@ -156,7 +156,7 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
 	}
 
 	public String getWaitingRoomInstructions() {
-		return assistant.getProperty("waiting-room-instructions");
+		return assistant.getProperty("waiting-room-instructions", "<h1>Please wait</h1><hr><p>Please wait while the rest of the participants complete the task.</p>");
 	}
 
 }

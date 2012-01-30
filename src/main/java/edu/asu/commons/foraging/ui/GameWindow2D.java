@@ -739,9 +739,8 @@ public class GameWindow2D implements GameWindow {
             }
         });
     }
-
-
-    private JPanel getVotingPanel() {
+    
+    public void showVotingScreen() {
         if (votingPanel == null) {
             votingPanel = new JPanel();
             votingPanel.setLayout(new BoxLayout(votingPanel, BoxLayout.Y_AXIS));
@@ -752,10 +751,10 @@ public class GameWindow2D implements GameWindow {
             votingForm = new VotingForm(client);
             votingPanel.add(votingForm);
             votingPanel.setName(VotingForm.NAME);
+            add(votingPanel);
         }
-        return votingPanel;
+        showPanel(VotingForm.NAME);
     }
-    
 
     public void showVotingResults(final List<ForagingStrategy> selectedRules, final Map<ForagingStrategy, Integer> votingResults) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -770,14 +769,6 @@ public class GameWindow2D implements GameWindow {
         });
     }
     
-    
-    public void showVoteScreen() {
-        if (votingPanel == null) {
-            add(getVotingPanel());
-        }
-        showPanel(VotingForm.NAME);
-    }
-
     public void showSurveyInstructions() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
