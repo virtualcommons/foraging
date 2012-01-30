@@ -25,7 +25,7 @@ public class RuleSelectedUpdateEvent extends AbstractPersistableEvent {
     private final Map<ForagingStrategy, Integer> votingResults;
   
     public RuleSelectedUpdateEvent(Identifier id, List<ForagingStrategy> selectedStrategies, Map<ForagingStrategy, Integer> votingResults) {
-        super(id, String.format("Strategies: %s, All results: %s", selectedStrategies, votingResults));
+        super(id, String.format("Strategies (first is tiebreaker): %s, All nominations: %s", selectedStrategies, votingResults));
         this.selectedStrategies = selectedStrategies;
         this.votingResults = votingResults;
     }
