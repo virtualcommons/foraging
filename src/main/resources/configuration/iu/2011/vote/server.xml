@@ -244,15 +244,16 @@ Your total trust game earnings: <b>{clientData.trustGameEarnings}</b>.
 Your <b>total income</b> is <b>{clientData.grandTotalIncome}</b>.
 </p>
 {if (showExitInstructions)}
-<h2>Exit Survey</h2>
+<h2>Final Round</h2>
 <hr>
-<p>
-This was the last round, but not the end of the experiment. We ask that you please carefully fill out a brief survey as we prepare your payments.
-</p>
+    <p>This was the last round of the experiment.</p>
 <h2>Payment</h2>
 <hr>
 <p>
-When payments are ready we will call you up one by one. Please wait until your computer number, <b>{clientData.id}</b>, is called to turn in your survey and receive payment.  Please answer the survey carefully and thank you for participating. 
+Please wait quietly while we prepare your payments.  When payments are ready we will
+call you up one by one. Please wait until your computer number,
+<b>{clientData.id}</b>, is called before coming up to receive payment.  Thank you
+for participating.
 </p>
 {endif}
 ]]>
@@ -308,16 +309,12 @@ experiment.
     <p>
         <b>Do you have any questions?</b>  If you have any questions at this time,
         raise your hand and someone will come over to your station and answer it.
-        Otherwise, please click the continue button below.
     </p>
-    <form>
-    <input type="submit" value="Continue" name="continue">
-    </form>
     ]]>
 </entry>
 <entry key='waiting-room-instructions'>
 <![CDATA[
-<h1>Waiting Room</h1>
+<h1>Please Wait</h1>
 <hr>
 <p>Please wait while the other participants complete their tasks.</p>
 ]]>

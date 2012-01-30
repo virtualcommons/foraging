@@ -1,7 +1,6 @@
 package edu.asu.commons.foraging.model;
 
 import java.awt.Point;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,7 +42,7 @@ import edu.asu.commons.net.Identifier;
  * @version $Revision$
  */
 
-public class GroupDataModel implements Serializable, Comparable<GroupDataModel>, DataModel<ServerConfiguration, RoundConfiguration> {
+public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<ServerConfiguration, RoundConfiguration> {
 
     private static final long serialVersionUID = -4756267788191037505L;
 
@@ -807,6 +806,11 @@ public class GroupDataModel implements Serializable, Comparable<GroupDataModel>,
     
     public ForagingStrategy getSelectedRule() {
         return selectedRules.get(0);
+    }
+
+    @Override
+    public ServerConfiguration getExperimentConfiguration() {
+        return serverDataModel.getExperimentConfiguration();
     }
 
 }
