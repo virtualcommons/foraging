@@ -8,10 +8,10 @@ import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.GroupDataModel;
 
 /**
- * $Id: AddClientEvent.java 4 2008-07-25 22:51:44Z alllee $
+ * $Id$
  * 
  * @author Allen Lee, Deepali Bhagvat
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 public class AddClientEvent extends AbstractPersistableEvent {
 

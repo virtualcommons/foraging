@@ -11,7 +11,7 @@ import edu.asu.commons.foraging.graphics.TextureLoader;
 /**
  * The Ground class represents the forest ground in the foresty experiment visualization. 
  * @author <a href='deepali.bhagvat@asu.edu'>Deepali Bhagvat</a>
- * @version $Revision: 4 $
+ * @version $Revision$
  *
  */
 public class Ground extends GraphicsObject {

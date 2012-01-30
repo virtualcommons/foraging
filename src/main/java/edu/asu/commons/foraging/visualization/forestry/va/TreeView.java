@@ -15,7 +15,7 @@ import com.sun.opengl.util.BufferUtil;
  * architecture.
  *  
  * @author <a href='deepali.bhagvat@asu.edu'>Deepali Bhagvat</a>
- * @version $Revision: 4 $
+ * @version $Revision$
  *
  */
 public class TreeView {	

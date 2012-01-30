@@ -35,7 +35,7 @@ import edu.asu.commons.foraging.visualization.GameView3d;
  * in the forestry visualization. Animation files are used to animate the woodcutter to perform different actions. The actions supported are
  * standing, walking and axing.  
  * @author <a href='deepali.bhagvat@asu.edu'>Deepali Bhagvat</a>
- * @version $Revision: 4 $
+ * @version $Revision$
  *
  */
 public class Woodcutter extends GraphicsObject implements MovingObject {

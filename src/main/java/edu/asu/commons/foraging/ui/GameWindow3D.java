@@ -18,12 +18,12 @@ import edu.asu.commons.foraging.visualization.GameView3d;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: GameWindow3D.java 416 2009-12-25 05:17:14Z alllee $
+ * $Id$
  * 
  * TODO: fix chat panel layout, scrolling messages cause the chat panel to overwhelm the game window.
  * 
  * @author <a href='Allen.Lee@asu.edu'>Allen Lee</a>, Deepali Bhagvat
- * @version $Revision: 416 $
+ * @version $Revision$
  */
 
 public class GameWindow3D implements GameWindow {

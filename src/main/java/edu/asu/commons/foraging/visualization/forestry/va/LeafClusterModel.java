@@ -11,7 +11,7 @@ import edu.asu.commons.foraging.graphics.Vector3D;
  * The LeafClusterModel class is used to create leaf clusters in the tree foliage. The geometry is approximated as 2 triangles connected 
  * to each other on one side. This is then buffered for rendering. This is a model type of class in the MVC architecture. 
  * @author <a href='deepali.bhagvat@asu.edu'>Deepali Bhagvat</a>
- * @version $Revision: 4 $
+ * @version $Revision$
  *
  */
 public class LeafClusterModel {

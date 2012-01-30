@@ -19,7 +19,7 @@ import edu.asu.commons.foraging.util.Tuple3i;
  * The TreeModel class is used to create tree geometry according to its age. This is then buffered for rendering. This is a model type of class
  * in the MVC architecture. 
  * @author <a href='deepali.bhagvat@asu.edu'>Deepali Bhagvat</a>
- * @version $Revision: 4 $
+ * @version $Revision$
  *
  */
 public class TreeModel {

@@ -33,7 +33,7 @@ import edu.asu.commons.net.Identifier;
 
 
 /**
- * $Id: EmbeddedChatPanel.java 416 2009-12-25 05:17:14Z alllee $
+ * $Id$
  * 
  * Chat panel used to communicate with other players within the 3D foraging visualization.  
  * 
@@ -43,7 +43,7 @@ import edu.asu.commons.net.Identifier;
  * FIXME: set the layout/bounds on this class properly.
  * 
  * @author alllee
- * @version $Revision: 416 $
+ * @version $Revision$
  */
 
 @SuppressWarnings("serial")
