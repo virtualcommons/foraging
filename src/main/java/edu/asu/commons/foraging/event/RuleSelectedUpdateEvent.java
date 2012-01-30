@@ -21,28 +21,23 @@ import edu.asu.commons.net.Identifier;
 public class RuleSelectedUpdateEvent extends AbstractPersistableEvent {
 
     private static final long serialVersionUID = 4360213814026474451L;
-    private final List<ForagingStrategy> selectedRules;
+    private final List<ForagingStrategy> selectedStrategies;
     private final Map<ForagingStrategy, Integer> votingResults;
   
-    public RuleSelectedUpdateEvent(Identifier id, List<ForagingStrategy> selectedRules, Map<ForagingStrategy, Integer> votingResults) {
-        super(id, selectedRules.toString());
-        this.selectedRules = selectedRules;
+    public RuleSelectedUpdateEvent(Identifier id, List<ForagingStrategy> selectedStrategies, Map<ForagingStrategy, Integer> votingResults) {
+        super(id, String.format("Strategies: %s, All results: %s", selectedStrategies, votingResults));
+        this.selectedStrategies = selectedStrategies;
         this.votingResults = votingResults;
     }
     
     public ForagingStrategy getSelectedRule() {
-        return selectedRules.get(0);
+        return selectedStrategies.get(0);
     }
     
-    public List<ForagingStrategy> getSelectedRules() {
-        return selectedRules;
+    public List<ForagingStrategy> getSelectedStrategies() {
+        return selectedStrategies;
     }
     
-    @Override
-    public String toString() {
-        return String.format("Selected first rule from %s", selectedRules);
-    }
-
     public Map<ForagingStrategy, Integer> getVotingResults() {
         return votingResults;
     }

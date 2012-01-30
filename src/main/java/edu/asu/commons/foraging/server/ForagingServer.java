@@ -397,9 +397,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                                 sendFacilitatorMessage(String.format(
                                         "%s selected [%s] from all rules (%s)",
                                         group, selectedRules, votingResults));
+                                
                                 transmit(new RuleSelectedUpdateEvent(id, selectedRules, votingResults));
                             }
-
+                            store(new RuleSelectedUpdateEvent(facilitatorId, selectedRules, votingResults));
                         }
                     }
                 }
