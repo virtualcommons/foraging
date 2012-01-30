@@ -18,21 +18,4 @@
 <entry key='survey-url'>
     <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_3efXdNaJ6EXZ0S8&SURVEY_ID={surveyId}]]>
 </entry>
-
-
-<entry key="instructions">
-<![CDATA[
-<h2>Important New Instructions!</h2>
-<hr>
-<p>
-<b>From this point forward, participants will NOT have the option to reduce the earnings of another participant.</b> 
-</p>
-
-<h2>Round {self.roundNumber}</h2>
-<hr>
-<p>
-Round {self.roundNumber} is about to begin. The length of this round is again {duration}.</p>
-<p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
-]]>
-</entry>
 </properties>
