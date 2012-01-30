@@ -12,7 +12,7 @@
   <resources> 
     <j2se version="1.6+"/>
     <jar href="facilitator.jar"/>
-    <jar href='stringtemplate.jar'/>
+    <jar href='ST4.jar'/>
     <jar href='antlr-runtime.jar'/>
     <jar href='@FRAMEWORK_JAR@'/>
   </resources>
