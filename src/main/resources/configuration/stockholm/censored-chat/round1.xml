@@ -16,7 +16,7 @@
 
 <entry key="instructions">
 <![CDATA[
-<h1>Round {roundNumber} Instructions</h1>
+<h1>Round {self.roundNumber} Instructions</h1>
 <hr>
 <p>
     This is the first round of the experiment. The length of the round is
@@ -30,10 +30,10 @@
 In this round the renewable resource will become five times bigger.  You will share
 this larger environment with other randomly selected participants in this room.
 Each participant in the room has been randomly assigned to one of several
-equal-sized {clientsPerGroup} person groups and everyone in your group has been
-randomly assigned a number from 1 to {clientsPerGroup}.  You will stay in the same
+equal-sized {self.clientsPerGroup} person groups and everyone in your group has been
+randomly assigned a number from 1 to {self.clientsPerGroup}.  You will stay in the same
 group for the entire experiment, and each person's number from 1 to
-{clientsPerGroup} will remain the same throughout the experiment. The other members
+{self.clientsPerGroup} will remain the same throughout the experiment. The other members
 of your group will appear on the screen as blue dots <img src="@CODEBASE_URL@/images/gem-other.gif"> 
 with a white number embedded in the dot.
 </p>
