@@ -179,7 +179,7 @@ room.
 </p>
 ]]>
 </entry>
-<entry key="sameRoundAsPreviousInstructions">
+<entry key="same-as-previous-round-instructions">
 <![CDATA[
 <h3>Round {self.roundNumber} Instructions</h3>
 <hr>
@@ -236,7 +236,15 @@ This was the last round, but not the end of the experiment. We ask that you plea
 <h2>Payment</h2>
 <hr>
 <p>
-When payments are ready we will call you up one by one. Please wait until your computer number, <b>{clientData.id}</b>, is called to turn in your survey and receive payment.  Please answer the survey carefully and thank you for participating. 
+When payments are ready we will call you up one by one. Please wait until your
+computer number, <b>{clientData.id}</b>, is called to turn in your survey and
+receive payment.  Please answer the survey carefully and thank you for
+participating. 
+</p>
+<p>
+NOTE: Please <b>answer the survey completely (there may be a back side)</b>
+and <b>bring all your belongings with you</b> when you come up to
+receive your payment to help us speed up the payment process.
 </p>
 {endif}
 ]]>
