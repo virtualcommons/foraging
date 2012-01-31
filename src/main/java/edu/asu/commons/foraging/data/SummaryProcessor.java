@@ -19,7 +19,7 @@ import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id: SummaryProcessor.java 526 2010-08-06 01:25:27Z alllee $
+ * $Id$
  * 
  * 
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
@@ -41,7 +41,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
             	}
             });
             for (ClientData data : clientDataList) {
-                clientTokens.add(String.format("%s, %s, %s", data.getId(), data.getAssignedNumber(), data.getTotalTokens()));
+                clientTokens.add(String.format("%s, %s", data, data.getTotalTokens()));
                 totalConsumedGroupTokens += data.getTotalTokens();
             }
             writer.println(
