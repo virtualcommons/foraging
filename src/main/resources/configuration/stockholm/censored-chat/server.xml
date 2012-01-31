@@ -213,17 +213,17 @@ rules we will have to stop the experiment and remove the offending group from th
 room.
 </p>
 <p>
-    You will see other participants labeled from 1 to {clientsPerGroup} in the chat
+    You will see other participants labeled from A to {self.lastChatHandle} in the chat
     window.  You can send a chat message by typing into the textfield and pressing
     the enter key.
 </p>
 ]]>
 </entry>
-<entry key="sameRoundAsPreviousInstructions">
+<entry key="same-as-previous-round-instructions">
 <![CDATA[
-<h3>Round {roundNumber} Instructions</h3>
+<h3>Round {self.roundNumber} Instructions</h3>
 <hr>
-<p>Round {roundNumber} is the same as the previous round.</p>
+<p>Round {self.roundNumber} is the same as the previous round.</p>
 <p>The length of this round is {duration}.</p>
 <p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
 ]]>

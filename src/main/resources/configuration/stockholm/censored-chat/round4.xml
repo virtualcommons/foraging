@@ -54,7 +54,7 @@
             During the next round you will have the option to reduce the earnings of another
             participant at a cost to your own earnings.
             <ul>
-                <li>If you press the numeric key 1-{clientsPerGroup} corresponding
+                <li>If you press the numeric key 1-{self.clientsPerGroup} corresponding
                     to another participant, you will reduce the number of tokens
                     they have collected in this round by
                     <b>{self.sanctionPenalty}</b> token(s). This will also
@@ -114,7 +114,7 @@
             During the next round you will have the option to reduce the earnings of another
             participant at a cost to your own earnings.
             <ul>
-                <li>If you press the numeric key 1-{clientsPerGroup} corresponding
+                <li>If you press the numeric key 1-{self.clientsPerGroup} corresponding
                     to another participant, you will reduce the number of tokens
                     they have collected in this round by
                     <b>{self.sanctionPenalty}</b> token(s). This will also
