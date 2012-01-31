@@ -320,4 +320,23 @@ experiment.
 ]]>
 </entry>
 
+<entry key='voting-instructions'>
+<![CDATA[
+<h1>Strategy Nomination Instructions</h1>
+<hr>
+<p>
+To nominate a strategy, click the radio button that is to the right of the one you choose; then click "submit". The computer will tally the nominations and then report the
+results on the next screen. The results will be presented to each person in
+your group.
+</p>
+<h2>Your selection will be anonymous</h2>
+<hr>
+<p>
+The identity of people who nominated a particular strategy will NOT be revealed.
+Therefore, neither you nor the experimenter will know who nominated a particular
+strategy.
+</p>
+]]>
+</entry>
+
 </properties>

@@ -600,7 +600,13 @@ public class ClientData implements Serializable {
     }
 
     public String toString() {
-        return String.format("[%s #%d]", id, assignedNumber);
+        String surveyId = id.getSurveyId();
+        if (surveyId == null || surveyId.trim().isEmpty()) {
+            return String.format("%s, #%d", id, assignedNumber);
+        }
+        else {
+            return String.format("%s, Survey id: %s, #%d", id, surveyId, assignedNumber);
+        }
     }
 
     public void addTrustGameEarnings(double trustGameEarnings) {
