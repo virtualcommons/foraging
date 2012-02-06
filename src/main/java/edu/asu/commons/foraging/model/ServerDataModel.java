@@ -7,7 +7,6 @@ import java.io.ObjectInputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -16,6 +15,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import edu.asu.commons.event.Event;
@@ -257,9 +257,7 @@ public class ServerDataModel extends ForagingDataModel {
     }
     
     public List<GroupDataModel> getOrderedGroups() {
-        ArrayList<GroupDataModel> groups = new ArrayList<GroupDataModel>(clientsToGroups.values());
-        Collections.sort(groups);
-        return groups;
+        return new ArrayList<GroupDataModel>(new TreeSet<GroupDataModel>(clientsToGroups.values()));
     }
 
     protected ClientData getClientData(Identifier id) {

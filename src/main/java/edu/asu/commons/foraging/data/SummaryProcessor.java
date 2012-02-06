@@ -49,9 +49,8 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                             group,
                             Utils.join(',', clientTokens),
                             group.getResourceDistributionSize(),
-                            totalConsumedGroupTokens,
-                            Utils.join(',', group.getResourceDistribution().keySet())
-                    ));
+                            totalConsumedGroupTokens)
+                    );
         }
         Map<GroupDataModel, SortedSet<ChatRequest>> chatRequestMap = new HashMap<GroupDataModel, SortedSet<ChatRequest>>();
         SortedSet<ChatRequest> allChatRequests = savedRoundData.getChatRequests();
