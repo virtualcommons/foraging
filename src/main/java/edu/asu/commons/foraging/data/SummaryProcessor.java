@@ -29,7 +29,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
         ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
-        List<GroupDataModel> groups = new ArrayList<GroupDataModel>(serverDataModel.getGroups());
+        List<GroupDataModel> groups = serverDataModel.getOrderedGroups();
         for (GroupDataModel group: groups) {
             int totalConsumedGroupTokens = 0;
             ArrayList<String> clientTokens = new ArrayList<String>();

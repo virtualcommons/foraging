@@ -3,8 +3,8 @@ package edu.asu.commons.foraging.data;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
@@ -55,9 +55,8 @@ class CollectedTokenSpatialDistributionProcessor extends SaveFileProcessor.Base 
 				PrintWriter writer,
 				ServerDataModel serverDataModel,
 				Map<Identifier, ClientSpatialDistribution> clientSpatialDistributionMap) {
-			ArrayList<GroupDataModel> groups = new ArrayList<GroupDataModel>(serverDataModel.getGroups());
+			List<GroupDataModel> groups = serverDataModel.getOrderedGroups();
             for (GroupDataModel group: groups) {
-//                String groupLabel = "Group #" + groups.indexOf(group);
                 String groupLabel = group.toString();
                 writer.println("Identifier, Group, # tokens, row stdev, column stdev");
                 double groupWeightedSpatialMetric = 0.0d;

@@ -49,6 +49,7 @@ import edu.asu.commons.foraging.ui.GameWindow;
 import edu.asu.commons.foraging.ui.GameWindow2D;
 import edu.asu.commons.foraging.ui.GameWindow3D;
 import edu.asu.commons.net.SocketIdentifier;
+import edu.asu.commons.ui.UserInterfaceUtils;
 import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.Utils;
 
@@ -424,10 +425,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
                 client.connect();
                 frame.setTitle("Client Window: " + client.getId());
                 frame.add(client.clientPanel);
-                frame.pack();
-                frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                frame.setVisible(true);
+                UserInterfaceUtils.maximize(frame);
             }
         };
         SwingUtilities.invokeLater(createGuiRunnable);

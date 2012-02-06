@@ -258,6 +258,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         // reassociation of clients to ids and data. should be
                         // logged however so we can remember the context of the data
                         transmit(new ClientMessageEvent(event.getId(), "The experiment has already started, we cannot add you at this time."));
+                        sendFacilitatorMessage(String.format("Experiment was already started, not adding %s", event.getId()));
                         return;
                     }
                     Identifier identifier = event.getId();

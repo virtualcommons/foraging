@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import edu.asu.commons.event.PersistableEvent;
@@ -29,7 +28,7 @@ import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id: AggregateTimeIntervalProcessor.java 526 2010-08-06 01:25:27Z alllee $
+ * $Id$
  * 
  * Generates aggregate statistics 
  * 
@@ -50,7 +49,7 @@ public class AggregateTimeIntervalProcessor extends SaveFileProcessor.Base {
         }
         RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
         TreeSet<Identifier> orderedIdentifiers = new TreeSet<Identifier>(serverDataModel.getClientDataMap().keySet());
-        List<GroupDataModel> groups = new ArrayList<GroupDataModel>(serverDataModel.getGroups());
+        List<GroupDataModel> groups = serverDataModel.getOrderedGroups();
         
         List<String> movementHeader = new ArrayList<String>();
         List<String> collectedTokensHeader = new ArrayList<String>();
@@ -60,17 +59,17 @@ public class AggregateTimeIntervalProcessor extends SaveFileProcessor.Base {
         }
 
         // headers for average probability of a token for each group
-        //            List<String> tokenProbabilityGroupNumberHeader = new ArrayList<String>();
+        List<String> tokenProbabilityGroupNumberHeader = new ArrayList<String>();
         // headers for tokens left in each group
-        //            List<String> tokensLeftGroupNumberHeader = new ArrayList<String>();
+        List<String> tokensLeftGroupNumberHeader = new ArrayList<String>();
         List<String> distanceHeader = new ArrayList<String>();
 
-        for (int groupIndex = 0; groupIndex < groups.size(); groupIndex++) {
-            String groupNumber = "Group-" + groupIndex;
-            //                tokenProbabilityGroupNumberHeader.add(groupNumber + " avg token P");
-            //                tokensLeftGroupNumberHeader.add(groupNumber + " tokens left");
+        for (GroupDataModel group: groups) {
+            String groupNumber = group.toString(); 
+            tokenProbabilityGroupNumberHeader.add(groupNumber + " avg token P");
+            tokensLeftGroupNumberHeader.add(groupNumber + " tokens left");
             
-            List<Identifier> ids = new ArrayList<Identifier>(groups.get(groupIndex).getOrderedClientIdentifiers());
+            List<Identifier> ids = new ArrayList<Identifier>(group.getOrderedClientIdentifiers());
             for (int i = 0; i < ids.size();  i++) {
                 Identifier id = ids.get(i);
                 for (int j = i+1; j < ids.size(); j++) {
@@ -87,9 +86,9 @@ public class AggregateTimeIntervalProcessor extends SaveFileProcessor.Base {
                 // tokens 
                 Utils.join(',', collectedTokensHeader),
                 // group token probabilities
-                //                Utils.join(',', tokenProbabilityGroupNumberHeader),
+                Utils.join(',', tokenProbabilityGroupNumberHeader),
                 // group total tokens left
-                //                Utils.join(',', tokensLeftGroupNumberHeader),
+                Utils.join(',', tokensLeftGroupNumberHeader),
                 // distance between participants
                 Utils.join(',', distanceHeader)
         );
@@ -190,15 +189,15 @@ public class AggregateTimeIntervalProcessor extends SaveFileProcessor.Base {
         return distances;
     }
 
-    private List<Double> getExpectedTokenProbabilities(ServerDataModel state) {
+    private List<Double> getExpectedTokenProbabilities(ServerDataModel serverDataModel) {
         List<Double> expectedTokens = new ArrayList<Double>();
-        Set<GroupDataModel> groups = state.getGroups();
-        ResourceDispenser dispenser = new ResourceDispenser(state);
+        List<GroupDataModel> groups = serverDataModel.getOrderedGroups();
+        ResourceDispenser dispenser = new ResourceDispenser(serverDataModel);
         StochasticGenerator generator = dispenser.getDensityDependentGenerator();
         for (GroupDataModel group: groups) {
             double tokenProbabilitySum = 0;
-            for (int x = 0; x < state.getBoardWidth(); x++) {
-                for (int y = 0; y < state.getBoardHeight(); y++) {
+            for (int x = 0; x < serverDataModel.getBoardWidth(); x++) {
+                for (int y = 0; y < serverDataModel.getBoardHeight(); y++) {
                     if (! group.getResourcePositions().contains(new Point(x, y))) {
                         tokenProbabilitySum += generator.getProbabilityForCell(group, x, y);    
                     }
