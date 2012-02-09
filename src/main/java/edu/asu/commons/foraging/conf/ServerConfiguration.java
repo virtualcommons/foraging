@@ -48,15 +48,15 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     }
     
     public String getLogFileDestination() {
-        return assistant.getStringProperty("log", DEFAULT_LOG_FILE_DESTINATION);
+        return getStringProperty("log", DEFAULT_LOG_FILE_DESTINATION);
     }
 
     public boolean shouldUpdateFacilitator() {
-        return assistant.getBooleanProperty("update-facilitator", false);
+        return getBooleanProperty("update-facilitator", false);
     }
     
     public boolean isCensoredChat() {
-        return assistant.getBooleanProperty("censored-chat-enabled", false);
+        return getBooleanProperty("censored-chat-enabled", false);
     }
     
     public boolean shouldInitialize3D() {
@@ -77,19 +77,19 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     }
     
     public double getShowUpPayment() {
-        return assistant.getDoubleProperty("show-up-payment", DEFAULT_SHOW_UP_PAYMENT);
+        return getDoubleProperty("show-up-payment", DEFAULT_SHOW_UP_PAYMENT);
     }
 
     public double getQuizCorrectAnswerReward() {
-        return assistant.getDoubleProperty("quiz-correct-answer-reward", DEFAULT_QUIZ_CORRECT_ANSWER_REWARD);
+        return getDoubleProperty("quiz-correct-answer-reward", DEFAULT_QUIZ_CORRECT_ANSWER_REWARD);
     }
     
     public String getWelcomeInstructions() {
-        return assistant.getStringProperty("welcome-instructions", "Please wait quietly and do not open or close any programs on this computer.");
+        return getStringProperty("welcome-instructions", "Please wait quietly and do not open or close any programs on this computer.");
     }
     
     public String getGeneralInstructions() {
-        ST st = createStringTemplate(assistant.getStringProperty("general-instructions"));
+        ST st = createStringTemplate(getStringProperty("general-instructions"));
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         st.add("showUpPayment", formatter.format(getShowUpPayment()));
         st.add("dollarsPerToken", formatter.format(getDollarsPerToken()));
@@ -97,11 +97,11 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     }
     
     public String getSameAsPreviousRoundInstructions() {
-        return assistant.getStringProperty("same-as-previous-round-instructions", SAME_ROUND_AS_PREVIOUS_INSTRUCTIONS);
+        return getStringProperty("same-as-previous-round-instructions", SAME_ROUND_AS_PREVIOUS_INSTRUCTIONS);
     }
     
     public String getFieldOfVisionInstructions() {
-        return assistant.getProperty("field-of-vision-instructions", 
+        return getProperty("field-of-vision-instructions", 
                 "Your view of the resource will be limited in this round.  The area visible to you will be shaded.");
     }
     
@@ -114,20 +114,20 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     }
     
     public String getFinalRoundFacilitatorInstructions() {
-    	return assistant.getProperty("facilitator-payment-instructions", 
+    	return getProperty("facilitator-payment-instructions", 
     			"<h3>The experiment has ended and participant payments are listed above.  We recommend that you copy and paste it into a text editor for your records.</h3>");
     }
 
     public String getSurveyInstructions() {
-        return assistant.getProperty("survey-instructions");
+        return getProperty("survey-instructions");
     }
 
     public String getFacilitatorDebriefing() {
-        return assistant.getProperty("facilitator-debriefing");
+        return getProperty("facilitator-debriefing");
     }
 
     public String getClientDebriefing() {
-        return assistant.getProperty("client-debriefing");
+        return getProperty("client-debriefing");
     }
 
     public double getTotalIncome(ClientData data) {
@@ -144,19 +144,19 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfi
     }
 
 	public String getInitialVotingInstructions() {
-		return assistant.getProperty("initial-voting-instructions");
+		return getProperty("initial-voting-instructions");
 	}
 	
 	public String getVotingResults() {
-	    return assistant.getProperty("voting-results");
+	    return getProperty("voting-results");
 	}
 	
 	public int getServerSleepInterval() {
-	    return assistant.getIntProperty("server-sleep-interval", 50);
+	    return getIntProperty("server-sleep-interval", 50);
 	}
 
 	public String getWaitingRoomInstructions() {
-		return assistant.getProperty("waiting-room-instructions", "<h1>Please wait</h1><hr><p>Please wait while the rest of the participants complete the task.</p>");
+		return getProperty("waiting-room-instructions", "<h1>Please wait</h1><hr><p>Please wait while the rest of the participants complete the task.</p>");
 	}
 
 }

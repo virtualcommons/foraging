@@ -330,12 +330,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("regulation-instructions");
     }
 
-    public String getLastRoundDebriefing(Identifier id) {
-        ST template = createStringTemplate(getProperty("last-round-debriefing"));
-        template.add("id", id);
-        return template.render();
-    }
-
     /**
      * FIXME: quiz instructions and quiz enabled should be tightly coupled..
      * 

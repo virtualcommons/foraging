@@ -29,7 +29,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
         ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
-        List<GroupDataModel> groups = new ArrayList<GroupDataModel>(serverDataModel.getGroups());
+        List<GroupDataModel> groups = serverDataModel.getOrderedGroups();
         for (GroupDataModel group: groups) {
             int totalConsumedGroupTokens = 0;
             ArrayList<String> clientTokens = new ArrayList<String>();
@@ -49,9 +49,8 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                             group,
                             Utils.join(',', clientTokens),
                             group.getResourceDistributionSize(),
-                            totalConsumedGroupTokens,
-                            Utils.join(',', group.getResourceDistribution().keySet())
-                    ));
+                            totalConsumedGroupTokens)
+                    );
         }
         Map<GroupDataModel, SortedSet<ChatRequest>> chatRequestMap = new HashMap<GroupDataModel, SortedSet<ChatRequest>>();
         SortedSet<ChatRequest> allChatRequests = savedRoundData.getChatRequests();

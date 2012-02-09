@@ -46,27 +46,28 @@ public class InstructionsView {
     }
     
     public void debrief(ClientDataModel dataModel, boolean lastRound) {
-        RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
-        instructionsBuilder.delete(0, instructionsBuilder.length());
-        instructionsBuilder.append(
-                String.format("<h3>Your stats in this round:</h3>" +
-                        "<ul>" +
-                        "<li>Tokens collected: %d</li>" +
-                        "<li>Income: $%3.2f</li>" +
-                        "</ul>", 
-                        dataModel.getCurrentTokens(),
-                        dataModel.getCurrentIncome())
-                );
-        if (roundConfiguration.isPracticeRound()) {
-            instructionsBuilder.append("<h3>Note - since this was a practice round you did not earn any income this round.</h3>");
-        }
-        double showUpPayment = roundConfiguration.getParentConfiguration().getShowUpPayment();
-        instructionsBuilder.append(String.format("Your <b>total income</b> so far (including a $%3.2f bonus for showing up) is : $%3.2f<hr>",
-                showUpPayment, dataModel.getTotalIncome() + showUpPayment));
-        if (lastRound) {
-            instructionsBuilder.append(dataModel.getLastRoundDebriefing());
-        }
-        setInstructions(instructionsBuilder.toString());
+    	throw new UnsupportedOperationException("Deprecated");
+//        RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
+//        instructionsBuilder.delete(0, instructionsBuilder.length());
+//        instructionsBuilder.append(
+//                String.format("<h3>Your stats in this round:</h3>" +
+//                        "<ul>" +
+//                        "<li>Tokens collected: %d</li>" +
+//                        "<li>Income: $%3.2f</li>" +
+//                        "</ul>", 
+//                        dataModel.getCurrentTokens(),
+//                        dataModel.getCurrentIncome())
+//                );
+//        if (roundConfiguration.isPracticeRound()) {
+//            instructionsBuilder.append("<h3>Note - since this was a practice round you did not earn any income this round.</h3>");
+//        }
+//        double showUpPayment = roundConfiguration.getParentConfiguration().getShowUpPayment();
+//        instructionsBuilder.append(String.format("Your <b>total income</b> so far (including a $%3.2f bonus for showing up) is : $%3.2f<hr>",
+//                showUpPayment, dataModel.getTotalIncome() + showUpPayment));
+//        if (lastRound) {
+//            instructionsBuilder.append(dataModel.getLastRoundDebriefing());
+//        }
+//        setInstructions(instructionsBuilder.toString());
     }
     
     /**

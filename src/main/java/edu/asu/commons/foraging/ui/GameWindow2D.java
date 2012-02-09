@@ -637,31 +637,31 @@ public class GameWindow2D implements GameWindow {
 
     // FIXME: replace with StringTemplate
     private void postSanctionDebriefingText(final PostRoundSanctionUpdateEvent event) {
-        instructionsBuilder.delete(0, instructionsBuilder.length());
-        ClientData clientData = event.getClientData();
-        // FIXME: split into tokens used to sanction others and tokens taken
-        // away by other people.
-        instructionsBuilder.append(
-                String.format("<h3>Your statistics from the last round have been updated as follows:</h3>" +
-                        "<ul>" +
-                        "<li>Tokens collected last round: %d</li>" +
-                        "<li>Tokens subtracted by other players: %d</li>" +
-                        "<li>Tokens used to subtract tokens from other players: %d</li>" +
-                        "<li>Net earned tokens in the last round: %d</li>" +
-                        "<li>Net income from the last round: $%3.2f</li>" +
-                        "</ul>",
-                        clientData.getTokensCollectedLastRound(),
-                        clientData.getSanctionPenalties(),
-                        clientData.getSanctionCosts(),
-                        clientData.getCurrentTokens(),
-                        getIncome(clientData.getCurrentTokens()))
-                );
-        instructionsBuilder.append(String.format("Your <b>total income</b> so far is: $%3.2f<hr>",
-                getIncome(clientData.getTotalTokens())));
-        if (event.isLastRound()) {
-            instructionsBuilder.append(client.getDataModel().getLastRoundDebriefing());
-        }
-        setInstructions(instructionsBuilder.toString());
+//        instructionsBuilder.delete(0, instructionsBuilder.length());
+//        ClientData clientData = event.getClientData();
+//        // FIXME: split into tokens used to sanction others and tokens taken
+//        // away by other people.
+//        instructionsBuilder.append(
+//                String.format("<h3>Your statistics from the last round have been updated as follows:</h3>" +
+//                        "<ul>" +
+//                        "<li>Tokens collected last round: %d</li>" +
+//                        "<li>Tokens subtracted by other players: %d</li>" +
+//                        "<li>Tokens used to subtract tokens from other players: %d</li>" +
+//                        "<li>Net earned tokens in the last round: %d</li>" +
+//                        "<li>Net income from the last round: $%3.2f</li>" +
+//                        "</ul>",
+//                        clientData.getTokensCollectedLastRound(),
+//                        clientData.getSanctionPenalties(),
+//                        clientData.getSanctionCosts(),
+//                        clientData.getCurrentTokens(),
+//                        getIncome(clientData.getCurrentTokens()))
+//                );
+//        instructionsBuilder.append(String.format("Your <b>total income</b> so far is: $%3.2f<hr>",
+//                getIncome(clientData.getTotalTokens())));
+//        if (event.isLastRound()) {
+//            instructionsBuilder.append(client.getDataModel().getLastRoundDebriefing());
+//        }
+//        setInstructions(instructionsBuilder.toString());
 
     }
 

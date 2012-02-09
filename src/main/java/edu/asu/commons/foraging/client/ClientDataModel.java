@@ -285,8 +285,4 @@ public class ClientDataModel extends ForagingDataModel {
         throw new UnsupportedOperationException("3D support is currently unavailable");
     }
 
-    public String getLastRoundDebriefing() {
-        return getRoundConfiguration().getLastRoundDebriefing(getId());
-    }
-
 }
