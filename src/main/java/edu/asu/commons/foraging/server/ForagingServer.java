@@ -13,10 +13,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import edu.asu.commons.event.BeginRoundRequest;
 import edu.asu.commons.event.ChatEvent;
@@ -99,8 +95,6 @@ import edu.asu.commons.util.Utils;
  */
 public class ForagingServer extends AbstractExperiment<ServerConfiguration, RoundConfiguration> {
 
-    private final Logger logger = Logger.getLogger(getClass().getName());
-
     private final Map<Identifier, ClientData> clients = new HashMap<Identifier, ClientData>();
     private final HashSet<Identifier> syncSet = new HashSet<Identifier>();
 
@@ -138,14 +132,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
     public ForagingServer(ServerConfiguration configuration) {
         super(configuration);
         persister = new ForagingPersister(getEventChannel(), configuration);
-        try {
-            Handler logHandler = new FileHandler(configuration.getLogFileDestination(), true);
-            logHandler.setFormatter(new SimpleFormatter());
-            logger.addHandler(logHandler);
-        } catch (IOException e) {
-            e.printStackTrace();
-            logger.severe("Unable to log to file : " + configuration.getLogFileDestination());
-        }
     }
 
     @Override
@@ -274,7 +260,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 public void handle(DisconnectionRequest event) {
                     synchronized (clients) {
                     	Identifier id = event.getId();
-                        logger.warning("Disconnecting client, removing " + id + " from clients " + clients.keySet());
+                        getLogger().warning("Disconnecting client, removing " + id + " from clients " + clients.keySet());
                         clients.remove(id);
                         serverDataModel.removeClient(id);
                     }
@@ -331,7 +317,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<PostRoundSanctionRequest>(PostRoundSanctionRequest.class) {
                 public void handle(PostRoundSanctionRequest event) {
-                    logger.info("Received post round sanction request");
+                    getLogger().info("Received post round sanction request");
                     clients.get(event.getId()).getGroupDataModel().handleSanctionRequest(event);
                     // postRoundSanctionLatch.countDown();
                     numberOfCompletedSanctions++;
@@ -496,7 +482,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
             GroupDataModel group = sourceClient.getGroupDataModel();
             if (!group.equals(targetClient.getGroupDataModel())) {
-                logger.severe("source client and target client groups are different: " + sourceClient + targetClient);
+                getLogger().severe("source client and target client groups are different: " + sourceClient + targetClient);
                 return;
             }
             EnforcementMechanism enforcementMechanism = group.getActiveEnforcementMechanism();
@@ -531,7 +517,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     break;
                 case NONE:
                 default:
-                    logger.severe("tried to sanction with EnforcementMechanism.NONE");
+                    getLogger().severe("tried to sanction with EnforcementMechanism.NONE");
             }
         }
 
@@ -544,7 +530,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     || sourceClient.getGroupDataModel().isResourceDistributionEmpty();
             if (invalidSanctionRequest) {
                 // ignore the sanction request, send a message to the sanctioner.
-                logger.warning("Ignoring token reduction request, sending new client error message event to : " + sourceClient.getId());
+                getLogger().warning("Ignoring token reduction request, sending new client error message event to : " + sourceClient.getId());
                 if (getCurrentRoundConfiguration().isSanctioningEnabled()) {
                     transmit(new ClientMessageEvent(sourceClient.getId(),
                             String.format("Ignoring token reduction request: # %d does not have any tokens to reduce.", targetClient.getAssignedNumber())));
@@ -571,7 +557,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             // add sanction request to the target client so they can figure out who just sanctioned them
             sourceClient.getLatestSanctions().add(request);
             targetClient.getLatestSanctions().add(request);
-            logger.info("target client " + targetClient.getId() + " has sanctions: " + targetClient.getLatestSanctions());
+            getLogger().info("target client " + targetClient.getId() + " has sanctions: " + targetClient.getLatestSanctions());
             transmit(new ClientMessageEvent(sourceClient.getId(),
                     String.format("Subtracting %d tokens from # %d at the cost of %d to yourself.",
                             subtractedTokens,
@@ -617,7 +603,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 public void handle(BeginRoundRequest event) {
                     if (event.getId().equals(facilitatorId)) {
                         if (isReadyToStartRound()) {
-                            logger.info("Begin round request from facilitator - starting round.");
+                            getLogger().info("Begin round request from facilitator - starting round.");
                             experimentStarted = true;
                             Utils.notify(roundSignal);
                         }
@@ -708,7 +694,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         	for (GroupDataModel group : serverDataModel.getGroups()) {
         		LinkedList<ClientData> clientList = new LinkedList<ClientData>(group.getClientDataMap().values());
         		Collections.shuffle(clientList);
-        		logger.info("TRUST GAME shuffled client list: " + clientList);
+        		getLogger().info("TRUST GAME shuffled client list: " + clientList);
         		ClientData first = clientList.getFirst();
 
         		// using an iterator to consume both players and ensure that a player doesn't
@@ -727,7 +713,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         				// why doesn't listIterator offer a currentIndex() method as well?
 //        				playerTwo = clientList.get(random.nextInt(iter.previousIndex() + 1));
 //        			}
-        			logger.info("TRUST GAME: about to pair " + playerOne + " with " + playerTwo);
+        			getLogger().info("TRUST GAME: about to pair " + playerOne + " with " + playerTwo);
         			TrustGameResult trustGameLog = serverDataModel.calculateTrustGame(playerOne, playerTwo);
         			allTrustGameResults.add(trustGameLog);
         			sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in:\n%s", playerOne, playerTwo,
@@ -786,14 +772,14 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         }
 
         private void sendFacilitatorMessage(String message) {
-            logger.info(message);
+            getLogger().info(message);
             if (facilitatorId != null) {
                 transmit(new FacilitatorMessageEvent(facilitatorId, message));
             }
         }
         
         private void warnFacilitator(String message) {
-            logger.warning(message);
+            getLogger().warning(message);
             if (facilitatorId != null) {
                 transmit(new FacilitatorMessageEvent(facilitatorId, "!. " + message));
             }
@@ -900,7 +886,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             }
             RoundConfiguration nextRoundConfiguration = getConfiguration().nextRound();
             serverDataModel.setRoundConfiguration(nextRoundConfiguration);
-            logger.info("Advancing to round # " + getConfiguration().getCurrentRoundNumber());
+            getLogger().info("Advancing to round # " + getConfiguration().getCurrentRoundNumber());
             // send the next round configuration to each client
             for (Identifier id : clients.keySet()) {
                 transmit(new SetConfigurationEvent<RoundConfiguration>(id, nextRoundConfiguration));
@@ -929,7 +915,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 //                }
             	for (ClientData data: clients.values()) {
             		if (shouldSynchronize(data)) {
-            			logger.info("Sending full sync to: " + data);
+            			getLogger().info("Sending full sync to: " + data);
             			transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
             			syncSet.add(data.getId());
             		}
@@ -1036,11 +1022,11 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private void initializeGroups() {
             // reset group linkages if necessary
             if (shouldShuffleParticipants()) {
-                logger.info("Shuffling participants");
+                getLogger().info("Shuffling participants");
                 shuffleParticipants();
             }
             else {
-                logger.info("Didn't need to shuffle participants : " + getCurrentRoundConfiguration());
+                getLogger().info("Didn't need to shuffle participants : " + getCurrentRoundConfiguration());
                 // shuffleParticipants automatically initializes the client positions
                 // if we don't shuffle, we need to manually re-initialize them.
                 initializeClientPositions();
@@ -1065,7 +1051,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             currentRoundDuration = roundConfiguration.getRoundDuration();
             if (roundConfiguration.isVotingAndRegulationEnabled()) {
                 monitorRotationInterval = Math.max(Duration.toSeconds(currentRoundDuration.getTimeLeft()) / roundConfiguration.getClientsPerGroup(), 1);
-                logger.info("monitor rotation interval: " + monitorRotationInterval);
+                getLogger().info("monitor rotation interval: " + monitorRotationInterval);
             }
             currentRoundDuration.start();
             transmit(new FacilitatorUpdateEvent(facilitatorId, serverDataModel, currentRoundDuration.getTimeLeft()));

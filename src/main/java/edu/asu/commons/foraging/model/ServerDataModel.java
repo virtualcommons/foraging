@@ -251,9 +251,7 @@ public class ServerDataModel extends ForagingDataModel {
     }
 
     public Set<GroupDataModel> getGroups() {
-        Set<GroupDataModel> groups = new LinkedHashSet<GroupDataModel>();
-        groups.addAll(clientsToGroups.values());
-        return groups;
+        return new LinkedHashSet<GroupDataModel>(clientsToGroups.values());
     }
     
     public List<GroupDataModel> getOrderedGroups() {
