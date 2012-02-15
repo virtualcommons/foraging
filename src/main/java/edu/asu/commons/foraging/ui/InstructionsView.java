@@ -7,7 +7,6 @@ import javax.swing.JScrollPane;
 
 import edu.asu.commons.foraging.client.ClientDataModel;
 import edu.asu.commons.foraging.client.ForagingClient;
-import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.visualization.conceptual.AgentDesignPanel;
 import edu.asu.commons.foraging.visualization.forestry.AvatarDesignPanel;
 import edu.asu.commons.ui.HtmlEditorPane;

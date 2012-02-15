@@ -1,7 +1,5 @@
 package edu.asu.commons.foraging.model;
 
-import static org.junit.Assert.*;
-
 import java.awt.Point;
 import java.util.HashSet;
 import java.util.Random;
@@ -10,7 +8,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.asu.commons.foraging.model.Resource;
+import static org.junit.Assert.*;
 
 
 public class ResourceTest {

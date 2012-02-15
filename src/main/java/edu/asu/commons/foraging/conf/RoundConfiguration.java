@@ -570,7 +570,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public boolean isCensoredChat() {
-        return getBooleanProperty("censored-chat-enabled", false);
+        return getBooleanProperty("censored-chat-enabled");
     }
 
     /**

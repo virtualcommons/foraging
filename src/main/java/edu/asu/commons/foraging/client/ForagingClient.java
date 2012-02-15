@@ -2,14 +2,12 @@ package edu.asu.commons.foraging.client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Frame;
 import java.util.LinkedList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.WindowConstants;
 
 import edu.asu.commons.client.BaseClient;
 import edu.asu.commons.event.ClientMessageEvent;

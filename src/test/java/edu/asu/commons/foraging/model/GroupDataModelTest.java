@@ -1,8 +1,5 @@
 package edu.asu.commons.foraging.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +11,7 @@ import org.junit.Test;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.net.Identifier;
+import static org.junit.Assert.*;
 
 public class GroupDataModelTest {
     
