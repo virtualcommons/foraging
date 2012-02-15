@@ -13,7 +13,7 @@ public class ShowTrustGameRequest extends AbstractEvent implements ShowRequest<S
     }
     
     @Override
-    public ShowTrustGameRequest copy(Identifier id) {
+    public ShowTrustGameRequest clone(Identifier id) {
         return new ShowTrustGameRequest(id);
     }
 }

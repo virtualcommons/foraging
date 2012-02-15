@@ -12,7 +12,7 @@ public class ShowVotingInstructionsRequest extends AbstractEvent implements Show
         super(id);
     }
     @Override
-    public ShowVotingInstructionsRequest copy(Identifier id) {
+    public ShowVotingInstructionsRequest clone(Identifier id) {
         return new ShowVotingInstructionsRequest(id);
     }
 }

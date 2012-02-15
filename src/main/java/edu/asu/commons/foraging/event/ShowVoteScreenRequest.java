@@ -13,7 +13,7 @@ public class ShowVoteScreenRequest extends AbstractEvent implements ShowRequest<
     }
     
     @Override
-    public ShowVoteScreenRequest copy(Identifier id) {
+    public ShowVoteScreenRequest clone(Identifier id) {
         return new ShowVoteScreenRequest(id);
     }
 }

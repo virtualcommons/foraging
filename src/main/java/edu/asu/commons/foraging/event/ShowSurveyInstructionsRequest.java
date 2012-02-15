@@ -13,7 +13,7 @@ public class ShowSurveyInstructionsRequest extends AbstractEvent implements Show
     }
     
     @Override
-    public ShowSurveyInstructionsRequest copy(Identifier id) {
+    public ShowSurveyInstructionsRequest clone(Identifier id) {
         return new ShowSurveyInstructionsRequest(id);
     }
 }

@@ -21,7 +21,7 @@ public class ShowFinalRoundDebriefingRequest extends AbstractEvent implements Sh
     }
     
     @Override
-    public ShowFinalRoundDebriefingRequest copy(Identifier id) {
+    public ShowFinalRoundDebriefingRequest clone(Identifier id) {
         return new ShowFinalRoundDebriefingRequest(id);
     }
 }
