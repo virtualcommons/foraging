@@ -7,21 +7,13 @@
 <entry key="resource-depth">29</entry>
 <entry key="resource-width">29</entry>
 <entry key="duration">240</entry>
-
-<!-- enable field of vision for tokens and subjects -->
-<entry key='tokens-field-of-vision'>true</entry>
-<entry key='subjects-field-of-vision'>true</entry>
-
 <!-- enable sanctioning -->
 <entry key="sanction-type">real-time</entry>
 <entry key="sanction-cost">1</entry>
 <entry key="sanction-multiplier">2</entry>
-
 <entry key="initial-distribution">.25</entry>
-
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
-
 <!-- enable censored chat session before this round -->
 <entry key='censored-chat-enabled'>true</entry>
 <entry key='chat-enabled'>true</entry>

@@ -21,7 +21,6 @@ import edu.asu.commons.event.ClientMessageEvent;
 import edu.asu.commons.event.ClientReadyEvent;
 import edu.asu.commons.event.EndRoundRequest;
 import edu.asu.commons.event.EventTypeProcessor;
-import edu.asu.commons.event.FacilitatorMessageEvent;
 import edu.asu.commons.event.FacilitatorRegistrationRequest;
 import edu.asu.commons.event.RoundStartedMarkerEvent;
 import edu.asu.commons.event.SetConfigurationEvent;
@@ -595,7 +594,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     	return;
                     }
                     for (Identifier id : clients.keySet()) {
-                    	transmit(request.copy(id));
+                    	transmit(request.clone(id));
                     }
                 }
             });
@@ -660,7 +659,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         sendFacilitatorMessage(String.format("Received trust game submission %s (%d total)", request, numberOfSubmissions));
                     }
                     else {
-                    	warnFacilitator("Received trust game submission request but trust game wasn't enabled: " + request);
+                    	sendFacilitatorMessage("Received trust game submission request but trust game wasn't enabled: " + request);
                     }
                     if (numberOfSubmissions >= clients.size()) {
                     	// once all clients have submitted their decisions, execute the trust game.
@@ -771,20 +770,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             }
         }
 
-        private void sendFacilitatorMessage(String message) {
-            getLogger().info(message);
-            if (facilitatorId != null) {
-                transmit(new FacilitatorMessageEvent(facilitatorId, message));
-            }
-        }
-        
-        private void warnFacilitator(String message) {
-            getLogger().warning(message);
-            if (facilitatorId != null) {
-                transmit(new FacilitatorMessageEvent(facilitatorId, "!. " + message));
-            }
-        }
-
         // FIXME: remove Dispatcher reference if it's unused.
         public void execute(Dispatcher dispatcher) {
             switch (serverState) {
@@ -844,7 +829,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     startRound();
                     break;
                 default:
-                    throw new RuntimeException("Should never get here.");
+                    sendFacilitatorMessage("Invalid server state, this is a serious error.", new IllegalStateException("Invalid server state: " + serverState));
+                    break;
             }
         }
 
