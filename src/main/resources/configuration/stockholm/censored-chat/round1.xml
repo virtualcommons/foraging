@@ -8,9 +8,6 @@
 <entry key="resource-depth">29</entry>
 <entry key="resource-width">29</entry>
 
-<entry key='tokens-field-of-vision'>true</entry>
-<entry key='subjects-field-of-vision'>true</entry>
-
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
 
@@ -37,13 +34,6 @@ group for the entire experiment, and each person's number from 1 to
 of your group will appear on the screen as blue dots <img src="@CODEBASE_URL@/images/gem-other.gif"> 
 with a white number embedded in the dot.
 </p>
-<p>
-    Your vision will be limited in this experiment and you might not see all the
-    other participants or all the resource units depending on your position and the
-    position of the other members of your group. The figure below indicates the
-    vision range compared to the whole environment.
-</p>
-<img src="@CODEBASE_URL@/images/vision-range.jpg">
 <p>
     In each round of the token task, you can see how many tokens each player has
     collected at the top right corner of the screen.  On the top left corner of the
