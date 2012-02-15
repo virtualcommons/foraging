@@ -1,7 +1,5 @@
 package edu.asu.commons.foraging.event;
 
-import static org.junit.Assert.*;
-
 import java.awt.Point;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +15,7 @@ import org.junit.Test;
 
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.foraging.model.Resource;
+import static org.junit.Assert.*;
 
 public class ResourcesAddedEventTest {
     

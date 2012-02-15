@@ -1,13 +1,12 @@
 package edu.asu.commons.foraging.model;
 
-import static org.junit.Assert.*;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.net.Identifier;
+import static org.junit.Assert.*;
 
 /**
  * $Id$
