@@ -45,15 +45,10 @@ class AllDataProcessor extends SaveFileProcessor.Base {
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
         RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
-        if (roundConfiguration.is2dExperiment()) {
-            processData2d(savedRoundData, writer);
-        }
-        else {
-            processData3d(savedRoundData, writer);
-        }
+        processData(savedRoundData, writer);
     }
 
-    private void processData2d(SavedRoundData savedRoundData, PrintWriter writer) {
+    private void processData(SavedRoundData savedRoundData, PrintWriter writer) {
     	RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
         SortedSet<PersistableEvent> actions = savedRoundData.getActions();
         ServerDataModel dataModel = (ServerDataModel) savedRoundData.getDataModel();
