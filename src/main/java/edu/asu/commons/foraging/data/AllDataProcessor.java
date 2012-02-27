@@ -27,7 +27,7 @@ import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id: AllDataProcessor.java 526 2010-08-06 01:25:27Z alllee $
+ * $Id$
  * 
  * Serializes all data in the save file into a CSV string format, ordered by time.
  * 
