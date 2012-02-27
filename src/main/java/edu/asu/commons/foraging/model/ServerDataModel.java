@@ -334,11 +334,6 @@ public class ServerDataModel extends ForagingDataModel {
         }
     }
 
-    /**
-     * Resets this server data model by performing the following:
-     * 
-     * 1. Sets event channel to a no-op event channel.
-     */
     public void setNullEventChannel() {
         super.channel = new EventTypeChannel() {
             public void handle(Event event) { }
@@ -350,7 +345,15 @@ public class ServerDataModel extends ForagingDataModel {
             group.resetResourceDistribution();
         }
     }
-
+    /**
+     * Reinitializes this server data model in preparation for a replay by:
+     * <ol>
+     * <li> Sets event channel to a no-op event channel.</li>
+     * <li> resets all group resource distributions </li>
+     * <li> reinitializes all client positions </li>
+     * </ol>
+     * FIXME: may be safer to return a clone() instead?
+     */
     public void reinitialize() {
         setNullEventChannel();
         resetGroupResourceDistributions();

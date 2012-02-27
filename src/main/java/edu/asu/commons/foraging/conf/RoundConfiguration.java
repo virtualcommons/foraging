@@ -177,6 +177,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getBooleanProperty("subjects-field-of-vision", false);
     }
 
+    /**
+     * FIXME: rename for consistency, getSubjectsFieldOfVisionRadius()
+     * @return
+     */
     public int getViewSubjectsRadius() {
         if (isSubjectsFieldOfVisionEnabled()) {
             return getIntProperty("view-subjects-radius", 6);
