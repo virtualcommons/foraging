@@ -35,6 +35,7 @@ import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.FacilitatorEndRoundEvent;
 import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.QuizCompletedEvent;
+import edu.asu.commons.foraging.event.ShowImposedStrategyRequest;
 import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.model.ClientData;
@@ -202,7 +203,7 @@ public class FacilitatorWindow extends JPanel {
                 facilitator.sendShowVoteScreenRequest();
             }
         });
-        imposeStrategyMenuItem = createMenuItem(menu, "Impose condition", new ActionListener() {
+        imposeStrategyMenuItem = createMenuItem(menu, "Select imposed strategy", new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		ForagingStrategy selection = (ForagingStrategy) JOptionPane.showInputDialog(FacilitatorWindow.this, "Select the strategy to impose:\n",
         				"Impose Strategy",
@@ -212,6 +213,11 @@ public class FacilitatorWindow extends JPanel {
         				ForagingStrategy.NONE
         				);
         		facilitator.sendImposeStrategyEvent(selection);
+        	}
+        });
+        createMenuItem(menu, "Show imposed strategy", new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		facilitator.sendShowImposedStrategy();
         	}
         });
         menuBar.add(menu);

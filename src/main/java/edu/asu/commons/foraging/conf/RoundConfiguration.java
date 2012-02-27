@@ -20,6 +20,7 @@ import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
+import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategyNomination;
 import edu.asu.commons.net.Identifier;
@@ -846,4 +847,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("survey-confirmation-message", "Please make sure you have completed the survey before continuing.  Have you completed the survey?");
 
     }
+
+	public String getImposedStrategyInstructions(Strategy strategy) {
+		ST st = createStringTemplate(getProperty("imposed-strategy-instructions"));
+		st.add("strategy", strategy);
+		return st.render();
+	}
 }

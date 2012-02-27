@@ -33,6 +33,7 @@ import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
+import edu.asu.commons.foraging.event.ShowImposedStrategyRequest;
 import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
@@ -160,6 +161,11 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
             public void handle(ShowTrustGameRequest request) {
                 getGameWindow().showTrustGame();
             }
+        });
+        addEventProcessor(new EventTypeProcessor<ShowImposedStrategyRequest>(ShowImposedStrategyRequest.class) {
+        	@Override public void handle(ShowImposedStrategyRequest request) {
+        		getGameWindow2D().showImposedStrategy(request);
+        	}
         });
         addEventProcessor(new EventTypeProcessor<ShowVotingInstructionsRequest>(ShowVotingInstructionsRequest.class) {
             public void handle(ShowVotingInstructionsRequest request) {

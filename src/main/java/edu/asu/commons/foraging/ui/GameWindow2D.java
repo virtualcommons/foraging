@@ -54,6 +54,7 @@ import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
+import edu.asu.commons.foraging.event.ShowImposedStrategyRequest;
 import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
@@ -894,6 +895,14 @@ public class GameWindow2D implements GameWindow {
     	// some final calculation to occur before showing the final debriefing + exit instructions"
         showDebriefing(event.getClientData(), true);
     }
+
+	public void showImposedStrategy(final ShowImposedStrategyRequest request) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override public void run() {
+				setInstructions(dataModel.getRoundConfiguration().getImposedStrategyInstructions(request.getStrategy()));		
+			}
+		});
+	}
 
 
 }

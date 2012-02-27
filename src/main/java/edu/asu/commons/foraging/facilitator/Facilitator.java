@@ -24,6 +24,7 @@ import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.FacilitatorUpdateEvent;
 import edu.asu.commons.foraging.event.ImposeStrategyEvent;
 import edu.asu.commons.foraging.event.QuizCompletedEvent;
+import edu.asu.commons.foraging.event.ShowImposedStrategyRequest;
 import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
@@ -31,7 +32,7 @@ import edu.asu.commons.foraging.event.ShowVotingInstructionsRequest;
 import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.model.ServerDataModel;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
+import edu.asu.commons.foraging.rules.Strategy;
 
 /**
  * $Id$
@@ -44,7 +45,7 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
     private ServerDataModel serverDataModel;
     private FacilitatorWindow facilitatorWindow;
     private boolean experimentRunning = false;
-	private ForagingStrategy imposedStrategy;
+	private Strategy imposedStrategy;
 
     private Facilitator() {
         this(new ServerConfiguration());
@@ -227,7 +228,7 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
         this.serverDataModel = serverGameState;
     }
 
-	public void sendImposeStrategyEvent(ForagingStrategy strategy) {
+	public void sendImposeStrategyEvent(Strategy strategy) {
 		if (imposedStrategy == strategy) {
 			facilitatorWindow.addMessage(strategy + " has already been imposed.");
 			return;
@@ -235,6 +236,18 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
 		this.imposedStrategy = strategy;
 		facilitatorWindow.addMessage("sending imposed strategy: " + strategy);
 		transmit(new ImposeStrategyEvent(getId(), strategy));
+	}
+
+	public Strategy getImposedStrategy() {
+		return imposedStrategy;
+	}
+
+	public void sendShowImposedStrategy() {
+		if (imposedStrategy == null) {
+			facilitatorWindow.addMessage("No imposed strategy selected, please select a strategy first.");
+			return;
+		}
+		transmit(new ShowImposedStrategyRequest(getId(), imposedStrategy));
 	}
 
 }
