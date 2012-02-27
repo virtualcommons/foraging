@@ -55,7 +55,6 @@ class AllDataProcessor extends SaveFileProcessor.Base {
         Map<Identifier, ClientMovementTokenCount> clientMovementTokenCounts = ClientMovementTokenCount.createMap(dataModel);
         Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();
         boolean restrictedVisibility = roundConfiguration.isSubjectsFieldOfVisionEnabled();
-        int radius = roundConfiguration.getViewSubjectsRadius();
         dataModel.reinitialize();
         for (PersistableEvent event: actions) {
             if (event instanceof MovementEvent) {
@@ -103,21 +102,22 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 StringBuilder targetStringBuilder = new StringBuilder();
                 String message = request.toString();
                 if (restrictedVisibility) {
-                	ClientData clientData = clientDataMap.get(event.getId());
-                	GroupDataModel group = clientData.getGroupDataModel();
-                	Circle circle = new Circle(clientData.getPoint(), radius);
-            		targetStringBuilder.append('[');
-                	for (Map.Entry<Identifier, Point> entry: group.getClientPositions().entrySet()) {
-                		Identifier id = entry.getKey();
-                		Point position = entry.getValue();
-                		if (circle.contains(position)) {
-                			targetStringBuilder.append(id).append(',');
-                		}
-                	}
-                	targetStringBuilder.setCharAt(targetStringBuilder.length() - 1, ']');
+                    int radius = roundConfiguration.getViewSubjectsRadius();
+                    ClientData clientData = clientDataMap.get(event.getId());
+                    GroupDataModel group = clientData.getGroupDataModel();
+                    Circle circle = new Circle(clientData.getPoint(), radius);
+                    targetStringBuilder.append('[');
+                    for (Map.Entry<Identifier, Point> entry: group.getClientPositions().entrySet()) {
+                        Identifier id = entry.getKey();
+                        Point position = entry.getValue();
+                        if (circle.contains(position)) {
+                            targetStringBuilder.append(id).append(',');
+                        }
+                    }
+                    targetStringBuilder.setCharAt(targetStringBuilder.length() - 1, ']');
                 }
                 else {
-                	targetStringBuilder.append(request.getTarget());
+                    targetStringBuilder.append(request.getTarget());
                 }
                 String line = String.format("%s, %s, %s, %s", savedRoundData.toSecondString(event), sourceId, targetStringBuilder.toString(), message);
                 System.err.println(line);
