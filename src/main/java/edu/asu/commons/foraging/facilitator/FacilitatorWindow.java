@@ -39,10 +39,16 @@ import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.ServerDataModel;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.HtmlEditorPane;
 import edu.asu.commons.ui.UserInterfaceUtils;
 
+/**
+ * $Id$
+ * 
+ */
+@SuppressWarnings("unused")
 public class FacilitatorWindow extends JPanel {
 
     private static final String JAVAX_JNLP_CLIPBOARD_SERVICE = "javax.jnlp.ClipboardService";
@@ -71,13 +77,12 @@ public class FacilitatorWindow extends JPanel {
 
     private JMenuItem startChatMenuItem;
     private JMenuItem showTrustGameMenuItem;
-    @SuppressWarnings("unused")
     private JMenuItem showVotingInstructionsMenuItem;
-    @SuppressWarnings("unused")
     private JMenuItem showVoteScreenMenuItem;
-    @SuppressWarnings("unused")
     private JMenuItem showSurveyInstructionsMenuItem;
-
+	private JMenuItem showExitInstructionsMenuItem;
+	private JMenuItem imposeStrategyMenuItem;
+	
     private HtmlEditorPane messageEditorPane;
 
     private StringBuilder instructionsBuilder;
@@ -86,16 +91,11 @@ public class FacilitatorWindow extends JPanel {
 
     private ClipboardService clipboardService;
 
-	private JMenuItem showExitInstructionsMenuItem;
 
     public FacilitatorWindow(Dimension dimension, Facilitator facilitator) {
         this.facilitator = facilitator;
         initGuiComponents();
         createMenu();
-        // FIXME: only applicable for standalone java app version - also
-        // seems to be causing a NPE for some reason
-        // centerOnScreen();
-        // frame.setVisible(true);
     }
 
     public void initializeReplay() {
@@ -110,8 +110,7 @@ public class FacilitatorWindow extends JPanel {
      * This method gets called after the end of each round
      */
     public void displayInstructions() {
-
-        // repaint();
+    	
     }
 
     /*
@@ -202,6 +201,19 @@ public class FacilitatorWindow extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 facilitator.sendShowVoteScreenRequest();
             }
+        });
+        imposeStrategyMenuItem = createMenuItem(menu, "Impose condition", new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		ForagingStrategy selection = (ForagingStrategy) JOptionPane.showInputDialog(FacilitatorWindow.this, "Select the strategy to impose:\n",
+        				"Impose Strategy",
+        				JOptionPane.QUESTION_MESSAGE,
+        				null,
+        				ForagingStrategy.values(),
+        				ForagingStrategy.NONE
+        				);
+        		addMessage("selecting strategy: " + selection);
+        		facilitator.sendImposeStrategyEvent(selection);
+        	}
         });
         menuBar.add(menu);
 

@@ -22,6 +22,7 @@ import edu.asu.commons.foraging.event.BeginChatRoundRequest;
 import edu.asu.commons.foraging.event.FacilitatorEndRoundEvent;
 import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.FacilitatorUpdateEvent;
+import edu.asu.commons.foraging.event.ImposeStrategyEvent;
 import edu.asu.commons.foraging.event.QuizCompletedEvent;
 import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
@@ -30,6 +31,7 @@ import edu.asu.commons.foraging.event.ShowVotingInstructionsRequest;
 import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.model.ServerDataModel;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 
 /**
  * $Id$
@@ -42,16 +44,17 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
     private ServerDataModel serverDataModel;
     private FacilitatorWindow facilitatorWindow;
     private boolean experimentRunning = false;
+	private ForagingStrategy imposedStrategy;
 
     private Facilitator() {
         this(new ServerConfiguration());
     }
 
-    @SuppressWarnings("rawtypes")
     public Facilitator(ServerConfiguration configuration) {
         super(configuration);
     }
-
+    
+    @SuppressWarnings("rawtypes")
     void createFacilitatorWindow(Dimension dimension) {
         facilitatorWindow = new FacilitatorWindow(dimension, this);
         if (getId() == null) {
@@ -223,5 +226,14 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
     public void setServerDataModel(ServerDataModel serverGameState) {
         this.serverDataModel = serverGameState;
     }
+
+	public void sendImposeStrategyEvent(ForagingStrategy strategy) {
+		if (imposedStrategy == strategy) {
+			facilitatorWindow.addMessage(String.format("%s has already been imposed.", strategy));
+			return;
+		}
+		this.imposedStrategy = strategy;
+		transmit(new ImposeStrategyEvent(getId(), strategy));
+	}
 
 }
