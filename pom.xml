@@ -28,7 +28,7 @@ vim:sts=2:sw=2
   <groupId>edu.asu.commons</groupId>
   <artifactId>foraging</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <name>foraging</name>
   <url>http://commons.asu.edu/foraging</url>
   <properties>

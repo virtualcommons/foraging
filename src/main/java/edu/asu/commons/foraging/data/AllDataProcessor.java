@@ -119,7 +119,7 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 else {
                     targetStringBuilder.append(request.getTarget());
                 }
-                String line = String.format("%s, %s, %s, %s", savedRoundData.toSecondString(event), sourceId, targetStringBuilder.toString(), message);
+                String line = String.format("%s, %s, %s, %s, Chat event", savedRoundData.toSecondString(event), sourceId, targetStringBuilder.toString(), message);
                 System.err.println(line);
                 writer.println(line);
             }

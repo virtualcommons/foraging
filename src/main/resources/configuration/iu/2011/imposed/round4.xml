@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="display-group-tokens">true</entry>
+<entry key="clients-per-group">4</entry>
+<entry key="resource-depth">26</entry>
+<entry key="resource-width">26</entry>
+<entry key="duration">240</entry>
+
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+
+<entry key="initial-distribution">.25</entry>
+<entry key='imposed-strategy'>true</entry>
+<entry key="instructions">
+    <![CDATA[
+    <h1>Round {self.roundNumber} Instructions</h1>
+    <hr>
+<p>
+Round {self.roundNumber} is about to begin.  
+</p>
+    <p>
+        The length of this round is {duration}.
+    </p>
+<h2>Strategy Reminder</h2>
+<hr>
+    <p>
+        Reminder: 
+    </p>
+        <ul>
+            <li><b>{first(self.selectedRules)}</b></li>
+        </ul>
+<p><b>Do you have any questions?</b> If you have any questions at this time, raise your hand and someone will come over to your station and answer it.</p>
+    ]]>
+</entry>
+
+
+<entry key='external-survey-enabled'>true</entry>
+<entry key='survey-url'>
+    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_3jHrnndEZSM9cqM&SURVEY_ID={surveyId}]]>
+</entry>
+
+</properties>

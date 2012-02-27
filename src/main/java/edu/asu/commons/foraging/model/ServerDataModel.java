@@ -37,7 +37,7 @@ import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.event.TokenMovedEvent;
 import edu.asu.commons.foraging.event.TokensMovedEvent;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
-import edu.asu.commons.foraging.graphics.FractalTerrain;
+import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.net.Identifier;
 
 /**
@@ -53,15 +53,13 @@ public class ServerDataModel extends ForagingDataModel {
 
     private static final long serialVersionUID = 8166812955398387600L;
 
+    private static final NumberFormat CURRENCY_FORMATTER = NumberFormat.getCurrencyInstance();
+    
     private transient Logger logger = Logger.getLogger( getClass().getName() );
-    
-    private final static NumberFormat CURRENCY_FORMATTER = NumberFormat.getCurrencyInstance();
-
     private transient Random random = new Random();
-
-    private transient FractalTerrain terrain;
-    
     private transient boolean dirty = false;
+    
+    private Strategy imposedStrategy; 
     
 	// Maps client Identifiers to the GroupDataModel that the client belongs to 
     private final Map<Identifier, GroupDataModel> clientsToGroups = new HashMap<Identifier, GroupDataModel>();
@@ -206,14 +204,6 @@ public class ServerDataModel extends ForagingDataModel {
         int x = random.nextInt(getBoardWidth());
         int y = random.nextInt(getBoardHeight());
         return new Point(x, y);
-    }
-
-    public FractalTerrain getTerrain() {
-        return terrain;
-    }
-
-    public void setTerrain(FractalTerrain terrain) {
-        this.terrain = terrain;
     }
 
     public void clear() {
@@ -469,4 +459,12 @@ public class ServerDataModel extends ForagingDataModel {
         return new ArrayList<Identifier>(clientsToGroups.keySet());
 
     }
+
+	public Strategy getImposedStrategy() {
+		return imposedStrategy;
+	}
+
+	public void setImposedStrategy(Strategy imposedStrategy) {
+		this.imposedStrategy = imposedStrategy;
+	}
 }

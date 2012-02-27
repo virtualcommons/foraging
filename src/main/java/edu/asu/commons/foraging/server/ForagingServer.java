@@ -48,6 +48,7 @@ import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.FacilitatorUpdateEvent;
 import edu.asu.commons.foraging.event.HarvestFruitRequest;
 import edu.asu.commons.foraging.event.HarvestResourceRequest;
+import edu.asu.commons.foraging.event.ImposeStrategyEvent;
 import edu.asu.commons.foraging.event.LockResourceEvent;
 import edu.asu.commons.foraging.event.LockResourceRequest;
 import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
@@ -579,6 +580,18 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         clients.remove(facilitatorId);
                     }
                 }
+            });
+            addEventProcessor(new EventTypeProcessor<ImposeStrategyEvent>(ImposeStrategyEvent.class) {
+            	@Override
+            	public void handle(ImposeStrategyEvent event) {
+            		if (! event.getId().equals(facilitatorId)) {
+            			sendFacilitatorMessage("Ignoring request to impose strategy " + event);
+            			return;
+            		}
+            		persister.store(event);
+            		serverDataModel.setImposedStrategy(event.getStrategy());
+            		sendFacilitatorMessage("Server has imposed strategy: " + event.getStrategy());
+            	}
             });
             addEventProcessor(new EventTypeProcessor<ShowRequest>(ShowRequest.class, true) {
                 @Override
