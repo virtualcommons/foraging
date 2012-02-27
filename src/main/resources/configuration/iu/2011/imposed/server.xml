@@ -341,16 +341,27 @@ strategy.
 
 <entry key='imposed-strategy-instructions'>
 <![CDATA[
-<h1>Important New Instructions! Strategy for managing how players collect tokens for the rest of the experiment.</h1>
+<h1>Important New Instructions!</h1>
+<h2>Strategy for managing how players collect tokens for the rest of the experiment</h2>
 <hr>
 <p>
 Your group is being assigned a strategy for how you and the three other people in your group collect tokens for the rest of the experiment.
 </p>
-<h1>Assigned Strategy</h1>
+<h2>Assigned Strategy</h2>
 <hr>
 <p>
 <b>{strategy}</b>
 </p>
+<h2>Implementation</h2>
+<hr>
+    <p>Neither the computer nor the experimenter will intervene to implement the
+        strategy.
+    </p>
+
+    <p>
+        <b>Do you have any questions?</b>  If you have any questions at this time,
+        raise your hand and someone will come over to your station and answer it.
+    </p>
 ]]>
 </entry>
 </properties>
