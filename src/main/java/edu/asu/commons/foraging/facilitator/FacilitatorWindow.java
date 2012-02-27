@@ -211,7 +211,6 @@ public class FacilitatorWindow extends JPanel {
         				ForagingStrategy.values(),
         				ForagingStrategy.NONE
         				);
-        		addMessage("selecting strategy: " + selection);
         		facilitator.sendImposeStrategyEvent(selection);
         	}
         });

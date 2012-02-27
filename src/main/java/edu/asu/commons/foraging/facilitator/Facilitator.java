@@ -229,10 +229,11 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
 
 	public void sendImposeStrategyEvent(ForagingStrategy strategy) {
 		if (imposedStrategy == strategy) {
-			facilitatorWindow.addMessage(String.format("%s has already been imposed.", strategy));
+			facilitatorWindow.addMessage(strategy + " has already been imposed.");
 			return;
 		}
 		this.imposedStrategy = strategy;
+		facilitatorWindow.addMessage("sending imposed strategy: " + strategy);
 		transmit(new ImposeStrategyEvent(getId(), strategy));
 	}
 

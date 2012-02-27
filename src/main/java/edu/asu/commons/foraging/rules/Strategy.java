@@ -1,5 +1,7 @@
 package edu.asu.commons.foraging.rules;
 
+import java.io.Serializable;
+
 /**
  * $Id$
  * 
@@ -7,6 +9,6 @@ package edu.asu.commons.foraging.rules;
  * 
  * @author alllee
  */
-public interface Strategy {
+public interface Strategy extends Serializable {
 
 }
