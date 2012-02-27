@@ -22,11 +22,12 @@ import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.foraging.model.ServerDataModel;
+import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id: AllDataProcessor.java 526 2010-08-06 01:25:27Z alllee $
+ * $Id$
  * 
  * Serializes all data in the save file into a CSV string format, ordered by time.
  * 
@@ -44,24 +45,21 @@ class AllDataProcessor extends SaveFileProcessor.Base {
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
         RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
-        if (roundConfiguration.is2dExperiment()) {
-            processData2d(savedRoundData, writer);
-        }
-        else {
-            processData3d(savedRoundData, writer);
-        }
+        processData(savedRoundData, writer);
     }
 
-    private void processData2d(SavedRoundData savedRoundData, PrintWriter writer) {
-        //            RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
+    private void processData(SavedRoundData savedRoundData, PrintWriter writer) {
+    	RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
         SortedSet<PersistableEvent> actions = savedRoundData.getActions();
-        ServerDataModel model = (ServerDataModel) savedRoundData.getDataModel();
-        Map<Identifier, ClientMovementTokenCount> clientMovementTokenCounts = ClientMovementTokenCount.createMap(model);
-//        List<GroupDataModel> groups = new ArrayList<GroupDataModel>(model.getGroups());
-        Map<Identifier, ClientData> clientDataMap = model.getClientDataMap();
+        ServerDataModel dataModel = (ServerDataModel) savedRoundData.getDataModel();
+        Map<Identifier, ClientMovementTokenCount> clientMovementTokenCounts = ClientMovementTokenCount.createMap(dataModel);
+        Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();
+        boolean restrictedVisibility = roundConfiguration.isSubjectsFieldOfVisionEnabled();
+        dataModel.reinitialize();
         for (PersistableEvent event: actions) {
             if (event instanceof MovementEvent) {
                 MovementEvent movementEvent = (MovementEvent) event;
+                dataModel.apply(movementEvent);
                 ClientData clientData = clientDataMap.get(event.getId());
                 ClientMovementTokenCount client = clientMovementTokenCounts.get(event.getId());
                 client.moves++;
@@ -101,9 +99,27 @@ class AllDataProcessor extends SaveFileProcessor.Base {
             else if (event instanceof ChatRequest) {
                 ChatRequest request = (ChatRequest) event;
                 Identifier sourceId = request.getSource();
-                Identifier targetId = request.getTarget();
+                StringBuilder targetStringBuilder = new StringBuilder();
                 String message = request.toString();
-                String line = String.format("%s, %s, %s, %s", savedRoundData.toSecondString(event), sourceId, targetId, message);
+                if (restrictedVisibility) {
+                    int radius = roundConfiguration.getViewSubjectsRadius();
+                    ClientData clientData = clientDataMap.get(event.getId());
+                    GroupDataModel group = clientData.getGroupDataModel();
+                    Circle circle = new Circle(clientData.getPoint(), radius);
+                    targetStringBuilder.append('[');
+                    for (Map.Entry<Identifier, Point> entry: group.getClientPositions().entrySet()) {
+                        Identifier id = entry.getKey();
+                        Point position = entry.getValue();
+                        if (circle.contains(position)) {
+                            targetStringBuilder.append(id).append(',');
+                        }
+                    }
+                    targetStringBuilder.setCharAt(targetStringBuilder.length() - 1, ']');
+                }
+                else {
+                    targetStringBuilder.append(request.getTarget());
+                }
+                String line = String.format("%s, %s, %s, %s", savedRoundData.toSecondString(event), sourceId, targetStringBuilder.toString(), message);
                 System.err.println(line);
                 writer.println(line);
             }
