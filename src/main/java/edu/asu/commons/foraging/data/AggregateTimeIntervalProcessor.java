@@ -29,7 +29,7 @@ import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id: AggregateTimeIntervalProcessor.java 526 2010-08-06 01:25:27Z alllee $
+ * $Id$
  * 
  * Generates aggregate statistics 
  * 
