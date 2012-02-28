@@ -401,15 +401,15 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         }
         
         private void processNominations() {
-        	// calculate votes
         	boolean imposedStrategyEnabled = getCurrentRoundConfiguration().isImposedStrategyEnabled();
         	for (GroupDataModel group : serverDataModel.getGroups()) {
+                // calculate votes
         		Map<Strategy, Integer> votingResults = group.generateVotingResults(imposedStrategyEnabled);
         		List<Strategy> selectedRules = group.getSelectedRules();
         		for (Identifier id : group.getClientIdentifiers()) {
         			sendFacilitatorMessage(String.format(
-        					"%s selected [%s] from all rules (%s)",
-        					group, selectedRules, votingResults));
+        					"%s selected [%s] from all rules %s (imposed? %s)",
+        					group, selectedRules, votingResults, imposedStrategyEnabled));
 
         			transmit(new RuleSelectedUpdateEvent(id, selectedRules, votingResults));
         		}

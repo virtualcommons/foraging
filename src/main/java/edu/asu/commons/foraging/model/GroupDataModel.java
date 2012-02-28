@@ -774,6 +774,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public Map<Strategy, Integer> generateVotingResults(boolean imposedStrategyEnabled) {
         Map<Strategy, Integer> tallyMap = new HashMap<Strategy, Integer>();
         if (imposedStrategyEnabled) {
+            // short circuits to use the imposed strategy
         	tallyMap.put(getImposedStrategy(), 1);
         	selectedRules.add(getImposedStrategy());
         	return tallyMap; 

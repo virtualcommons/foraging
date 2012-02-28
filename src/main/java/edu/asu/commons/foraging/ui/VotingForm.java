@@ -32,11 +32,15 @@ import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
 import edu.asu.commons.foraging.client.ForagingClient;
+import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.ui.UserInterfaceUtils;
 
 /**
  * $Id$
+ * 
+ * Interface nominate a given ForagingStrategy
+ * 
  * @author Allen Lee
  */
 public class VotingForm extends JPanel {
@@ -48,18 +52,18 @@ public class VotingForm extends JPanel {
     private ForagingClient client;
 
     public VotingForm(ForagingClient client) {
-        this(client, new HashMap<ForagingStrategy, Integer>());
+        this(client, new HashMap<Strategy, Integer>());
     }
     
-    public VotingForm(ForagingClient client, Map<ForagingStrategy, Integer> votingResults) {
+    public VotingForm(ForagingClient client, Map<Strategy, Integer> votingResults) {
         this.client = client;
         initComponents();
         initForm(votingResults);
         setName(NAME);
     }
     
-    private void initForm(Map<ForagingStrategy, Integer> votingResults) {
-        ForagingStrategy[] rules = ForagingStrategy.values();
+    private void initForm(Map<Strategy, Integer> votingResults) {
+        ForagingStrategy[] strategies = ForagingStrategy.values();
         JPanel panel = new JPanel();
         GroupLayout groupLayout = new GroupLayout(panel);
         panel.setLayout(groupLayout);
@@ -84,22 +88,26 @@ public class VotingForm extends JPanel {
         
         verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(strategyHeaderLabel).addGap(20).addComponent(rightHeaderLabel));
         Dimension labelDimension = new Dimension(800, 100);
-        for (ForagingStrategy rule: rules) {
-            JLabel ruleLabel = new JLabel("<html>" + rule.getDescription() + "</html>");
+        boolean imposedStrategyEnabled = client.getCurrentRoundConfiguration().isImposedStrategyEnabled();
+        for (ForagingStrategy strategy: strategies) {
+            JLabel ruleLabel = new JLabel("<html>" + strategy.getDescription() + "</html>");
             ruleLabel.setFont(UserInterfaceUtils.DEFAULT_PLAIN_FONT);
             ruleLabel.setMaximumSize(labelDimension);
             horizontalLabelParallelGroup.addComponent(ruleLabel);
             JComponent component = null;
             if (votingResults.isEmpty()) {
                 JRadioButton radioButton = new JRadioButton();                        
-                radioButton.setActionCommand(rule.name());
+                radioButton.setActionCommand(strategy.name());
                 buttonGroup.add(radioButton);
                 component = radioButton;
                 horizontalButtonParallelGroup.addComponent(radioButton);
                 verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addComponent(radioButton));
             }
+            else if (imposedStrategyEnabled) {
+                component = new JLabel("");
+            }
             else {
-                Integer numberOfVotes = votingResults.get(rule);
+                Integer numberOfVotes = votingResults.get(strategy);
                 component = new JLabel(String.valueOf(numberOfVotes == null ? 0 : numberOfVotes));
             }
             horizontalButtonParallelGroup.addComponent(component);
