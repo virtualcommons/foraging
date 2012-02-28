@@ -1,7 +1,11 @@
 package edu.asu.commons.foraging.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,26 +13,25 @@ import org.junit.Before;
 import org.junit.Test;
 
 import edu.asu.commons.foraging.conf.RoundConfiguration;
+import edu.asu.commons.foraging.conf.ServerConfiguration;
+import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.net.Identifier;
-import static org.junit.Assert.*;
+
 
 public class GroupDataModelTest {
     
     private ServerDataModel serverDataModel;
+    private int numberOfGroups = 3;
     
     @Before
     public void setUp() {
         serverDataModel = new ServerDataModel();
-        RoundConfiguration configuration = new RoundConfiguration();
-        configuration.setProperty("clients-per-group", "5");
-        serverDataModel.setRoundConfiguration(configuration);
-        for (int i = 0; i < 10; i++) {
-            Identifier id = new Identifier.Base() {
-            };
-            serverDataModel.addClient(new ClientData(id));
-        }
-        
+        ServerConfiguration serverConfiguration = new ServerConfiguration("configuration/asu/2011/t1");
+        RoundConfiguration roundConfiguration = serverConfiguration.getAllParameters().get(4);
+        serverDataModel.setRoundConfiguration(roundConfiguration);
+        int numberOfParticipants = roundConfiguration.getClientsPerGroup() * numberOfGroups;
+        addClients(numberOfParticipants);
     }
 
     @Test
@@ -45,9 +48,17 @@ public class GroupDataModelTest {
             }
         }
     }
+
+    private void addClients(int numberOfParticipants) {
+        serverDataModel.clear();
+        for (int i = 0; i < numberOfParticipants; i++) {
+            serverDataModel.addClient(new ClientData(new Identifier.Mock()));
+        }
+    }
     
     @Test
     public void testTiebreaker() {
+        addClients(10);
         for (GroupDataModel group: serverDataModel.getGroups()) {
             List<ForagingStrategy> rules = Arrays.asList(ForagingStrategy.values());
             // add some more randomness into the mix.
@@ -64,10 +75,26 @@ public class GroupDataModelTest {
             Map<ForagingStrategy, Integer> votingResults = group.generateVotingResults();
             assertEquals("There should be 3 rules voted on, total" + votingResults, 3, votingResults.size());
             for (ForagingStrategy tieBreaker: tieBreakerRules) {
+                System.err.println("Inspecting tiebreaker: " + tieBreaker);
             	assertEquals(2, votingResults.get(tieBreaker).intValue()); 
             }
             assertTrue(tieBreakerRules.contains(group.getSelectedRule()));
         }
+    }
+    
+    @Test
+    public void testImposedStrategyDistribution() {
+    	Map<Strategy, Integer> imposedStrategyDistribution = new HashMap<Strategy, Integer>();
+    	// test all the same
+    	for (ForagingStrategy strategy: ForagingStrategy.values()) {
+            imposedStrategyDistribution.clear();
+            imposedStrategyDistribution.put(strategy, numberOfGroups);
+            serverDataModel.allocateImposedStrategyDistribution(imposedStrategyDistribution);
+            for (GroupDataModel group: serverDataModel.getGroups()) {
+                assertEquals("mismatched imposed strategies", strategy, group.getImposedStrategy());
+            }
+        }
+    	
     }
 
 }

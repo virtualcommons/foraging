@@ -54,10 +54,9 @@ import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
-import edu.asu.commons.foraging.event.ShowImposedStrategyRequest;
-import edu.asu.commons.foraging.event.TrustGameResultsClientEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
+import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.HtmlEditorPane;
@@ -888,18 +887,10 @@ public class GameWindow2D implements GameWindow {
         showInstructionsPanel();
     }
 
-    public void updateDebriefingWith(TrustGameResultsClientEvent event) {
-        // FIXME: currently hard coded to always show exit instructions in this case 
-    	// should change this to either have an explicit show exit instructions fired off by the
-    	// facilitator or figure out a cleaner way of distinguishing between "we have to wait for 
-    	// some final calculation to occur before showing the final debriefing + exit instructions"
-        showDebriefing(event.getClientData(), true);
-    }
-
-	public void showImposedStrategy(final ShowImposedStrategyRequest request) {
+	public void showImposedStrategy(final Strategy strategy) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override public void run() {
-				setInstructions(dataModel.getRoundConfiguration().getImposedStrategyInstructions(request.getStrategy()));		
+				setInstructions(dataModel.getRoundConfiguration().getImposedStrategyInstructions(strategy));		
 			}
 		});
 	}

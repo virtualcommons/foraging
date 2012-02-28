@@ -61,6 +61,7 @@ import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
+import edu.asu.commons.foraging.event.ShowImposedStrategyRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
@@ -332,7 +333,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                             transmit(updateEvent);
                         }
                         // update the facilitator
-                        transmit(new FacilitatorSanctionUpdateEvent(facilitatorId, clients, lastRound));
+                        transmit(new FacilitatorSanctionUpdateEvent(facilitatorId, serverDataModel));
                         Utils.notify(facilitatorSignal);
                         numberOfCompletedSanctions = 0;
                     }
@@ -588,9 +589,32 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             			sendFacilitatorMessage("Ignoring request to impose strategy " + event);
             			return;
             		}
-            		persister.store(event);
-            		serverDataModel.setImposedStrategy(event.getStrategy());
-            		sendFacilitatorMessage("Server has imposed strategy: " + event.getStrategy());
+        			persister.store(event);
+            		try {
+            			List<GroupDataModel> groups = serverDataModel.allocateImposedStrategyDistribution(event.getStrategyDistribution());
+            			StringBuilder builder = new StringBuilder();
+            			for (GroupDataModel group: groups) {
+            				builder.append('[').append(group).append(':').append(group.getImposedStrategy()).append(']');
+            			}
+            			sendFacilitatorMessage("Server has imposed strategies for all groups: " + builder);
+
+            		}
+            		catch (IllegalArgumentException exception) {
+            			sendFacilitatorMessage("Couldn't allocate strategy distribution: " + event, exception);
+            		}
+            	}
+            });
+            addEventProcessor(new EventTypeProcessor<ShowImposedStrategyRequest>(ShowImposedStrategyRequest.class) {
+            	@Override
+            	public void handle(ShowImposedStrategyRequest request) {
+            		if (! request.getId().equals(facilitatorId)) {
+            			sendFacilitatorMessage("Ignoring request to show imposed strategies from: " + request.getId());
+            			return;
+            		}
+            		for (Identifier id: clients.keySet()) {
+            			transmit(new ShowImposedStrategyRequest(id, serverDataModel.getGroup(id).getImposedStrategy()));
+            		}
+            		sendFacilitatorMessage("Notified all groups of imposed strategy.");
             	}
             });
             addEventProcessor(new EventTypeProcessor<ShowRequest>(ShowRequest.class, true) {

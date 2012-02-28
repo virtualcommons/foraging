@@ -1,10 +1,11 @@
 package edu.asu.commons.foraging.conf;
 
+import static org.junit.Assert.*;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import edu.asu.commons.net.Identifier;
-import static org.junit.Assert.*;
 
 public class RoundConfigurationTest {
     
@@ -14,7 +15,7 @@ public class RoundConfigurationTest {
     
     @Before
     public void setUp() {
-        ServerConfiguration serverConfiguration = new ServerConfiguration("configuration/indiana-experiments/2011/vote-punish");
+        ServerConfiguration serverConfiguration = new ServerConfiguration("configuration/iu/2011/vote-punish");
         roundConfiguration = serverConfiguration.getAllParameters().get(4);
     }
 
@@ -25,8 +26,7 @@ public class RoundConfigurationTest {
         assertTrue(uninterpolatedInstructions.contains("}"));
         assertFalse(uninterpolatedInstructions.contains("http://"));
 
-        @SuppressWarnings("rawtypes")
-        Identifier id = new Identifier.Base() {
+        Identifier id = new Identifier.Mock() {
             private static final long serialVersionUID = 1231310402707042800L;
             public String getSurveyId() {
                 return SURVEY_ID;

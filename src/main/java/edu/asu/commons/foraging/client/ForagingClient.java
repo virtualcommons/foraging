@@ -164,7 +164,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         });
         addEventProcessor(new EventTypeProcessor<ShowImposedStrategyRequest>(ShowImposedStrategyRequest.class) {
         	@Override public void handle(ShowImposedStrategyRequest request) {
-        		getGameWindow2D().showImposedStrategy(request);
+        		getGameWindow2D().showImposedStrategy(request.getStrategy());
         	}
         });
         addEventProcessor(new EventTypeProcessor<ShowVotingInstructionsRequest>(ShowVotingInstructionsRequest.class) {

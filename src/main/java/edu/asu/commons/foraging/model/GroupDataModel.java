@@ -25,6 +25,7 @@ import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
+import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
@@ -68,6 +69,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     private EnforcementMechanism activeEnforcementMechanism = EnforcementMechanism.NONE;
     private SanctionMechanism activeSanctionMechanism = SanctionMechanism.NONE;
     private RegulationData activeRegulation;
+    private Strategy imposedStrategy;
         
     private List<ClientData> waitingMonitors;
     
@@ -812,5 +814,13 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public ServerConfiguration getExperimentConfiguration() {
         return serverDataModel.getExperimentConfiguration();
     }
+
+	public Strategy getImposedStrategy() {
+		return imposedStrategy;
+	}
+
+	public void setImposedStrategy(Strategy imposedStrategy) {
+		this.imposedStrategy = imposedStrategy;
+	}
 
 }

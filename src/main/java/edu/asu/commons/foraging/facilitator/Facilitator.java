@@ -2,6 +2,7 @@ package edu.asu.commons.foraging.facilitator;
 
 import java.awt.Dimension;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -45,7 +46,7 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
     private ServerDataModel serverDataModel;
     private FacilitatorWindow facilitatorWindow;
     private boolean experimentRunning = false;
-	private Strategy imposedStrategy;
+	private Map<Strategy, Integer> imposedStrategyDistribution;
 
     private Facilitator() {
         this(new ServerConfiguration());
@@ -94,7 +95,8 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
         });
         addEventProcessor(new EventTypeProcessor<FacilitatorSanctionUpdateEvent>(FacilitatorSanctionUpdateEvent.class) {
             public void handle(FacilitatorSanctionUpdateEvent event) {
-                facilitatorWindow.updateDebriefing(event);
+            	System.err.println("Updating facilitator after post-round sanctioning.");
+                facilitatorWindow.displayDebriefing(event.getServerDataModel());
             }
         });
         addEventProcessor(new EventTypeProcessor<FacilitatorMessageEvent>(FacilitatorMessageEvent.class) {
@@ -228,26 +230,22 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
         this.serverDataModel = serverGameState;
     }
 
-	public void sendImposeStrategyEvent(Strategy strategy) {
-		if (imposedStrategy == strategy) {
-			facilitatorWindow.addMessage(strategy + " has already been imposed.");
-			return;
-		}
-		this.imposedStrategy = strategy;
-		facilitatorWindow.addMessage("sending imposed strategy: " + strategy);
-		transmit(new ImposeStrategyEvent(getId(), strategy));
+	public void sendImposeStrategyEvent(Map<Strategy, Integer> imposedStrategyDistribution) {
+		this.imposedStrategyDistribution = imposedStrategyDistribution;
+		facilitatorWindow.addMessage("sending imposed strategy: " + imposedStrategyDistribution);
+		transmit(new ImposeStrategyEvent(getId(), imposedStrategyDistribution));
 	}
 
-	public Strategy getImposedStrategy() {
-		return imposedStrategy;
+	public Map<Strategy, Integer> getImposedStrategyDistribution() {
+		return imposedStrategyDistribution;
 	}
 
 	public void sendShowImposedStrategy() {
-		if (imposedStrategy == null) {
-			facilitatorWindow.addMessage("No imposed strategy selected, please select a strategy first.");
+		if (imposedStrategyDistribution == null || imposedStrategyDistribution.isEmpty()) {
+			facilitatorWindow.addMessage("No imposed strategies selected, please select a strategy first.");
 			return;
 		}
-		transmit(new ShowImposedStrategyRequest(getId(), imposedStrategy));
+		transmit(new ShowImposedStrategyRequest(getId()));
 	}
 
 }
