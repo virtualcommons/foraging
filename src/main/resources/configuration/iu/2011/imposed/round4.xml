@@ -12,7 +12,8 @@
 <entry key='max-cell-occupancy'>1</entry>
 
 <entry key="initial-distribution">.25</entry>
-<entry key='imposed-strategy'>true</entry>
+<entry key='voting-enabled'>true</entry>
+<entry key='imposed-strategy-enabled'>true</entry>
 <entry key="instructions">
     <![CDATA[
     <h1>Round {self.roundNumber} Instructions</h1>

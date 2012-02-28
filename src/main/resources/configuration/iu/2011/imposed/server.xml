@@ -17,6 +17,7 @@
 <entry key="wait-for-participants">true</entry>
 <entry key="number-of-rounds">10</entry>
 <entry key='external-survey-enabled'>true</entry>
+<entry key='imposed-strategy-enabled'>true</entry>
 <entry key='survey-id-enabled'>true</entry>
 <entry key='survey-instructions'>
     <![CDATA[

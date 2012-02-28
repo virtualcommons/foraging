@@ -553,6 +553,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public boolean isVotingEnabled() {
         return getBooleanProperty("voting-enabled");
     }
+    
+    public boolean isImposedStrategyEnabled() {
+    	return getBooleanProperty("imposed-strategy-enabled");
+    }
 
     public String getVotingInstructions() {
         return getProperty("voting-instructions");

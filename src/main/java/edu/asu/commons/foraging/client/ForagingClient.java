@@ -449,7 +449,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
 
     public void sendRuleVoteRequest(ForagingStrategy selectedRule) {
         transmit(new RuleVoteRequest(getId(), selectedRule));
-        getGameWindow2D().ruleVoteSubmitted();
+        getGameWindow2D().strategyNominationSubmitted();
     }
 
 

@@ -882,7 +882,7 @@ public class GameWindow2D implements GameWindow {
         showInstructionsPanel();
     }
 
-    public void ruleVoteSubmitted() {
+    public void strategyNominationSubmitted() {
         setInstructions(dataModel.getRoundConfiguration().getSubmittedVoteInstructions());
         showInstructionsPanel();
     }
