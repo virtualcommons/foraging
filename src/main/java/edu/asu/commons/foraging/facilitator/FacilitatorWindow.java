@@ -14,8 +14,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeSet;
 
 import javax.jnlp.ClipboardService;
 import javax.jnlp.ServiceManager;
@@ -33,20 +33,21 @@ import javax.swing.text.BadLocationException;
 
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.FacilitatorEndRoundEvent;
-import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.QuizCompletedEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
-import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.ServerDataModel;
+import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
-import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.HtmlEditorPane;
 import edu.asu.commons.ui.UserInterfaceUtils;
 
 /**
  * $Id$
  * 
+ * The primary facilitator interface panel.
+ * 
+ * @author Allen Lee
  */
 @SuppressWarnings("unused")
 public class FacilitatorWindow extends JPanel {
@@ -91,7 +92,8 @@ public class FacilitatorWindow extends JPanel {
 
     private ClipboardService clipboardService;
 
-
+    private Map<Strategy, Integer> imposedStrategies = new HashMap<Strategy, Integer>();
+	
     public FacilitatorWindow(Dimension dimension, Facilitator facilitator) {
         this.facilitator = facilitator;
         initGuiComponents();
@@ -202,7 +204,7 @@ public class FacilitatorWindow extends JPanel {
                 facilitator.sendShowVoteScreenRequest();
             }
         });
-        imposeStrategyMenuItem = createMenuItem(menu, "Select imposed strategy", new ActionListener() {
+        imposeStrategyMenuItem = createMenuItem(menu, "Add imposed strategy", new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		ForagingStrategy selection = (ForagingStrategy) JOptionPane.showInputDialog(FacilitatorWindow.this, "Select the strategy to impose:\n",
         				"Impose Strategy",
@@ -211,9 +213,26 @@ public class FacilitatorWindow extends JPanel {
         				ForagingStrategy.values(),
         				ForagingStrategy.NONE
         				);
-        		facilitator.sendImposeStrategyEvent(selection);
+        		Integer distribution = imposedStrategies.get(selection);
+        		if (distribution == null) {
+        			distribution = Integer.valueOf(0);
+        		}
+        		imposedStrategies.put(selection, Integer.valueOf(distribution + 1));
+        		addMessage("Current strategy distribution: " + imposedStrategies);
         	}
         });
+        createMenuItem(menu, "Clear imposed strategies", new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		imposedStrategies.clear();
+        	}
+        });
+        createMenuItem(menu, "Send imposed strategy", new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		facilitator.sendImposeStrategyEvent(imposedStrategies);
+        	}
+        });
+        
         createMenuItem(menu, "Show imposed strategy", new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		facilitator.sendShowImposedStrategy();
@@ -329,32 +348,6 @@ public class FacilitatorWindow extends JPanel {
         repaint();
     }
 
-    // FIXME: get rid of duplication here & displayDebriefing..
-    public void updateDebriefing(FacilitatorSanctionUpdateEvent event) {
-        Map<Identifier, ClientData> clientDataMap = event.getClientDataMap();
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("<h3>Updated Facilitator Debriefing:</h3>");
-        buffer.append("<table><thead><th>Participant</th><th>Current tokens</th><th>Current Income</th><th>Total Income</th></thead><tbody>");
-        TreeSet<Identifier> orderedSet = new TreeSet<Identifier>(clientDataMap.keySet());
-        for (Identifier clientId : orderedSet) {
-            ClientData data = clientDataMap.get(clientId);
-            buffer.append(String.format(
-                    "<tr><td>%s</td>" +
-                            "<td align='center'>%d</td>" +
-                            "<td align='center'>$%3.2f</td>" +
-                            "<td align='center'>$%3.2f</td></tr>",
-                    clientId.toString(),
-                    data.getCurrentTokens(),
-                    getIncome(data.getCurrentTokens()),
-                    getIncome(data.getTotalTokens())));
-        }
-        buffer.append("</tbody></table><hr>");
-        if (event.isLastRound()) {
-            buffer.append("<h2><font color='blue'>The experiment is over.  Please prepare payments.</font></h2>");
-        }
-        informationEditorPane.setText(buffer.toString());
-    }
-
     public void displayDebriefing(ServerDataModel serverDataModel) {
         RoundConfiguration roundConfiguration = serverDataModel.getRoundConfiguration();
         System.err.println("Displaying debriefing: " + roundConfiguration);
@@ -384,24 +377,12 @@ public class FacilitatorWindow extends JPanel {
         informationEditorPane.setText(instructionsBuilder.toString());
     }
 
-    private double getIncome(float numTokens) {
-        RoundConfiguration configuration = facilitator.getCurrentRoundConfiguration();
-        if (configuration.isPracticeRound()) {
-            return 0.0f;
-        }
-        return configuration.getDollarsPerToken() * numTokens;
-    }
-
     public void endRound(FacilitatorEndRoundEvent endRoundEvent) {
         System.out.println("Ending round: " + endRoundEvent);
         ServerDataModel serverDataModel = endRoundEvent.getServerDataModel();
         displayDebriefing(serverDataModel);
         completedQuizzes = 0;
         completedTrustGames = 0;
-    }
-
-    public void setRoundConfiguration(RoundConfiguration roundConfiguration) {
-
     }
 
     public void configureForReplay() {

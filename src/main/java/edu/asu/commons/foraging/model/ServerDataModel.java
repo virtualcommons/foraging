@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -58,8 +59,6 @@ public class ServerDataModel extends ForagingDataModel {
     private transient Logger logger = Logger.getLogger( getClass().getName() );
     private transient Random random = new Random();
     private transient boolean dirty = false;
-    
-    private Strategy imposedStrategy; 
     
 	// Maps client Identifiers to the GroupDataModel that the client belongs to 
     private final Map<Identifier, GroupDataModel> clientsToGroups = new HashMap<Identifier, GroupDataModel>();
@@ -238,6 +237,10 @@ public class ServerDataModel extends ForagingDataModel {
 
     public int getNumberOfClients() {
         return clientsToGroups.keySet().size();
+    }
+    
+    public int getNumberOfGroups() {
+    	return getGroups().size();
     }
 
     public Set<GroupDataModel> getGroups() {
@@ -459,12 +462,25 @@ public class ServerDataModel extends ForagingDataModel {
         return new ArrayList<Identifier>(clientsToGroups.keySet());
 
     }
-
-	public Strategy getImposedStrategy() {
-		return imposedStrategy;
-	}
-
-	public void setImposedStrategy(Strategy imposedStrategy) {
-		this.imposedStrategy = imposedStrategy;
-	}
+    
+    public List<GroupDataModel> allocateImposedStrategyDistribution(Map<Strategy, Integer> imposedStrategyDistribution) {
+    	List<GroupDataModel> groups = getOrderedGroups();
+    	int numberOfGroups = groups.size();
+    	Collections.shuffle(groups);
+    	Iterator<GroupDataModel> groupIterator = groups.iterator();
+    	int numberOfStrategies = 0;
+    	for (Map.Entry<Strategy, Integer> entry : imposedStrategyDistribution.entrySet()) {
+    		Strategy strategy = entry.getKey();
+    		int occurrences = entry.getValue();
+    		if (numberOfStrategies > numberOfGroups) {
+    			throw new IllegalArgumentException("Invalid number of strategies : " + numberOfStrategies + " for " + numberOfGroups + " groups.");
+    		}
+    		for (int i = 0; i < occurrences; i++) {
+    			GroupDataModel group = groupIterator.next();
+    			group.setImposedStrategy(strategy);
+    			numberOfStrategies++;
+    		}
+    	}
+    	return groups;
+    }
 }
