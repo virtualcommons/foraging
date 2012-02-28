@@ -3,6 +3,7 @@ package edu.asu.commons.foraging.conf;
 import java.awt.Dimension;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import edu.asu.commons.foraging.model.EnforcementMechanism;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.rules.Strategy;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategyNomination;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
@@ -735,6 +737,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         template.add("tiebreaker", selectedRules.size() > 1);
         template.add("selectedRules", selectedRules);
         return template.render();
+    }
+
+    public List<ForagingStrategy> getForagingStrategies() {
+        return Arrays.asList(ForagingStrategy.values());
     }
     
     public String getVotingResultsTemplate() {

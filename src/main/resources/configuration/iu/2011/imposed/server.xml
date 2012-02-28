@@ -323,6 +323,21 @@ experiment.
 
 <entry key='voting-instructions'>
 <![CDATA[
+{if (self.imposedStrategyEnabled)}
+<h1>Strategies</h1>
+<hr>
+    <p>You now have the opportunity to consider {self.foragingStrategies.size}
+        possible strategies for managing how you and the other members of your group
+        collect tokens for the rest of the experiment.
+    </p>
+    <p>
+        Below is the list of different strategies.  Please read the list carefully.
+        Press "Submit" once you have finished reviewing the strategies.
+    </p>
+    <ol>
+        {foragingStrategies: { strategy | <li>{strategy}</li> }}
+    </ol>
+{else}
 <h1>Strategy Nomination Instructions</h1>
 <hr>
 <p>
@@ -337,6 +352,7 @@ The identity of people who nominated a particular strategy will NOT be revealed.
 Therefore, neither you nor the experimenter will know who nominated a particular
 strategy.
 </p>
+{endif}
 ]]>
 </entry>
 
