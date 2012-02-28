@@ -3,6 +3,13 @@ package edu.asu.commons.foraging.event;
 import edu.asu.commons.event.AbstractEvent;
 import edu.asu.commons.net.Identifier;
 
+/**
+ * $Id$
+ * 
+ * Server to facilitator notification that wraps a participant's TrustGameSubmissionRequest.   
+ * @author alllee
+ *
+ */
 public class TrustGameSubmissionEvent extends AbstractEvent {
 
     private static final long serialVersionUID = 1957461200448076811L;
