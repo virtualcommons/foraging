@@ -1,7 +1,11 @@
 package edu.asu.commons.foraging.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,13 +13,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import edu.asu.commons.foraging.conf.RoundConfiguration;
+import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
-import edu.asu.commons.net.Identifier;
-import static org.junit.Assert.*;
+import edu.asu.commons.net.MockIdentifier;
 
 public class GroupDataModelTest {
     
     private ServerDataModel serverDataModel;
+    private int numberOfParticipants = 15;
     
     @Before
     public void setUp() {
@@ -23,10 +28,8 @@ public class GroupDataModelTest {
         RoundConfiguration configuration = new RoundConfiguration();
         configuration.setProperty("clients-per-group", "5");
         serverDataModel.setRoundConfiguration(configuration);
-        for (int i = 0; i < 10; i++) {
-            Identifier id = new Identifier.Base() {
-            };
-            serverDataModel.addClient(new ClientData(id));
+        for (int i = 0; i < numberOfParticipants; i++) {
+            serverDataModel.addClient(new ClientData(new MockIdentifier()));
         }
         
     }
@@ -68,6 +71,21 @@ public class GroupDataModelTest {
             }
             assertTrue(tieBreakerRules.contains(group.getSelectedRule()));
         }
+    }
+    
+    @Test
+    public void testImposedStrategyDistribution() {
+    	int numberOfGroups = numberOfParticipants / serverDataModel.getRoundConfiguration().getClientsPerGroup();
+    	Map<Strategy, Integer> imposedStrategyDistribution = new HashMap<Strategy, Integer>();
+    	// test all the same
+    	for (ForagingStrategy strategy: ForagingStrategy.values()) {
+    		imposedStrategyDistribution.put(strategy, numberOfGroups);
+    		serverDataModel.allocateImposedStrategyDistribution(imposedStrategyDistribution);
+    		for (GroupDataModel group: serverDataModel.getGroups()) {
+    			assertEquals("mismatched imposed strategies", strategy, group.getImposedStrategy());
+    		}
+    	}
+    	
     }
 
 }

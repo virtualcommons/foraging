@@ -29,6 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 
 import edu.asu.commons.foraging.conf.RoundConfiguration;
@@ -388,18 +389,22 @@ public class FacilitatorWindow extends JPanel {
     public void configureForReplay() {
         // Enable the replay menus
         loadExperimentMenuItem.setEnabled(true);
-
         // Disable all other menus
         startRoundMenuItem.setEnabled(false);
         stopRoundMenuItem.setEnabled(false);
     }
 
-    public void addMessage(String message) {
-        try {
-            messageEditorPane.getDocument().insertString(0, "-----\n" + message + "\n", null);
-        } catch (BadLocationException exception) {
-            exception.printStackTrace();
-        }
+    public void addMessage(final String message) {
+    	SwingUtilities.invokeLater(new Runnable() {
+    		public void run() {
+    			try {
+    				messageEditorPane.getDocument().insertString(0, "-----\n" + message + "\n", null);
+    				messageEditorPane.setCaretPosition(0);
+    			} catch (BadLocationException exception) {
+    				exception.printStackTrace();
+    			}
+    		}
+    	});
     }
 
     public void quizCompleted(QuizCompletedEvent event) {
