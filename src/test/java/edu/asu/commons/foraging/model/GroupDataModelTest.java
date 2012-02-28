@@ -15,7 +15,8 @@ import org.junit.Test;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
-import edu.asu.commons.net.MockIdentifier;
+import edu.asu.commons.net.Identifier;
+
 
 public class GroupDataModelTest {
     
@@ -29,7 +30,7 @@ public class GroupDataModelTest {
         configuration.setProperty("clients-per-group", "5");
         serverDataModel.setRoundConfiguration(configuration);
         for (int i = 0; i < numberOfParticipants; i++) {
-            serverDataModel.addClient(new ClientData(new MockIdentifier()));
+            serverDataModel.addClient(new ClientData(new Identifier.Mock()));
         }
         
     }

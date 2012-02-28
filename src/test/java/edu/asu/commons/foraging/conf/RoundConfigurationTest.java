@@ -1,13 +1,11 @@
 package edu.asu.commons.foraging.conf;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import edu.asu.commons.net.Identifier;
-import edu.asu.commons.net.MockIdentifier;
 
 public class RoundConfigurationTest {
     
@@ -28,7 +26,7 @@ public class RoundConfigurationTest {
         assertTrue(uninterpolatedInstructions.contains("}"));
         assertFalse(uninterpolatedInstructions.contains("http://"));
 
-        Identifier id = new MockIdentifier() {
+        Identifier id = new Identifier.Mock() {
             private static final long serialVersionUID = 1231310402707042800L;
             public String getSurveyId() {
                 return SURVEY_ID;
