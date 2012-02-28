@@ -559,7 +559,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getVotingInstructions() {
-        return getProperty("voting-instructions");
+        return render(getProperty("voting-instructions"));
     }
 
     public String getInitialVotingInstructions() {
