@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging experiment server configuration</comment>
+<entry key="hostname">@SERVER_ADDRESS@</entry>
+<entry key="port">@PORT_NUMBER@</entry>
+<entry key="round0">round0.xml</entry>
+<entry key="round1">round1.xml</entry>
+<entry key="round2">round2.xml</entry>
+<entry key="round3">round3.xml</entry>
+<entry key="round4">round4.xml</entry>
+<entry key="round5">round5.xml</entry>
+<entry key="round6">round6.xml</entry>
+<entry key="round7">round7.xml</entry>
+<entry key="round8">round8.xml</entry>
+<entry key="round9">round9.xml</entry>
+<entry key="wait-for-participants">true</entry>
+<entry key="number-of-rounds">10</entry>
+<entry key='external-survey-enabled'>true</entry>
+<entry key='imposed-strategy-enabled'>true</entry>
+<entry key='survey-id-enabled'>true</entry>
+<entry key='survey-instructions'>
+    <![CDATA[
+    <h1>Survey</h1>
+    <hr>
+        <p>
+            Before we continue to the next round of the token task, we would like to ask you
+            some quick questions. Please <a href='{surveyUrl}'>click here</a> to
+            begin the survey.
+        </p>
+        <p>
+            We will continue with the rest of the experiment after all of the
+            surveys have been completed by all the participants in the room.  Please
+            press the "Continue" button at the bottom of the screen after you have
+            successfully completed the survey.  
+        </p>
+        <p>
+            If you encounter any problems with the survey <b>please inform the experimenter</b>.
+        </p>
+        <br>
+        <form>
+        <input type="submit" value="Continue" name="continue">
+        </form>
+    ]]>
+</entry>
+
+<entry key="facilitator-instructions">
+<![CDATA[
+<p>
+    This facilitator interface allows you to control the experiment.  In general you
+    will be following a sequence similar to this:
+    <ol>
+        <li>Show instructions</li>
+        <li>Start round</li>
+        <li>After round is over
+            <ol>
+                <li>show trust game if necessary</li>
+                <li>start standalone chat round if necessary</li>
+            </ol>
+        </li>
+        <li>Goto 1.</li>
+    </ol>
+</p>
+]]>
+</entry>
+
+<entry key="welcome-instructions">
+<![CDATA[
+<h1>Welcome</h1>
+<hr>
+<p>
+Welcome to the experiment. The experiment will begin shortly after everyone has been
+assigned a station.
+<br><br>
+Please <b>wait quietly</b> and <b>do not close this window, open any other
+    applications, or communicate with any of the other participants</b> unless you
+are told to do so.
+</p>
+]]>
+</entry>
+
+<entry key="general-instructions">
+<![CDATA[
+<h1>General Instructions</h1>
+<h2>Your Earnings</h2>
+<hr>
+<p>
+    You have already earned {showUpPayment} by showing up at this experiment.  You can
+earn more, up to a maximum of about $15-$50, by participating in this experiment
+which will take about an hour to an hour and a half. The amount of money you earn
+depends on your decisions, as well as the decisions of your group members during the nine rounds of the experiment.</p>
+<h2>The Token Task</h2>
+<hr>
+<p>
+    Today's experiment is on the computer.  In the experiment, you can collect green
+    diamond shaped tokens <img src="@CODEBASE_URL@/images/gem-token.gif"></img>, and
+    you will earn <b>{dollarsPerToken}</b> for each token you collect.  When the token task
+    begins, you will appear on the screen as a yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif"></img>.  
+    To collect a token, move your yellow dot over a green token and <b>press the
+    space bar</b>.  If you move over a token without pressing the space bar you will
+    NOT collect that token. You can move either up, down, left, or right.  You have
+    to press an arrow key for every move of your yellow dot.
+</p>
+<p>
+    Later, you will be assigned to a group.  The other group members will appear as
+    blue dots <img src="@CODEBASE_URL@/images/gem-other.gif"></img>.
+
+<h2>Tokens</h2>
+<hr>
+<p>
+The tokens that you collect have the potential to regenerate.  After you have
+collected a green token, a new token can re-appear on that empty cell. The rate at
+which new tokens appear is dependent on the number of adjacent cells that still have
+tokens. The more tokens there are in the eight cells around an empty cell, the faster
+a new token will appear on that empty cell.  
+</p>
+<p>
+Tokens generate new tokens.  Thus, the middle cell, which is denoted with X in Image 1 will be regenerated at a faster rate than the middle cell in Image 2.  
+When all neighboring cells are empty, there is no renewal.
+</p>
+<table width="100%">
+<tr>
+<td align="center"><b>Image 1</b></td>
+<td align="center"><b>Image 2</b></td>
+</tr>
+<tr>
+<td align="center">
+    <img src="@CODEBASE_URL@/images/8neighbors.jpg" alt="image 1"></img>
+</td>
+<td align="center">
+    <img src="@CODEBASE_URL@/images/5neighbors.jpg" alt="image 2"></img>
+</td>
+</tr>
+</table>
+<p>
+    If you have any questions at this time, please raise your hand and someone will
+    come over to your station and answer it.  If you have no questions, continue to
+    the quiz below.
+</p>
+]]>
+</entry>
+
+<entry key='trust-game-instructions'>
+<![CDATA[
+<h1>Instructions</h1>
+<hr>
+<p>
+    You will now participate in an exercise where you will be matched with a random
+    person in your group. In this exercise there are two roles, Player 1 and Player 2.
+    Your job is to design strategies for both Player 1 and Player 2 roles.  When you
+    are randomly paired with another member of your group you may be selected as
+    Player 1 <b>or</b> Player 2.  The results of randomly pairing your strategies
+    with the other group member's strategies will be shown to you at the <b>end of
+    the experiment</b>.
+</p>
+
+<h2>How to participate</h2>
+<hr>
+<ol>
+    <li>Player 1 will first receive an endowment of one dollar and has to decide <b>how much to keep</b>.  The remaining amount is <b>sent to Player 2</b>.
+    <li>The amount Player 1 sends to Player 2 is tripled by the system and then
+        given to Player 2.  Player 2 must then decide <b>how much to keep</b> and <b>how much to send back to Player 1</b>.
+</ol>
+<p>
+For example, if Player 1 sends 0 cents to Player 2, Player 1 earns 1 dollar and
+Player 2 earns 0 cents. However, if Player 1 sends 1 dollar to Player 2, 3 dollars
+would be sent to Player 2.  Player 2 then decides to return $1.75 back to Player 1.
+In this case, Player 1 earns $1.75, and Player 2 earns $1.25.
+</p>
+<p>
+Please fill in the following form to design your strategies as Player 1 or Player 2.
+<br>
+<b>If you have any questions, please raise your hand.  Are there any questions?</b>
+</p>
+]]>
+</entry>
+
+<entry key="chat-instructions">
+<![CDATA[
+<p>
+You can chat with the other participants in your group during this round.
+You may discuss any aspect of the experiment with the other participants in your group with two exceptions:
+<ol>
+    <li>You <b>may not promise side-payments after the experiment is completed or threaten anyone with any consequence after the experiment is finished</b>.</li>
+    <li>You <b>may not reveal your actual identity</b></li>
+</ol>
+We are monitoring the chat traffic while you chat. If we detect any violation of the
+rules we will have to stop the the experiment and remove the group where the offense
+occurred from the room.
+</p>
+<p>
+    You will see other participants labeled from A to {self.lastChatHandle} in the
+    chat box.  You can send a chat message by typing into the textfield and pressing
+    the enter key.
+</p>
+]]>
+</entry>
+
+<entry key="sameRoundAsPreviousInstructions">
+<![CDATA[
+<h3>Round {self.roundNumber} Instructions</h3>
+<hr>
+<p>Round {self.roundNumber} is the same as the previous round.</p>
+<p>The length of this round is {duration}.</p>
+<p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
+]]>
+</entry>
+<entry key='facilitator-debriefing'>
+<![CDATA[
+<h3>Round {self.roundNumber} results</h3>
+<hr>
+<table border=1 cellspacing=3 cellpadding=3>
+<tr>
+<th>Participant</th><th>Current tokens</th><th>Current income</th><th>Quiz earnings</th><th>Trust game earnings</th><th>Total income</th>
+</tr>
+{clientDataList: {data | 
+<tr align="RIGHT"><td>{data.id}</td><td>{data.currentTokens}</td><td>{data.currentIncome}</td><td>{data.quizEarnings}</td><td>{data.trustGameEarnings}</td><td>{data.grandTotalIncome}</td></tr>
+}}
+</table>
+]]>
+</entry>
+<entry key='client-debriefing'>
+<![CDATA[
+<h1>{if (self.practiceRound)}Practice Round{else}Round {self.roundNumber}{endif} Results</h1>
+<hr>
+<ul>
+<li>Tokens collected in this round: {clientData.currentTokens}</li>
+<li>Income from tokens collected: {clientData.currentIncome}</li>
+<li>Quiz earnings: {clientData.quizEarnings}</li>
+<li>Show up payment: {showUpPayment}</li>
+</ul>
+{if (showExitInstructions && !clientData.trustGameLog.empty) }
+<h2>Trust Game Earnings</h2>
+<hr>
+<ul>
+{clientData.trustGameLog: {trustGameLog|
+<li>Trust Game #{i}: {trustGameLog}</li>
+}}
+</ul>
+Your total trust game earnings: <b>{clientData.trustGameEarnings}</b>.
+{endif}
+<h2>Total Income</h2>
+<hr>
+<p>
+Your <b>total income</b> is <b>{clientData.grandTotalIncome}</b>.
+</p>
+{if (showExitInstructions)}
+<h2>Final Round</h2>
+<hr>
+    <p>This was the last round of the experiment.</p>
+<h2>Payment</h2>
+<hr>
+<p>
+Please wait quietly while we prepare your payments.  When payments are ready we will
+call you up one by one. Please wait until your computer number,
+<b>{clientData.id}</b>, is called before coming up to receive payment.  Thank you
+for participating.
+</p>
+{endif}
+]]>
+</entry>
+<entry key='voting-results'>
+    <![CDATA[
+    <h1>Nomination Results</h1>
+    <hr>
+    <table border=3 cellspacing=3 cellpadding=3>
+        <tr><th>Strategy</th><th>Nominations</th></tr>
+        {nominations: { strategyNomination |
+        <tr bgcolor="#{if (strategyNomination.selected)}FFFFCC{else}CCCCCC{endif}"><td>{strategyNomination.strategy}</td><td>{strategyNomination.nominations}</td></tr>
+        }}
+    </table>
+    <h1>Selected Strategy</h1>
+    <hr>
+    {if (tiebreaker)}
+    <p><b>NOTE:</b> There was a tie and the selected strategy listed here was randomly selected as the winner.</p>
+    {endif}
+    <p><b> {first(selectedRules)} </b></p>
+    ]]>
+</entry>
+<entry key='initial-voting-instructions'>
+    <![CDATA[
+<h1>Important New Instructions!</h1>
+<h2>Strategies for managing how players collect tokens for the rest of the experiment</h2>
+<hr>
+<p>
+In a moment, you will have the option to implement one of five strategies for how you
+and the three other people in your group collect tokens for the rest of the
+experiment.
+</p>
+
+<h2>Procedure for Deciding the Strategy</h2>
+<hr>
+<p>
+    Each of the {self.clientsPerGroup} people in your group can nominate one of the five
+    potential strategies.  The single strategy that receives the most nominations
+    wins.
+</p>
+<p>
+    <b>If there is a tie</b>, one of the tied options will be selected at random by
+    the computer.  Each of the tied strategies will have an equal chance of being
+    selected.
+</p>
+
+<h2>Implementation</h2>
+<hr>
+    <p>Neither the computer nor the experimenter will intervene to implement the
+        strategy.
+    </p>
+
+    <p>
+        <b>Do you have any questions?</b>  If you have any questions at this time,
+        raise your hand and someone will come over to your station and answer it.
+    </p>
+    ]]>
+</entry>
+<entry key='waiting-room-instructions'>
+<![CDATA[
+<h1>Please Wait</h1>
+<hr>
+<p>Please wait while the other participants complete their tasks.</p>
+]]>
+</entry>
+<entry key='voting-instructions'>
+<![CDATA[
+<h1>Strategy Nomination Instructions</h1>
+<hr>
+<p>
+To nominate a strategy, click the radio button that is to the right of the one you choose; then click "submit". The computer will tally the nominations and then report the
+results on the next screen. The results will be presented to each person in
+your group.
+</p>
+<h2>Your selection will be anonymous</h2>
+<hr>
+<p>
+The identity of people who nominated a particular strategy will NOT be revealed.
+Therefore, neither you nor the experimenter will know who nominated a particular
+strategy.
+</p>
+]]>
+</entry>
+
+<entry key='imposed-strategy-instructions'>
+<![CDATA[
+<h1>Important New Instructions!</h1>
+<h2>Strategy for managing how players collect tokens for the rest of the experiment</h2>
+<hr>
+<p>
+Your group is being assigned a strategy for how you and the three other people in your group collect tokens for the rest of the experiment.
+</p>
+<h2>Assigned Strategy</h2>
+<hr>
+<p>
+<b>{strategy}</b>
+</p>
+<h2>Implementation</h2>
+<hr>
+    <p>Neither the computer nor the experimenter will intervene to implement the
+        strategy.
+    </p>
+
+    <p>
+        <b>Do you have any questions?</b>  If you have any questions at this time,
+        raise your hand and someone will come over to your station and answer it.
+    </p>
+]]>
+</entry>
+
+</properties>

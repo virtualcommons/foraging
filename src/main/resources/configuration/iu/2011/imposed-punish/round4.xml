@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="display-group-tokens">true</entry>
+<entry key="clients-per-group">4</entry>
+<entry key="resource-depth">26</entry>
+<entry key="resource-width">26</entry>
+<entry key="duration">240</entry>
+
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+
+<entry key="initial-distribution">.25</entry>
+<entry key='voting-enabled'>true</entry>
+<entry key="instructions">
+    <![CDATA[
+    <h1>Important New Instructions!</h1>
+    <h2>Reducing Other Player's Earnings</h2>
+    <hr>
+<p>
+Round {self.roundNumber} is about to begin.  You will now have the option to reduce the
+earnings of another participant at a cost to your own earnings by typing that
+participants' number key from 1 to {self.clientsPerGroup}.
+</p>
+    <ul>
+        <li>Each player in your group has a number from 1 to {self.clientsPerGroup}.  If
+            you press a number key 1-{self.clientsPerGroup}, you will reduce the number
+            of tokens that player has collected during the round by
+            {self.sanctionPenalty} tokens. This will also reduce your own token amount by
+            {self.sanctionCost} token. The decision whether or when to use this option is
+            up to you. 
+        </li>
+        <li>When you reduce the number of tokens of another participant, they will
+            receive a message stating that you have reduced their tokens. Likewise, if
+            another participant reduces your number of tokens, you will also receive a
+            message. These messages will be displayed on the bottom of your screen.
+        </li>
+        <li>If your tokens are being reduced or you are reducing another participant's
+            tokens, you will receive some visual cues.  When your tokens are being reduced
+            your yellow dot will turn red briefly with a blue background.  The participant
+            currently reducing your tokens will turn purple with a white background.
+        </li>
+        <li>You may reduce the earnings of other participants as long as (1) there are
+            tokens remaining on the screen and (2) both you and the other participant
+            have a positive number of tokens collected during the round.  <b>Each time</b>
+            you press the numeric key corresponding to another participant your token
+            amount is reduced by <b>{self.sanctionCost}</b>, and their token amount is reduced by
+            <b>{self.sanctionPenalty}</b>.  
+        </li>
+    </ul>
+    <p>
+        The length of this round is {duration}.
+    </p>
+<h2>Strategy Reminder</h2>
+<hr>
+    <p>
+        Reminder: 
+    </p>
+        <ul>
+            <li><b>{first(self.selectedRules)}</b></li>
+        </ul>
+<p><b>Do you have any questions?</b> If you have any questions at this time, raise your hand and someone will come over to your station and answer it.</p>
+    ]]>
+</entry>
+
+
+
+<entry key='voting-instructions'>
+<![CDATA[
+<h1>Strategy Nomination Instructions</h1>
+<hr>
+<p>
+To nominate a strategy, click the radio button that is to the right of the one you choose; then click "submit". The computer will tally the nominations and then report the
+results on the next screen. The results will be presented to each person in
+your group.
+</p>
+<h2>Your selection will be anonymous</h2>
+<hr>
+<p>
+The identity of people who nominated a particular strategy will NOT be revealed.
+Therefore, neither you nor the experimenter will know who nominated a particular
+strategy.
+</p>
+]]>
+</entry>
+
+<entry key='external-survey-enabled'>true</entry>
+<entry key='survey-url'>
+    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_cLX7jnYikmD9eSM&SURVEY_ID={surveyId}]]>
+</entry>
+
+<entry key='sanction-type'>real-time</entry>
+<entry key="sanction-cost">1</entry>
+<entry key="sanction-multiplier">2</entry>
+</properties>
