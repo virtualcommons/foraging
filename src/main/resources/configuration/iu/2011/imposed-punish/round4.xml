@@ -87,7 +87,7 @@ strategy.
 
 <entry key='external-survey-enabled'>true</entry>
 <entry key='survey-url'>
-    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_cLX7jnYikmD9eSM&SURVEY_ID={surveyId}]]>
+    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_3jHrnndEZSM9cqM&SURVEY_ID={surveyId}]]>
 </entry>
 
 <entry key='sanction-type'>real-time</entry>
