@@ -79,7 +79,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     private ArrayList<RegulationData> submittedRegulations = new ArrayList<RegulationData>();
 
-    private ArrayList<ForagingStrategy> selectedRules;
+    private ArrayList<Strategy> selectedRules;
 
     public GroupDataModel(ServerDataModel serverDataModel) {
         this(serverDataModel, nextGroupId++);
@@ -766,9 +766,18 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public EventChannel getEventChannel() {
         return serverDataModel.getEventChannel();
     }
+    
+    public Map<Strategy, Integer> generateVotingResults() {
+    	return generateVotingResults(getRoundConfiguration().isImposedStrategyEnabled());
+    }
 
-    public Map<ForagingStrategy, Integer> generateVotingResults() {
-        Map<ForagingStrategy, Integer> tallyMap = new HashMap<ForagingStrategy, Integer>();
+    public Map<Strategy, Integer> generateVotingResults(boolean imposedStrategyEnabled) {
+        Map<Strategy, Integer> tallyMap = new HashMap<Strategy, Integer>();
+        if (imposedStrategyEnabled) {
+        	tallyMap.put(getImposedStrategy(), 1);
+        	selectedRules.add(getImposedStrategy());
+        	return tallyMap; 
+        }
         for (ClientData client: clients.values()) {
             ForagingStrategy rule = client.getVotedRule();
             Integer count = tallyMap.get(rule);
@@ -777,9 +786,9 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             }
             tallyMap.put(rule, count + 1);
         }
-        selectedRules = new ArrayList<ForagingStrategy>();
+        selectedRules = new ArrayList<Strategy>();
         Integer maxSeenValue = 0;
-        for (Map.Entry<ForagingStrategy, Integer> entry : tallyMap.entrySet()) {
+        for (Map.Entry<Strategy, Integer> entry : tallyMap.entrySet()) {
             Integer currentValue = entry.getValue();
 //            getLogger().info("rule : " + entry.getKey() + " has a vote value of " + currentValue);
 
@@ -801,12 +810,12 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         return tallyMap;
     }
     
-    public List<ForagingStrategy> getSelectedRules() {
+    public List<Strategy> getSelectedRules() {
         return selectedRules;
     }
     
     
-    public ForagingStrategy getSelectedRule() {
+    public Strategy getSelectedRule() {
         return selectedRules.get(0);
     }
 

@@ -44,7 +44,7 @@ public class GroupDataModelTest {
                     data.setVotedRule(rule);
                 }
                 // verify that this is the rule in place.
-                Map<ForagingStrategy, Integer> votingResults = group.generateVotingResults();
+                Map<Strategy, Integer> votingResults = group.generateVotingResults();
                 assertEquals(1, votingResults.size());
                 assertEquals(rule, group.getSelectedRule());
             }
@@ -74,7 +74,7 @@ public class GroupDataModelTest {
                 ForagingStrategy votedRule = rules.get(index);
                 data.setVotedRule(votedRule);
             }
-            Map<ForagingStrategy, Integer> votingResults = group.generateVotingResults();
+            Map<Strategy, Integer> votingResults = group.generateVotingResults();
             assertEquals("There should be 3 rules voted on, total: " + votingResults, 3, votingResults.size());
             for (ForagingStrategy tieBreaker: tieBreakerRules) {
             	assertEquals(2, votingResults.get(tieBreaker).intValue()); 

@@ -18,7 +18,7 @@ import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.ForagingDataModel;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.Resource;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
+import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 /**
@@ -46,7 +46,7 @@ public class ClientDataModel extends ForagingDataModel {
     // these are the subjects that have sanctioned us.
     private Map<Identifier, Duration> sanctioners = new HashMap<Identifier, Duration>();
 
-    private List<ForagingStrategy> selectedRules = new ArrayList<ForagingStrategy>();
+    private List<Strategy> selectedRules = new ArrayList<Strategy>();
     private ForagingClient client;
 
     private volatile boolean explicitCollectionMode = false;
@@ -272,11 +272,11 @@ public class ClientDataModel extends ForagingDataModel {
     }
 
     // FIXME: deprecate and remove these later
-    public void setSelectedRules(List<ForagingStrategy> selectedRules) {
+    public void setSelectedRules(List<Strategy> selectedRules) {
         this.selectedRules = selectedRules;
     }
 
-    public List<ForagingStrategy> getSelectedRules() {
+    public List<Strategy> getSelectedRules() {
         return selectedRules;
     }
 

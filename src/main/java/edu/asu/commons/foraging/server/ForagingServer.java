@@ -76,7 +76,7 @@ import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.model.TrustGameResult;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
+import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Dispatcher;
 import edu.asu.commons.net.Identifier;
@@ -369,7 +369,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<RuleVoteRequest>(RuleVoteRequest.class) {
                 int votesReceived = 0;
-
                 @Override
                 public void handle(RuleVoteRequest request) {
                     sendFacilitatorMessage("Received vote rule request: " + request);
@@ -377,19 +376,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     client.setVotedRule(request.getRule());
                     votesReceived++;
                     if (votesReceived >= clients.size()) {
-                        // calculate votes
-                        for (GroupDataModel group : serverDataModel.getGroups()) {
-                            Map<ForagingStrategy, Integer> votingResults = group.generateVotingResults();
-                            List<ForagingStrategy> selectedRules = group.getSelectedRules();
-                            for (Identifier id : group.getClientIdentifiers()) {
-                                sendFacilitatorMessage(String.format(
-                                        "%s selected [%s] from all rules (%s)",
-                                        group, selectedRules, votingResults));
-                                
-                                transmit(new RuleSelectedUpdateEvent(id, selectedRules, votingResults));
-                            }
-                            store(new RuleSelectedUpdateEvent(facilitatorId, selectedRules, votingResults));
-                        }
+                    	processNominations();
                     }
                 }
             });
@@ -411,6 +398,23 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 }
             });
 
+        }
+        
+        private void processNominations() {
+        	// calculate votes
+        	boolean imposedStrategyEnabled = getCurrentRoundConfiguration().isImposedStrategyEnabled();
+        	for (GroupDataModel group : serverDataModel.getGroups()) {
+        		Map<Strategy, Integer> votingResults = group.generateVotingResults(imposedStrategyEnabled);
+        		List<Strategy> selectedRules = group.getSelectedRules();
+        		for (Identifier id : group.getClientIdentifiers()) {
+        			sendFacilitatorMessage(String.format(
+        					"%s selected [%s] from all rules (%s)",
+        					group, selectedRules, votingResults));
+
+        			transmit(new RuleSelectedUpdateEvent(id, selectedRules, votingResults));
+        		}
+        		store(new RuleSelectedUpdateEvent(facilitatorId, selectedRules, votingResults));
+        	}
         }
 
         @Deprecated

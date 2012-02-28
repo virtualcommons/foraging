@@ -57,7 +57,6 @@ import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.rules.Strategy;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.HtmlEditorPane;
 import edu.asu.commons.ui.UserInterfaceUtils;
@@ -756,7 +755,7 @@ public class GameWindow2D implements GameWindow {
         showPanel(VotingForm.NAME);
     }
 
-    public void showVotingResults(final List<ForagingStrategy> selectedRules, final Map<ForagingStrategy, Integer> votingResults) {
+    public void showVotingResults(final List<Strategy> selectedRules, final Map<Strategy, Integer> votingResults) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 votingPanel.removeAll();
