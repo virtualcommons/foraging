@@ -722,7 +722,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getSubmittedVoteInstructions() {
-        return getProperty("submitted-vote-instructions", "<h1>Submitted</h1><hr><p>Your nomination has been recorded.  The final results of the nomination will be shown once all the nominations in your group have been received.</p>"); 
+        return render(getProperty("submitted-vote-instructions")); 
     }
     
     public String generateVotingResults(List<Strategy> selectedRules, Map<Strategy, Integer> nominations) {
