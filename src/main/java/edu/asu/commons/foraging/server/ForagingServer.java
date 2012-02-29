@@ -261,7 +261,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 public void handle(DisconnectionRequest event) {
                     synchronized (clients) {
                     	Identifier id = event.getId();
-                        getLogger().warning("Disconnecting client, removing " + id + " from clients " + clients.keySet());
+                        sendFacilitatorMessage("Received DisconnectionRequest, removing " + id + " from clients " + clients.keySet(), event.getException());
                         clients.remove(id);
                         serverDataModel.removeClient(id);
                     }

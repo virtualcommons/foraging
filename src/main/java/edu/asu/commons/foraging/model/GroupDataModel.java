@@ -773,6 +773,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     public Map<Strategy, Integer> generateVotingResults(boolean imposedStrategyEnabled) {
         Map<Strategy, Integer> tallyMap = new HashMap<Strategy, Integer>();
+        selectedRules = new ArrayList<Strategy>();
         if (imposedStrategyEnabled) {
             // short circuits to use the imposed strategy
         	tallyMap.put(getImposedStrategy(), 1);
@@ -787,7 +788,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             }
             tallyMap.put(rule, count + 1);
         }
-        selectedRules = new ArrayList<Strategy>();
+
         Integer maxSeenValue = 0;
         for (Map.Entry<Strategy, Integer> entry : tallyMap.entrySet()) {
             Integer currentValue = entry.getValue();
