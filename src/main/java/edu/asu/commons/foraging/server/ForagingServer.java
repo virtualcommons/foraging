@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import edu.asu.commons.event.BeginRoundRequest;
 import edu.asu.commons.event.ChatEvent;
@@ -259,7 +260,12 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 public void handle(DisconnectionRequest event) {
                     synchronized (clients) {
                     	Identifier id = event.getId();
-                        sendFacilitatorMessage("Received DisconnectionRequest, removing " + id + " from clients " + clients.keySet(), event.getException());
+                    	if (id.equals(getFacilitatorId())) {
+                    	    getLogger().log(Level.SEVERE, "Disconnecting facilitator.", event.getException());
+                    	}
+                    	else {
+                    	    sendFacilitatorMessage("Received DisconnectionRequest, removing " + id + " from clients " + clients.keySet(), event.getException());
+                    	}
                         clients.remove(id);
                         serverDataModel.removeClient(id);
                     }
@@ -404,12 +410,13 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 // calculate votes
         		Map<Strategy, Integer> votingResults = group.generateVotingResults(imposedStrategyEnabled);
         		List<Strategy> selectedRules = group.getSelectedRules();
-        		for (Identifier id : group.getClientIdentifiers()) {
-        			sendFacilitatorMessage(String.format(
-        					"%s selected [%s] from all rules %s (imposed? %s)",
-        					group, selectedRules, votingResults, imposedStrategyEnabled));
-
-        			transmit(new RuleSelectedUpdateEvent(id, selectedRules, votingResults));
+                sendFacilitatorMessage(String.format(
+                        "%s selected [%s] from all rules %s (imposed? %s)",
+                        group, selectedRules, votingResults, imposedStrategyEnabled));
+                if (! imposedStrategyEnabled) {
+                    for (Identifier id : group.getClientIdentifiers()) {
+                        transmit(new RuleSelectedUpdateEvent(id, selectedRules, votingResults));
+                    }
         		}
         		store(new RuleSelectedUpdateEvent(getFacilitatorId(), selectedRules, votingResults));
         	}
