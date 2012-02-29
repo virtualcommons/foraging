@@ -62,7 +62,7 @@ import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
-import edu.asu.commons.foraging.event.ShowImposedStrategyRequest;
+import edu.asu.commons.foraging.event.SetImposedStrategyEvent;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
@@ -605,26 +605,15 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             			StringBuilder builder = new StringBuilder();
             			for (GroupDataModel group: groups) {
             				builder.append('[').append(group).append(':').append(group.getImposedStrategy()).append(']');
+            				for (Identifier id: group.getClientIdentifiers()) {
+                                transmit(new SetImposedStrategyEvent(id, group.getImposedStrategy()));
+            				}
             			}
             			sendFacilitatorMessage("Server has imposed strategies for all groups: " + builder);
-
             		}
             		catch (IllegalArgumentException exception) {
             			sendFacilitatorMessage("Couldn't allocate strategy distribution: " + event, exception);
             		}
-            	}
-            });
-            addEventProcessor(new EventTypeProcessor<ShowImposedStrategyRequest>(ShowImposedStrategyRequest.class) {
-            	@Override
-            	public void handle(ShowImposedStrategyRequest request) {
-            		if (! request.getId().equals(getFacilitatorId())) {
-            			sendFacilitatorMessage("Ignoring request to show imposed strategies from: " + request.getId());
-            			return;
-            		}
-            		for (Identifier id: clients.keySet()) {
-            			transmit(new ShowImposedStrategyRequest(id, serverDataModel.getGroup(id).getImposedStrategy()));
-            		}
-            		sendFacilitatorMessage("Notified all groups of imposed strategy.");
             	}
             });
             addEventProcessor(new EventTypeProcessor<ShowRequest>(ShowRequest.class, true) {

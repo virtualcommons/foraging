@@ -46,7 +46,7 @@ public class ClientDataModel extends ForagingDataModel {
     // these are the subjects that have sanctioned us.
     private Map<Identifier, Duration> sanctioners = new HashMap<Identifier, Duration>();
 
-    private List<Strategy> selectedRules = new ArrayList<Strategy>();
+    private List<Strategy> selectedStrategies = new ArrayList<Strategy>();
     private ForagingClient client;
 
     private volatile boolean explicitCollectionMode = false;
@@ -271,13 +271,17 @@ public class ClientDataModel extends ForagingDataModel {
         return explicitCollectionMode;
     }
 
-    // FIXME: deprecate and remove these later
-    public void setSelectedRules(List<Strategy> selectedRules) {
-        this.selectedRules = selectedRules;
+    public void setSelectedStrategies(List<Strategy> selectedStrategies) {
+        this.selectedStrategies = selectedStrategies;
     }
 
+    public List<Strategy> getSelectedStrategies() {
+        return selectedStrategies;
+    }
+    
+    @Deprecated
     public List<Strategy> getSelectedRules() {
-        return selectedRules;
+        return selectedStrategies;
     }
 
     public Point3D getPoint3D(Identifier id) {

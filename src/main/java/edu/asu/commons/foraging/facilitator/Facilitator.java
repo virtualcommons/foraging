@@ -25,7 +25,6 @@ import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.FacilitatorUpdateEvent;
 import edu.asu.commons.foraging.event.ImposeStrategyEvent;
 import edu.asu.commons.foraging.event.QuizCompletedEvent;
-import edu.asu.commons.foraging.event.ShowImposedStrategyRequest;
 import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
@@ -238,14 +237,6 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
 
 	public Map<Strategy, Integer> getImposedStrategyDistribution() {
 		return imposedStrategyDistribution;
-	}
-
-	public void sendShowImposedStrategy() {
-		if (imposedStrategyDistribution == null || imposedStrategyDistribution.isEmpty()) {
-			facilitatorWindow.addMessage("No imposed strategies selected, please select a strategy first.");
-			return;
-		}
-		transmit(new ShowImposedStrategyRequest(getId()));
 	}
 
 }

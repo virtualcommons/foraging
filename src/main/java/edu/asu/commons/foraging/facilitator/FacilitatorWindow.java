@@ -228,15 +228,9 @@ public class FacilitatorWindow extends JPanel {
         		imposedStrategies.clear();
         	}
         });
-        createMenuItem(menu, "Send imposed strategy", new ActionListener() {
+        createMenuItem(menu, "Send imposed strategy distribution", new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		facilitator.sendImposeStrategyEvent(imposedStrategies);
-        	}
-        });
-        
-        createMenuItem(menu, "Show imposed strategy", new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		facilitator.sendShowImposedStrategy();
         	}
         });
         menuBar.add(menu);

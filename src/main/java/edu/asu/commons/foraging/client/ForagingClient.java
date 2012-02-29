@@ -2,6 +2,7 @@ package edu.asu.commons.foraging.client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import javax.swing.JFrame;
@@ -33,7 +34,7 @@ import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
-import edu.asu.commons.foraging.event.ShowImposedStrategyRequest;
+import edu.asu.commons.foraging.event.SetImposedStrategyEvent;
 import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
@@ -162,9 +163,9 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
                 getGameWindow().showTrustGame();
             }
         });
-        addEventProcessor(new EventTypeProcessor<ShowImposedStrategyRequest>(ShowImposedStrategyRequest.class) {
-        	@Override public void handle(ShowImposedStrategyRequest request) {
-        		getGameWindow2D().showImposedStrategy(request.getStrategy());
+        addEventProcessor(new EventTypeProcessor<SetImposedStrategyEvent>(SetImposedStrategyEvent.class) {
+        	@Override public void handle(SetImposedStrategyEvent event) {
+        	    dataModel.setSelectedStrategies(Arrays.asList(event.getStrategy()));
         	}
         });
         addEventProcessor(new EventTypeProcessor<ShowVotingInstructionsRequest>(ShowVotingInstructionsRequest.class) {
@@ -175,7 +176,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         addEventProcessor(new EventTypeProcessor<RuleSelectedUpdateEvent>(RuleSelectedUpdateEvent.class) {
             @Override
             public void handle(RuleSelectedUpdateEvent event) {
-                dataModel.setSelectedRules(event.getSelectedStrategies());
+                dataModel.setSelectedStrategies(event.getSelectedStrategies());
                 getGameWindow2D().showVotingResults(event.getSelectedStrategies(), event.getVotingResults());
             }
         });
