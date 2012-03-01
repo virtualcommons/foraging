@@ -275,17 +275,9 @@ for participating.
     <p><b>NOTE:</b> There was a tie and the selected strategy listed here was randomly selected as the winner.</p>
     {endif}
     <p><b> {first(selectedRules)} </b></p>
-    <h2>Implementation</h2>
-    <hr>
-        <p>
-            Neither the computer, nor the experimenter will intervene to implement the
-            strategy.
-        </p>
-        <p><b>Any questions?</b>  If you have any questions at this time, raise your
-            hand and someone will come over to your station and answer it.
-        </p>
     ]]>
 </entry>
+
 <entry key='initial-voting-instructions'>
     <![CDATA[
 <h1>Important New Instructions!</h1>
@@ -363,59 +355,21 @@ strategy.
 {endif}
 ]]>
 </entry>
-<entry key='imposed-strategy-instructions'>
-<![CDATA[
-<h1>Important New Instructions!</h1>
-<h2>Strategy for managing how players collect tokens for the rest of the experiment</h2>
-<hr>
-<p>
-Your group is being assigned a strategy for how you and the three other people in your group collect tokens for the rest of the experiment.
-</p>
-<h2>Assigned Strategy</h2>
-<hr>
-<p>
-<b>{strategy}</b>
-</p>
-<h2>Implementation</h2>
-<hr>
-    <p>Neither the computer nor the experimenter will intervene to implement the
-        strategy.
-    </p>
-
-    <p>
-        <b>Do you have any questions?</b>  If you have any questions at this time,
-        raise your hand and someone will come over to your station and answer it.
-    </p>
-]]>
-</entry>
 <entry key='submitted-vote-instructions'>
     <![CDATA[
     {if (self.imposedStrategyEnabled)}
     <h1>The Assigned Strategy</h1>
     <hr>
-        <p>Your group is being assigned the following strategy.  All other members in your group are being notified of the same strategy.</p>
-        <ul>
-            <li><b>{first(selectedRules)}</b></li>
-        </ul>
-    <h2>Implementation</h2>
-    <hr>
-        <p>
-            Neither the computer, nor the experimenter will intervene to implement the
-            strategy.
-        </p>
-        <p><b>Any questions?</b>  If you have any questions at this time, raise your
-            hand and someone will come over to your station and answer it.
-        </p>
+        <p>Your group has been assigned the following strategy.  Every member in your group is being notified of the same strategy.</p>
+        <p><b> {first(selectedRules)} </b></p>
 
     {else}
     <h1>Submitted</h1>
     <hr>
-        <p>Your nomination has been recorded.  The final
-            results of the nomination will be shown once all the nominations in your
-            group have been received.
+        <p>Your nomination has been recorded.  The final results of the nomination will be shown once all the
+            nominations in your group have been received.
         </p>
     {endif}
     ]]>
 </entry>
-
 </properties>
