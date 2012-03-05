@@ -740,19 +740,24 @@ public class GameWindow2D implements GameWindow {
     }
     
     public void showVotingScreen() {
-        if (votingPanel == null) {
-            votingPanel = new JPanel();
-            votingPanel.setLayout(new BoxLayout(votingPanel, BoxLayout.Y_AXIS));
-            votingInstructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
-            votingInstructionsScrollPane = new JScrollPane(votingInstructionsEditorPane);
-            votingInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getVotingInstructions());
-            votingPanel.add(votingInstructionsScrollPane);
-            votingForm = new VotingForm(client);
-            votingPanel.add(votingForm);
-            votingPanel.setName(VotingForm.NAME);
-            add(votingPanel);
-        }
-        showPanel(VotingForm.NAME);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (votingPanel == null) {
+                    votingPanel = new JPanel();
+                    votingPanel.setLayout(new BoxLayout(votingPanel, BoxLayout.Y_AXIS));
+                    votingInstructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
+                    votingInstructionsScrollPane = new JScrollPane(votingInstructionsEditorPane);
+                    RoundConfiguration configuration = client.getCurrentRoundConfiguration();
+                    votingInstructionsEditorPane.setText(configuration.getVotingInstructions());
+                    votingPanel.add(votingInstructionsScrollPane);
+                    votingForm = new VotingForm(client);
+                    votingPanel.add(votingForm);
+                    votingPanel.setName(VotingForm.NAME);
+                    add(votingPanel);
+                }
+                showPanel(VotingForm.NAME);        
+            }
+        });
     }
 
     public void showVotingResults(final List<Strategy> selectedRules, final Map<Strategy, Integer> votingResults) {
@@ -882,17 +887,9 @@ public class GameWindow2D implements GameWindow {
     }
 
     public void strategyNominationSubmitted() {
-        setInstructions(dataModel.getRoundConfiguration().getSubmittedVoteInstructions());
+        RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
+        setInstructions(roundConfiguration.getSubmittedVoteInstructions());
         showInstructionsPanel();
     }
-
-	public void showImposedStrategy(final Strategy strategy) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override public void run() {
-				setInstructions(dataModel.getRoundConfiguration().getImposedStrategyInstructions(strategy));		
-			}
-		});
-	}
-
 
 }

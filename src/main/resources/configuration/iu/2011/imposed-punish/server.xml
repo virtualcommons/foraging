@@ -334,9 +334,6 @@ experiment.
         Below is the list of different strategies.  Please read the list carefully.
         Press "Submit" once you have finished reviewing the strategies.
     </p>
-    <ol>
-        {foragingStrategies: { strategy | <li>{strategy}</li> }}
-    </ol>
 {else}
 <h1>Strategy Nomination Instructions</h1>
 <hr>
@@ -361,7 +358,7 @@ strategy.
     <h1>The Assigned Strategy</h1>
     <hr>
         <p>Your group has been assigned the following strategy.  Every member in your group is being notified of the same strategy.</p>
-        <p><b> {first(selectedRules)} </b></p>
+        <p><b> {first(self.selectedRules)} </b></p>
 
     {else}
     <h1>Submitted</h1>

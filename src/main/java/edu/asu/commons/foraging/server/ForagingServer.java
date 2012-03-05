@@ -63,6 +63,7 @@ import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.SetImposedStrategyEvent;
+import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
@@ -599,21 +600,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             			sendFacilitatorMessage("Ignoring request to impose strategy " + event);
             			return;
             		}
+            		serverDataModel.setImposedStrategyDistribution(event.getStrategyDistribution());
+                    sendFacilitatorMessage("Setting imposed strategy distribution to " + event.getStrategyDistribution());
         			persister.store(event);
-            		try {
-            			List<GroupDataModel> groups = serverDataModel.allocateImposedStrategyDistribution(event.getStrategyDistribution());
-            			StringBuilder builder = new StringBuilder();
-            			for (GroupDataModel group: groups) {
-            				builder.append('[').append(group).append(':').append(group.getImposedStrategy()).append(']');
-            				for (Identifier id: group.getClientIdentifiers()) {
-                                transmit(new SetImposedStrategyEvent(id, group.getImposedStrategy()));
-            				}
-            			}
-            			sendFacilitatorMessage("Server has imposed strategies for all groups: " + builder);
-            		}
-            		catch (IllegalArgumentException exception) {
-            			sendFacilitatorMessage("Couldn't allocate strategy distribution: " + event, exception);
-            		}
             	}
             });
             addEventProcessor(new EventTypeProcessor<ShowRequest>(ShowRequest.class, true) {
@@ -623,6 +612,11 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     if (! request.getId().equals(getFacilitatorId())) {
                         sendFacilitatorMessage("Ignoring show request from non facilitator id: " + request.getId());
                         return;
+                    }
+                    // FIXME: bah, more special casing.  figure out a better way 
+                    // to determine when to send the imposed strategy..
+                    if (request instanceof ShowVoteScreenRequest && getCurrentRoundConfiguration().isImposedStrategyEnabled()) {
+                        sendImposedStrategy();
                     }
                     // if this is a ShowExitInstructionsRequest, is this the last round at least?
                     if (request instanceof ShowExitInstructionsRequest && ! getCurrentRoundConfiguration().isLastRound()) {
@@ -867,6 +861,23 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 default:
                     sendFacilitatorMessage("Invalid server state, this is a serious error.", new IllegalStateException("Invalid server state: " + serverState));
                     break;
+            }
+        }
+        
+        private void sendImposedStrategy() {
+            try {
+                List<GroupDataModel> groups = serverDataModel.allocateImposedStrategyDistribution();
+                StringBuilder builder = new StringBuilder();
+                for (GroupDataModel group: groups) {
+                    builder.append('[').append(group).append(':').append(group.getImposedStrategy()).append(']');
+                    for (Identifier id: group.getClientIdentifiers()) {
+                        transmit(new SetImposedStrategyEvent(id, group.getImposedStrategy()));
+                    }
+                }
+                sendFacilitatorMessage("Server has imposed strategies for all groups: " + builder);
+            }
+            catch (IllegalArgumentException exception) {
+                sendFacilitatorMessage("Couldn't allocate strategy distribution: " + serverDataModel.getImposedStrategyDistribution(), exception);
             }
         }
 

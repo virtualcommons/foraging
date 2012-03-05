@@ -851,10 +851,4 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("survey-confirmation-message", "Please make sure you have completed the survey before continuing.  Have you completed the survey?");
 
     }
-
-	public String getImposedStrategyInstructions(Strategy strategy) {
-		ST st = createStringTemplate(getProperty("imposed-strategy-instructions"));
-		st.add("strategy", strategy);
-		return st.render();
-	}
 }

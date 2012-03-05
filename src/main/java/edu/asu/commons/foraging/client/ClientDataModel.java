@@ -273,6 +273,7 @@ public class ClientDataModel extends ForagingDataModel {
 
     public void setSelectedStrategies(List<Strategy> selectedStrategies) {
         this.selectedStrategies = selectedStrategies;
+        getRoundConfiguration().setSelectedRules(selectedStrategies);
     }
 
     public List<Strategy> getSelectedStrategies() {

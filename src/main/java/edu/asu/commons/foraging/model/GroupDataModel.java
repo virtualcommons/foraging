@@ -831,7 +831,10 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 	}
 
 	public void setImposedStrategy(Strategy imposedStrategy) {
-		this.imposedStrategy = imposedStrategy;
+	    // XXX: defensive set, don't override an already imposed strategy.
+	    if (this.imposedStrategy == null) {
+	        this.imposedStrategy = imposedStrategy;
+	    }
 	}
 
 }
