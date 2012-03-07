@@ -183,7 +183,7 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
      * Send a request to set the configuration object
      */
     public void sendSetConfigRequest() {
-        transmit(new ConfigurationEvent<ServerConfiguration>(getId(), getServerConfiguration()));
+        transmit(new ConfigurationEvent<ServerConfiguration, RoundConfiguration>(getId(), getServerConfiguration()));
     }
 
     public FacilitatorWindow getFacilitatorWindow() {

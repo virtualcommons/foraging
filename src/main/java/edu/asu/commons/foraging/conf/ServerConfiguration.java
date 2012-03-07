@@ -24,7 +24,7 @@ import edu.asu.commons.foraging.model.ClientData;
  * @see 
  * @version $Revision$
  */
-public class ServerConfiguration extends ExperimentConfiguration.Base<RoundConfiguration> {
+public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConfiguration, RoundConfiguration> {
     
     private static final long serialVersionUID = -1737412253553943902L;
     

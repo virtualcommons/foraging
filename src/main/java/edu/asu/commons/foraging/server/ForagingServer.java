@@ -253,7 +253,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         clients.put(identifier, new ClientData(identifier));
                     }
                     // send welcome instructions and experiment configuration
-                    transmit(new SetConfigurationEvent<RoundConfiguration>(identifier, getCurrentRoundConfiguration()));
+                    transmit(new SetConfigurationEvent<ServerConfiguration, RoundConfiguration>(identifier, getCurrentRoundConfiguration()));
                 }
             });
             addEventProcessor(new EventTypeProcessor<DisconnectionRequest>(DisconnectionRequest.class) {
@@ -922,9 +922,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             getLogger().info("Advancing to round # " + getConfiguration().getCurrentRoundNumber());
             // send the next round configuration to each client
             for (Identifier id : clients.keySet()) {
-                transmit(new SetConfigurationEvent<RoundConfiguration>(id, nextRoundConfiguration));
+                transmit(new SetConfigurationEvent<ServerConfiguration, RoundConfiguration>(id, nextRoundConfiguration));
             }
-            transmit(new SetConfigurationEvent<RoundConfiguration>(getFacilitatorId(), nextRoundConfiguration));
+            transmit(new SetConfigurationEvent<ServerConfiguration, RoundConfiguration>(getFacilitatorId(), nextRoundConfiguration));
         }
 
         private void processRound() {
