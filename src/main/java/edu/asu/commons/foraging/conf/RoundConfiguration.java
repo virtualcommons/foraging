@@ -735,7 +735,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         ST template = createStringTemplate(getVotingResultsTemplate());
         template.add("nominations", sortedNominations);
         template.add("tiebreaker", selectedRules.size() > 1);
-        template.add("selectedRules", selectedRules);
         return template.render();
     }
 

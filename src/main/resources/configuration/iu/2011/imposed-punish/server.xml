@@ -274,7 +274,7 @@ for participating.
     {if (tiebreaker)}
     <p><b>NOTE:</b> There was a tie and the selected strategy listed here was randomly selected as the winner.</p>
     {endif}
-    <p><b> {first(selectedRules)} </b></p>
+    <p><b> {first(self.selectedRules)} </b></p>
     ]]>
 </entry>
 
@@ -326,14 +326,14 @@ experiment.
 {if (self.imposedStrategyEnabled)}
 <h1>Strategies</h1>
 <hr>
-    <p>You now have the opportunity to consider {self.foragingStrategies.size}
-        possible strategies for managing how you and the other members of your group
-        collect tokens for the rest of the experiment.
-    </p>
+    <p>Below is a list of {self.foragingStrategies.size} strategies, or options, for managing how you and the other
+        members of your group collect tokens for the rest of the experiment.
     <p>
-        Below is the list of different strategies.  Please read the list carefully.
-        Press "Submit" once you have finished reviewing the strategies.
+        Please read and consider the list of options carefully. Press "Submit" once you have finished reviewing the
+        strategies.
     </p>
+    <p><b>Any questions?</b>  If you have any questions at this time, raise your hand and someone will come over to your station and answer it. </p>
+
 {else}
 <h1>Strategy Nomination Instructions</h1>
 <hr>
@@ -357,8 +357,11 @@ strategy.
     {if (self.imposedStrategyEnabled)}
     <h1>The Assigned Strategy</h1>
     <hr>
-        <p>Your group has been assigned the following strategy.  Every member in your group is being notified of the same strategy.</p>
+        <p>Your group has been assigned the following strategy.  Every member of your group is being notified of the same strategy.</p>
         <p><b> {first(self.selectedRules)} </b></p>
+    <h2>Implementation</h2>
+    <hr>
+        <p>Neither the computer nor the experimenter will intervene to implement the strategy. </p>
 
     {else}
     <h1>Submitted</h1>
