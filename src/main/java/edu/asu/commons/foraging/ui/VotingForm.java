@@ -45,6 +45,8 @@ import edu.asu.commons.ui.UserInterfaceUtils;
  */
 public class VotingForm extends JPanel {
     
+    private static final int DEFAULT_STRATEGY_GAP_SIZE = 80;
+
     private static final long serialVersionUID = 3871660663519284024L;
 
     public final static String NAME = "Strategy voting form";
@@ -77,7 +79,7 @@ public class VotingForm extends JPanel {
         horizontalGroup.addGroup(horizontalButtonParallelGroup);
         
         GroupLayout.SequentialGroup verticalGroup = groupLayout.createSequentialGroup();
-        boolean imposedStrategyEnabled = client.getCurrentRoundConfiguration().isImposedStrategyEnabled();
+        boolean imposedStrategyEnabled = (client != null) && client.getCurrentRoundConfiguration().isImposedStrategyEnabled();
         // XXX: this is certainly what Rawlins was warning against
         String rightColumnHeader = votingResults.isEmpty() 
                 ? (imposedStrategyEnabled) ? "" : "Select" 
@@ -91,7 +93,7 @@ public class VotingForm extends JPanel {
         horizontalLabelParallelGroup.addComponent(strategyHeaderLabel);
         
         verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(strategyHeaderLabel).addGap(20).addComponent(rightHeaderLabel));
-        Dimension labelDimension = new Dimension(800, 100);
+        Dimension labelDimension = new Dimension(1000, 100);
  
         for (ForagingStrategy strategy: strategies) {
             JLabel ruleLabel = new JLabel("<html>" + strategy.getDescription() + "</html>");
@@ -115,7 +117,7 @@ public class VotingForm extends JPanel {
                 component = new JLabel(String.valueOf(numberOfVotes == null ? 0 : numberOfVotes));
             }
             horizontalButtonParallelGroup.addComponent(component);
-            verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addComponent(component));
+            verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addGap(DEFAULT_STRATEGY_GAP_SIZE).addComponent(component));
         }
         if (votingResults.isEmpty()) {
             JButton submitButton = getSubmitButton();
