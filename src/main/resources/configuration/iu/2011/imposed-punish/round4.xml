@@ -63,28 +63,6 @@ participants' number key from 1 to {self.clientsPerGroup}.
 <p><b>Do you have any questions?</b> If you have any questions at this time, raise your hand and someone will come over to your station and answer it.</p>
     ]]>
 </entry>
-
-
-
-<entry key='voting-instructions'>
-<![CDATA[
-<h1>Strategy Nomination Instructions</h1>
-<hr>
-<p>
-To nominate a strategy, click the radio button that is to the right of the one you choose; then click "submit". The computer will tally the nominations and then report the
-results on the next screen. The results will be presented to each person in
-your group.
-</p>
-<h2>Your selection will be anonymous</h2>
-<hr>
-<p>
-The identity of people who nominated a particular strategy will NOT be revealed.
-Therefore, neither you nor the experimenter will know who nominated a particular
-strategy.
-</p>
-]]>
-</entry>
-
 <entry key='external-survey-enabled'>true</entry>
 <entry key='survey-url'>
     <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_3jHrnndEZSM9cqM&SURVEY_ID={surveyId}]]>
