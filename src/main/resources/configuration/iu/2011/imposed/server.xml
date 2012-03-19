@@ -17,6 +17,7 @@
 <entry key="wait-for-participants">true</entry>
 <entry key="number-of-rounds">10</entry>
 <entry key='external-survey-enabled'>true</entry>
+<entry key='imposed-strategy-enabled'>true</entry>
 <entry key='survey-id-enabled'>true</entry>
 <entry key='survey-instructions'>
     <![CDATA[
@@ -273,9 +274,10 @@ for participating.
     {if (tiebreaker)}
     <p><b>NOTE:</b> There was a tie and the selected strategy listed here was randomly selected as the winner.</p>
     {endif}
-    <p><b> {first(selectedRules)} </b></p>
+    <p><b> {first(self.selectedRules)} </b></p>
     ]]>
 </entry>
+
 <entry key='initial-voting-instructions'>
     <![CDATA[
 <h1>Important New Instructions!</h1>
@@ -319,9 +321,20 @@ experiment.
 <p>Please wait while the other participants complete their tasks.</p>
 ]]>
 </entry>
-
 <entry key='voting-instructions'>
 <![CDATA[
+{if (self.imposedStrategyEnabled)}
+<h1>Strategies</h1>
+<hr>
+    <p>Below is a list of {self.foragingStrategies.size} strategies, or options, for managing how you and the other
+        members of your group collect tokens for the rest of the experiment.
+    <p>
+        Please read and consider the list of options carefully. Press "Submit" once you have finished reviewing the
+        strategies.
+    </p>
+    <p><b>Any questions?</b>  If you have any questions at this time, raise your hand and someone will come over to your station and answer it. </p>
+    <br><br>
+{else}
 <h1>Strategy Nomination Instructions</h1>
 <hr>
 <p>
@@ -336,32 +349,27 @@ The identity of people who nominated a particular strategy will NOT be revealed.
 Therefore, neither you nor the experimenter will know who nominated a particular
 strategy.
 </p>
+{endif}
 ]]>
 </entry>
+<entry key='submitted-vote-instructions'>
+    <![CDATA[
+    {if (self.imposedStrategyEnabled)}
+    <h1>The Assigned Strategy</h1>
+    <hr>
+        <p>Your group has been assigned the following strategy.  Every member of your group is being notified of the same strategy.</p>
+        <p><b> {first(self.selectedRules)} </b></p>
+    <h2>Implementation</h2>
+    <hr>
+        <p>Neither the computer nor the experimenter will intervene to implement the strategy. </p>
 
-<entry key='imposed-strategy-instructions'>
-<![CDATA[
-<h1>Important New Instructions!</h1>
-<h2>Strategy for managing how players collect tokens for the rest of the experiment</h2>
-<hr>
-<p>
-Your group is being assigned a strategy for how you and the three other people in your group collect tokens for the rest of the experiment.
-</p>
-<h2>Assigned Strategy</h2>
-<hr>
-<p>
-<b>{strategy}</b>
-</p>
-<h2>Implementation</h2>
-<hr>
-    <p>Neither the computer nor the experimenter will intervene to implement the
-        strategy.
-    </p>
-
-    <p>
-        <b>Do you have any questions?</b>  If you have any questions at this time,
-        raise your hand and someone will come over to your station and answer it.
-    </p>
-]]>
+    {else}
+    <h1>Submitted</h1>
+    <hr>
+        <p>Your nomination has been recorded.  The final results of the nomination will be shown once all the
+            nominations in your group have been received.
+        </p>
+    {endif}
+    ]]>
 </entry>
 </properties>

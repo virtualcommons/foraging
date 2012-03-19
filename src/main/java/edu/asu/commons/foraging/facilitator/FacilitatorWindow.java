@@ -82,9 +82,9 @@ public class FacilitatorWindow extends JPanel {
     private JMenuItem showVotingInstructionsMenuItem;
     private JMenuItem showVoteScreenMenuItem;
     private JMenuItem showSurveyInstructionsMenuItem;
-	private JMenuItem showExitInstructionsMenuItem;
-	private JMenuItem imposeStrategyMenuItem;
-	
+    private JMenuItem showExitInstructionsMenuItem;
+    private JMenuItem imposeStrategyMenuItem;
+
     private HtmlEditorPane messageEditorPane;
 
     private StringBuilder instructionsBuilder;
@@ -94,7 +94,7 @@ public class FacilitatorWindow extends JPanel {
     private ClipboardService clipboardService;
 
     private Map<Strategy, Integer> imposedStrategies = new HashMap<Strategy, Integer>();
-	
+
     public FacilitatorWindow(Dimension dimension, Facilitator facilitator) {
         this.facilitator = facilitator;
         initGuiComponents();
@@ -113,7 +113,7 @@ public class FacilitatorWindow extends JPanel {
      * This method gets called after the end of each round
      */
     public void displayInstructions() {
-    	
+
     }
 
     /*
@@ -131,7 +131,6 @@ public class FacilitatorWindow extends JPanel {
         // Round menu
         JMenu menu = new JMenu("Round");
         menu.setMnemonic(KeyEvent.VK_R);
-        
 
         showInstructionsMenuItem = new JMenuItem("Show Instructions");
         showInstructionsMenuItem.setMnemonic(KeyEvent.VK_I);
@@ -143,7 +142,7 @@ public class FacilitatorWindow extends JPanel {
             }
         });
         menu.add(showInstructionsMenuItem);
-        
+
         startRoundMenuItem = new JMenuItem("Start");
         startRoundMenuItem.setMnemonic(KeyEvent.VK_T);
         startRoundMenuItem.setEnabled(false);
@@ -170,7 +169,7 @@ public class FacilitatorWindow extends JPanel {
                 facilitator.sendShowExitInstructionsRequest();
             }
         });
-        
+
         startChatMenuItem = new JMenuItem("Start chat");
         startChatMenuItem.setEnabled(true);
         startChatMenuItem.addActionListener(new ActionListener() {
@@ -188,10 +187,8 @@ public class FacilitatorWindow extends JPanel {
         });
         menu.add(showTrustGameMenuItem);
 
-        
-        
         menuBar.add(menu);
-        
+
         // voting menu
         menu = new JMenu("Voting");
 
@@ -206,38 +203,34 @@ public class FacilitatorWindow extends JPanel {
             }
         });
         imposeStrategyMenuItem = createMenuItem(menu, "Add imposed strategy", new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		ForagingStrategy selection = (ForagingStrategy) JOptionPane.showInputDialog(FacilitatorWindow.this, "Select the strategy to impose:\n",
-        				"Impose Strategy",
-        				JOptionPane.QUESTION_MESSAGE,
-        				null,
-        				ForagingStrategy.values(),
-        				ForagingStrategy.NONE
-        				);
-        		Integer distribution = imposedStrategies.get(selection);
-        		if (distribution == null) {
-        			distribution = Integer.valueOf(0);
-        		}
-        		imposedStrategies.put(selection, Integer.valueOf(distribution + 1));
-        		addMessage("Current strategy distribution: " + imposedStrategies);
-        	}
+            public void actionPerformed(ActionEvent e) {
+                ForagingStrategy selection = (ForagingStrategy) JOptionPane.showInputDialog(FacilitatorWindow.this, "Select the strategy to impose:\n",
+                        "Impose Strategy",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        ForagingStrategy.values(),
+                        ForagingStrategy.NONE
+                        );
+                if (selection == null)
+                    return;
+                Integer distribution = imposedStrategies.get(selection);
+                if (distribution == null) {
+                    distribution = Integer.valueOf(0);
+                }
+                imposedStrategies.put(selection, Integer.valueOf(distribution + 1));
+                addMessage("Current strategy distribution: " + imposedStrategies);
+            }
         });
         createMenuItem(menu, "Clear imposed strategies", new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		
-        		imposedStrategies.clear();
-        	}
+            public void actionPerformed(ActionEvent e) {
+                imposedStrategies.clear();
+                addMessage("Cleared strategy distribution: " + imposedStrategies);
+            }
         });
-        createMenuItem(menu, "Send imposed strategy", new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		facilitator.sendImposeStrategyEvent(imposedStrategies);
-        	}
-        });
-        
-        createMenuItem(menu, "Show imposed strategy", new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		facilitator.sendShowImposedStrategy();
-        	}
+        createMenuItem(menu, "Send imposed strategy distribution", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                facilitator.sendImposeStrategyEvent(imposedStrategies);
+            }
         });
         menuBar.add(menu);
 
@@ -395,16 +388,16 @@ public class FacilitatorWindow extends JPanel {
     }
 
     public void addMessage(final String message) {
-    	SwingUtilities.invokeLater(new Runnable() {
-    		public void run() {
-    			try {
-    				messageEditorPane.getDocument().insertString(0, "-----\n" + message + "\n", null);
-    				messageEditorPane.setCaretPosition(0);
-    			} catch (BadLocationException exception) {
-    				exception.printStackTrace();
-    			}
-    		}
-    	});
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    messageEditorPane.getDocument().insertString(0, "-----\n" + message + "\n", null);
+                    messageEditorPane.setCaretPosition(0);
+                } catch (BadLocationException exception) {
+                    exception.printStackTrace();
+                }
+            }
+        });
     }
 
     public void quizCompleted(QuizCompletedEvent event) {
@@ -469,10 +462,10 @@ public class FacilitatorWindow extends JPanel {
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
             if (String.class.equals(flavor.getRepresentationClass())) {
                 return html;
-            } 
+            }
             else if (Reader.class.equals(flavor.getRepresentationClass())) {
                 return new StringReader(html);
-            } 
+            }
             else if (InputStream.class.equals(flavor.getRepresentationClass())) {
                 return new ByteArrayInputStream(html.getBytes());
             }

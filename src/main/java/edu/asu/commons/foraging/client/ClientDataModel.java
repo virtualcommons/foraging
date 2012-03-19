@@ -18,7 +18,7 @@ import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.ForagingDataModel;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.Resource;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
+import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 /**
@@ -46,7 +46,7 @@ public class ClientDataModel extends ForagingDataModel {
     // these are the subjects that have sanctioned us.
     private Map<Identifier, Duration> sanctioners = new HashMap<Identifier, Duration>();
 
-    private List<ForagingStrategy> selectedRules = new ArrayList<ForagingStrategy>();
+    private List<Strategy> selectedStrategies = new ArrayList<Strategy>();
     private ForagingClient client;
 
     private volatile boolean explicitCollectionMode = false;
@@ -271,13 +271,18 @@ public class ClientDataModel extends ForagingDataModel {
         return explicitCollectionMode;
     }
 
-    // FIXME: deprecate and remove these later
-    public void setSelectedRules(List<ForagingStrategy> selectedRules) {
-        this.selectedRules = selectedRules;
+    public void setSelectedStrategies(List<Strategy> selectedStrategies) {
+        this.selectedStrategies = selectedStrategies;
+        getRoundConfiguration().setSelectedRules(selectedStrategies);
     }
 
-    public List<ForagingStrategy> getSelectedRules() {
-        return selectedRules;
+    public List<Strategy> getSelectedStrategies() {
+        return selectedStrategies;
+    }
+    
+    @Deprecated
+    public List<Strategy> getSelectedRules() {
+        return selectedStrategies;
     }
 
     public Point3D getPoint3D(Identifier id) {

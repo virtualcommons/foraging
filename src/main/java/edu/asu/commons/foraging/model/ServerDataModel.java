@@ -63,6 +63,8 @@ public class ServerDataModel extends ForagingDataModel {
 	// Maps client Identifiers to the GroupDataModel that the client belongs to 
     private final Map<Identifier, GroupDataModel> clientsToGroups = new HashMap<Identifier, GroupDataModel>();
 
+    private Map<Strategy, Integer> imposedStrategyDistribution;
+
     public ServerDataModel() {
         super(EventTypeChannel.getInstance());
     }
@@ -463,24 +465,41 @@ public class ServerDataModel extends ForagingDataModel {
 
     }
     
+
     public List<GroupDataModel> allocateImposedStrategyDistribution(Map<Strategy, Integer> imposedStrategyDistribution) {
-    	List<GroupDataModel> groups = getOrderedGroups();
-    	int numberOfGroups = groups.size();
-    	Collections.shuffle(groups);
-    	Iterator<GroupDataModel> groupIterator = groups.iterator();
-    	int numberOfStrategies = 0;
-    	for (Map.Entry<Strategy, Integer> entry : imposedStrategyDistribution.entrySet()) {
-    		Strategy strategy = entry.getKey();
-    		int occurrences = entry.getValue();
-    		if (numberOfStrategies > numberOfGroups) {
-    			throw new IllegalArgumentException("Invalid number of strategies : " + numberOfStrategies + " for " + numberOfGroups + " groups.");
-    		}
-    		for (int i = 0; i < occurrences; i++) {
-    			GroupDataModel group = groupIterator.next();
-    			group.setImposedStrategy(strategy);
-    			numberOfStrategies++;
-    		}
-    	}
-    	return groups;
+        if (imposedStrategyDistribution == null || imposedStrategyDistribution.isEmpty()) {
+            throw new IllegalArgumentException("No strategy distribution defined.  Please create a strategy distribution and try again.");
+        }
+        List<GroupDataModel> groups = getOrderedGroups();
+        int numberOfGroups = groups.size();
+        Collections.shuffle(groups);
+        Iterator<GroupDataModel> groupIterator = groups.iterator();
+        int numberOfStrategies = 0;
+        for (Map.Entry<Strategy, Integer> entry : imposedStrategyDistribution.entrySet()) {
+            Strategy strategy = entry.getKey();
+            int occurrences = entry.getValue();
+            if (numberOfStrategies > numberOfGroups) {
+                throw new IllegalArgumentException("Invalid number of strategies : " + numberOfStrategies + " for " + numberOfGroups + " groups.");
+            }
+            for (int i = 0; i < occurrences; i++) {
+                GroupDataModel group = groupIterator.next();
+                group.setImposedStrategy(strategy);
+                numberOfStrategies++;
+            }
+        }
+        return groups;
     }
+    
+    public List<GroupDataModel> allocateImposedStrategyDistribution() {
+        return allocateImposedStrategyDistribution(imposedStrategyDistribution);
+    }
+
+    public void setImposedStrategyDistribution(Map<Strategy, Integer> strategyDistribution) {
+        this.imposedStrategyDistribution = strategyDistribution;              
+    }
+
+    public Map<Strategy, Integer> getImposedStrategyDistribution() {
+        return imposedStrategyDistribution;
+    }
+
 }

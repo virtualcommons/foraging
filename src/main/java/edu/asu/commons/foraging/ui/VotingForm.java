@@ -32,15 +32,21 @@ import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
 import edu.asu.commons.foraging.client.ForagingClient;
+import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.ui.UserInterfaceUtils;
 
 /**
  * $Id$
+ * 
+ * Interface nominate a given ForagingStrategy
+ * 
  * @author Allen Lee
  */
 public class VotingForm extends JPanel {
     
+    private static final int DEFAULT_STRATEGY_GAP_SIZE = 80;
+
     private static final long serialVersionUID = 3871660663519284024L;
 
     public final static String NAME = "Strategy voting form";
@@ -48,18 +54,18 @@ public class VotingForm extends JPanel {
     private ForagingClient client;
 
     public VotingForm(ForagingClient client) {
-        this(client, new HashMap<ForagingStrategy, Integer>());
+        this(client, new HashMap<Strategy, Integer>());
     }
     
-    public VotingForm(ForagingClient client, Map<ForagingStrategy, Integer> votingResults) {
+    public VotingForm(ForagingClient client, Map<Strategy, Integer> votingResults) {
         this.client = client;
         initComponents();
         initForm(votingResults);
         setName(NAME);
     }
     
-    private void initForm(Map<ForagingStrategy, Integer> votingResults) {
-        ForagingStrategy[] rules = ForagingStrategy.values();
+    private void initForm(Map<Strategy, Integer> votingResults) {
+        ForagingStrategy[] strategies = ForagingStrategy.values();
         JPanel panel = new JPanel();
         GroupLayout groupLayout = new GroupLayout(panel);
         panel.setLayout(groupLayout);
@@ -73,7 +79,11 @@ public class VotingForm extends JPanel {
         horizontalGroup.addGroup(horizontalButtonParallelGroup);
         
         GroupLayout.SequentialGroup verticalGroup = groupLayout.createSequentialGroup();
-        String rightColumnHeader = votingResults.isEmpty() ? "Select" : "Nominations";
+        boolean imposedStrategyEnabled = (client != null) && client.getCurrentRoundConfiguration().isImposedStrategyEnabled();
+        // XXX: this is certainly what Rawlins was warning against
+        String rightColumnHeader = votingResults.isEmpty() 
+                ? (imposedStrategyEnabled) ? "" : "Select" 
+                    : "Nominations";
         JLabel rightHeaderLabel = new JLabel(rightColumnHeader);
         rightHeaderLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
         horizontalButtonParallelGroup.addComponent(rightHeaderLabel);
@@ -83,27 +93,31 @@ public class VotingForm extends JPanel {
         horizontalLabelParallelGroup.addComponent(strategyHeaderLabel);
         
         verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(strategyHeaderLabel).addGap(20).addComponent(rightHeaderLabel));
-        Dimension labelDimension = new Dimension(800, 100);
-        for (ForagingStrategy rule: rules) {
-            JLabel ruleLabel = new JLabel("<html>" + rule.getDescription() + "</html>");
+        Dimension labelDimension = new Dimension(1000, 100);
+ 
+        for (ForagingStrategy strategy: strategies) {
+            JLabel ruleLabel = new JLabel("<html>" + strategy.getDescription() + "</html>");
             ruleLabel.setFont(UserInterfaceUtils.DEFAULT_PLAIN_FONT);
             ruleLabel.setMaximumSize(labelDimension);
             horizontalLabelParallelGroup.addComponent(ruleLabel);
             JComponent component = null;
-            if (votingResults.isEmpty()) {
+            if (imposedStrategyEnabled) {
+                component = new JLabel("");
+            }
+            else if (votingResults.isEmpty()) {
                 JRadioButton radioButton = new JRadioButton();                        
-                radioButton.setActionCommand(rule.name());
+                radioButton.setActionCommand(strategy.name());
                 buttonGroup.add(radioButton);
                 component = radioButton;
-                horizontalButtonParallelGroup.addComponent(radioButton);
-                verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addComponent(radioButton));
+//                horizontalButtonParallelGroup.addComponent(radioButton);
+//                verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addComponent(radioButton));
             }
             else {
-                Integer numberOfVotes = votingResults.get(rule);
+                Integer numberOfVotes = votingResults.get(strategy);
                 component = new JLabel(String.valueOf(numberOfVotes == null ? 0 : numberOfVotes));
             }
             horizontalButtonParallelGroup.addComponent(component);
-            verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addComponent(component));
+            verticalGroup.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(ruleLabel).addGap(DEFAULT_STRATEGY_GAP_SIZE).addComponent(component));
         }
         if (votingResults.isEmpty()) {
             JButton submitButton = getSubmitButton();
@@ -121,6 +135,10 @@ public class VotingForm extends JPanel {
         JButton submitButton = new JButton("Submit");
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                if (client.getCurrentRoundConfiguration().isImposedStrategyEnabled()) {
+                    client.sendRuleVoteRequest(null);
+                    return;
+                }
                 ButtonModel model = buttonGroup.getSelection();
                 if (model == null) {
                     JOptionPane.showMessageDialog(VotingForm.this, "Please select a strategy.");

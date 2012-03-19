@@ -43,7 +43,7 @@ import edu.asu.commons.util.Duration;
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  * @version $Rev: 534 $
  */
-public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerConfiguration> {
+public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerConfiguration, RoundConfiguration> {
 
     private static final long serialVersionUID = 8575239803733029326L;
 
@@ -58,7 +58,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     private static final double DEFAULT_TOKEN_MOVEMENT_PROBABILITY = 0.2d;
     private static final double DEFAULT_TOKEN_BIRTH_PROBABILITY = 0.01d;
 
-    private List<ForagingStrategy> selectedRules;
+    private List<Strategy> selectedRules;
 
     public double getTrustGamePayoffIncrement() {
         return getDoubleProperty("trust-game-payoff", 0.25d);
@@ -553,19 +553,19 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public boolean isVotingEnabled() {
         return getBooleanProperty("voting-enabled");
     }
+    
+    public boolean isImposedStrategyEnabled() {
+    	return getBooleanProperty("imposed-strategy-enabled");
+    }
 
     public String getVotingInstructions() {
-        return getProperty("voting-instructions");
+        return render(getProperty("voting-instructions"));
     }
 
     public String getInitialVotingInstructions() {
         return createStringTemplate(getProperty("initial-voting-instructions")).render();
     }
     
-    public List<ForagingStrategy> getForagingRules() {
-        return Arrays.asList(ForagingStrategy.values());
-
-    }
     public boolean isVotingAndRegulationEnabled() {
         return getBooleanProperty("voting-and-regulation-enabled", false);
     }
@@ -722,21 +722,24 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getSubmittedVoteInstructions() {
-        return getProperty("submitted-vote-instructions", "<h1>Submitted</h1><hr><p>Your nomination has been recorded.  The final results of the nomination will be shown once all the nominations in your group have been received.</p>"); 
+        return render(getProperty("submitted-vote-instructions")); 
     }
     
-    public String generateVotingResults(List<ForagingStrategy> selectedRules, Map<ForagingStrategy, Integer> nominations) {
+    public String generateVotingResults(List<Strategy> selectedRules, Map<Strategy, Integer> nominations) {
     	List<ForagingStrategyNomination> sortedNominations = new ArrayList<ForagingStrategyNomination>();
-    	for (Map.Entry<ForagingStrategy, Integer> entry: new TreeMap<ForagingStrategy, Integer>(nominations).entrySet()) {
-    		ForagingStrategy strategy = entry.getKey();
+    	for (Map.Entry<Strategy, Integer> entry: new TreeMap<Strategy, Integer>(nominations).entrySet()) {
+    		Strategy strategy = entry.getKey();
     		sortedNominations.add(new ForagingStrategyNomination(strategy, entry.getValue(), strategy.equals(selectedRules.get(0))));
     	}
         setSelectedRules(selectedRules);
         ST template = createStringTemplate(getVotingResultsTemplate());
         template.add("nominations", sortedNominations);
         template.add("tiebreaker", selectedRules.size() > 1);
-        template.add("selectedRules", selectedRules);
         return template.render();
+    }
+
+    public List<ForagingStrategy> getForagingStrategies() {
+        return Arrays.asList(ForagingStrategy.values());
     }
     
     public String getVotingResultsTemplate() {
@@ -772,11 +775,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return template.render();
     }
     
-    public List<ForagingStrategy> getSelectedRules() {
+    public List<Strategy> getSelectedRules() {
         return selectedRules;
     }
 
-    public void setSelectedRules(List<ForagingStrategy> selectedRules) {
+    public void setSelectedRules(List<Strategy> selectedRules) {
         this.selectedRules = selectedRules;
     }
     
@@ -847,10 +850,4 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("survey-confirmation-message", "Please make sure you have completed the survey before continuing.  Have you completed the survey?");
 
     }
-
-	public String getImposedStrategyInstructions(Strategy strategy) {
-		ST st = createStringTemplate(getProperty("imposed-strategy-instructions"));
-		st.add("strategy", strategy);
-		return st.render();
-	}
 }

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import edu.asu.commons.event.BeginRoundRequest;
 import edu.asu.commons.event.ChatEvent;
@@ -61,7 +62,8 @@ import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
-import edu.asu.commons.foraging.event.ShowImposedStrategyRequest;
+import edu.asu.commons.foraging.event.SetImposedStrategyEvent;
+import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
@@ -76,7 +78,7 @@ import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.model.TrustGameResult;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
+import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Dispatcher;
 import edu.asu.commons.net.Identifier;
@@ -101,8 +103,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
     public final static int SYNCHRONIZATION_FREQUENCY = 60;
     public final static int SERVER_SLEEP_INTERVAL = 75;
-
-    private Identifier facilitatorId;
 
     // FIXME: investigate using java.util.concurrent constructs instead, e.g., CountDownLatch / CyclicBarrier
     private final Object roundSignal = new Object();
@@ -253,7 +253,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         clients.put(identifier, new ClientData(identifier));
                     }
                     // send welcome instructions and experiment configuration
-                    transmit(new SetConfigurationEvent<RoundConfiguration>(identifier, getCurrentRoundConfiguration()));
+                    transmit(new SetConfigurationEvent<ServerConfiguration, RoundConfiguration>(identifier, getCurrentRoundConfiguration()));
                 }
             });
             addEventProcessor(new EventTypeProcessor<DisconnectionRequest>(DisconnectionRequest.class) {
@@ -261,7 +261,12 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 public void handle(DisconnectionRequest event) {
                     synchronized (clients) {
                     	Identifier id = event.getId();
-                        getLogger().warning("Disconnecting client, removing " + id + " from clients " + clients.keySet());
+                    	if (id.equals(getFacilitatorId())) {
+                    	    getLogger().log(Level.SEVERE, "Disconnecting facilitator.", event.getException());
+                    	}
+                    	else {
+                    	    sendFacilitatorMessage("Received DisconnectionRequest, removing " + id + " from clients " + clients.keySet(), event.getException());
+                    	}
                         clients.remove(id);
                         serverDataModel.removeClient(id);
                     }
@@ -281,7 +286,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 public void handle(FacilitatorCensoredChatRequest request) {
                     if (getCurrentRoundConfiguration().isCensoredChat()) {
                         sendFacilitatorMessage("needs approval: " + request);
-                        request.setId(facilitatorId);
+                        request.setId(getFacilitatorId());
                         transmit(request);
                     }
                     else {
@@ -306,7 +311,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 public void handle(final QuizResponseEvent event) {
                     sendFacilitatorMessage("Received quiz response: " + event);
                     numberOfSubmittedQuizzes++;
-                    transmit(new QuizCompletedEvent(facilitatorId, event));
+                    transmit(new QuizCompletedEvent(getFacilitatorId(), event));
                     ClientData clientData = clients.get(event.getId());
                     clientData.addCorrectQuizAnswers(event.getNumberOfCorrectAnswers());
                     if (numberOfSubmittedQuizzes >= clients.size()) {
@@ -333,7 +338,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                             transmit(updateEvent);
                         }
                         // update the facilitator
-                        transmit(new FacilitatorSanctionUpdateEvent(facilitatorId, serverDataModel));
+                        transmit(new FacilitatorSanctionUpdateEvent(getFacilitatorId(), serverDataModel));
                         Utils.notify(facilitatorSignal);
                         numberOfCompletedSanctions = 0;
                     }
@@ -369,7 +374,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<RuleVoteRequest>(RuleVoteRequest.class) {
                 int votesReceived = 0;
-
                 @Override
                 public void handle(RuleVoteRequest request) {
                     sendFacilitatorMessage("Received vote rule request: " + request);
@@ -377,19 +381,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     client.setVotedRule(request.getRule());
                     votesReceived++;
                     if (votesReceived >= clients.size()) {
-                        // calculate votes
-                        for (GroupDataModel group : serverDataModel.getGroups()) {
-                            Map<ForagingStrategy, Integer> votingResults = group.generateVotingResults();
-                            List<ForagingStrategy> selectedRules = group.getSelectedRules();
-                            for (Identifier id : group.getClientIdentifiers()) {
-                                sendFacilitatorMessage(String.format(
-                                        "%s selected [%s] from all rules (%s)",
-                                        group, selectedRules, votingResults));
-                                
-                                transmit(new RuleSelectedUpdateEvent(id, selectedRules, votingResults));
-                            }
-                            store(new RuleSelectedUpdateEvent(facilitatorId, selectedRules, votingResults));
-                        }
+                    	processNominations();
                     }
                 }
             });
@@ -411,6 +403,24 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 }
             });
 
+        }
+        
+        private void processNominations() {
+        	boolean imposedStrategyEnabled = getCurrentRoundConfiguration().isImposedStrategyEnabled();
+        	for (GroupDataModel group : serverDataModel.getGroups()) {
+                // calculate votes
+        		Map<Strategy, Integer> votingResults = group.generateVotingResults(imposedStrategyEnabled);
+        		List<Strategy> selectedRules = group.getSelectedRules();
+                sendFacilitatorMessage(String.format(
+                        "%s selected [%s] from all rules %s (imposed? %s)",
+                        group, selectedRules, votingResults, imposedStrategyEnabled));
+                if (! imposedStrategyEnabled) {
+                    for (Identifier id : group.getClientIdentifiers()) {
+                        transmit(new RuleSelectedUpdateEvent(id, group, selectedRules, votingResults));
+                    }
+        		}
+        		store(new RuleSelectedUpdateEvent(getFacilitatorId(), group, selectedRules, votingResults));
+        	}
         }
 
         @Deprecated
@@ -575,8 +585,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             // facilitator handlers
             addEventProcessor(new EventTypeProcessor<FacilitatorRegistrationRequest>(FacilitatorRegistrationRequest.class) {
                 public void handle(FacilitatorRegistrationRequest event) {
-                    // remap the facilitator ID and remove from the clients list.
-                    facilitatorId = event.getId();
+                    Identifier facilitatorId = event.getId();
+                    getLogger().info("Registering facilitator: " + facilitatorId);
+                    setFacilitatorId(event.getId());
                     synchronized (clients) {
                         clients.remove(facilitatorId);
                     }
@@ -585,45 +596,27 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             addEventProcessor(new EventTypeProcessor<ImposeStrategyEvent>(ImposeStrategyEvent.class) {
             	@Override
             	public void handle(ImposeStrategyEvent event) {
-            		if (! event.getId().equals(facilitatorId)) {
+            		if (! event.getId().equals(getFacilitatorId())) {
             			sendFacilitatorMessage("Ignoring request to impose strategy " + event);
             			return;
             		}
+            		serverDataModel.setImposedStrategyDistribution(event.getStrategyDistribution());
+                    sendFacilitatorMessage("Setting imposed strategy distribution to " + event.getStrategyDistribution());
         			persister.store(event);
-            		try {
-            			List<GroupDataModel> groups = serverDataModel.allocateImposedStrategyDistribution(event.getStrategyDistribution());
-            			StringBuilder builder = new StringBuilder();
-            			for (GroupDataModel group: groups) {
-            				builder.append('[').append(group).append(':').append(group.getImposedStrategy()).append(']');
-            			}
-            			sendFacilitatorMessage("Server has imposed strategies for all groups: " + builder);
-
-            		}
-            		catch (IllegalArgumentException exception) {
-            			sendFacilitatorMessage("Couldn't allocate strategy distribution: " + event, exception);
-            		}
-            	}
-            });
-            addEventProcessor(new EventTypeProcessor<ShowImposedStrategyRequest>(ShowImposedStrategyRequest.class) {
-            	@Override
-            	public void handle(ShowImposedStrategyRequest request) {
-            		if (! request.getId().equals(facilitatorId)) {
-            			sendFacilitatorMessage("Ignoring request to show imposed strategies from: " + request.getId());
-            			return;
-            		}
-            		for (Identifier id: clients.keySet()) {
-            			transmit(new ShowImposedStrategyRequest(id, serverDataModel.getGroup(id).getImposedStrategy()));
-            		}
-            		sendFacilitatorMessage("Notified all groups of imposed strategy.");
             	}
             });
             addEventProcessor(new EventTypeProcessor<ShowRequest>(ShowRequest.class, true) {
                 @Override
                 public void handle(ShowRequest request) {
                 	// validity checks: request from facilitator?
-                    if (! request.getId().equals(facilitatorId)) {
+                    if (! request.getId().equals(getFacilitatorId())) {
                         sendFacilitatorMessage("Ignoring show request from non facilitator id: " + request.getId());
                         return;
+                    }
+                    // FIXME: bah, more special casing.  figure out a better way 
+                    // to determine when to send the imposed strategy..
+                    if (request instanceof ShowVoteScreenRequest && getCurrentRoundConfiguration().isImposedStrategyEnabled()) {
+                        sendImposedStrategy();
                     }
                     // if this is a ShowExitInstructionsRequest, is this the last round at least?
                     if (request instanceof ShowExitInstructionsRequest && ! getCurrentRoundConfiguration().isLastRound()) {
@@ -637,7 +630,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<BeginRoundRequest>(BeginRoundRequest.class) {
                 public void handle(BeginRoundRequest event) {
-                    if (event.getId().equals(facilitatorId)) {
+                    if (event.getId().equals(getFacilitatorId())) {
                         if (isReadyToStartRound()) {
                             getLogger().info("Begin round request from facilitator - starting round.");
                             experimentStarted = true;
@@ -657,7 +650,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<EndRoundRequest>(EndRoundRequest.class) {
                 public void handle(EndRoundRequest request) {
-                    if (request.getId().equals(facilitatorId)) {
+                    if (request.getId().equals(getFacilitatorId())) {
                         // set current round duration to expire?
                         currentRoundDuration.stop();
                     }
@@ -691,7 +684,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         clientData.setTrustGamePlayerOneAmountToKeep(request.getPlayerOneAmountToKeep());
                         clientData.setTrustGamePlayerTwoAmountsToKeep(request.getPlayerTwoAmountsToKeep());
                         persister.store(request);
-                        transmit(new TrustGameSubmissionEvent(facilitatorId, request));
+                        transmit(new TrustGameSubmissionEvent(getFacilitatorId(), request));
                         numberOfSubmissions++;
                         sendFacilitatorMessage(String.format("Received trust game submission %s (%d total)", request, numberOfSubmissions));
                     }
@@ -762,7 +755,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     transmit(new ShowExitInstructionsRequest(data.getId(), data.getGroupDataModel()));
                 }
             }
-			transmitAndStore(new TrustGameResultsFacilitatorEvent(facilitatorId, serverDataModel, allTrustGameResults));
+			transmitAndStore(new TrustGameResultsFacilitatorEvent(getFacilitatorId(), serverDataModel, allTrustGameResults));
 			Utils.notify(facilitatorSignal);
 		}
 
@@ -855,7 +848,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 	// while waiting for connections we must defer group initialization till all clients
                 	// are connected (which is unknown, we allow clients to connect until the experiment has started)
                     setupRound();
-                    sendFacilitatorMessage("Ready to show instructions and the start next round.");
+                    sendFacilitatorMessage("Ready to show instructions and start the next round.");
                     if (getCurrentRoundConfiguration().isQuizEnabled()) {
                         getLogger().info("Waiting for all quizzes to be submitted.");
                         Utils.waitOn(quizSignal);
@@ -868,6 +861,23 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 default:
                     sendFacilitatorMessage("Invalid server state, this is a serious error.", new IllegalStateException("Invalid server state: " + serverState));
                     break;
+            }
+        }
+        
+        private void sendImposedStrategy() {
+            try {
+                List<GroupDataModel> groups = serverDataModel.allocateImposedStrategyDistribution();
+                StringBuilder builder = new StringBuilder();
+                for (GroupDataModel group: groups) {
+                    builder.append('[').append(group).append(':').append(group.getImposedStrategy()).append(']');
+                    for (Identifier id: group.getClientIdentifiers()) {
+                        transmit(new SetImposedStrategyEvent(id, group.getImposedStrategy()));
+                    }
+                }
+                sendFacilitatorMessage("Server has imposed strategies for all groups: " + builder);
+            }
+            catch (IllegalArgumentException exception) {
+                sendFacilitatorMessage("Couldn't allocate strategy distribution: " + serverDataModel.getImposedStrategyDistribution(), exception);
             }
         }
 
@@ -912,9 +922,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             getLogger().info("Advancing to round # " + getConfiguration().getCurrentRoundNumber());
             // send the next round configuration to each client
             for (Identifier id : clients.keySet()) {
-                transmit(new SetConfigurationEvent<RoundConfiguration>(id, nextRoundConfiguration));
+                transmit(new SetConfigurationEvent<ServerConfiguration, RoundConfiguration>(id, nextRoundConfiguration));
             }
-            transmit(new SetConfigurationEvent<RoundConfiguration>(facilitatorId, nextRoundConfiguration));
+            transmit(new SetConfigurationEvent<ServerConfiguration, RoundConfiguration>(getFacilitatorId(), nextRoundConfiguration));
         }
 
         private void processRound() {
@@ -978,7 +988,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             }
             // FIXME: refine this, send basic info to the facilitator (how many resources left, etc.)
             if (shouldUpdateFacilitator()) {
-                transmit(new FacilitatorUpdateEvent(facilitatorId, serverDataModel, currentRoundDuration.getTimeLeft()));
+                transmit(new FacilitatorUpdateEvent(getFacilitatorId(), serverDataModel, currentRoundDuration.getTimeLeft()));
             }
 
         }
@@ -990,7 +1000,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private boolean shouldSynchronize(ClientData data) {
             long startCount = secondTick.getStartCount();
             int assignedNumber = data.getAssignedNumber(); 
-            return (startCount < 2) || ((startCount % SYNCHRONIZATION_FREQUENCY) == (assignedNumber * 10));
+            return (startCount == 0) || ((startCount % SYNCHRONIZATION_FREQUENCY) == (assignedNumber * 10));
         }
 
         private void sendEndRoundEvents() {
@@ -998,7 +1008,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             // 1. avg number of tokens collected in this round for the group
             // 2. total number of tokens collected by this client
             // 3. number of tokens collected by this client in this round.
-            transmit(new FacilitatorEndRoundEvent(facilitatorId, serverDataModel));
+            transmit(new FacilitatorEndRoundEvent(getFacilitatorId(), serverDataModel));
             boolean lastRound = getConfiguration().isLastRound();
             for (Map.Entry<Identifier, ClientData> clientDataEntry : clients.entrySet()) {
                 Identifier id = clientDataEntry.getKey();
@@ -1077,7 +1087,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 getLogger().info("monitor rotation interval: " + monitorRotationInterval);
             }
             currentRoundDuration.start();
-            transmit(new FacilitatorUpdateEvent(facilitatorId, serverDataModel, currentRoundDuration.getTimeLeft()));
+            transmit(new FacilitatorUpdateEvent(getFacilitatorId(), serverDataModel, currentRoundDuration.getTimeLeft()));
             secondTick.start();
             serverState = ServerState.ROUND_IN_PROGRESS;
         }

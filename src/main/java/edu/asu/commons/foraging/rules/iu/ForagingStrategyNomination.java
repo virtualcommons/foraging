@@ -1,16 +1,18 @@
 package edu.asu.commons.foraging.rules.iu;
 
+import edu.asu.commons.foraging.rules.Strategy;
+
 public class ForagingStrategyNomination {
 	
-	private final ForagingStrategy strategy;
+	private final Strategy strategy;
 	private final Integer nominations;
 	private final boolean selected;
-	public ForagingStrategyNomination(ForagingStrategy strategy, Integer nominations, boolean selected) {
+	public ForagingStrategyNomination(Strategy strategy, Integer nominations, boolean selected) {
 		this.strategy = strategy;
 		this.nominations = nominations;
 		this.selected = selected;
 	}
-	public ForagingStrategy getStrategy() {
+	public Strategy getStrategy() {
 		return strategy;
 	}
 	public Integer getNominations() {

@@ -17,6 +17,8 @@ import edu.asu.commons.foraging.event.MovementEvent;
 import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResourcesAddedEvent;
+import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
+import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.GroupDataModel;
@@ -139,6 +141,17 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 System.err.println("enforcement ranking request: " + event);
                 EnforcementRankingRequest request = (EnforcementRankingRequest) event;
                 String line = String.format("%s, %s", savedRoundData.toSecondString(event), request.toString());
+                writer.println(line);
+            }
+            else if (event instanceof RuleVoteRequest) {
+                RuleVoteRequest request = (RuleVoteRequest) event;
+                String line = String.format("%s, %s, %s, Strategy Nomination", savedRoundData.toSecondString(event), request.getId(), request.getRule());
+                writer.println(line);
+            }
+            else if (event instanceof RuleSelectedUpdateEvent) {
+                RuleSelectedUpdateEvent update = (RuleSelectedUpdateEvent) event;
+                String line = String.format("%s, %s, \"%s\", \"%s\", Rule selected", 
+                        savedRoundData.toSecondString(event), update.getGroup(), update.getSelectedStrategies(), update.getVotingResults());
                 writer.println(line);
             }
             else {

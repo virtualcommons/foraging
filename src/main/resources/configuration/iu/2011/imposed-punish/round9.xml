@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="display-group-tokens">true</entry>
+<entry key="clients-per-group">4</entry>
+<entry key="resource-depth">26</entry>
+<entry key="resource-width">26</entry>
+<entry key="duration">240</entry>
+
+<entry key="initial-distribution">.25</entry>
+
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+
+
+<entry key='external-survey-enabled'>true</entry>
+<entry key='survey-url'>
+    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_e8rPe7yyhue5OVm&SURVEY_ID={surveyId}]]>
+</entry>
+
+<entry key='survey-instructions'>
+    <![CDATA[
+    <h1>Survey</h1>
+    <hr>
+        <p>
+            We would like to again ask you some quick questions. Please <a href='{surveyUrl}'>click here</a> to begin the survey.
+        </p>
+        <p>
+            We will continue after all of the surveys have been completed by all the
+            participants in the room.  Please press the "Continue" button at the
+            bottom of the screen after you have successfully completed the survey.  
+        </p>
+        <p>
+            If you encounter any problems with the survey <b>please inform the experimenter</b>.
+        </p>
+        <br>
+        <form>
+        <input type="submit" value="Continue" name="continue">
+        </form>
+    ]]>
+</entry>
+
+
+</properties>

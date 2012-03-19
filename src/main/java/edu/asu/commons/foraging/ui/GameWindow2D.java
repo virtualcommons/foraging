@@ -57,7 +57,6 @@ import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.rules.Strategy;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.HtmlEditorPane;
 import edu.asu.commons.ui.UserInterfaceUtils;
@@ -741,22 +740,27 @@ public class GameWindow2D implements GameWindow {
     }
     
     public void showVotingScreen() {
-        if (votingPanel == null) {
-            votingPanel = new JPanel();
-            votingPanel.setLayout(new BoxLayout(votingPanel, BoxLayout.Y_AXIS));
-            votingInstructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
-            votingInstructionsScrollPane = new JScrollPane(votingInstructionsEditorPane);
-            votingInstructionsEditorPane.setText(client.getCurrentRoundConfiguration().getVotingInstructions());
-            votingPanel.add(votingInstructionsScrollPane);
-            votingForm = new VotingForm(client);
-            votingPanel.add(votingForm);
-            votingPanel.setName(VotingForm.NAME);
-            add(votingPanel);
-        }
-        showPanel(VotingForm.NAME);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (votingPanel == null) {
+                    votingPanel = new JPanel();
+                    votingPanel.setLayout(new BoxLayout(votingPanel, BoxLayout.Y_AXIS));
+                    votingInstructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
+                    votingInstructionsScrollPane = new JScrollPane(votingInstructionsEditorPane);
+                    RoundConfiguration configuration = client.getCurrentRoundConfiguration();
+                    votingInstructionsEditorPane.setText(configuration.getVotingInstructions());
+                    votingPanel.add(votingInstructionsScrollPane);
+                    votingForm = new VotingForm(client);
+                    votingPanel.add(votingForm);
+                    votingPanel.setName(VotingForm.NAME);
+                    add(votingPanel);
+                }
+                showPanel(VotingForm.NAME);        
+            }
+        });
     }
 
-    public void showVotingResults(final List<ForagingStrategy> selectedRules, final Map<ForagingStrategy, Integer> votingResults) {
+    public void showVotingResults(final List<Strategy> selectedRules, final Map<Strategy, Integer> votingResults) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 votingPanel.removeAll();
@@ -882,18 +886,10 @@ public class GameWindow2D implements GameWindow {
         showInstructionsPanel();
     }
 
-    public void ruleVoteSubmitted() {
-        setInstructions(dataModel.getRoundConfiguration().getSubmittedVoteInstructions());
+    public void strategyNominationSubmitted() {
+        RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
+        setInstructions(roundConfiguration.getSubmittedVoteInstructions());
         showInstructionsPanel();
     }
-
-	public void showImposedStrategy(final Strategy strategy) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override public void run() {
-				setInstructions(dataModel.getRoundConfiguration().getImposedStrategyInstructions(strategy));		
-			}
-		});
-	}
-
 
 }

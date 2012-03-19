@@ -3,11 +3,13 @@ package edu.asu.commons.foraging.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +44,7 @@ public class GroupDataModelTest {
                     data.setVotedRule(rule);
                 }
                 // verify that this is the rule in place.
-                Map<ForagingStrategy, Integer> votingResults = group.generateVotingResults();
+                Map<Strategy, Integer> votingResults = group.generateVotingResults();
                 assertEquals(1, votingResults.size());
                 assertEquals(rule, group.getSelectedRule());
             }
@@ -72,10 +74,9 @@ public class GroupDataModelTest {
                 ForagingStrategy votedRule = rules.get(index);
                 data.setVotedRule(votedRule);
             }
-            Map<ForagingStrategy, Integer> votingResults = group.generateVotingResults();
-            assertEquals("There should be 3 rules voted on, total" + votingResults, 3, votingResults.size());
+            Map<Strategy, Integer> votingResults = group.generateVotingResults();
+            assertEquals("There should be 3 rules voted on, total: " + votingResults, 3, votingResults.size());
             for (ForagingStrategy tieBreaker: tieBreakerRules) {
-                System.err.println("Inspecting tiebreaker: " + tieBreaker);
             	assertEquals(2, votingResults.get(tieBreaker).intValue()); 
             }
             assertTrue(tieBreakerRules.contains(group.getSelectedRule()));
@@ -86,15 +87,27 @@ public class GroupDataModelTest {
     public void testImposedStrategyDistribution() {
     	Map<Strategy, Integer> imposedStrategyDistribution = new HashMap<Strategy, Integer>();
     	// test all the same
+    	Set<GroupDataModel> groups = serverDataModel.getGroups();
     	for (ForagingStrategy strategy: ForagingStrategy.values()) {
             imposedStrategyDistribution.clear();
             imposedStrategyDistribution.put(strategy, numberOfGroups);
             serverDataModel.allocateImposedStrategyDistribution(imposedStrategyDistribution);
-            for (GroupDataModel group: serverDataModel.getGroups()) {
+            for (GroupDataModel group: groups) {
                 assertEquals("mismatched imposed strategies", strategy, group.getImposedStrategy());
             }
         }
-    	
+    	// test even distribution
+    	imposedStrategyDistribution.clear();
+    	List<ForagingStrategy> strategies = new ArrayList<ForagingStrategy>(Arrays.asList(ForagingStrategy.values()));
+    	Collections.shuffle(strategies);
+    	for (ForagingStrategy strategy: strategies.subList(0, groups.size())) {
+    		imposedStrategyDistribution.put(strategy, 1);
+    	}
+    	serverDataModel.allocateImposedStrategyDistribution(imposedStrategyDistribution);
+    	for (GroupDataModel group: groups) {
+    		assertEquals(Integer.valueOf(1), imposedStrategyDistribution.remove(group.getImposedStrategy()));
+    	}
+    	assertTrue(imposedStrategyDistribution.isEmpty());
     }
 
 }
