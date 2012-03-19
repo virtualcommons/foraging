@@ -416,10 +416,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         group, selectedRules, votingResults, imposedStrategyEnabled));
                 if (! imposedStrategyEnabled) {
                     for (Identifier id : group.getClientIdentifiers()) {
-                        transmit(new RuleSelectedUpdateEvent(id, selectedRules, votingResults));
+                        transmit(new RuleSelectedUpdateEvent(id, group, selectedRules, votingResults));
                     }
         		}
-        		store(new RuleSelectedUpdateEvent(getFacilitatorId(), selectedRules, votingResults));
+        		store(new RuleSelectedUpdateEvent(getFacilitatorId(), group, selectedRules, votingResults));
         	}
         }
 
