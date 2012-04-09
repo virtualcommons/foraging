@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML experiment round configuration</comment>
+<entry key="display-group-tokens">true</entry>
+<entry key="clients-per-group">5</entry>
+<entry key="duration">240</entry>
+<entry key="resource-depth">29</entry>
+<entry key="resource-width">29</entry>
+<entry key='trust-game'>true</entry>
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+<entry key="instructions">
+<![CDATA[
+<h1> Inštrukcie Kola {self.roundNumber} 
+</h1>
+<hr>
+<p>
+    Toto je prvé skutočné kolo tohto experimnetu.
+    Dlžka kola je {duration}.
+    Takisto ako v skúšobnom kole zbierate zelené žetóny s tým rozdielom,
+ že zarobíte <b>{dollarsPerToken}</b> Eúr za každý zozbieraný žetón.
+    <b>Nedokážete</b> v tomto kole resetnúť distribúcie zelených žetónov na hracej ploche.
+    
+</p>
+<h3>Skupiny 
+</h3>
+<hr>
+<p>
+V tomto kole sa obnovitelné zdroje stanú päť krát väčšie.
+Budete sa deliť o toto väčšie prostredie s dalšími štyrmi hráčmi v miestnosti.
+Každému účastníkovi experimentu v miestnosti je náhodne pridelené  
+číslo skupiny z {self.clientsPerGroup} rovnako početných skupín,
+a každému účastníkovi v rámci jeho skupiny je náhodne pridelené číslo 
+od 1 do {self.clientsPerGroup}. 
+Zostanete v rovnakej skupine počas celého experimentu, 
+a každé účastníkové číslo od 1 do {self.clientsPerGroup} zostane nezmené 
+    tiež počas celého experimentu.
+  Ostatní členovia Vašej skupiny sa objavia na obrazovke 
+ako modré bodky <img src="@CODEBASE_URL@/images/gem-other.gif"> s
+ bielym číslom vo vnútri bodky.  
+</p>
+<p>
+    V každom kole úlohy, v pravom hornom rohu obrazovky môžete vidieť 
+kolko žetónov každý hráč nazbieral.
+    V lavom hornom rohu obrazovky vidíte zvyšný čas do ukončenia kola.
+</p>
+<h3>Anonymita
+</h3>
+<hr>
+<p>
+    Z dôvodu náhodného pridelovania počítačom hráčov do skupín
+ a náhodného výberu prideleného čísla v rámci skupiny, ani Vy a ani experimentátor 
+    nie je sú schopní identifikovať, ktorí hráči v miestnosti boli pridelení do 
+príslušnej skupiny a ako ani ich čísla v rámci danej skupiny.
+   Vaša anonymita je garantovaná.
+</p>
+<h3>
+    Žetóny
+</h3>
+<hr>
+    <p>
+        Každá skupina má svoju vlastnú množinu žetónových zdrojov.
+    </p>
+<p><b>Máte nejaké otázky?</b>  
+    Ked máte otázky, zdvihnite ruku a
+ niekto príde k Vášmu počítaču a odpovie Vám na danú otázku. 
+</p>
+]]>
+</entry>
+</properties>
