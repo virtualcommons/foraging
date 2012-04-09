@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="display-group-tokens">true</entry>
+<entry key="clients-per-group">5</entry>
+<entry key="resource-depth">29</entry>
+<entry key="resource-width">29</entry>
+<entry key="duration">240</entry>
+
+<!-- have a trust game before this round begins -->
+<entry key='trust-game'>true</entry>
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+
+<entry key='in-round-chat-enabled'>true</entry>
+<entry key="initial-distribution">.25</entry>
+
+<entry key="instructions">
+<![CDATA[
+<h3>Inštrukcie {roundNumber} kola
+</h3>
+<hr>
+<p>
+    Toto kolo je rovnaké ako ostatné kolá pred tým len s jednou výnimkou.
+    Ste schopný komunikovať s ostatnými hráčmi vo Vašej skupine <b>počas</b>
+    kola. Aby ste mohli komunikovať, stlačte enter klávesu a napíšte Váš odkaz,
+ a  následne potom
+    znova stlačte enter klávesu. Klávesa enter musí byť 
+vždy stlačená predtým ako napíšete odkaz, inak 
+    control klávesou sa môžete vrátiť späť do hry, 
+kde používate klávesy šípiek, aby ste sa dokázali pohybovať 
+v rámci hracej plochy na obrazovke.
+</p>
+
+<p> 
+    Trvanie tohto kola je {duration}.
+</p>
+    <p><b>Máte nejaké otázky?</b> 
+    Ked máte otázky, zdvihnite ruku a niekto príde k 
+Vášmu počítaču a odpovie Vám na danú otázku. 
+</p>
+]]>
+</entry>
+</properties>

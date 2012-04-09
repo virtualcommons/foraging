@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Costly Sanctioning XML-ized experiment round configuration</comment>
+<entry key="hostname">@SERVER_ADDRESS@</entry>
+<entry key="port">@PORT_NUMBER@</entry>
+<entry key="round0">round0.xml</entry>
+<entry key="round1">round1.xml</entry>
+<entry key="round2">round2.xml</entry>
+<entry key="round3">round3.xml</entry>
+<entry key="round4">round4.xml</entry>
+<entry key="round5">round5.xml</entry>
+<entry key="round6">round6.xml</entry>
+<entry key="wait-for-participants">true</entry>
+<entry key="number-of-rounds">7</entry>
+<entry key="facilitator-instructions">
+<![CDATA[
+<p>
+    Prostredie "facilitator" ti dovolí kontrolovať priebeh experimentu. 
+    Vo všeobecnosti experiment pozostáva z nasledujúcej postupnosti  krokov podobnej k týmto:
+    <ol>
+        <li> Ukáž inštrukcie experimentu </li>
+        <li> Spusti kolo</li>
+        <li>Po kole je koniec
+
+            <ol>
+                <li> Ukáž hru dôvery ak je to nutné </li>
+                <li> Spusti samostatné komunikačné kolo ak je to nutné </li>
+            </ol>
+        </li>
+        <li>Chod na 1.</li>
+    </ol>
+</p>
+]]>
+</entry>
+
+<entry key='field-of-vision-instructions'>
+<![CDATA[
+    Váš pohlad je limitovaný v tomto experimente.
+    Viditelná oblasť Vami bude  vytieňovaná.
+]]>
+</entry>
+
+<entry key="welcome-instructions">
+<![CDATA[
+<h1>Vítame Vás pri hraní tohto  experimentu. </h1>
+<hr>
+<p>
+Vítame Vás na experimente. Experiment sa začne okamžite ako každý sa 
+prihlási a zaregistruje k svojmu počítaču.
+<br><br>
+Prosím <b> čakajte v tichosti</b> a
+ nezatvárajte otvorené hracie okno, alebo iné otovarené aplikácie, a 
+ nekomunikujte s druhými účastníkmi experimentu.</b>.
+</p>
+]]>
+</entry>
+
+<entry key="general-instructions">
+<![CDATA[
+<h1> Všeobecné inštrukcie k experimentu </h1>
+<hr>
+<p> <b>Vítame Vás.</b> 
+    Zarobili ste už {showUpPayment} Eur za to, 
+    že ste boli ochotný prísť hrať tento experiment. 
+</p>
+<p>
+Máte možnosť zarobiť aj  viac, a to maximálne do výšky okolo 40 Eur, a to zúčastnením 
+sa na celom priebehu experimentu,
+    ktorý potrvá okolo  hodinu a pol. Sumu, ktorú zarobíte závisí od Vašich rozhodnutí
+     A na rozhodnutiach urobenými inými účastníkmi v miestnosti počas trvania experimentu.
+</p>
+<h2> Ako sa zúčastniť na experimente</h2>
+<hr>
+<p>
+Na obrazovke budete znyornený ako žltý plný kruh s vykrojenými ústami (dalej "pacman" a 
+pre tých, ktorí poznajú hru pacman tento symbol je určite známy) 
+<img src="@CODEBASE_URL@/images/gem-self.gif"></img>. 
+Vášho "pacmana" po obrazovke môžete pohybovať stláčaním 4och 
+šípkových kláves na Vašej klávesnici.
+</p>
+<p>
+    Možete sa pohybovať smerom nahor, dole, doľava a doprava.
+    Musíte stláčať klávesu pre každý pohyb Vašej žltej bodky.
+    Ked sa pohybujete po hracej ploche tak je Vám umožnené zbierať 
+    zelené žetóny v tvare diamantu
+    <img src="@CODEBASE_URL@/images/gem-token.gif"></img> 
+    a zarobiť 2 centy za každý˝ zozbieraný žetón.
+    Zobrať žetón možete nasledujúcim spôsobom. 
+    Pohnite Vášho zltého "pacmana" na zelený žetón a 
+    <b>stlačte klávesu medzerovníka</b>.
+    Jednoduchý pohyb Vášho "pacmana" cez zelený žetón <b>nezoberie</b> daný žetón.  
+</p>
+
+<h2>Žetóny
+</h2>
+<hr>
+<p>
+Žetóny, ktoré zbierate majú schopnosť sa regenerovať. 
+    Potom ako ste zobrali  zelený žetón, nový žetón sa môže znova objaviť 
+    na prázdnej hracej bunke.
+    Miera s ktorou sa nové žetóny objavujú je závislá na počte priľahlých 
+   bunkiek so žetónmi.
+    Ak je viac žetónov na priľahlých susediacich bunkách s prázdnou bunkou
+    potom je aj rýchlejšia miera generovania a objavenia
+    sa nového žetónu na prázdnej bunke.
+    Inými slovami, <b> existujúce žetóny môžu generovať novšie žetóny</b>.
+    Názorná ukážka regenerácie nových žetónov na práydnych bunkách 
+   je ukázaná na Obrázku č.1 a Obrázku č.2.
+    Stredná  bunka na Obrázku č.1 označená veľkým písmenom X má 
+    väčšiu pravdepodobnosť regenerácie 
+    nového žetónu ako stredná bunka na Obrázku č.2. 
+    Ak sú všetky susediace bunky prázdne, potom 
+   <b>nie je žiadna šanca na regeneráciu nového žetónu</b>.
+    </p>
+<table width="100%">
+<tr>
+<td align="center"><b>Image 1</b></td>
+<td align="center"><b>Image 2</b></td>
+</tr>
+<tr>
+<td align="center">
+    <img src="@CODEBASE_URL@/images/8neighbors.jpg" alt="image 1">
+</td>
+<td align="center">
+    <img src="@CODEBASE_URL@/images/5neighbors.jpg" alt="image 2">
+</td>
+</tr>
+</table>
+
+<h2>Najlepšia stratégia
+</h2>
+<hr>
+<p>
+    Pravdepodobnosť, že žetóny sa znova objavia na prázdnej bunke 
+rastie ak je viac okolo susediacich žetónov.
+    Teda potom, sa snažíte mať čo najviac
+ susediacich žetónov okolo prázdnej bunky len ak je  to možné.
+    Avšak, tiež potrebujete prázdne bunky, 
+  aby ste získavali z tohto nárastu nové žetóny.
+    Najlepšie rozmiestnenie žetónov, 
+  ktoré maximalizuje celkový nárast nových žetónov, je znázornený
+ nižšie na obrázku hracej plochy.
+<br>
+<img src="@CODEBASE_URL@/images/foraging-checkerboard.png" alt="Checkerboard Resource">
+</p>
+]]>
+</entry>
+
+<entry key='trust-game-instructions'>
+<![CDATA[
+<h1>Inštrukcie
+</h1>
+<hr>
+<p>
+    Teraz sa zúčastníte cvičenia, kde budete núhodne spárovaný
+ s náhodným iným účastníkom experimentu vo Vašej skupine.
+    V tomto cvičení sú dvaja hráči Hráč 1 a Hráč 2.
+    Vaša úloha je rozhodnúť o stratégiách pre oboch hráčov Hráča 1 aj Hráča 2.
+    Keď ste náhodne spárovaný s iným členom Vašej skupiny, 
+ môžete byť vybraný ako Hráč  1 <b>alebo</b> ako Hráč 2.
+    Výsledky z náhodne spárovaných Vašich stratégií 
+   s inými členmi Vašej skupiny budú Vám ukázané  <b>na konci experimentu</b>. 
+</p>
+
+<h2>Ako sa zúčastniť
+</h2>
+<hr>
+<ol>
+    <li>
+    Hráč 1 najprv dostane dotáciu 1 Euro a musí
+   sa rozhodnúť,<b> že akú sumu z 1 Eura si ponechá.</b>
+    Zvyšná suma je <b>poslaná Hráčovi 2</b>.
+    <li>
+    Suma, ktorú Hráč 1 posiela Hráčovi 2, je strojnásobená a daná Hráčovi 2.
+    Hráč 2 sa potom musí rozhodnúť <b>koľko si ponechá</b> a <b>
+koľko pošle späť Hráčovi 1</b>.
+    
+</ol>
+<p>
+    Napríklad, Ak Hráč 1 pošle 0 centov Hráčovi 2,
+ potom Hráč 1 zarobí 1 Euro a Hráč 2 zarobí 0 Eur.
+    Avšak, Ak Hráč 1 pošle 1 Euro Hráčovi 2, potom 3 Eurá budú poslané Hráčovi 2. 
+    Hráč 2 sa rozhodne vrátiť 1,75 Eura späť Hráčovi 2.
+ V tomto prípade Hráč 1 zarobí 1,75 Eura a Hráč 2 1,25 Eura.
+    
+</p>
+<p>
+    Prosímm vyplňte nasledujúci formulár obsahujúci Vaše stratégie
+ ako Hráč 1 alebo ako Hráč 2.
+<br>
+<b>
+    Ak máte nejaké otázky. 
+Prosím zdvihnite Vašu ruku a niekto Vám odpovie na Vaše otázky?
+</p>
+]]>
+</entry>
+
+<entry key="chat-instructions">
+<![CDATA[
+<p>
+   Môžete komunikovať s ostatnými účastníkmi vo Vašej skupine 
+počas tohto kola. Môžete diskutovať o rôznych aspektoch 
+experimentu s ostatnými účastníkmi, ale s dvoma výnimkami:
+    <ol>
+    <li>
+    <b> Nesmiete žiadnemu účastníkovi experimentu
+ slúbiť vyplatenie bočných platieb po skončení
+ experimentu a ani sa vyhrážať niekomu s rôznymi následkami, 
+ potom ako sa experiment ukončí</b>.
+    
+    <li> <b>Nesmiete odhaliť svoju identitu.</b></li>
+</ol>
+<p>
+  Moniturujeme komunikáciu pokial komunikujete medzi sebou. 
+Ak odhalíme lubovolné porušenie pravidiel, 
+potom sme nútení zastaviť experiment a odstrániť 
+problémovú skupinu z miestnosti a experimentu.
+    </p>
+<p>
+    Ostatných účastníkov vidíte označených velkými písmenami
+ abecedy začínajúc od  A až po {self.lastChatHandle} v komunikačnom okne.
+    Môžete poslať odkaz jednoducho vpísaním
+ obsahu odkazu do textového poľa a stlačením klávesy enter.
+    </p>
+]]>
+</entry>
+<entry key="same-as-previous-round-instructions">
+<![CDATA[
+<h3>Inštrukcie {self.roundNumber} kola
+s</h3>
+<hr>
+<p> {self.roundNumber} kolo je rovnaké ako predchádzajúce kolo.</p>
+<p> Dĺžka tohto kola je {duration}.</p>
+<p><b>Máte nejaké otázky?  Ak máte nejaké otázky teraz, 
+prosím zodvihnite ruku a niekto príde k Vášmu počítaču a odpovie Vám.</p>
+]]>
+</entry>
+<entry key='facilitator-debriefing'>
+<![CDATA[
+<h3>Inštrukcie {self.roundNumber} kola
+ </h3>
+<hr>
+<table border=1 cellspacing=3 cellpadding=3>
+<tr>
+<th>Účastník
+  </th><th>Aktuálny stav žetónov</th><th> Aktuálny stav príjmu</th><th>Kvízový zárobok
+</th><th>Zárobok z Hry Dôvery</th><th> Celkový príjem</th>
+</tr>
+{clientDataList: {data | 
+<tr align="RIGHT"><td>{data.id}</td><td>{data.currentTokens}</td>
+<td>{data.currentIncome}</td><td>{data.quizEarnings}</td>
+<td>{data.trustGameEarnings}</td><td>{data.grandTotalIncome}</td></tr>
+}}
+</table>
+]]>
+</entry>
+<entry key='client-debriefing'>
+<![CDATA[
+<h1> {if (self.practiceRound)}Skúšobné kolo {else} Kolo {self.roundNumber}{endif} Výsledky 
+ </h1>
+<hr>
+<ul>
+    <li> Žetóny zozbierané v tomto kole: {clientData.currentTokens}
+    </li>
+    <li>Príjmy zo zozbieraných žetónov: {clientData.currentIncome}
+    </li>
+    <li>Zárobok z kvízu: {clientData.quizEarnings}
+    </li>
+    <li>Platba za príchod na experiment:{showUpPayment}
+    </li>
+</ul>
+{if (showExitInstructions && !clientData.trustGameLog.empty) }
+<h2> Zárobky z hry Dôvery
+ </h2>
+<hr>
+<ul>
+{clientData.trustGameLog: {trustGameLog|
+<li>Hra Dôvery #{i}: {trustGameLog}</li>
+}}
+</ul>
+    Vaše celkové príjmy z hry Dôvery:<b>{clientData.trustGameEarnings}</b>.
+{endif}
+<h2> Celkový príjem
+</h2>
+<hr>
+<p>
+    Váš <b>celkový príjem</b je <b>{clientData.grandTotalIncome}</b>.
+</p>
+{if (showExitInstructions)}
+<h2> Odhlásit sa z prehladu
+</h2>
+<hr>
+<p>
+Toto bolo posledné kolo, ale nie koniec experimentu.
+ Chceli by sme Vás požiadať, aby ste vyplnili krátky dotazník a zatial 
+ pripravíme Vaše nahrané príjmy.
+</p>
+<h2>Platby
+</h2>
+<hr>
+<p>
+ Keď budú Vaše platby pripravené, budeme Vás volať po jednom. 
+Prosím počkajte dokým nieje číslo Vášho počítača 
+<b>{clientData.id}</b> zavolané, aby ste odvzdali Váš dotazník a
+ dostali výplatu za hru.
+    Prosíme Vás odpovedzte na dotazník
+ pozorne a ďakuejme Vám za účasť na experimente.
+</p>
+{endif}
+]]>
+</entry>
+</properties>
