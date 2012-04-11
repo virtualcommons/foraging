@@ -66,11 +66,12 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 ClientMovementTokenCount client = clientMovementTokenCounts.get(event.getId());
                 client.moves++;
                 GroupDataModel group = clientData.getGroupDataModel();
-                String line = String.format("%s, %s, %d, %d, %s, %s",
+                String line = String.format("%s, %s, %d, %d, %s, %s, %s",
                         savedRoundData.toSecondString(event),
                         clientData.getId(),
                         group.getGroupId(),
                         client.moves,
+                        clientData.getPosition(),
                         movementEvent.getDirection(),
                         "movement event"
                 );
