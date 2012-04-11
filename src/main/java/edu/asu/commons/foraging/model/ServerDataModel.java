@@ -349,7 +349,8 @@ public class ServerDataModel extends ForagingDataModel {
      * </ol>
      * FIXME: may be safer to return a clone() instead?
      */
-    public void reinitialize() {
+    public void reinitialize(RoundConfiguration roundConfiguration) {
+        setRoundConfiguration(roundConfiguration);
         setNullEventChannel();
         resetGroupResourceDistributions();
         // initialize all client positions

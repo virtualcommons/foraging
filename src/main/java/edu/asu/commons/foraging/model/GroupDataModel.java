@@ -458,9 +458,13 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public void moveClient(Identifier id, Direction direction) {
         ClientData clientData = clients.get(id);
         Point newPosition = direction.apply(clientData.getPoint());
+//        System.err.println(String.format("Moving client %s in direction %s to position %s", id, direction, newPosition));
+        
         if (serverDataModel.isValidPosition(newPosition)) {
             // check occupancy
             if ( isCellAvailable(newPosition) ) {
+//                System.err.println("setting position: " + newPosition);
+
                 clientData.setPosition(newPosition);
                 // if the client is explicitly collecting, then movement does not automatically
                 // collect a token.

@@ -55,9 +55,9 @@ class AllDataProcessor extends SaveFileProcessor.Base {
         SortedSet<PersistableEvent> actions = savedRoundData.getActions();
         ServerDataModel dataModel = (ServerDataModel) savedRoundData.getDataModel();
         Map<Identifier, ClientMovementTokenCount> clientMovementTokenCounts = ClientMovementTokenCount.createMap(dataModel);
-        Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();
         boolean restrictedVisibility = roundConfiguration.isSubjectsFieldOfVisionEnabled();
-        dataModel.reinitialize();
+        dataModel.reinitialize(roundConfiguration);
+        Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();
         for (PersistableEvent event: actions) {
             if (event instanceof MovementEvent) {
                 MovementEvent movementEvent = (MovementEvent) event;
@@ -113,6 +113,10 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                     for (Map.Entry<Identifier, Point> entry: group.getClientPositions().entrySet()) {
                         Identifier id = entry.getKey();
                         Point position = entry.getValue();
+//                        System.err.println(String.format("id %s at position %s", id, position));
+                        if (id.equals(sourceId)) {
+                            continue;
+                        }
                         if (circle.contains(position)) {
                             targetStringBuilder.append(id).append(',');
                         }
