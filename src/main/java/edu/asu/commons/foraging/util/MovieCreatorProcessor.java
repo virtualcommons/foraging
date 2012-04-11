@@ -26,7 +26,7 @@ import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.ServerDataModel;
 
 /**
- * $Id: MovieCreatorProcessor.java 522 2010-06-30 19:17:48Z alllee $
+ * $Id$
  * 
  * Foraging save file processor to create quicktime movies.
  *
