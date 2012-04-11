@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -770,33 +771,32 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             Identifier source = request.getSource();
             Identifier target = request.getTarget();
             ClientData clientData = clients.get(source);
-            sendFacilitatorMessage(String.format("CHAT: %s: [ %s ]", clientData.toString(), request));
+            ArrayList<Identifier> targets = new ArrayList<Identifier>();
             if (Identifier.ALL.equals(target)) {
                 // relay to all clients in this client's group.
-
                 RoundConfiguration currentConfiguration = getCurrentRoundConfiguration();
                 // check for field of vision
                 if (currentConfiguration.isFieldOfVisionEnabled()) {
                     // FIXME: replace with clientData.getFieldOfVision?
                     Circle circle = new Circle(clientData.getPosition(), currentConfiguration.getViewSubjectsRadius());
-                    sendChatEvent(request, clientData.getGroupDataModel().getClientIdentifiersWithin(circle));
+                    targets.addAll(clientData.getGroupDataModel().getClientIdentifiersWithin(circle));
                 }
                 else {
-                    sendChatEvent(request, clientData.getGroupDataModel().getClientIdentifiers());
+                    targets.addAll(clientData.getGroupDataModel().getClientIdentifiers());
                 }
             }
             else {
-                getLogger().info(String.format("%s sending [%s] to target [%s]", request.getSource(), request, request.getTarget()));
-                ChatEvent chatEvent = new ChatEvent(request.getTarget(), request.toString(), request.getSource());
-                transmit(chatEvent);
+                targets.add(request.getTarget());
             }
+            sendChatEvent(request, targets);
             persister.store(request);
         }
 
         private void sendChatEvent(ChatRequest request, Collection<Identifier> identifiers) {
+            sendFacilitatorMessage(String.format("%s->%s : [%s]", request.getSource(), identifiers, request));
             for (Identifier targetId : identifiers) {
                 ChatEvent chatEvent = new ChatEvent(targetId, request.toString(), request.getSource(), true);
-                transmit(chatEvent);
+                transmitAndStore(chatEvent);
             }
         }
 

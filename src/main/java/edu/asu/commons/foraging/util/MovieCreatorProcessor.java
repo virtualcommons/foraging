@@ -26,7 +26,7 @@ import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.ServerDataModel;
 
 /**
- * $Id: MovieCreatorProcessor.java 522 2010-06-30 19:17:48Z alllee $
+ * $Id$
  * 
  * Foraging save file processor to create quicktime movies.
  *
@@ -53,7 +53,7 @@ class MovieCreatorProcessor extends SaveFileProcessor.Base {
         RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
         final List<GroupView> groupViewList = new ArrayList<GroupView>();
         final Map<GroupView, QuickTimeOutputStream> groupViewMap = new HashMap<GroupView, QuickTimeOutputStream>();
-        serverDataModel.reinitialize();
+        serverDataModel.reinitialize(roundConfiguration);
         List<JFrame> jframes = new ArrayList<JFrame>();
         Dimension dimension = new Dimension(800, 800);
         File savedRoundDataFile = new File(savedRoundData.getSaveFilePath());

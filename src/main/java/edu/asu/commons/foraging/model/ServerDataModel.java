@@ -349,13 +349,18 @@ public class ServerDataModel extends ForagingDataModel {
      * </ol>
      * FIXME: may be safer to return a clone() instead?
      */
-    public void reinitialize() {
+    public void reinitialize(RoundConfiguration roundConfiguration) {
+        setRoundConfiguration(roundConfiguration);
         setNullEventChannel();
         resetGroupResourceDistributions();
         // initialize all client positions
         for (GroupDataModel group: getGroups()) {
             for (ClientData clientData: group.getClientDataMap().values()) {
                 clientData.initializePosition();
+                if (! clientData.getGroupDataModel().equals(group)) {
+                    logger.warning("client data model had different group " + clientData.getGroupDataModel() + " than server's group: " + group);
+                    clientData.setGroupDataModel(group);
+                }
             }
         }
     }

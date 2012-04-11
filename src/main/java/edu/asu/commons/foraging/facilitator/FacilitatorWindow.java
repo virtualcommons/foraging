@@ -2,24 +2,13 @@ package edu.asu.commons.foraging.facilitator;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.jnlp.ClipboardService;
-import javax.jnlp.ServiceManager;
-import javax.jnlp.UnavailableServiceException;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -41,6 +30,7 @@ import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.ui.HtmlEditorPane;
+import edu.asu.commons.ui.HtmlSelection;
 import edu.asu.commons.ui.UserInterfaceUtils;
 
 /**
@@ -270,10 +260,13 @@ public class FacilitatorWindow extends JPanel {
                         return;
                     }
                 }
-                ClipboardService service = getClipboardService();
+                ClipboardService service = UserInterfaceUtils.getClipboardService();
                 if (service != null) {
                     HtmlSelection selection = new HtmlSelection(text);
                     service.setContents(selection);
+                }
+                else {
+                    addMessage("Clipboard service is only available when run as a WebStart application.");
                 }
             }
         });
@@ -416,62 +409,6 @@ public class FacilitatorWindow extends JPanel {
         for (String result : event.getTrustGameLog()) {
             addMessage(result);
         }
-    }
-
-    public ClipboardService getClipboardService() {
-        if (clipboardService == null) {
-            try {
-                clipboardService = (ClipboardService) ServiceManager.lookup(JAVAX_JNLP_CLIPBOARD_SERVICE);
-            } catch (UnavailableServiceException e) {
-                e.printStackTrace();
-                addMessage("Unable to load the ClipboardService for all your clipboard needs.  Sorry!");
-            }
-        }
-        return clipboardService;
-    }
-
-    private static class HtmlSelection implements Transferable {
-
-        private static DataFlavor[] htmlFlavors = new DataFlavor[3];
-        private final String html;
-        static {
-            try {
-                htmlFlavors[0] = new DataFlavor("text/html;class=java.lang.String");
-                htmlFlavors[1] = new DataFlavor("text/html;class=java.io.Reader");
-                htmlFlavors[2] = new DataFlavor("text/html;charset=unicode;class=java.io.InputStream");
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public HtmlSelection(String html) {
-            this.html = html;
-        }
-
-        @Override
-        public DataFlavor[] getTransferDataFlavors() {
-            return htmlFlavors;
-        }
-
-        @Override
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return Arrays.asList(htmlFlavors).contains(flavor);
-        }
-
-        @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-            if (String.class.equals(flavor.getRepresentationClass())) {
-                return html;
-            }
-            else if (Reader.class.equals(flavor.getRepresentationClass())) {
-                return new StringReader(html);
-            }
-            else if (InputStream.class.equals(flavor.getRepresentationClass())) {
-                return new ByteArrayInputStream(html.getBytes());
-            }
-            throw new UnsupportedFlavorException(flavor);
-        }
-
     }
 
 }
