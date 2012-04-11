@@ -355,7 +355,8 @@ public class ServerDataModel extends ForagingDataModel {
         }
     }
 
-    public void reinitialize() {
+    public void reinitialize(RoundConfiguration roundConfiguration) {
+        setRoundConfiguration(roundConfiguration);
         setNullEventChannel();
         resetGroupResourceDistributions();
         // initialize all client positions
