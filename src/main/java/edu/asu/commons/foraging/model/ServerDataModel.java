@@ -356,6 +356,10 @@ public class ServerDataModel extends ForagingDataModel {
         for (GroupDataModel group: getGroups()) {
             for (ClientData clientData: group.getClientDataMap().values()) {
                 clientData.initializePosition();
+                if (! clientData.getGroupDataModel().equals(group)) {
+                    logger.warning("client data model had different group " + clientData.getGroupDataModel() + " than server's group: " + group);
+                    clientData.setGroupDataModel(group);
+                }
             }
         }
     }
