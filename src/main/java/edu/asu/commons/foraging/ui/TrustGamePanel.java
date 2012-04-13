@@ -34,11 +34,11 @@ public class TrustGamePanel extends JPanel {
         private String[] columnNames = { "Amount sent by P1", "Total amount received", "Amount to keep", "Amount to return to P1" };
         private Object[][] columnDataTable = {
 
-                { "0 cents", "(3 x 0) = 0 cents", 0.0d, 0.0d },
-                { "25 cents", "(3 x 0.25) = 75 cents", "", "" },
-                { "50 cents", "(3 x 0.5) = 1.5 dollars", "", "" },
-                { "75 cents", "(3 x 0.75) = 2.25 dollars", "", "" },
-                { "1 dollar", "(3 x 1) = 3 dollars", "", "" }
+                { "0", "(3 x 0) = 0", 0.0d, 0.0d },
+                { "0.25", "(3 x 0.25) = 0.75", "", "" },
+                { "0.50", "(3 x 0.5) = 1.5", "", "" },
+                { "0.75", "(3 x 0.75) = 2.25", "", "" },
+                { "1.0", "(3 x 1) = 3", "", "" }
         };
 
         @Override
@@ -218,34 +218,34 @@ public class TrustGamePanel extends JPanel {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("0 cents");
+        jLabel1.setText("0");
         jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("1 dollar");
+        jLabel2.setText("1");
         jLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("(3 x 1) = 3 dollars");
+        jLabel4.setText("(3 x 1) = 3");
         jLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jLabel4.setFocusable(false);
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setText("(3 x 0.75) = 2.25 dollars");
+        jLabel5.setText("(3 x 0.75) = 2.25");
         jLabel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jLabel5.setFocusable(false);
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("75 cents");
+        jLabel3.setText("0.75");
         jLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setText("25 cents");
+        jLabel6.setText("0.25");
         jLabel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         playerOneActionButtonGroup.add(playerOneRadioButton1);
@@ -256,17 +256,17 @@ public class TrustGamePanel extends JPanel {
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText("50 cents");
+        jLabel7.setText("0.50");
         jLabel7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel8.setText("50 cents");
+        jLabel8.setText("0.50");
         jLabel8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel9.setText("(3 x 0.5) = 1.5 dollars");
+        jLabel9.setText("(3 x 0.5) = 1.5");
         jLabel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jLabel9.setFocusable(false);
 
@@ -275,17 +275,17 @@ public class TrustGamePanel extends JPanel {
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setText("75 cents");
+        jLabel10.setText("0.75");
         jLabel10.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel11.setText("25 cents");
+        jLabel11.setText("0.25");
         jLabel11.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel12.setText("(3 x 0.25) = 0.75 cents");
+        jLabel12.setText("(3 x 0.25) = 0.75");
         jLabel12.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jLabel12.setFocusable(false);
 
@@ -297,17 +297,17 @@ public class TrustGamePanel extends JPanel {
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel13.setText("1 dollar");
+        jLabel13.setText("1");
         jLabel13.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel14.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel14.setText("0 cents");
+        jLabel14.setText("0");
         jLabel14.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel15.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel15.setText("(3 x 0) = 0 cents");
+        jLabel15.setText("(3 x 0) = 0");
         jLabel15.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jLabel15.setFocusable(false);
 
