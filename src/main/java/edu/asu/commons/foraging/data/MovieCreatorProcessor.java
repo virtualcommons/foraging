@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.util;
+package edu.asu.commons.foraging.data;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -24,6 +24,7 @@ import edu.asu.commons.foraging.event.AddClientEvent;
 import edu.asu.commons.foraging.facilitator.GroupView;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.ServerDataModel;
+import edu.asu.commons.foraging.util.*;
 
 /**
  * $Id$
