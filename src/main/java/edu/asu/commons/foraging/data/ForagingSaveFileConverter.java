@@ -9,7 +9,7 @@ import edu.asu.commons.experiment.Persister;
 import edu.asu.commons.experiment.SaveFileProcessor;
 
 /**
- * $Id: ForagingSaveFileConverter.java 526 2010-08-06 01:25:27Z alllee $
+ * $Id$
  * <p>
  * Save file processors used to convert binary data files from the foraging experiment.
  *
@@ -31,8 +31,8 @@ public class ForagingSaveFileConverter {
                     new AggregateTokenSpatialDistributionProcessor(),
                     new CollectedTokenSpatialDistributionProcessor(),  
                     new MovementStatisticsProcessor(),
+                    new MovieCreatorProcessor(),
                     new AggregateCollectedTokenNeighborProcessor()
-                    // new MovieCreatorProcessor()
             ));
             Persister.processSaveFiles(allSaveFilesDirectory, processors);
             return true;
