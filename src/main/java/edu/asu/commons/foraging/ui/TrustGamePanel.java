@@ -39,6 +39,10 @@ public class TrustGamePanel extends JPanel {
                 { "1.0", "(3 x 1) = 3", "", "" }
         };
 
+        public void setColumnNames(String[] columnNames) {
+            this.columnNames = columnNames;
+        }
+
         @Override
         public int getColumnCount() {
             return columnNames.length;
@@ -103,9 +107,9 @@ public class TrustGamePanel extends JPanel {
         }
     }
 
-    private TableModel playerTwoTableModel;
+    private PlayerTwoTableModel playerTwoTableModel;
 
-    private TableModel getPlayerTwoTableModel() {
+    private PlayerTwoTableModel getPlayerTwoTableModel() {
         if (playerTwoTableModel == null) {
             playerTwoTableModel = new PlayerTwoTableModel();
         }
@@ -152,6 +156,10 @@ public class TrustGamePanel extends JPanel {
 
     public void setRoundConfiguration(RoundConfiguration configuration) {
         this.roundConfiguration = configuration;
+        getPlayerTwoTableModel().setColumnNames(configuration.getTrustGamePlayerTwoColumnNames());
+        playerOneTableLabel.setText(roundConfiguration.getTrustGamePlayerOneAllocationLabel());
+        playerTwoLabel.setText(roundConfiguration.getTrustGamePlayerTwoAllocationLabel());
+        jLabel16.setText(roundConfiguration.getTrustGamePlayerTwoInstructionLabel());
     }
 
     /**
@@ -313,7 +321,7 @@ public class TrustGamePanel extends JPanel {
         playerTwoLabel.setText("Player 2: Please enter data for ALL of the following allocations.");
 
         submitButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        submitButton.setText("Submit");
+        submitButton.setText("OK");
         submitButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 submitButtonActionPerformed(evt);
@@ -498,7 +506,7 @@ public class TrustGamePanel extends JPanel {
         // default player action is to keep everything
         
         if (model == null) {
-            JOptionPane.showMessageDialog(this, "Please select the amount you would like to keep as player 1.");
+            JOptionPane.showMessageDialog(this, roundConfiguration.getPlayerOneAmountToKeepValidation());
             return;
         }
         String selectedPlayerOneAction = model.getActionCommand();
@@ -509,7 +517,7 @@ public class TrustGamePanel extends JPanel {
             Object value = playerTwoTable.getValueAt(rowIndex, 2);
             System.err.println("value is: " + value);
             if (value == null || "".equals(value)) {
-                JOptionPane.showMessageDialog(this, "Please enter the amount you would like to keep as player 2.");
+                JOptionPane.showMessageDialog(this, roundConfiguration.getPlayerTwoAmountToKeepValidation());
                 playerTwoTable.setColumnSelectionAllowed(true);
                 playerTwoTable.setColumnSelectionInterval(2, 2);
                 return;

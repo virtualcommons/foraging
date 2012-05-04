@@ -850,4 +850,29 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("survey-confirmation-message", "Please make sure you have completed the survey before continuing.  Have you completed the survey?");
 
     }
+
+    public String[] getTrustGamePlayerTwoColumnNames() {
+        return getParentConfiguration().getTrustGamePlayerTwoColumnNames();
+    }
+
+    public String getTrustGamePlayerOneAllocationLabel() {
+        return getParentConfiguration().getTrustGamePlayerOneAllocationLabel();
+    }
+
+    public String getTrustGamePlayerTwoAllocationLabel() {
+        return getParentConfiguration().getTrustGamePlayerTwoAllocationLabel();
+    }
+
+    public String getTrustGamePlayerTwoInstructionLabel() {
+        return getParentConfiguration().getTrustGamePlayerTwoInstructionLabel();
+    }
+
+    public String getPlayerOneAmountToKeepValidation() {
+        return getParentConfiguration().getPlayerOneAmountToKeepValidation();
+    }
+
+    public String getPlayerTwoAmountToKeepValidation() {
+        return getParentConfiguration().getPlayerTwoAmountToKeepValidation();
+    }
+
 }

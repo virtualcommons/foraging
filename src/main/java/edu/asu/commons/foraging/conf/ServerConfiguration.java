@@ -163,4 +163,33 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
 		return getProperty("waiting-room-instructions", "<h1>Please wait</h1><hr><p>Please wait while the rest of the participants complete the task.</p>");
 	}
 
+    public String[] getTrustGamePlayerTwoColumnNames() {
+        return new String[] {
+            getProperty("trust-game-p2-column-0", "Amount sent by P1"),
+                getProperty("trust-game-p2-column-1", "Total amount received"),
+                getProperty("trust-game-p2-column-2", "Amount to keep"),
+                getProperty("trust-game-p2-column-3", "Amount to return to P1")
+        };
+    }
+
+    public String getTrustGamePlayerOneAllocationLabel() {
+        return getProperty("trust-game-p1-allocation", "Player 1: Please select one of the following allocations.");
+    }
+
+    public String getTrustGamePlayerTwoAllocationLabel() {
+        return getProperty("trust-game-p2-allocation", "Player 2: Please enter data for ALL of the following allocations.");
+    }
+
+    public String getTrustGamePlayerTwoInstructionLabel() {
+        return getProperty("trust-game-p2-amount-to-keep-label", "Click in the \"Amount to keep\" column to select how much to keep if you are selected as player 2.");
+    }
+
+    public String getPlayerOneAmountToKeepValidation() {
+        return getProperty("trust-game-p1-validation", "Please select the amount you would like to keep as player 1.");
+    }
+
+    public String getPlayerTwoAmountToKeepValidation() {
+        return getProperty("trust-game-p2-validation", "Please select the amount you would like to keep as player 1.");
+    }
+
 }
