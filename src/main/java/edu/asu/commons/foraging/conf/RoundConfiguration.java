@@ -685,7 +685,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     private String getInRoundChatInstructions() {
-        return getProperty("in-round-chat-instructions", "<p>You can chat during this round with all players visible on the screen.</p>");
+        return getProperty("in-round-chat-instructions", getParentConfiguration().getInRoundChatInstructions());
     }
 
     public String getTrustGameInstructions() {

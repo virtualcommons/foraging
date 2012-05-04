@@ -155,6 +155,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
 	    return getIntProperty("server-sleep-interval", 50);
 	}
 
+    public String getInRoundChatInstructions() {
+        return getProperty("in-round-chat-instructions", "<p>You can chat during this round with all players visible on the screen.</p>");
+    }
+
 	public String getWaitingRoomInstructions() {
 		return getProperty("waiting-room-instructions", "<h1>Please wait</h1><hr><p>Please wait while the rest of the participants complete the task.</p>");
 	}

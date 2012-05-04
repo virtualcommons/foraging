@@ -29,11 +29,9 @@ public class TrustGamePanel extends JPanel {
     private ForagingClient client;
 
     private class PlayerTwoTableModel extends AbstractTableModel {
-
         private static final long serialVersionUID = 8044821545875471685L;
         private String[] columnNames = { "Amount sent by P1", "Total amount received", "Amount to keep", "Amount to return to P1" };
         private Object[][] columnDataTable = {
-
                 { "0", "(3 x 0) = 0", 0.0d, 0.0d },
                 { "0.25", "(3 x 0.25) = 0.75", "", "" },
                 { "0.50", "(3 x 0.5) = 1.5", "", "" },
