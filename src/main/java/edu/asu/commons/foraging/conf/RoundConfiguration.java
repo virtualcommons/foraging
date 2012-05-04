@@ -664,11 +664,12 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         else if (resourceGeneratorType.equals("top-bottom-patchy")) {
             addSpecialInstructions(builder, getPatchyResourceInstructions());
         }
-        if (builder.toString().isEmpty()) {
+        if (builder.length() == 0) {
             return instructionsBuilder;
         }
         else {
-            return instructionsBuilder.append("<h2>Additional instructions</h2><hr><ul>").append(builder).append("</ul>");
+            // FIXME: localize via ResourceBundle
+            return instructionsBuilder.append("<hr><ul>").append(builder).append("</ul>");
         }
     }
 
