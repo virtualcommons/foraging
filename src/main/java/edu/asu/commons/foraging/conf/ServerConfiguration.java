@@ -110,7 +110,7 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
     }
 
     public double getDollarsPerToken() {
-        return DEFAULT_DOLLARS_PER_TOKEN;
+        return getDoubleProperty("dollars-per-token", DEFAULT_DOLLARS_PER_TOKEN);
     }
     
     public String getFinalRoundFacilitatorInstructions() {
