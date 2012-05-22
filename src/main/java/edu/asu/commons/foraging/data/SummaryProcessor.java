@@ -11,8 +11,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.asu.commons.event.ChatRequest;
+import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
+import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.ServerDataModel;
@@ -78,8 +80,21 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                 }
             }
         }
-
+        writer.println("=========================================");
+        writer.println("Time, Participant, Token Collected?, Chat");
+        for (PersistableEvent action: savedRoundData.getActions()) {
+            if (action instanceof ChatRequest) {
+                writer.println(String.format("%s, %s, %s, %s", 
+                        savedRoundData.toSecondString(action), action.getId(), 0, action.toString()));
+            }
+            else if (action instanceof TokenCollectedEvent) {
+                writer.println(String.format("%s, %s, %s", 
+                        savedRoundData.toSecondString(action), action.getId(), "token collected"));
+                
+            }
+        }
     }
+    
     @Override
     public String getOutputFileExtension() {
         return "-summary.txt";
