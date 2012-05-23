@@ -24,7 +24,9 @@ import edu.asu.commons.foraging.event.AddClientEvent;
 import edu.asu.commons.foraging.facilitator.GroupView;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.ServerDataModel;
-import edu.asu.commons.foraging.util.*;
+import edu.asu.commons.foraging.util.IntervalChecker;
+import edu.asu.commons.foraging.util.QuickTimeOutputStream;
+import edu.asu.commons.foraging.util.VideoFormat;
 
 /**
  * $Id$
@@ -47,9 +49,9 @@ class MovieCreatorProcessor extends SaveFileProcessor.Base {
     }
 
     @Override
-    public void process(SavedRoundData savedRoundData, OutputStream stream) {
-        // hmm, there needs to be one output stream per group because we write 1 video per group.
-        //                QuickTimeOutputStream quickTimeOutputStream = new QuickTimeOutputStream(stream, videoFormat);
+    public void process(SavedRoundData savedRoundData, OutputStream ignored) {
+        // there needs to be one output stream per group because we write 1 video per group.
+        // we ignore the incoming output stream.
         ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
         RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
         final List<GroupView> groupViewList = new ArrayList<GroupView>();
@@ -64,7 +66,7 @@ class MovieCreatorProcessor extends SaveFileProcessor.Base {
             groupView.setup(roundConfiguration);
             groupViewList.add(groupView);
             try {
-                File groupMovieFile = new File(savedRoundDataFile.getCanonicalPath() + "-group-" + groupDataModel.getGroupId() + "-" + saveFilePath + ".mov");
+                File groupMovieFile = new File(savedRoundDataFile.getCanonicalPath() + "-group-" + groupDataModel.getGroupId() + ".mov");
                 groupViewMap.put(groupView, new QuickTimeOutputStream(groupMovieFile, videoFormat));
             }
             catch (IOException exception) {
