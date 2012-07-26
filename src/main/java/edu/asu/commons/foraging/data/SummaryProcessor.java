@@ -32,10 +32,8 @@ class SummaryProcessor extends SaveFileProcessor.Base {
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
         ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
         List<GroupDataModel> groups = serverDataModel.getOrderedGroups();
-        String header = "Participant, Group, Collected tokens, Given punishment, Received punishment";
-        writer.println(header);
+        writer.println("Participant, Group, Total Cumulative Tokens, Sanction costs, Sanction penalties");
         for (GroupDataModel group: groups) {
-            int totalTokensHarvestedThisRound = 0;
             int totalTokensHarvested = 0;
             ArrayList<ClientData> clientDataList = new ArrayList<ClientData>(group.getClientDataMap().values());
             Collections.sort(clientDataList, new Comparator<ClientData>() {
@@ -45,15 +43,10 @@ class SummaryProcessor extends SaveFileProcessor.Base {
             	}
             });
             for (ClientData data : clientDataList) {
-                writer.println(String.format("%s, %s, %s, %s, %s", 
-                        data.getId(), group, data.getCurrentTokens(), data.getSanctionCosts(), data.getSanctionPenalties()));
-                totalTokensHarvestedThisRound += data.getCurrentTokens();
+                writer.println(String.format("%s, %s, %s, %s, %s", data, group, data.getTotalTokens(), data.getSanctionCosts(), data.getSanctionPenalties()));
                 totalTokensHarvested += data.getTotalTokens();
             }
-            writer.println(String.format("%s, %d tokens harvested this round, %d tokens harvested over all rounds, %s", group, 
-                    totalTokensHarvestedThisRound, 
-                    totalTokensHarvested,
-                    Utils.join(',', clientDataList)));
+            writer.println(String.format("Group %s, %s, %s", group, group.getResourceDistributionSize(), totalTokensHarvested));
         }
         Map<GroupDataModel, SortedSet<ChatRequest>> chatRequestMap = new HashMap<GroupDataModel, SortedSet<ChatRequest>>();
         SortedSet<ChatRequest> allChatRequests = savedRoundData.getChatRequests();
