@@ -14,11 +14,12 @@ import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
+import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.ServerDataModel;
-import edu.asu.commons.util.Utils;
+import edu.asu.commons.net.Identifier;
 
 /**
  * $Id$
@@ -35,7 +36,6 @@ class SummaryProcessor extends SaveFileProcessor.Base {
         writer.println("Participant, Group, Collected Tokens, Sanction costs, Sanction penalties");
         for (GroupDataModel group: groups) {
             int totalConsumedGroupTokens = 0;
-            ArrayList<String> clientTokens = new ArrayList<String>();
             ArrayList<ClientData> clientDataList = new ArrayList<ClientData>(group.getClientDataMap().values());
             Collections.sort(clientDataList, new Comparator<ClientData>() {
             	@Override
@@ -48,16 +48,6 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                 totalConsumedGroupTokens += data.getTotalTokens();
             }
             writer.println(String.format("Group %s, %s, %s", group, group.getResourceDistributionSize(), totalConsumedGroupTokens));
-            /*
-            writer.println(
-                    String.format("%s, %s, %s, %s",
-                            group,
-                            Utils.join(',', clientTokens),
-                            group.getResourceDistributionSize(),
-                            totalConsumedGroupTokens,
-                            Utils.join(',', group.getResourceDistribution().keySet())
-                    ));
-                    */
         }
         Map<GroupDataModel, SortedSet<ChatRequest>> chatRequestMap = new HashMap<GroupDataModel, SortedSet<ChatRequest>>();
         SortedSet<ChatRequest> allChatRequests = savedRoundData.getChatRequests();
@@ -86,6 +76,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
         }
         writer.println("=========================================");
         writer.println("Time, Participant, Token Collected?, Chat");
+        Map<Identifier, RuleVoteRequest> ruleVoteRequests = new HashMap<Identifier, RuleVoteRequest>();
         for (PersistableEvent action: savedRoundData.getActions()) {
             if (action instanceof ChatRequest) {
                 writer.println(String.format("%s, %s, %s, %s", 
@@ -94,7 +85,25 @@ class SummaryProcessor extends SaveFileProcessor.Base {
             else if (action instanceof TokenCollectedEvent) {
                 writer.println(String.format("%s, %s, %s", 
                         savedRoundData.toSecondString(action), action.getId(), "token collected"));
-                
+            }
+            else if (action instanceof RuleVoteRequest) {
+                ruleVoteRequests.put(action.getId(), (RuleVoteRequest) action);
+            }
+        }
+        if (! ruleVoteRequests.isEmpty()) {
+            for (GroupDataModel group: groups) {
+                ArrayList<ClientData> clientDataList = new ArrayList<ClientData>(group.getClientDataMap().values());
+                Collections.sort(clientDataList, new Comparator<ClientData>() {
+                    @Override
+                    public int compare(ClientData a, ClientData b) {
+                        return Integer.valueOf(a.getAssignedNumber()).compareTo(b.getAssignedNumber());
+                    }
+                });
+                writer.println("=== Voting results for " + group.toString() + "===");
+                for (ClientData data: clientDataList) {
+                    RuleVoteRequest request = ruleVoteRequests.get(data.getId());
+                    writer.println(String.format("%s, %s", data.getId(), request.getRule()));
+                }
             }
         }
     }
