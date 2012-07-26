@@ -78,7 +78,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
         writer.println("=========================================");
         writer.println("Time, Participant, Token Collected?, Chat");
         Map<Identifier, RuleVoteRequest> ruleVoteRequests = new HashMap<Identifier, RuleVoteRequest>();
-        Map<GroupDataModel, RuleSelectedUpdateEvent> ruleSelectedEvents = new HashMap<GroupDataModel, RuleSelectedUpdateEvent>();
+        ArrayList<RuleSelectedUpdateEvent> ruleSelectedEvents = new ArrayList<RuleSelectedUpdateEvent>();
         for (PersistableEvent action: savedRoundData.getActions()) {
             if (action instanceof ChatRequest) {
                 writer.println(String.format("%s, %s, %s, %s", 
@@ -92,10 +92,11 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                 ruleVoteRequests.put(action.getId(), (RuleVoteRequest) action);
             }
             else if (action instanceof RuleSelectedUpdateEvent) {
-                ruleSelectedEvents.put(serverDataModel.getGroup(action.getId()), (RuleSelectedUpdateEvent) action);
+                ruleSelectedEvents.add((RuleSelectedUpdateEvent) action);
             }
         }
         if (! ruleVoteRequests.isEmpty()) {
+            writer.println("Selected rules:\n\t" + ruleSelectedEvents);
             for (GroupDataModel group: groups) {
                 ArrayList<ClientData> clientDataList = new ArrayList<ClientData>(group.getClientDataMap().values());
                 Collections.sort(clientDataList, new Comparator<ClientData>() {
@@ -104,8 +105,8 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                         return Integer.valueOf(a.getAssignedNumber()).compareTo(b.getAssignedNumber());
                     }
                 });
+                
                 writer.println("=== Voting results for " + group.toString() + "===");
-                writer.println("Selected rule: " + ruleSelectedEvents.get(group).getSelectedRule());
                 for (ClientData data: clientDataList) {
                     RuleVoteRequest request = ruleVoteRequests.get(data.getId());
                     writer.println(String.format("%s, %s", data.getId(), request.getRule()));
