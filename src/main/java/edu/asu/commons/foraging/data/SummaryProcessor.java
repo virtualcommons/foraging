@@ -96,7 +96,10 @@ class SummaryProcessor extends SaveFileProcessor.Base {
             }
         }
         if (! ruleVoteRequests.isEmpty()) {
-            writer.println("Selected rules:\n\t" + ruleSelectedEvents);
+            writer.println("=== Selected rules ===");
+            for (RuleSelectedUpdateEvent event: ruleSelectedEvents) {
+                writer.println(event.toString());
+            }
             for (GroupDataModel group: groups) {
                 ArrayList<ClientData> clientDataList = new ArrayList<ClientData>(group.getClientDataMap().values());
                 Collections.sort(clientDataList, new Comparator<ClientData>() {
