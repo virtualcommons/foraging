@@ -14,6 +14,7 @@ import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
+import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.model.ClientData;
@@ -77,6 +78,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
         writer.println("=========================================");
         writer.println("Time, Participant, Token Collected?, Chat");
         Map<Identifier, RuleVoteRequest> ruleVoteRequests = new HashMap<Identifier, RuleVoteRequest>();
+        Map<GroupDataModel, RuleSelectedUpdateEvent> ruleSelectedEvents = new HashMap<GroupDataModel, RuleSelectedUpdateEvent>();
         for (PersistableEvent action: savedRoundData.getActions()) {
             if (action instanceof ChatRequest) {
                 writer.println(String.format("%s, %s, %s, %s", 
@@ -89,6 +91,9 @@ class SummaryProcessor extends SaveFileProcessor.Base {
             else if (action instanceof RuleVoteRequest) {
                 ruleVoteRequests.put(action.getId(), (RuleVoteRequest) action);
             }
+            else if (action instanceof RuleSelectedUpdateEvent) {
+                ruleSelectedEvents.put(serverDataModel.getGroup(action.getId()), (RuleSelectedUpdateEvent) action);
+            }
         }
         if (! ruleVoteRequests.isEmpty()) {
             for (GroupDataModel group: groups) {
@@ -100,6 +105,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                     }
                 });
                 writer.println("=== Voting results for " + group.toString() + "===");
+                writer.println("Selected rule: " + ruleSelectedEvents.get(group).getSelectedRule());
                 for (ClientData data: clientDataList) {
                     RuleVoteRequest request = ruleVoteRequests.get(data.getId());
                     writer.println(String.format("%s, %s", data.getId(), request.getRule()));
