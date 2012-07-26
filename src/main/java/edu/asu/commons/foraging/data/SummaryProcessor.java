@@ -32,6 +32,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
         ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
         List<GroupDataModel> groups = new ArrayList<GroupDataModel>(serverDataModel.getGroups());
+        writer.println("Participant, Group, Collected Tokens, Sanction costs, Sanction penalties");
         for (GroupDataModel group: groups) {
             int totalConsumedGroupTokens = 0;
             ArrayList<String> clientTokens = new ArrayList<String>();
@@ -43,9 +44,11 @@ class SummaryProcessor extends SaveFileProcessor.Base {
             	}
             });
             for (ClientData data : clientDataList) {
-                clientTokens.add(String.format("%s, %s", data, data.getTotalTokens()));
+                writer.println(String.format("%s, %s, %s, %s, %s", data, group, data.getTotalTokens(), data.getSanctionCosts(), data.getSanctionPenalties()));
                 totalConsumedGroupTokens += data.getTotalTokens();
             }
+            writer.println(String.format("Group %s, %s, %s", group, group.getResourceDistributionSize(), totalConsumedGroupTokens));
+            /*
             writer.println(
                     String.format("%s, %s, %s, %s",
                             group,
@@ -54,6 +57,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                             totalConsumedGroupTokens,
                             Utils.join(',', group.getResourceDistribution().keySet())
                     ));
+                    */
         }
         Map<GroupDataModel, SortedSet<ChatRequest>> chatRequestMap = new HashMap<GroupDataModel, SortedSet<ChatRequest>>();
         SortedSet<ChatRequest> allChatRequests = savedRoundData.getChatRequests();
