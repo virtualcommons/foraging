@@ -16,6 +16,7 @@ import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
+import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.GroupDataModel;
@@ -34,6 +35,20 @@ class SummaryProcessor extends SaveFileProcessor.Base {
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
         ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
         List<GroupDataModel> groups = new ArrayList<GroupDataModel>(serverDataModel.getGroups());
+        for (PersistableEvent event: savedRoundData.getActions()) {
+            if (event instanceof SanctionAppliedEvent) {
+                SanctionAppliedEvent sanctionEvent = (SanctionAppliedEvent) event;
+                Identifier id = sanctionEvent.getId();
+                System.err.println("applying sanction costs and penalties to " + sanctionEvent.getId() + " -> " + sanctionEvent.getTarget());
+                ClientData source = serverDataModel.getClientData(id);
+                source.addSanctionCosts(sanctionEvent.getSanctionCost());
+                System.err.println("costs on client data are now " + source.getSanctionCosts());
+                ClientData target = serverDataModel.getClientData(sanctionEvent.getTarget());
+                target.addSanctionPenalties(sanctionEvent.getSanctionPenalty());
+                System.err.println("penalties on client data are now " + target.getSanctionPenalties());
+            }
+        }
+
         writer.println("Participant, Group, Collected Tokens, Sanction costs, Sanction penalties");
         for (GroupDataModel group: groups) {
             int totalConsumedGroupTokens = 0;

@@ -46,7 +46,6 @@ class AllDataProcessor extends SaveFileProcessor.Base {
 
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
-        RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
         processData(savedRoundData, writer);
     }
 

@@ -262,7 +262,7 @@ public class ServerDataModel extends ForagingDataModel {
         return groups;
     }
 
-    protected ClientData getClientData(Identifier id) {
+    public ClientData getClientData(Identifier id) {
         return getGroup(id).getClientData(id);
     }
 
