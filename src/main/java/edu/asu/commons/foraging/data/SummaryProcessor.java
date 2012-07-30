@@ -14,11 +14,14 @@ import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
+import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
+import edu.asu.commons.foraging.event.RuleVoteRequest;
+import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.ServerDataModel;
-import edu.asu.commons.util.Utils;
+import edu.asu.commons.net.Identifier;
 
 /**
  * $Id$
@@ -32,6 +35,20 @@ class SummaryProcessor extends SaveFileProcessor.Base {
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
         ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
         List<GroupDataModel> groups = serverDataModel.getOrderedGroups();
+        for (PersistableEvent event: savedRoundData.getActions()) {
+            if (event instanceof SanctionAppliedEvent) {
+                SanctionAppliedEvent sanctionEvent = (SanctionAppliedEvent) event;
+                Identifier id = sanctionEvent.getId();
+                System.err.println("applying sanction costs and penalties to " + sanctionEvent.getId() + " -> " + sanctionEvent.getTarget());
+                ClientData source = serverDataModel.getClientData(id);
+                source.addSanctionCosts(sanctionEvent.getSanctionCost());
+                System.err.println("costs on client data are now " + source.getSanctionCosts());
+                ClientData target = serverDataModel.getClientData(sanctionEvent.getTarget());
+                target.addSanctionPenalties(sanctionEvent.getSanctionPenalty());
+                System.err.println("penalties on client data are now " + target.getSanctionPenalties());
+            }
+        }
+
         writer.println("Participant, Group, Total Cumulative Tokens, Sanction costs, Sanction penalties");
         for (GroupDataModel group: groups) {
             int totalTokensHarvested = 0;
@@ -75,6 +92,8 @@ class SummaryProcessor extends SaveFileProcessor.Base {
         }
         writer.println("=========================================");
         writer.println("Time, Participant, Token Collected?, Chat");
+        Map<Identifier, RuleVoteRequest> ruleVoteRequests = new HashMap<Identifier, RuleVoteRequest>();
+        ArrayList<RuleSelectedUpdateEvent> ruleSelectedEvents = new ArrayList<RuleSelectedUpdateEvent>();
         for (PersistableEvent action: savedRoundData.getActions()) {
             if (action instanceof ChatRequest) {
                 writer.println(String.format("%s, %s, %s, %s", 
@@ -83,6 +102,33 @@ class SummaryProcessor extends SaveFileProcessor.Base {
             else if (action instanceof TokenCollectedEvent) {
                 writer.println(String.format("%s, %s, %s", 
                         savedRoundData.toSecondString(action), action.getId(), "token collected"));
+            }
+            else if (action instanceof RuleVoteRequest) {
+                ruleVoteRequests.put(action.getId(), (RuleVoteRequest) action);
+            }
+            else if (action instanceof RuleSelectedUpdateEvent) {
+                ruleSelectedEvents.add((RuleSelectedUpdateEvent) action);
+            }
+        }
+        if (! ruleVoteRequests.isEmpty()) {
+            writer.println("=== Selected rules ===");
+            for (RuleSelectedUpdateEvent event: ruleSelectedEvents) {
+                writer.println(event.toString());
+            }
+            for (GroupDataModel group: groups) {
+                ArrayList<ClientData> clientDataList = new ArrayList<ClientData>(group.getClientDataMap().values());
+                Collections.sort(clientDataList, new Comparator<ClientData>() {
+                    @Override
+                    public int compare(ClientData a, ClientData b) {
+                        return Integer.valueOf(a.getAssignedNumber()).compareTo(b.getAssignedNumber());
+                    }
+                });
+                
+                writer.println("=== Voting results for " + group.toString() + "===");
+                for (ClientData data: clientDataList) {
+                    RuleVoteRequest request = ruleVoteRequests.get(data.getId());
+                    writer.println(String.format("%s, %s", data.getId(), request.getRule()));
+                }
                 
             }
         }

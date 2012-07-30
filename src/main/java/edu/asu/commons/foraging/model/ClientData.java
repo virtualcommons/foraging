@@ -335,6 +335,15 @@ public class ClientData implements Serializable {
     public int getSanctionPenalties() {
         return sanctionPenalties;
     }
+
+    public void addSanctionCosts(int cost) {
+        sanctionCosts += cost;
+    }
+
+    public void addSanctionPenalties(int penalty) {
+        sanctionPenalties += penalty;
+    }
+
     
     public int getSanctionCosts() {
         return sanctionCosts;
