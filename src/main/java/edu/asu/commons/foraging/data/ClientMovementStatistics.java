@@ -5,7 +5,7 @@ import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: ClientMovementStatistics.java 526 2010-08-06 01:25:27Z alllee $
+ * $Id$
  * 
  * Helper class to keep track of client movements. 
  * 

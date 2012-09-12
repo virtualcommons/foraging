@@ -6,12 +6,12 @@ import edu.asu.commons.net.Identifier;
 
 
 /**
- * $Id: ExplicitCollectionModeRequest.java 4 2008-07-25 22:51:44Z alllee $
+ * $Id$
  * 
  * Informs the server that the client's collection mode has changed.
  * 
  * @author <a href='Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 
 public class ExplicitCollectionModeRequest extends AbstractPersistableEvent {

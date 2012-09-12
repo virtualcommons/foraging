@@ -6,9 +6,9 @@ import edu.asu.commons.net.Identifier;
 
 
 /**
- * $Id: MovementEvent.java 4 2008-07-25 22:51:44Z alllee $
+ * $Id$
  * 
- * @version $Revision: 4 $
+ * @version $Revision$
  * @author Allen Lee
  */
 public class MovementEvent extends AbstractPersistableEvent {

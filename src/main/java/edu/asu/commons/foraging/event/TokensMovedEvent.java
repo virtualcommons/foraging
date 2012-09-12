@@ -6,13 +6,13 @@ import java.util.Collection;
 import edu.asu.commons.event.AbstractPersistableEvent;
 import edu.asu.commons.net.Identifier;
 /**
- * $Id: TokensMovedEvent.java 78 2009-03-03 03:36:25Z alllee $
+ * $Id$
  * 
  * Bulk token movement event containing old locations that should be removed and 
  * the new locations that should be added.
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 78 $
+ * @version $Revision$
  */
 public class TokensMovedEvent extends AbstractPersistableEvent {
 

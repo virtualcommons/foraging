@@ -7,7 +7,7 @@ import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: ClientMovementTokenCount.java 526 2010-08-06 01:25:27Z alllee $
+ * $Id$
  * 
  * Helper class for maintaining basic movement / token information.
  * 

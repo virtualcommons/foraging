@@ -6,13 +6,13 @@ import edu.asu.commons.net.Identifier;
 
 
 /**
- * $Id: BeginChatRoundRequest.java 4 2008-07-25 22:51:44Z alllee $
+ * $Id$
  *
  * The facilitator uses this Request to signal the server that the timed
  * communication can now begin.
  *
  * @author Allen Lee
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 
 public class BeginChatRoundRequest extends AbstractEvent {

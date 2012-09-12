@@ -51,7 +51,7 @@ import edu.asu.commons.net.Identifier;
  * Customized JPanel that enables participants to engage in post-round sanctioning.
  *
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 384 $
+ * @version $Revision$
  */
 
 @SuppressWarnings("serial")

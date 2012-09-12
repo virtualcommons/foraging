@@ -8,12 +8,12 @@ import java.util.Set;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 
 /**
- * $Id: ResourceGenerator.java 475 2010-02-24 00:39:44Z alllee $
+ * $Id$
  * 
  * ResourceGenerators add resources directly to the GroupDataModel.
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 475 $
+ * @version $Revision$
  */
 public interface ResourceGenerator {
     public void initialize(RoundConfiguration roundConfiguration);
