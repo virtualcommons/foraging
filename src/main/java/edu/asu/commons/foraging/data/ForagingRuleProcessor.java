@@ -139,7 +139,7 @@ public class ForagingRuleProcessor extends Base {
         Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();
         Map<ClientData, RuleData> dataMap = new TreeMap<ClientData, RuleData>(new Comparator<ClientData>() {
             public int compare(ClientData a, ClientData b) {
-                return Integer.valueOf(a.getAssignedNumber()).compareTo(b.getAssignedNumber());
+                return a.getId().getStationId().compareTo(b.getId().getStationId());
             }
         });
         for (ClientData data: clientDataMap.values()) {
