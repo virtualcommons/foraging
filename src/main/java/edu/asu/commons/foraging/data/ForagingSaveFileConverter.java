@@ -32,6 +32,7 @@ public class ForagingSaveFileConverter {
                     new CollectedTokenSpatialDistributionProcessor(),  
                     new MovementStatisticsProcessor(),
 //                    new MovieCreatorProcessor(),
+                    new ForagingRuleProcessor(),
                     new AggregateCollectedTokenNeighborProcessor()
             ));
             Persister.processSaveFiles(allSaveFilesDirectory, processors);

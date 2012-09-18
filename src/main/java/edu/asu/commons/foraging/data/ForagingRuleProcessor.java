@@ -9,7 +9,6 @@ import java.util.SortedSet;
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor.Base;
 import edu.asu.commons.experiment.SavedRoundData;
-import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.ServerDataModel;
@@ -23,21 +22,23 @@ public class ForagingRuleProcessor extends Base {
     // rule 3: wait 60 seconds
     // rule 4: collect 40 tokens then wait 30 seconds 
     private static class RuleData {
-        private int illegalRuleOneTokens;
-        private int illegalRuleFourTokens;
-        private int totalTokensCollected;
-        private int q1Tokens;
-        private int q2Tokens;
-        private int q3Tokens;
-        private int q4Tokens;
-        private int ruleFourTimestamp = -1;
+        private int illegalRuleOneTokens = 0;
+        private int illegalRuleThreeTokens = 0;
+        private int illegalRuleFourTokens = 0;
+        private int totalTokensCollected = 0;
+        private int q1Tokens = 0;
+        private int q2Tokens = 0;
+        private int q3Tokens = 0;
+        private int q4Tokens = 0;
+        private int nextLegalCollectionTime = -1;
+        private int ruleFourTokenInterval = 1;
         
         public void addTokenCollected(Point location, int elapsedTimeInSeconds) {
             if (isIllegalTokenCollectionForRuleOne(elapsedTimeInSeconds)) {
                 illegalRuleOneTokens++;
             }
             if (isIllegalTokenCollectionForRuleThree(elapsedTimeInSeconds)) {
-                
+                illegalRuleThreeTokens++;
             }
             totalTokensCollected++;
             addRuleTwoTokens(location);
@@ -45,20 +46,30 @@ public class ForagingRuleProcessor extends Base {
         }
         
         private void checkRuleFourTokens(int elapsedTimeInSeconds) {
-            if (totalTokensCollected < 40) {
-                return;
-            }
-            if (totalTokensCollected < 80 && ruleFourTimestamp == -1) {
-                // 40 tokens have been collected, from now on each token collected is illegal until 30 seconds from ruleFourTimestamp have passed.
-                ruleFourTimestamp = elapsedTimeInSeconds;
-                return;
-            }
-            if (elapsedTimeInSeconds < ruleFourTimestamp + 30) {
+            if (isIllegalRuleFourInterval(elapsedTimeInSeconds)) {
                 illegalRuleFourTokens++;
-                return;
             }
-            // FIXME: need to finish implementing rule four logic
-                        
+        }
+        
+        private boolean isIllegalRuleFourInterval(int elapsedTimeInSeconds) {
+            if (totalTokensCollected < 40) {
+                return false;
+            }
+            int allowedTokens = ruleFourTokenInterval * 40;
+            // first check if we've reached our token goal
+            if (totalTokensCollected == allowedTokens) {
+                // next allowable time is 30 seconds from now. 
+                nextLegalCollectionTime = elapsedTimeInSeconds + 30;
+                // the next number of allowable tokens is N * 40
+                ruleFourTokenInterval++;
+            }
+//            System.err.println(String.format("allowed tokens: %d, total tokens collected: %d, next legal collection time: %d, token interval %d, legal collection? %s",
+//                    allowedTokens,
+//                    totalTokensCollected,
+//                    nextLegalCollectionTime,
+//                    ruleFourTokenInterval,
+//                    (elapsedTimeInSeconds < nextLegalCollectionTime)));
+            return elapsedTimeInSeconds < nextLegalCollectionTime;
         }
         
         private void addRuleTwoTokens(Point location) {
@@ -84,12 +95,6 @@ public class ForagingRuleProcessor extends Base {
             return elapsedTimeInSeconds <= 60;
         }
 
-        @Override
-        public String toString() {
-            return String.format("illegal R1 tokens: %d, illegal R2 tokens: %d, total tokens: %d, [%d, %d, %d, %d]", 
-                    illegalRuleOneTokens, illegalRuleFourTokens, totalTokensCollected, q1Tokens, q2Tokens, q3Tokens, q4Tokens);
-        }
-
         /**
          * Returns true if the elapsed time is in the following interval ranges:
          * 0-10, 20-30, 40-50, 60-70, and so on.
@@ -102,6 +107,23 @@ public class ForagingRuleProcessor extends Base {
             int intervalModTwo = interval % 2;
             return intervalModTwo == 0;
         }
+        
+        public double getRuleOneBreaking() {
+            return (double) illegalRuleOneTokens / (double) totalTokensCollected;
+        }
+        public double getRuleThreeBreaking() {
+            return (double) illegalRuleThreeTokens / (double) totalTokensCollected;
+        }
+        public double getRuleFourBreaking() {
+            return (double) illegalRuleFourTokens / (double) totalTokensCollected;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("illegal R1 tokens: %d, illegal R2 tokens: %d, total tokens: %d, [%d, %d, %d, %d]", 
+                    illegalRuleOneTokens, illegalRuleFourTokens, totalTokensCollected, q1Tokens, q2Tokens, q3Tokens, q4Tokens);
+        }
+
     }
 
     @Override
@@ -126,6 +148,22 @@ public class ForagingRuleProcessor extends Base {
                 long elapsedTimeInSeconds = savedRoundData.getElapsedTimeInSeconds(event);
                 dataMap.get(clientData).addTokenCollected(location, (int) elapsedTimeInSeconds);
             }
+        }
+        writer.println("Participant, 10 Second Rule, 60 Second Rule, 40 Second Rule, Q1 Tokens, Q2 Tokens, Q3 Tokens, Q4 Tokens");
+        for (Map.Entry<ClientData, RuleData> entry: dataMap.entrySet()) {
+            RuleData data = entry.getValue();
+            String line = String.format("%s, %3.2f, %3.2f, %3.2f, %d, %d, %d, %d",
+                    entry.getKey(),
+                    data.getRuleOneBreaking(),
+                    data.getRuleThreeBreaking(),
+                    data.getRuleFourBreaking(),
+                    data.q1Tokens,
+                    data.q2Tokens,
+                    data.q3Tokens,
+                    data.q4Tokens
+                    );
+            System.err.println(line);
+            writer.println(line);
         }
     }
 
