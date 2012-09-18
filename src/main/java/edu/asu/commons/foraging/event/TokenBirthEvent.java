@@ -6,12 +6,12 @@ import edu.asu.commons.event.AbstractPersistableEvent;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: TokenBirthEvent.java 78 2009-03-03 03:36:25Z alllee $
+ * $Id$
  * 
  * Signifies that a resource at location source gave "birth" at location offspring.
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 78 $
+ * @version $Revision$
  */
 public class TokenBirthEvent extends AbstractPersistableEvent {
 

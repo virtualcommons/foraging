@@ -2,9 +2,10 @@ package edu.asu.commons.foraging.data;
 
 import java.awt.Point;
 import java.io.PrintWriter;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.TreeMap;
 
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor.Base;
@@ -136,7 +137,11 @@ public class ForagingRuleProcessor extends Base {
         SortedSet<PersistableEvent> actions = savedRoundData.getActions();
         ServerDataModel dataModel = (ServerDataModel) savedRoundData.getDataModel();
         Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();
-        Map<ClientData, RuleData> dataMap = new HashMap<ClientData, RuleData>();
+        Map<ClientData, RuleData> dataMap = new TreeMap<ClientData, RuleData>(new Comparator<ClientData>() {
+            public int compare(ClientData a, ClientData b) {
+                return Integer.valueOf(a.getAssignedNumber()).compareTo(b.getAssignedNumber());
+            }
+        });
         for (ClientData data: clientDataMap.values()) {
             dataMap.put(data, new RuleData());
         }

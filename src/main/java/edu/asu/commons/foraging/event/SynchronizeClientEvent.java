@@ -12,7 +12,7 @@ import edu.asu.commons.net.Identifier;
 
 
 /**
- * $Id: SynchronizeClientEvent.java 4 2008-07-25 22:51:44Z alllee $
+ * $Id$
  * 
  * Maintains a Map of all clients and their locations (denoted by
  * java.awt.Point-S) as well as a list of food positions, if the food is visible.
@@ -21,7 +21,7 @@ import edu.asu.commons.net.Identifier;
  * 
  * @author Deepali Bhagvat
  * @author Allen Lee
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 public class SynchronizeClientEvent extends AbstractEvent {
 

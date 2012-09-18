@@ -5,12 +5,12 @@ import java.awt.Point;
 import edu.asu.commons.event.AbstractPersistableEvent;
 import edu.asu.commons.net.Identifier;
 /**
- * $Id: TokenMovedEvent.java 78 2009-03-03 03:36:25Z alllee $
+ * $Id$
  * 
  * Signifies that a token moved from source to destination.
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 78 $
+ * @version $Revision$
  */
 public class TokenMovedEvent extends AbstractPersistableEvent {
 

@@ -6,13 +6,13 @@ import edu.asu.commons.event.AbstractPersistableEvent;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: TokenCollectedEvent.java 78 2009-03-03 03:36:25Z alllee $
+ * $Id$
  *
  * Persistable event signifying that a token was collected at some Point getLocation() by 
  * the participant with Identifier getId().
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 78 $
+ * @version $Revision$
  */
 public class TokenCollectedEvent extends AbstractPersistableEvent {
 

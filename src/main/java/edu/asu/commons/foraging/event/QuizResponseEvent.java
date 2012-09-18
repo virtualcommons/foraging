@@ -8,7 +8,7 @@ import edu.asu.commons.event.ClientRequest;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: QuizResponseEvent.java 522 2010-06-30 19:17:48Z alllee $
+ * $Id$
  * 
  * A client's quiz responses for a given quiz page.
  * 

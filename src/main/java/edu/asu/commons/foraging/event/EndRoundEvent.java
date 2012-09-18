@@ -11,7 +11,7 @@ import edu.asu.commons.net.Identifier;
 
 
 /**
- * $Id: EndRoundEvent.java 4 2008-07-25 22:51:44Z alllee $
+ * $Id$
  * 
  * This event carries all data relevant to the ending of a round, including the
  * debriefing message, the time (in milliseconds) that the client should wait
@@ -21,7 +21,7 @@ import edu.asu.commons.net.Identifier;
  * 
  * @author Deepali Bhagvat
  * @author Allen Lee
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 public class EndRoundEvent extends AbstractEvent {
 

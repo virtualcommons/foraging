@@ -23,7 +23,7 @@ import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id: AggregateCollectedTokenNeighborProcessor.java 526 2010-08-06 01:25:27Z alllee $
+ * $Id$
  * 
  * Generates aggregate distributions of the number of neighboring tokens for a collected token in two situations:
  * 1. without regard to visibility

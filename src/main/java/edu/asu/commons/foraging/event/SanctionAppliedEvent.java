@@ -4,7 +4,7 @@ import edu.asu.commons.event.AbstractPersistableEvent;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: SanctionAppliedEvent.java 522 2010-06-30 19:17:48Z alllee $
+ * $Id$
  * 
  * Persistable event marking an applied sanction.
  *

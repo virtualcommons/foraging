@@ -11,7 +11,7 @@ import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.ui.GridView;
 
 /**
- * $Id: GroupView.java 510 2010-04-20 04:11:22Z alllee $
+ * $Id$
  * 
  * Provides an overview visualization of a particular group and all participants in the group.
  * 

@@ -10,13 +10,13 @@ import edu.asu.commons.net.Identifier;
 
 
 /**
- * $Id: ClientMovementRequest.java 350 2009-10-30 22:18:42Z alllee $
+ * $Id$
  * 
  * Client signal informing the server that the client has moved in Direction d
  * and has ended up at Point p.
  * 
  * @author <a href='mailto:alllee@cs.indiana.edu'>Allen Lee</a>
- * @version $Revision: 350 $
+ * @version $Revision$
  */
 
 public class ClientMovementRequest extends AbstractEvent implements ClientRequest {
