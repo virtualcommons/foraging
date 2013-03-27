@@ -202,7 +202,7 @@
   </target>
   <!-- Compile project source files -->
   <target name="compile" depends="prepare, resolve">
-    <javac srcdir="${src.dir}" destdir="${build.dir}" debug="on" optimize="off" deprecation="on" source="1.6" includeAntRuntime="false">
+    <javac srcdir="${src.dir}" destdir="${build.dir}" debug="on" optimize="off" deprecation="on" source="1.6" target="1.6" includeAntRuntime="false">
       <compilerarg value="-Xlint:unchecked"/>
       <classpath refid="project.classpath"/>
     </javac>
@@ -260,7 +260,7 @@
   </target>
   <!-- Compile Tests -->
   <target name="compile-tests" depends="compile">
-    <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" source="1.6" debug="on">
+    <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" source="1.6" target="1.6" debug="on">
       <!-- <compilerarg value='-Xlint:unchecked'/> -->
       <classpath refid="project.classpath"/>
     </javac>
