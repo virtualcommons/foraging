@@ -46,7 +46,6 @@ class AllDataProcessor extends SaveFileProcessor.Base {
 
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
-        RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
         processData(savedRoundData, writer);
     }
 
@@ -149,11 +148,13 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 writer.println(line);
             }
             else if (event instanceof RuleVoteRequest) {
+                System.err.println("rule vote request: " + event);
                 RuleVoteRequest request = (RuleVoteRequest) event;
                 String line = String.format("%s, %s, %s, Strategy Nomination", savedRoundData.toSecondString(event), request.getId(), request.getRule());
                 writer.println(line);
             }
             else if (event instanceof RuleSelectedUpdateEvent) {
+                System.err.println("rule selected update event: " + event);
                 RuleSelectedUpdateEvent update = (RuleSelectedUpdateEvent) event;
                 String line = String.format("%s, %s, \"%s\", \"%s\", Rule selected", 
                         savedRoundData.toSecondString(event), update.getGroup(), update.getSelectedStrategies(), update.getVotingResults());

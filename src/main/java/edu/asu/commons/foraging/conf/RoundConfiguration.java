@@ -664,11 +664,12 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         else if (resourceGeneratorType.equals("top-bottom-patchy")) {
             addSpecialInstructions(builder, getPatchyResourceInstructions());
         }
-        if (builder.toString().isEmpty()) {
+        if (builder.length() == 0) {
             return instructionsBuilder;
         }
         else {
-            return instructionsBuilder.append("<h2>Additional instructions</h2><hr><ul>").append(builder).append("</ul>");
+            // FIXME: localize via ResourceBundle
+            return instructionsBuilder.append("<hr><ul>").append(builder).append("</ul>");
         }
     }
 
@@ -685,7 +686,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     private String getInRoundChatInstructions() {
-        return getProperty("in-round-chat-instructions", "<p>You can chat during this round with all players visible on the screen.</p>");
+        return getProperty("in-round-chat-instructions", getParentConfiguration().getInRoundChatInstructions());
     }
 
     public String getTrustGameInstructions() {
@@ -850,4 +851,29 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("survey-confirmation-message", "Please make sure you have completed the survey before continuing.  Have you completed the survey?");
 
     }
+
+    public String[] getTrustGamePlayerTwoColumnNames() {
+        return getParentConfiguration().getTrustGamePlayerTwoColumnNames();
+    }
+
+    public String getTrustGamePlayerOneAllocationLabel() {
+        return getParentConfiguration().getTrustGamePlayerOneAllocationLabel();
+    }
+
+    public String getTrustGamePlayerTwoAllocationLabel() {
+        return getParentConfiguration().getTrustGamePlayerTwoAllocationLabel();
+    }
+
+    public String getTrustGamePlayerTwoInstructionLabel() {
+        return getParentConfiguration().getTrustGamePlayerTwoInstructionLabel();
+    }
+
+    public String getPlayerOneAmountToKeepValidation() {
+        return getParentConfiguration().getPlayerOneAmountToKeepValidation();
+    }
+
+    public String getPlayerTwoAmountToKeepValidation() {
+        return getParentConfiguration().getPlayerTwoAmountToKeepValidation();
+    }
+
 }

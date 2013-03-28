@@ -84,7 +84,7 @@
       test      - Run all JUnit in the test source tree.
       build-all - builds the client, server, and facilitator jars.
       deploy    - invokes build-all and then copies the client and facilitator jars to ${web.dir}
-      convert   - invokes the ForagingSaveFileConverter to process the savefiles in the raw-data directory or as specified by -Dsavefile.dir=foo
+      convert   - invokes the ForagingSaveFileConverter to process the savefiles in the experiment-data directory or as specified by -Dsavefile.dir=foo
     </echo>
   </target>
   <target name="build-all" depends="facilitator-jar, client-jar, server-jar, compile"/>
@@ -202,7 +202,7 @@
   </target>
   <!-- Compile project source files -->
   <target name="compile" depends="prepare, resolve">
-    <javac srcdir="${src.dir}" destdir="${build.dir}" debug="on" optimize="off" deprecation="on" source="1.6" includeAntRuntime="false">
+    <javac srcdir="${src.dir}" destdir="${build.dir}" debug="on" optimize="off" deprecation="on" source="1.6" target="1.6" includeAntRuntime="false">
       <compilerarg value="-Xlint:unchecked"/>
       <classpath refid="project.classpath"/>
     </javac>
@@ -260,7 +260,7 @@
   </target>
   <!-- Compile Tests -->
   <target name="compile-tests" depends="compile">
-    <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" source="1.6" debug="on">
+    <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" source="1.6" target="1.6" debug="on">
       <!-- <compilerarg value='-Xlint:unchecked'/> -->
       <classpath refid="project.classpath"/>
     </javac>
@@ -281,8 +281,8 @@
     </junit>
   </target>
   <property name="savefile.converter.class" value="edu.asu.commons.foraging.data.ForagingSaveFileConverter"/>
-  <!-- default savefile directory is the raw-data directory -->
-  <property name="savefile.dir" value="raw-data"/>
+  <!-- default savefile directory is the experiment-data directory -->
+  <property name="savefile.dir" value="experiment-data"/>
   <target name="convert" depends="compile">
     <java classname="${savefile.converter.class}" classpathref="project.classpath" fork="yes">
       <arg value="${savefile.dir}"/>
