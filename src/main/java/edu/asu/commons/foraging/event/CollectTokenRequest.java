@@ -4,12 +4,12 @@ import edu.asu.commons.event.AbstractEvent;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: CollectTokenRequest.java 4 2008-07-25 22:51:44Z alllee $
+ * $Id$
  * 
  * Signals that the client wants to collect a token at its present location.
  * 
  * @author <a href='Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 public class CollectTokenRequest extends AbstractEvent {
     

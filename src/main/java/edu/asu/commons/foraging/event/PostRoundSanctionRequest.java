@@ -11,7 +11,7 @@ import edu.asu.commons.net.Identifier;
  * Carries a Map tying Identifiers to integer sanction amounts (can be positive or negative). 
  * 
  * @author alllee
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 
 public class PostRoundSanctionRequest extends AbstractPersistableEvent {

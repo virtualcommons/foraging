@@ -5,12 +5,12 @@ import java.awt.event.KeyEvent;
 import java.util.Random;
 
 /**
- * $Id: Direction.java 4 2008-07-25 22:51:44Z alllee $
+ * $Id$
  * 
  * Enum representing a cardinal Direction in a 2-D grid.
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 
 public enum Direction {

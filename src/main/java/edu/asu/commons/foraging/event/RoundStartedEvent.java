@@ -10,7 +10,7 @@ import edu.asu.commons.net.Identifier;
 
 
 /**
- * $Id: RoundStartedEvent.java 497 2010-03-29 20:10:49Z alllee $
+ * $Id$
  * 
  * Signals clients that the beginning of a round has begun, carrying 
  * relevant round parameters so the client can initialize its game window
@@ -18,7 +18,7 @@ import edu.asu.commons.net.Identifier;
  * 
  * 
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 497 $
+ * @version $Revision$
  */
 public class RoundStartedEvent extends AbstractEvent implements ExperimentUpdateEvent {
 

@@ -5,13 +5,13 @@ import java.io.Serializable;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: RegulationData.java 416 2009-12-25 05:17:14Z alllee $
+ * $Id$
  *
  * Prototype object used to carry information about a regulation proposed
  * by a participant.   
  * 
  * @author <a href='mailto:dbarge@asu.edu'>dbarge</a>
- * @version $Revision: 416 $
+ * @version $Revision$
  */
 
 public class RegulationData implements Serializable, Comparable<RegulationData> {

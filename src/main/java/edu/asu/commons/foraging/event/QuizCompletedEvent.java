@@ -5,10 +5,10 @@ import edu.asu.commons.net.Identifier;
 
 
 /**
- * $Id: QuizCompletedEvent.java 4 2008-07-25 22:51:44Z alllee $
+ * $Id$
  *
  * @author Allen Lee
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 
 public class QuizCompletedEvent extends AbstractEvent {

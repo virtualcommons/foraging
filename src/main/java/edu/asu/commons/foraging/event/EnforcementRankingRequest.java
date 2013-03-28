@@ -5,13 +5,13 @@ import edu.asu.commons.event.AbstractPersistableEvent;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: EnforcementRankingRequest.java 522 2010-06-30 19:17:48Z alllee $
+ * $Id$
  * 
  * Sent from a client to the server signaling that the client 
  * has updated the votes to the given options
  * 
  * @author <a href='allen.lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 522 $
+ * @version $Revision$
  */
 
 public class EnforcementRankingRequest extends AbstractPersistableEvent {

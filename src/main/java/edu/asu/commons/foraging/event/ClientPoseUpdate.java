@@ -5,10 +5,10 @@ import edu.asu.commons.foraging.graphics.Point3D;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: ClientPoseUpdate.java 4 2008-07-25 22:51:44Z alllee $
+ * $Id$
  * 
  * @author <a href='Allen.Lee@asu.edu'>Allen Lee</a>, Deepali Bhagvat
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 public class ClientPoseUpdate extends AbstractPersistableEvent {
 

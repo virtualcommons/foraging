@@ -6,12 +6,12 @@ import edu.asu.commons.net.Identifier;
 
 
 /**
- * $Id: RealTimeSanctionRequest.java 492 2010-03-23 23:08:38Z alllee $
+ * $Id$
  * 
  * A request made by a client to sanction another client.
  * 
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>, Deepali Bhagvat
- * @version $Revision: 492 $
+ * @version $Revision$
  */
 public class RealTimeSanctionRequest extends AbstractPersistableEvent {
 

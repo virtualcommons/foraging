@@ -10,11 +10,11 @@ import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id: ResourcesAddedEvent.java 4 2008-07-25 22:51:44Z alllee $
+ * $Id$
  * FoodAddedEvent
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision: 4 $
+ * @version $Revision$
  */
 public class ResourcesAddedEvent extends AbstractPersistableEvent {
 
