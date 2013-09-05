@@ -442,6 +442,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("resource-generator", ResourceDispenser.Type.DENSITY_DEPENDENT.toString());
     }
 
+    /**
+     * Returns true if the top and bottom resource zones should be indicated visually
+     * using a line and different token images.
+     */
+    public boolean showResourceZones() {
+        return getBooleanProperty("show-resource-zones", false);
+    }
+
     public int getWorldWidth() {
         return getResourceWidth() * getResourceWorldScale();
     }

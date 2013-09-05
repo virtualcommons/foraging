@@ -33,9 +33,9 @@ public abstract class GridView extends JPanel {
      * If the parameters call for a background, this object is created so that
      * the scaling calculation does not have to be performed for each paint.
      */
-    protected Image tokenImage, otherSubjectImage, selfImage, selfExplicitCollectionModeImage, beingSanctionedImage, sanctioningImage, monitorImage;
+    protected Image tokenImage, tokenImageB, otherSubjectImage, selfImage, selfExplicitCollectionModeImage, beingSanctionedImage, sanctioningImage, monitorImage;
 
-    protected Image scaledTokenImage, scaledOtherSubjectImage, scaledSelfImage,
+    protected Image scaledTokenImage, scaledTokenImageB, scaledOtherSubjectImage, scaledSelfImage,
             scaledSelfExplicitCollectionModeImage, scaledBeingSanctionedImage, scaledSanctioningImage, scaledMonitorImage;
 
     /**
@@ -94,6 +94,7 @@ public abstract class GridView extends JPanel {
         int cellWidth = (int) dw;
         int cellHeight = (int) dh;
         scaledTokenImage = tokenImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledTokenImageB = tokenImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledOtherSubjectImage = otherSubjectImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledSelfImage = selfImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledSelfExplicitCollectionModeImage = selfExplicitCollectionModeImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
@@ -137,6 +138,9 @@ public abstract class GridView extends JPanel {
         // imageUpdate callback is invoked a repaint happens.
         if (tokenImage == null) {
             tokenImage = loadImage("images/gem-token.gif");
+        }
+        if (tokenImageB == null) {
+            tokenImageB = loadImage("images/gem-token-b.gif");
         }
         if (selfImage == null) {
             selfImage = loadImage("images/gem-self.gif");

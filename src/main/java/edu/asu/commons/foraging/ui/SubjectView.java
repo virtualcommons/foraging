@@ -8,7 +8,10 @@ import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.Image;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -61,6 +64,9 @@ public class SubjectView extends GridView {
 
     private double fieldOfVisionOffset;
 
+    // Set from the the show-resource-zones parameter
+    private boolean showResourceZones;
+
     public SubjectView(Dimension screenSize, ClientDataModel dataModel) {
         super(screenSize);
         this.dataModel = dataModel;
@@ -73,6 +79,7 @@ public class SubjectView extends GridView {
     public void setup(RoundConfiguration configuration) {
         viewSubjectsField = null;
         viewTokensField = null;
+        showResourceZones = configuration.showResourceZones();
         synchronized (collectedTokens) {
             collectedTokens.clear();
             tokenFieldOfVisionEnabled = configuration.isTokensFieldOfVisionEnabled();
@@ -105,14 +112,43 @@ public class SubjectView extends GridView {
     }
 
     protected void paintTokens(Graphics2D graphics2D) {
+
+        // When showing the resource zones, paint top and bottom tokens using different images,
+        // and draw a line between the zones.
+        HashSet<Point> resourcePositionsA = new HashSet<Point>();
+        HashSet<Point> resourcePositionsB = new HashSet<Point>();
+        int midHeight = (int) boardSize.getHeight() / 2;
+        if (showResourceZones) {
+            for (Point point : dataModel.getResourcePositions()) {
+                if (point.y < midHeight) {
+                    resourcePositionsA.add(point);
+                } else {
+                    resourcePositionsB.add(point);
+                }
+            }
+            double lineY = scaleYDouble((double) midHeight);
+            graphics2D.setColor(Color.WHITE);
+            graphics2D.draw(new Line2D.Double(0, lineY, scaleXDouble(boardSize.getWidth()), lineY));
+        }
+
         // three cases - show all food on the game board, show all food within
         // visible radius of the current player, or don't show any food.
         if (tokenFieldOfVisionEnabled) {
             viewTokensField.setCenter(dataModel.getCurrentPosition());
-            paintCollection(dataModel.getResourcePositions(), graphics2D, scaledTokenImage, this, viewTokensField);
+            if (showResourceZones) {
+                paintCollection(resourcePositionsA, graphics2D, scaledTokenImage, this, viewTokensField);
+                paintCollection(resourcePositionsB, graphics2D, scaledTokenImageB, this, viewTokensField);
+            } else {
+                paintCollection(dataModel.getResourcePositions(), graphics2D, scaledTokenImage, this, viewTokensField);
+            }
         }
         else {
-            paintCollection(dataModel.getResourcePositions(), graphics2D, scaledTokenImage);
+            if (showResourceZones) {
+                paintCollection(resourcePositionsA, graphics2D, scaledTokenImage);
+                paintCollection(resourcePositionsB, graphics2D, scaledTokenImageB);
+            } else {
+                paintCollection(dataModel.getResourcePositions(), graphics2D, scaledTokenImage);
+            }
         }
         // display animation for food that has been eaten.
         long elapsedTime = 0;
@@ -148,9 +184,18 @@ public class SubjectView extends GridView {
     }
 
     private void paintToken(Point point, Graphics2D graphics2D, int width, int height) {
+
+        Image image;
+        if (showResourceZones) {
+            // Use token image for zone A or zone B depending on board position
+            image = (point.y < (int) boardSize.getHeight() / 2) ? scaledTokenImage : scaledTokenImageB;
+        } else {
+            image = scaledTokenImage;
+        }
+
         int x = scaleX(point.x);
         int y = scaleY(point.y);
-        graphics2D.drawImage(scaledTokenImage, x, y, width, height, null);
+        graphics2D.drawImage(image, x, y, width, height, null);
     }
 
     protected void paintSubjects(Graphics2D graphics2D) {
