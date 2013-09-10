@@ -465,7 +465,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         
         if (serverDataModel.isValidPosition(newPosition)) {
             // check occupancy
-            if ( isCellAvailable(newPosition) ) {
+            if ( isCellAvailable(newPosition) && isCellAllowed(clientData, newPosition)) {
 //                System.err.println("setting position: " + newPosition);
 
                 clientData.setPosition(newPosition);
@@ -491,6 +491,23 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
                     }
                 }
             }
+        }
+        return true;
+    }
+
+    /**
+     * Return true if the participant represented by clientData is allowed to
+     * move to the given position (assuming the position is valid and
+     * available), based on zone rules.
+     */
+    private boolean isCellAllowed(ClientData clientData, Point position) {
+        if (serverDataModel.getRoundConfiguration().areZonesAssigned() == false ||
+            serverDataModel.getRoundConfiguration().isTravelRestricted(clientData.getZone()) == false) {
+            return true;
+        }
+        int positionZone = position.y < serverDataModel.getBoardHeight() / 2 ? 0 : 1;
+        if (positionZone != clientData.getZone()) {
+            return false;
         }
         return true;
     }

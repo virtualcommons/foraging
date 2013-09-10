@@ -108,6 +108,7 @@ public abstract class GridView extends JPanel {
         scaledSanctioningImage = sanctioningImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledMonitorImage = monitorImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
 
+        // Scale the Zone B images
         scaledTokenImageB = tokenImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledOtherSubjectImageB = otherSubjectImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledSelfImageB = selfImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
@@ -174,6 +175,7 @@ public abstract class GridView extends JPanel {
             monitorImage = loadImage("images/gem-self-explicit.gif");
         }
 
+        // Load the Zone B images
         if (tokenImageB == null) {
             tokenImageB = loadImage("images/gem-token-b.gif");
         }

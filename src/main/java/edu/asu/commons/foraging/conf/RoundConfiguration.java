@@ -458,6 +458,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getBooleanProperty("assign-zones", false);
     }
 
+    /**
+     * Returns true if participants assigned to the given zone should be
+     * restricted from crossing the border.
+     */
+    public boolean isTravelRestricted(int zone) {
+        return getBooleanProperty("restrict-travel-zone-" + zone, false);
+    }
+
     public int getWorldWidth() {
         return getResourceWidth() * getResourceWorldScale();
     }
