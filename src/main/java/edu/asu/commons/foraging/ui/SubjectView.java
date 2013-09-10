@@ -257,30 +257,37 @@ public class SubjectView extends GridView {
     }
     
     private void drawParticipant(Graphics2D graphics2D, Identifier id, int x, int y) {
+        // The image to use is determined based on the client's assigned zone.
+        Image image;
         if (dataModel.isBeingSanctioned(id)) {
             graphics2D.setColor(Color.CYAN);
             graphics2D.fillRect(x, y, getCellWidth(), getCellHeight());
-            graphics2D.drawImage(scaledBeingSanctionedImage, x, y, this);
+            image = dataModel.getClientZone(id) == 1 ? scaledBeingSanctionedImageB : scaledBeingSanctionedImage;
+            graphics2D.drawImage(image, x, y, this);
         }
         else if (dataModel.isSanctioning(id)) {
             graphics2D.setColor(Color.WHITE);
             graphics2D.fillRect(x, y, getCellWidth(), getCellHeight());
-            graphics2D.drawImage(scaledSanctioningImage, x, y, this);   
+            image = dataModel.getClientZone(id) == 1 ? scaledSanctioningImageB : scaledSanctioningImage;
+            graphics2D.drawImage(image, x, y, this);   
         }
 //        else if (id.equals(dataModel.getMonitorId())) {
 //            graphics2D.drawImage(scaledMonitorImage, x, y, this);
 //        }
         else if (id.equals(dataModel.getId())) {
             if (dataModel.isExplicitCollectionMode()) {
-                graphics2D.drawImage(scaledSelfExplicitCollectionModeImage, x, y, this);
+                image = dataModel.getClientZone(id) == 1 ? scaledSelfExplicitCollectionModeImageB : scaledSelfExplicitCollectionModeImage;
+                graphics2D.drawImage(image, x, y, this);
             }
             else {
         		//System.out.println("Is a self image");
-                graphics2D.drawImage(scaledSelfImage, x, y, this);
+                image = dataModel.getClientZone(id) == 1 ? scaledSelfImageB : scaledSelfImage;
+                graphics2D.drawImage(image, x, y, this);
             }
         }
         else {
-        	graphics2D.drawImage(scaledOtherSubjectImage, x, y, this);
+            image = dataModel.getClientZone(id) == 1? scaledOtherSubjectImageB : scaledOtherSubjectImage;
+        	graphics2D.drawImage(image, x, y, this);
         }
     }
     

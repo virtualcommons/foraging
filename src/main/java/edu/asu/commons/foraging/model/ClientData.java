@@ -81,6 +81,10 @@ public class ClientData implements Serializable {
     private double trustGameIncome = 0.0d;
     private int correctQuizAnswers = 0;
 
+    // This client's zone number when the assign-zones parameter is set to true.
+    // If assign-zones is not set to true, zone is set to 0.
+    private int zone = 0;
+
     public void setTrustGamePlayerOneAmountToKeep(double trustGamePlayerOneAmountToKeep) {
         this.trustGamePlayerOneAmountToKeep = trustGamePlayerOneAmountToKeep;
     }
@@ -465,6 +469,14 @@ public class ClientData implements Serializable {
             double cellWidth = roundConfiguration.getResourceWidth() / (double) clientsPerGroup;
             int x = (int) ((cellWidth / 2) + (cellWidth * (getAssignedNumber() - 1)));
             int y = roundConfiguration.getResourceDepth() / 2;
+
+            // Position the client on the correct side of the border between
+            // zones.
+            if (roundConfiguration.areZonesAssigned()) {
+                if (zone == 0)
+                    y--;
+            }
+
             setPosition(new Point(x, y));
         }
         else {
@@ -686,5 +698,11 @@ public class ClientData implements Serializable {
 		return trustGameEarnings;
 	}
 
+    public int getZone() {
+        return zone;
+    }
 
+    public void setZone(int zone) {
+        this.zone = zone;
+    }
 }

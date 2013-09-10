@@ -33,10 +33,16 @@ public abstract class GridView extends JPanel {
      * If the parameters call for a background, this object is created so that
      * the scaling calculation does not have to be performed for each paint.
      */
-    protected Image tokenImage, tokenImageB, otherSubjectImage, selfImage, selfExplicitCollectionModeImage, beingSanctionedImage, sanctioningImage, monitorImage;
+    protected Image tokenImage, otherSubjectImage, selfImage, selfExplicitCollectionModeImage, beingSanctionedImage, sanctioningImage, monitorImage;
 
-    protected Image scaledTokenImage, scaledTokenImageB, scaledOtherSubjectImage, scaledSelfImage,
+    protected Image scaledTokenImage, scaledOtherSubjectImage, scaledSelfImage,
             scaledSelfExplicitCollectionModeImage, scaledBeingSanctionedImage, scaledSanctioningImage, scaledMonitorImage;
+
+    // The following are different versions of the images above to be shown in
+    // Zone B.
+    protected Image tokenImageB, otherSubjectImageB, selfImageB, selfExplicitCollectionModeImageB, beingSanctionedImageB, sanctioningImageB, monitorImageB;
+    protected Image scaledTokenImageB, scaledOtherSubjectImageB, scaledSelfImageB,
+            scaledSelfExplicitCollectionModeImageB, scaledBeingSanctionedImageB, scaledSanctioningImageB, scaledMonitorImageB;
 
     /**
      * Represents the width and height of a grid cell, respectively.
@@ -93,14 +99,23 @@ public abstract class GridView extends JPanel {
         // get scaled instances of the originals
         int cellWidth = (int) dw;
         int cellHeight = (int) dh;
+
         scaledTokenImage = tokenImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
-        scaledTokenImageB = tokenImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledOtherSubjectImage = otherSubjectImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledSelfImage = selfImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledSelfExplicitCollectionModeImage = selfExplicitCollectionModeImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledBeingSanctionedImage = beingSanctionedImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledSanctioningImage = sanctioningImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledMonitorImage = monitorImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+
+        scaledTokenImageB = tokenImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledOtherSubjectImageB = otherSubjectImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledSelfImageB = selfImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledSelfExplicitCollectionModeImageB = selfExplicitCollectionModeImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledBeingSanctionedImageB = beingSanctionedImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledSanctioningImageB = sanctioningImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledMonitorImageB = monitorImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+
         System.err.println("cell width: " + dw);
         System.err.println("cell height: " + dh);
         System.err.println("x offset: " + xoffset);
@@ -139,9 +154,6 @@ public abstract class GridView extends JPanel {
         if (tokenImage == null) {
             tokenImage = loadImage("images/gem-token.gif");
         }
-        if (tokenImageB == null) {
-            tokenImageB = loadImage("images/gem-token-b.gif");
-        }
         if (selfImage == null) {
             selfImage = loadImage("images/gem-self.gif");
         }
@@ -160,6 +172,29 @@ public abstract class GridView extends JPanel {
         // FIXME: generate a new image for the monitor, for now just use the explicit-mode image.
         if (monitorImage == null) {
             monitorImage = loadImage("images/gem-self-explicit.gif");
+        }
+
+        if (tokenImageB == null) {
+            tokenImageB = loadImage("images/gem-token-b.gif");
+        }
+        if (selfImageB == null) {
+            selfImageB = loadImage("images/gem-self-b.gif");
+        }
+        if (otherSubjectImageB == null) {
+            otherSubjectImageB = loadImage("images/gem-other-b.gif");
+        }
+        if (selfExplicitCollectionModeImageB == null) {
+            selfExplicitCollectionModeImageB = loadImage("images/gem-self-explicit-b.gif");
+        }
+        if (beingSanctionedImageB == null) {
+            beingSanctionedImageB = loadImage("images/gem-red-b.gif");
+        }
+        if (sanctioningImageB == null) {
+            sanctioningImageB = loadImage("images/gem-purple-b.gif");
+        }
+        // FIXME: generate a new image for the monitor, for now just use the explicit-mode image.
+        if (monitorImageB == null) {
+            monitorImageB = loadImage("images/gem-self-explicit-b.gif");
         }
     }
     

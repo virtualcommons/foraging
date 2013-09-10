@@ -81,6 +81,9 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     private ArrayList<Strategy> selectedRules;
 
+    // Used when assigning clients to zones
+    private int nextZone = 0;
+
     public GroupDataModel(ServerDataModel serverDataModel) {
         this(serverDataModel, nextGroupId++);
     }
@@ -512,6 +515,15 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
 
     public void addClient(ClientData clientData) {
+
+        // Assign the client to a zone, if this round has zone assignment
+        if (getRoundConfiguration().areZonesAssigned()) {
+            clientData.setZone(nextZone);
+            nextZone = (nextZone == 1 ? 0 : 1);
+        } else {
+            clientData.setZone(0);
+        }
+
         clients.put(clientData.getId(), clientData);
         clientData.setAssignedNumber(clients.size());
         clientData.setGroupDataModel(this);

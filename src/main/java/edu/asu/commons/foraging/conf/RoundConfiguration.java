@@ -450,6 +450,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getBooleanProperty("show-resource-zones", false);
     }
 
+    /**
+     * Returns true if participants should be assigned to resource zones.
+     * Different images will be used for avatars depending on assigned zone.
+     */
+    public boolean areZonesAssigned() {
+        return getBooleanProperty("assign-zones", false);
+    }
+
     public int getWorldWidth() {
         return getResourceWidth() * getResourceWorldScale();
     }
