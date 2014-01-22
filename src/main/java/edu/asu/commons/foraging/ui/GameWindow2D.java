@@ -6,11 +6,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.AWTException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
+import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -20,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
+import java.util.Random;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -40,6 +44,7 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
+import javax.swing.SwingWorker;
 
 import edu.asu.commons.event.ClientReadyEvent;
 import edu.asu.commons.event.Event;
@@ -120,6 +125,11 @@ public class GameWindow2D implements GameWindow {
     private HtmlEditorPane votingInstructionsEditorPane;
     private JScrollPane votingInstructionsScrollPane;
 
+    // SwingWorker for generating robot keypresses
+    private SwingWorker robotWorker;
+
+    private final static Logger logger = Logger.getLogger( GameWindow2D.class.getName() );
+
     // private EnergyLevel energyLevel;
 
     public GameWindow2D(ForagingClient client) {
@@ -130,6 +140,7 @@ public class GameWindow2D implements GameWindow {
         // feed subject view the available screen size so that
         // it can adjust appropriately when given a board size
         // int width = (int) Math.min(Math.floor(size.getWidth()), Math.floor(size.getHeight() * 0.85));
+        this.robotWorker = null;
         initGuiComponents();
     }
 
@@ -588,6 +599,67 @@ public class GameWindow2D implements GameWindow {
             }
         };
         SwingUtilities.invokeLater(runnable);
+
+        if (configuration.isRobotControlled()) {
+            startRobotWorker(configuration);
+        }
+    }
+
+    /**
+     * Start the SwingWorker thread that generates random player input
+     */
+    public void startRobotWorker(final RoundConfiguration configuration) {
+
+        // java.awt.Robot was my first choice for generating keyboard input;
+        // however, it doesn't seem to have permission to run in Java Web Start
+        // applications.
+
+        robotWorker = new SwingWorker<Void, Void>() {
+            @Override
+            public Void doInBackground() {
+
+                KeyListener keyListener = mainPanel.getKeyListeners()[0];
+
+                KeyEvent keyPressedEvent;
+                KeyEvent keyReleasedEvent;
+                int[] arrowKeyCodes = {
+                    KeyEvent.VK_UP,
+                    KeyEvent.VK_DOWN,
+                    KeyEvent.VK_LEFT,
+                    KeyEvent.VK_RIGHT
+                };
+                int keyCode;
+                Random random = new Random();
+                int sleepInterval = 1000 / configuration.getRobotMovesPerSecond();
+                double harvestProbability = configuration.getRobotHarvestProbability();
+
+                while (!isCancelled()) {
+
+                    // Move in a random direction
+                    keyCode = arrowKeyCodes[random.nextInt(4)];
+                    keyPressedEvent = new KeyEvent(mainPanel, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, keyCode, KeyEvent.CHAR_UNDEFINED);
+                    keyReleasedEvent = new KeyEvent(mainPanel, KeyEvent.KEY_RELEASED, System.currentTimeMillis(), 0, keyCode, KeyEvent.CHAR_UNDEFINED);
+                    keyListener.keyPressed(keyPressedEvent);
+                    keyListener.keyReleased(keyReleasedEvent);
+
+                    if (random.nextDouble() < harvestProbability) {
+                        // Collect a token
+                        keyPressedEvent = new KeyEvent(mainPanel, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_SPACE, ' ');
+                        keyReleasedEvent = new KeyEvent(mainPanel, KeyEvent.KEY_RELEASED, System.currentTimeMillis(), 0, KeyEvent.VK_SPACE, ' ');
+                        keyListener.keyPressed(keyPressedEvent);
+                        keyListener.keyReleased(keyReleasedEvent);
+                    }
+
+                    try {
+                        Thread.sleep(sleepInterval);
+                    } catch (InterruptedException e) {
+                        return null;
+                    }
+                }
+                return null;
+            }
+        };
+        robotWorker.execute();
     }
 
     public void displayErrorMessage(String errorMessage) {
@@ -812,6 +884,12 @@ public class GameWindow2D implements GameWindow {
     }
 
     public synchronized void endRound(final EndRoundEvent event) {
+
+        if (robotWorker != null) {
+            robotWorker.cancel(true);
+            robotWorker = null;
+        }
+
         Runnable runnable = new Runnable() {
             public void run() {
                 if (inRoundChatPanel != null) {

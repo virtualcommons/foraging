@@ -900,4 +900,26 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getParentConfiguration().getPlayerTwoAmountToKeepValidation();
     }
 
+    /**
+     * If true, all player input will be automatically generated.
+     */
+    public boolean isRobotControlled() {
+        return getBooleanProperty("robot-controlled", false);
+    }
+
+    /**
+     * When the robot-controlled parameter is true, specifies the number of
+     * moves per second each player will make.
+     */
+    public int getRobotMovesPerSecond() {
+        return getIntProperty("robot-moves-per-second", 10);
+    }
+
+    /**
+     * Probability that a robot-controlled player will attempt to harvest after
+     * making a move
+     */
+    public double getRobotHarvestProbability() {
+        return getDoubleProperty("robot-harvest-probability", 0.5d);
+    }
 }
