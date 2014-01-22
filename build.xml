@@ -55,6 +55,8 @@
   <property name="javadoc.dir" value="docs/javadoc"/>
   <property name="javadoc.private.dir" value="docs/private"/>
   <property name="lib.dir" value="lib"/>
+  <property name="remote.debug.port" value="1044"/>
+
   <!-- Set up the CLASSPATH, includes all jars in the lib
        directory and all built files for both the main project
        and the tests -->
@@ -243,6 +245,7 @@
     <fail message="Did not find any configuration files in ${conf.dir}, please copy over an appropriate set of configuration files into ${conf.dir}"
       unless="configuration.present" />
   </target>
+
   <target name="server" depends="compile,check-configuration" if='configuration.present'>
     <!-- make sure we update the configuration -->
     <copy todir="${build.dir}/conf" overwrite="true">
@@ -258,6 +261,27 @@
       <jvmarg value="-server"/>
     </java>
   </target>
+
+  <target name="server-debug" depends="compile,check-configuration" if='configuration.present'>
+    <!-- make sure we update the configuration -->
+    <copy todir="${build.dir}/conf" overwrite="true">
+      <fileset dir="${conf.dir}"/>
+      <filterset>
+        <filter token="SERVER_ADDRESS" value="${server.address}"/>
+        <filter token="PORT_NUMBER" value="${server.port}"/>
+        <filter token="CODEBASE_URL" value="${codebase.url}"/>
+      </filterset>
+    </copy>
+
+    <java classname="${server.class}" classpathref="project.classpath" fork="yes">
+      <jvmarg value="-server"/>
+
+      <!-- Enable remote debugging -->
+      <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${remote.debug.port}"/>
+
+    </java>
+  </target>
+
   <!-- Compile Tests -->
   <target name="compile-tests" depends="compile">
     <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" source="1.6" target="1.6" debug="on">
