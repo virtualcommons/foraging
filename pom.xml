@@ -79,7 +79,7 @@ vim:sts=2:sw=2
     <dependency>
       <groupId>edu.asu.commons</groupId>
       <artifactId>csidex</artifactId>
-      <version>0.6-SNAPSHOT</version>
+      <version>0.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>net.java.dev.jogl</groupId>
