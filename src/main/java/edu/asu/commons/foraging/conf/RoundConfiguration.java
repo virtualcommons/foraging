@@ -486,6 +486,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return isChatRoundEnabled() || isInRoundChatEnabled() || isCensoredChat();
     }
 
+    /**
+     * Returns true if chat messages should be sent only to participants in the
+     * same team as the sender (i.e. assigned to the same zone).
+     */
+    public boolean isChatWithTeamOnly() {
+        return getBooleanProperty("chat-with-team-only", false);
+    }
+
     public int getMaximumResourceAge() {
         return getIntProperty("maximum-resource-age", 10);
     }

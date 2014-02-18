@@ -772,21 +772,50 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             Identifier target = request.getTarget();
             ClientData clientData = clients.get(source);
             ArrayList<Identifier> targets = new ArrayList<Identifier>();
+            RoundConfiguration currentConfiguration = getCurrentRoundConfiguration();
             if (Identifier.ALL.equals(target)) {
                 // relay to all clients in this client's group.
-                RoundConfiguration currentConfiguration = getCurrentRoundConfiguration();
                 // check for field of vision
                 if (currentConfiguration.isFieldOfVisionEnabled()) {
                     // FIXME: replace with clientData.getFieldOfVision?
                     Circle circle = new Circle(clientData.getPosition(), currentConfiguration.getViewSubjectsRadius());
-                    targets.addAll(clientData.getGroupDataModel().getClientIdentifiersWithin(circle));
+                    if (currentConfiguration.isChatWithTeamOnly()) {
+                        // Send the message to all team members within field of vision
+                        for (Identifier id : clientData.getGroupDataModel().getClientIdentifiersWithin(circle)) {
+                            if (clients.get(id).getZone() == clientData.getZone()) {
+                                targets.add(id);
+                            }
+                        }
+                    } else {
+                        // Send the message to all group members within field of vision
+                        targets.addAll(clientData.getGroupDataModel().getClientIdentifiersWithin(circle));
+                    }
                 }
                 else {
-                    targets.addAll(clientData.getGroupDataModel().getClientIdentifiers());
+                    if (currentConfiguration.isChatWithTeamOnly()) {
+                        // Send the message to all team members
+                        for (Identifier id : clientData.getGroupDataModel().getClientIdentifiers()) {
+                            if (clients.get(id).getZone() == clientData.getZone()) {
+                                targets.add(id);
+                            }
+                        }
+                    } else {
+                        // Send the message to all group members
+                        targets.addAll(clientData.getGroupDataModel().getClientIdentifiers());
+                    }
                 }
             }
             else {
-                targets.add(request.getTarget());
+                // Single target
+                if (currentConfiguration.isChatWithTeamOnly()) {
+                    // Send the message to the target only if it's on the same team
+                    if (clients.get(target).getZone() == clientData.getZone()) {
+                        targets.add(target);
+                    }
+                } else {
+                    // Send the message to the target
+                    targets.add(target);
+                }
             }
             sendChatEvent(request, targets);
             persister.store(request);
