@@ -282,6 +282,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return isRealTimeSanctioningEnabled() || isPostRoundSanctioningEnabled();
     }
 
+    public boolean isSanctioningWithinTeamOnly() {
+        return getBooleanProperty("sanction-team-members-only", false);
+    }
+
     public boolean shouldCheckOccupancy() {
         return getMaximumOccupancyPerCell() < getClientsPerGroup();
     }
