@@ -781,7 +781,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             if (Identifier.ALL.equals(target)) {
                 // relay to all clients in this client's group.
                 // check for field of vision
-                if (currentConfiguration.isFieldOfVisionEnabled()) {
+                if (serverState == ServerState.ROUND_IN_PROGRESS && currentConfiguration.isFieldOfVisionEnabled()) {
                     // FIXME: replace with clientData.getFieldOfVision?
                     Circle circle = new Circle(clientData.getPosition(), currentConfiguration.getViewSubjectsRadius());
                     if (currentConfiguration.isChatWithTeamOnly()) {
