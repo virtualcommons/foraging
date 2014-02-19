@@ -81,8 +81,9 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     private ArrayList<Strategy> selectedRules;
 
-    // Used when assigning clients to zones
+    // Used when assigning clients to zones/teams
     private int nextZone = 0;
+    private int[] currentTeamSize = {0, 0};
 
     public GroupDataModel(ServerDataModel serverDataModel) {
         this(serverDataModel, nextGroupId++);
@@ -533,10 +534,16 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     public void addClient(ClientData clientData) {
 
-        // Assign the client to a zone, if this round has zone assignment
+        // Assign the client to a zone/team, if this round has zone assignment
         if (getRoundConfiguration().areZonesAssigned()) {
-            clientData.setZone(nextZone);
-            nextZone = (nextZone == 1 ? 0 : 1);
+            int thisZone = nextZone;
+            clientData.setZone(thisZone);
+            currentTeamSize[thisZone]++;
+            nextZone = (thisZone + 1) % 2;
+            if (currentTeamSize[nextZone] >= getRoundConfiguration().getMaxTeamSize(nextZone)) {
+                // The next team is full, so continue to assign to this team
+                nextZone = thisZone;
+            }
         } else {
             clientData.setZone(0);
         }
@@ -557,6 +564,8 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     
     public void clear() {
         clients.clear();
+        nextZone = 0;
+        currentTeamSize[0] = currentTeamSize[1] = 0;
         cleanupRound();
     }
     

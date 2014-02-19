@@ -1062,8 +1062,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             // 2. when we move from a private property round to a open access round
             // 3. when the clients per group in the current round is different from the
             // clients per group in the next round (FIXME: is this too broad or can #2 just be a special case of this?)
+            // 4. when the team sizes change
             return currentRoundConfiguration.shouldRandomizeGroup()
-                    || (previousRoundConfiguration.getClientsPerGroup() != currentRoundConfiguration.getClientsPerGroup());
+                    || (previousRoundConfiguration.getClientsPerGroup() != currentRoundConfiguration.getClientsPerGroup())
+                    || (previousRoundConfiguration.getMaxTeamSize(0) != currentRoundConfiguration.getMaxTeamSize(0));
         }
 
         private void shuffleParticipants() {

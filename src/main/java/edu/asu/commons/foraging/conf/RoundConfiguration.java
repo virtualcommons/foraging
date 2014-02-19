@@ -243,6 +243,21 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     /**
+     * Number of participants in each group to be assigned to the given
+     * zone/team, which may be 0 or 1. The default value is half the group size,
+     * rounded up.
+     *
+     * @return
+     */
+    public int getMaxTeamSize(int zone) {
+        if (zone == 0) {
+            return getIntProperty("team-0-size", getClientsPerGroup() / 2 + getClientsPerGroup() % 2);
+        } else {
+            return getClientsPerGroup() - getMaxTeamSize(0);
+        }
+    }
+
+    /**
      * Returns an int specifying how many tokens the sanctioner must pay to
      * penalize another player.
      * 
