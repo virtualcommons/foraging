@@ -506,11 +506,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     /**
-     * Returns true if chat messages should be sent only to participants in the
-     * same team as the sender (i.e. assigned to the same zone).
+     * Returns true if chat messages should be allowed from participants
+     * assigned to zoneA to participants assigned to zoneB
      */
-    public boolean isChatWithTeamOnly() {
-        return getBooleanProperty("chat-with-team-only", false);
+    public boolean isChatAllowed(int zoneA, int zoneB) {
+        return getBooleanProperty("chat-allowed-" + zoneA + "-" + zoneB, true);
     }
 
     public int getMaximumResourceAge() {
