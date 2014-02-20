@@ -297,8 +297,12 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return isRealTimeSanctioningEnabled() || isPostRoundSanctioningEnabled();
     }
 
-    public boolean isSanctioningWithinTeamOnly() {
-        return getBooleanProperty("sanction-team-members-only", false);
+    /**
+     * Returns true if participants assigned to zoneA should be allowed to
+     * sanction participants assigned to zoneB
+     */
+    public boolean isSanctioningAllowed(int zoneA, int zoneB) {
+        return getBooleanProperty("sanction-allowed-" + zoneA + "-" + zoneB, true);
     }
 
     public boolean shouldCheckOccupancy() {

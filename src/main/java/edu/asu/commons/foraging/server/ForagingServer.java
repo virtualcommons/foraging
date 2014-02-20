@@ -538,7 +538,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             ClientData targetClient = clients.get(request.getTarget());
             // validate request
             // FIXME:Added a new test condition to check for the simplified version of sanctioning
-            boolean teamError = getCurrentRoundConfiguration().isSanctioningWithinTeamOnly() && sourceClient.getZone() != targetClient.getZone();
+            boolean teamError = ! getCurrentRoundConfiguration().isSanctioningAllowed(sourceClient.getZone(), targetClient.getZone());
             boolean invalidSanctionRequest = sourceClient.getCurrentTokens() == 0 || targetClient.getCurrentTokens() == 0
                     || sourceClient.getGroupDataModel().isResourceDistributionEmpty() || teamError;
             if (invalidSanctionRequest) {
@@ -546,7 +546,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 getLogger().warning("Ignoring token reduction request, sending new client error message event to : " + sourceClient.getId());
                 if (teamError) {
                     transmit(new ClientMessageEvent(sourceClient.getId(),
-                            String.format("Ignoring token reduction request: # %d is not on your team.", targetClient.getAssignedNumber())));
+                            String.format("Ignoring token reduction request: You cannot punish members of %s team.",
+                                sourceClient.getZone() == targetClient.getZone() ? "your" : "the other")));
                 }
                 else if (getCurrentRoundConfiguration().isSanctioningEnabled()) {
                     transmit(new ClientMessageEvent(sourceClient.getId(),
