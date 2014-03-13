@@ -510,6 +510,20 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     /**
+     * Returns true if chat handles should be numeric rather than letters.
+     */
+    public boolean areChatHandlesNumeric() {
+        return getBooleanProperty("chat-handles-numeric", false);
+    }
+
+    /**
+     * Returns a prefix to be prepended to chat handles.
+     */
+    public String getChatHandlePrefix() {
+        return getStringProperty("chat-handle-prefix", "");
+    }
+
+    /**
      * Returns true if chat messages should be allowed from participants
      * assigned to zoneA to participants assigned to zoneB
      */
