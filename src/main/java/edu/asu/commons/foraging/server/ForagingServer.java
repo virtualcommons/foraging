@@ -812,9 +812,14 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         }
 
         private void sendChatEvent(ChatRequest request, Collection<Identifier> identifiers) {
-            sendFacilitatorMessage(String.format("%s->%s : [%s]", request.getSource(), identifiers, request));
+
+            // Get the server's version of the source Identifier.
+            // The Identifier returned by request.getSource() comes from the client and may not have the correct chat handle.
+            Identifier source = clients.get(request.getSource()).getId();
+
+            sendFacilitatorMessage(String.format("%s->%s : [%s]", source, identifiers, request));
             for (Identifier targetId : identifiers) {
-                ChatEvent chatEvent = new ChatEvent(targetId, request.toString(), request.getSource(), true);
+                ChatEvent chatEvent = new ChatEvent(targetId, request.toString(), source, true);
                 transmitAndStore(chatEvent);
             }
         }
