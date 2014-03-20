@@ -80,13 +80,14 @@
     Experiment server will start on ${server.address}, listening on port ${server.port}.
             
     Available targets:
-      compile   - Compile all the source code and tests.
-      clean     - Remove all compiled source and test classes.
-      docs      - Create JavaDoc documentation for all source code.
-      test      - Run all JUnit in the test source tree.
-      build-all - builds the client, server, and facilitator jars.
-      deploy    - invokes build-all and then copies the client and facilitator jars to ${web.dir}
-      convert   - invokes the ForagingSaveFileConverter to process the savefiles in the experiment-data directory or as specified by -Dsavefile.dir=foo
+      compile     - Compile all the source code and tests.
+      clean       - Remove all compiled source and test classes.
+      clean-build - Same as clean, but leave ~/.ant and ~/.m2 untouched
+      docs        - Create JavaDoc documentation for all source code.
+      test        - Run all JUnit in the test source tree.
+      build-all   - builds the client, server, and facilitator jars.
+      deploy      - invokes build-all and then copies the client and facilitator jars to ${web.dir}
+      convert     - invokes the ForagingSaveFileConverter to process the savefiles in the experiment-data directory or as specified by -Dsavefile.dir=foo
     </echo>
   </target>
   <target name="build-all" depends="facilitator-jar, client-jar, server-jar, compile"/>
@@ -195,6 +196,15 @@
     <echo message="Removing ${user.home}/.ant/cache" />
     <delete dir='${user.home}/.ant/cache' />
     <delete dir='${user.home}/.m2/repository/edu/asu/commons' />
+    <delete dir="${build.dir}"/>
+    <delete dir="${test.build.dir}"/>
+    <delete dir="${lib.dir}"/>
+    <delete file="server.jar"/>
+    <delete file="client.jar"/>
+    <delete file="facilitator.jar"/>
+  </target>
+  <!-- Clean project directory only, leaving ~/.ant and ~/.m2 untouched -->
+  <target name="clean-build">
     <delete dir="${build.dir}"/>
     <delete dir="${test.build.dir}"/>
     <delete dir="${lib.dir}"/>
