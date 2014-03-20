@@ -60,6 +60,7 @@ public abstract class GridView extends JPanel {
     // how big the entire screen is.
     protected Dimension screenSize;
     
+    // Size of the board in pixels
     protected int actualWidth;
     protected int actualHeight;
 
@@ -85,11 +86,12 @@ public abstract class GridView extends JPanel {
         // FIXME: this forces square proportions on all views.
         dw = dh = Math.min(dw, dh);
         
-        actualWidth = actualHeight = (int) Math.min(availableWidth, availableHeight);
+        actualWidth = (int) (dw * boardSize.getWidth());
+        actualHeight = (int) (dh * boardSize.getHeight());
 
         // centered on the screen so we divide by 2 to take into account both sides of the screen.
-        xoffset = (int) Math.floor((availableWidth - (dw * boardSize.getWidth())) / 2);
-        yoffset = (int) Math.floor((availableHeight - (dh * boardSize.getHeight())) / 2);
+        xoffset = (int) Math.floor((availableWidth - actualWidth) / 2);
+        yoffset = (int) Math.floor((availableHeight - actualHeight) / 2);
 
         fontSize = (int)(0.85 * dh);
         font = new Font("sansserif", Font.BOLD, fontSize);

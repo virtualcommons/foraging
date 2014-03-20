@@ -82,6 +82,7 @@ public class GameWindow2D implements GameWindow {
     private final static String CHAT_PANEL_NAME = "standalone chat panel";
     private final static String POST_ROUND_SANCTIONING_PANEL_NAME = "post round sanctioning panel";
     private final static String SURVEY_ID_PANEL_NAME = "survey id panel";
+    private final static int inRoundChatPanelWidth = 250;
     private String currentCardPanel = INSTRUCTIONS_PANEL_NAME;
     
     private final StringBuilder instructionsBuilder = new StringBuilder();
@@ -412,8 +413,14 @@ public class GameWindow2D implements GameWindow {
         // resize listener
         mainPanel.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent event) {
+                RoundConfiguration configuration = dataModel.getRoundConfiguration();
                 Component component = event.getComponent();
-                Dimension screenSize = new Dimension(component.getWidth(), (int) (component.getHeight() * 0.85d));
+                int width = component.getWidth();
+                if (configuration.isInRoundChatEnabled()) {
+                    // Prevent the chat panel from cutting off part of the subjectView
+                    width -= inRoundChatPanelWidth;
+                }
+                Dimension screenSize = new Dimension(width, (int) (component.getHeight() * 0.85d));
                 subjectView.setScreenSize(screenSize);
                 subjectView.setImageSizes();
                 getPanel().revalidate();
@@ -590,7 +597,7 @@ public class GameWindow2D implements GameWindow {
                     System.err.println("in round chat was enabled");
                     ChatPanel chatPanel = getInRoundChatPanel();
                     chatPanel.initialize(dataModel);
-                    Dimension chatPanelSize = new Dimension(250, getPanel().getSize().height);
+                    Dimension chatPanelSize = new Dimension(inRoundChatPanelWidth, getPanel().getSize().height);
                     chatPanel.setPreferredSize(chatPanelSize);
                     // FIXME: switch to different layout manager
                     gamePanel.add(chatPanel, BorderLayout.EAST);
