@@ -603,6 +603,10 @@ public class GameWindow2D implements GameWindow {
                     gamePanel.add(chatPanel, BorderLayout.EAST);
                 }
                 showPanel(GAME_PANEL_NAME);
+
+                // Send a resize event to ensure that the subjectView is sized
+                // to accommodate the in-round chat panel
+                mainPanel.dispatchEvent(new ComponentEvent(mainPanel, ComponentEvent.COMPONENT_RESIZED));
             }
         };
         SwingUtilities.invokeLater(runnable);
