@@ -494,7 +494,12 @@ public class GameWindow2D implements GameWindow {
 //                                displayErrorMessage("You may not reduce other participants tokens at this time.");
                                 return;
                             }
-                            if (client.canPerformRealTimeSanction()) {
+
+                            //if (client.canPerformRealTimeSanction()) {
+                            // Perform the same check as above, except don't check number of available tokens
+                            // - let the server handle that and send an appropriate error message.
+                            if (dataModel.isMonitor() || dataModel.isSanctioningAllowed()) {
+
                                 // System.out.println("Can do sanctioning");
                                 int assignedNumber = keyChar - 48;
                                 Identifier sanctionee = dataModel.getClientId(assignedNumber);
