@@ -25,7 +25,8 @@ public class ForagingSaveFileConverter {
         if (allSaveFilesDirectory.exists() && allSaveFilesDirectory.isDirectory()) {
             List<SaveFileProcessor> processors = new ArrayList<SaveFileProcessor>();
             processors.addAll(Arrays.asList(
-                    new AllDataProcessor(), 
+                    new AllDataProcessor(),
+                    new ResourceOverTimeProcessor(),
                     new AggregateTimeIntervalProcessor(), 
                     new SummaryProcessor(),
                     new AggregateTokenSpatialDistributionProcessor(),
