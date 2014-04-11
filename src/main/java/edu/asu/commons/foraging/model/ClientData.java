@@ -230,8 +230,12 @@ public class ClientData implements Serializable {
     
     private int subtractTokens(int amount) {
         int tokensToSubtract = Math.min(currentTokens, amount);
-        currentTokens = currentTokens - tokensToSubtract;
-        totalTokens = totalTokens - tokensToSubtract;
+        currentTokens -= tokensToSubtract;
+        RoundConfiguration configuration = getGroupDataModel().getRoundConfiguration();
+        if ( ! configuration.isPracticeRound() ) {
+            totalTokens -= tokensToSubtract;
+            totalIncome -= (tokensToSubtract * configuration.getDollarsPerToken());
+        }
         return tokensToSubtract;
     }
     
