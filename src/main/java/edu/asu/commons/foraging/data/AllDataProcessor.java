@@ -16,6 +16,7 @@ import edu.asu.commons.foraging.event.HarvestResourceRequest;
 import edu.asu.commons.foraging.event.MovementEvent;
 import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
+import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.ResourcesAddedEvent;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
@@ -134,6 +135,13 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 Identifier source = request.getSource();
                 Identifier target = request.getTarget();
                 String line = String.format("%s, %s, %s, %s", savedRoundData.toSecondString(event), source, target, request.toString());
+                writer.println(line);
+            }
+            else if (event instanceof SanctionAppliedEvent) {
+                SanctionAppliedEvent sanctionAppliedEvent = (SanctionAppliedEvent) event;
+                Identifier source = sanctionAppliedEvent.getId();
+                Identifier target = sanctionAppliedEvent.getTarget();
+                String line = String.format("%s, %s, %s, %s", savedRoundData.toSecondString(event), source, target, sanctionAppliedEvent.toString());
                 writer.println(line);
             }
             else if (event instanceof QuizResponseEvent) {
