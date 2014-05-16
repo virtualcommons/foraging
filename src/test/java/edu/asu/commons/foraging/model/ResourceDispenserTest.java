@@ -25,7 +25,7 @@ public class ResourceDispenserTest {
     @Before
     public void setUp() {
         serverDataModel = new ServerDataModel();
-        serverConfiguration = new ServerConfiguration("configuration");
+        serverConfiguration = new ServerConfiguration("configuration/asu/2011/t1");
         serverDataModel.setRoundConfiguration(serverConfiguration.getCurrentParameters());
         for (int i = 0; i < NUMBER_OF_CLIENTS; i++) {
             ClientData clientData = new ClientData(new Identifier.Base());

@@ -81,6 +81,10 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     private ArrayList<Strategy> selectedRules;
 
+    // Used when assigning clients to zones/teams
+    private int nextZone = 0;
+    private int[] currentTeamSize = {0, 0};
+
     public GroupDataModel(ServerDataModel serverDataModel) {
         this(serverDataModel, nextGroupId++);
     }
@@ -462,7 +466,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         
         if (serverDataModel.isValidPosition(newPosition)) {
             // check occupancy
-            if ( isCellAvailable(newPosition) ) {
+            if ( isCellAvailable(newPosition) && isCellAllowed(clientData, newPosition)) {
 //                System.err.println("setting position: " + newPosition);
 
                 clientData.setPosition(newPosition);
@@ -491,6 +495,23 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         }
         return true;
     }
+
+    /**
+     * Return true if the participant represented by clientData is allowed to
+     * move to the given position (assuming the position is valid and
+     * available), based on zone rules.
+     */
+    private boolean isCellAllowed(ClientData clientData, Point position) {
+        if (serverDataModel.getRoundConfiguration().areZonesAssigned() == false ||
+            serverDataModel.getRoundConfiguration().isTravelRestricted(clientData.getZone()) == false) {
+            return true;
+        }
+        int positionZone = position.y < serverDataModel.getBoardHeight() / 2 ? 0 : 1;
+        if (positionZone != clientData.getZone()) {
+            return false;
+        }
+        return true;
+    }
     
     public void collectToken(ClientData clientData) {
         Point position = clientData.getPoint();
@@ -512,6 +533,21 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
 
     public void addClient(ClientData clientData) {
+
+        // Assign the client to a zone/team, if this round has zone assignment
+        if (getRoundConfiguration().areZonesAssigned()) {
+            int thisZone = nextZone;
+            clientData.setZone(thisZone);
+            currentTeamSize[thisZone]++;
+            nextZone = (thisZone + 1) % 2;
+            if (currentTeamSize[nextZone] >= getRoundConfiguration().getMaxTeamSize(nextZone)) {
+                // The next team is full, so continue to assign to this team
+                nextZone = thisZone;
+            }
+        } else {
+            clientData.setZone(0);
+        }
+
         clients.put(clientData.getId(), clientData);
         clientData.setAssignedNumber(clients.size());
         clientData.setGroupDataModel(this);
@@ -528,6 +564,8 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     
     public void clear() {
         clients.clear();
+        nextZone = 0;
+        currentTeamSize[0] = currentTeamSize[1] = 0;
         cleanupRound();
     }
     

@@ -54,6 +54,10 @@ public class ClientDataModel extends ForagingDataModel {
     private Map<Identifier, Point> clientPositions;
 
     private Map<Identifier, Integer> clientTokens;
+
+    // Clients need to know the zones of all other clients in the group. This
+    // maps client ID's to zone numbers.
+    private Map<Identifier, Integer> clientZones;
     
     private Map<Point, Resource> resourceDistribution;
 
@@ -126,6 +130,7 @@ public class ClientDataModel extends ForagingDataModel {
         clear();
         Map<Identifier, ClientData> clientDataMap = groupDataModel.getClientDataMap();
         Identifier[] ids = new Identifier[clientDataMap.size()];
+        clientZones = new HashMap<Identifier, Integer>();
         // ensure that the allClientIdentifiers natural ordering is by assigned number.
         for (Map.Entry<Identifier, ClientData> entry : clientDataMap.entrySet()) {
             Identifier id = entry.getKey();
@@ -133,6 +138,7 @@ public class ClientDataModel extends ForagingDataModel {
             int index = data.getAssignedNumber() - 1;
             ids[index] = id;
 //            clientAssignedNumbers.put(id, data.getAssignedNumber());
+            clientZones.put(id, data.getZone());
         }
         allClientIdentifiers.addAll(Arrays.asList(ids));
         setGroupDataModel(groupDataModel);
@@ -288,6 +294,13 @@ public class ClientDataModel extends ForagingDataModel {
     public Point3D getPoint3D(Identifier id) {
         // FIXME: this is broken
         throw new UnsupportedOperationException("3D support is currently unavailable");
+    }
+
+    /**
+     * Return the zone number of the client with the given ID.
+     */
+    public int getClientZone(Identifier id) {
+        return clientZones.get(id);
     }
 
 }

@@ -55,6 +55,8 @@
   <property name="javadoc.dir" value="docs/javadoc"/>
   <property name="javadoc.private.dir" value="docs/private"/>
   <property name="lib.dir" value="lib"/>
+  <property name="remote.debug.port" value="1044"/>
+
   <!-- Set up the CLASSPATH, includes all jars in the lib
        directory and all built files for both the main project
        and the tests -->
@@ -78,13 +80,14 @@
     Experiment server will start on ${server.address}, listening on port ${server.port}.
             
     Available targets:
-      compile   - Compile all the source code and tests.
-      clean     - Remove all compiled source and test classes.
-      docs      - Create JavaDoc documentation for all source code.
-      test      - Run all JUnit in the test source tree.
-      build-all - builds the client, server, and facilitator jars.
-      deploy    - invokes build-all and then copies the client and facilitator jars to ${web.dir}
-      convert   - invokes the ForagingSaveFileConverter to process the savefiles in the experiment-data directory or as specified by -Dsavefile.dir=foo
+      compile     - Compile all the source code and tests.
+      clean       - Remove all compiled source and test classes.
+      clean-build - Same as clean, but leave ~/.ant and ~/.m2 untouched
+      docs        - Create JavaDoc documentation for all source code.
+      test        - Run all JUnit in the test source tree.
+      build-all   - builds the client, server, and facilitator jars.
+      deploy      - invokes build-all and then copies the client and facilitator jars to ${web.dir}
+      convert     - invokes the ForagingSaveFileConverter to process the savefiles in the experiment-data directory or as specified by -Dsavefile.dir=foo
     </echo>
   </target>
   <target name="build-all" depends="facilitator-jar, client-jar, server-jar, compile"/>
@@ -200,6 +203,15 @@
     <delete file="client.jar"/>
     <delete file="facilitator.jar"/>
   </target>
+  <!-- Clean project directory only, leaving ~/.ant and ~/.m2 untouched -->
+  <target name="clean-build">
+    <delete dir="${build.dir}"/>
+    <delete dir="${test.build.dir}"/>
+    <delete dir="${lib.dir}"/>
+    <delete file="server.jar"/>
+    <delete file="client.jar"/>
+    <delete file="facilitator.jar"/>
+  </target>
   <!-- Compile project source files -->
   <target name="compile" depends="prepare, resolve">
     <javac srcdir="${src.dir}" destdir="${build.dir}" debug="on" optimize="off" deprecation="on" source="1.6" target="1.6" includeAntRuntime="false">
@@ -243,6 +255,7 @@
     <fail message="Did not find any configuration files in ${conf.dir}, please copy over an appropriate set of configuration files into ${conf.dir}"
       unless="configuration.present" />
   </target>
+
   <target name="server" depends="compile,check-configuration" if='configuration.present'>
     <!-- make sure we update the configuration -->
     <copy todir="${build.dir}/conf" overwrite="true">
@@ -258,6 +271,27 @@
       <jvmarg value="-server"/>
     </java>
   </target>
+
+  <target name="server-debug" depends="compile,check-configuration" if='configuration.present'>
+    <!-- make sure we update the configuration -->
+    <copy todir="${build.dir}/conf" overwrite="true">
+      <fileset dir="${conf.dir}"/>
+      <filterset>
+        <filter token="SERVER_ADDRESS" value="${server.address}"/>
+        <filter token="PORT_NUMBER" value="${server.port}"/>
+        <filter token="CODEBASE_URL" value="${codebase.url}"/>
+      </filterset>
+    </copy>
+
+    <java classname="${server.class}" classpathref="project.classpath" fork="yes">
+      <jvmarg value="-server"/>
+
+      <!-- Enable remote debugging -->
+      <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${remote.debug.port}"/>
+
+    </java>
+  </target>
+
   <!-- Compile Tests -->
   <target name="compile-tests" depends="compile">
     <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" source="1.6" target="1.6" debug="on">

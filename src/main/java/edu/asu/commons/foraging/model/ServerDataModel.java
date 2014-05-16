@@ -161,7 +161,12 @@ public class ServerDataModel extends ForagingDataModel {
     public synchronized void addClientToGroup(ClientData clientData, GroupDataModel group) {
         group.addClient(clientData);
         clientsToGroups.put(clientData.getId(), group);
-        clientData.getId().setChatHandle(RoundConfiguration.CHAT_HANDLES[group.size() - 1]);
+
+        // Assign chat handle
+        String chatHandle = getRoundConfiguration().getChatHandlePrefix() + (
+                getRoundConfiguration().areChatHandlesNumeric() ? group.size() : RoundConfiguration.CHAT_HANDLES[group.size() - 1]);
+        clientData.getId().setChatHandle(chatHandle);
+
         channel.handle(new AddClientEvent(clientData, group, clientData.getPosition()));
     }
 

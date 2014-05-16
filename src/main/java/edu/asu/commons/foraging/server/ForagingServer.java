@@ -536,23 +536,38 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private void handleRealTimeSanctionRequest(RealTimeSanctionRequest request) {
             ClientData sourceClient = clients.get(request.getSource());
             ClientData targetClient = clients.get(request.getTarget());
-            // validate request
+
             // FIXME:Added a new test condition to check for the simplified version of sanctioning
-            boolean invalidSanctionRequest = sourceClient.getCurrentTokens() == 0 || targetClient.getCurrentTokens() == 0
-                    || sourceClient.getGroupDataModel().isResourceDistributionEmpty();
-            if (invalidSanctionRequest) {
-                // ignore the sanction request, send a message to the sanctioner.
+
+            // validate request
+            boolean validSanctionRequest = false;
+            String errorMessage = "";
+            if ( ! getCurrentRoundConfiguration().isRealTimeSanctioningEnabled()) {
+                errorMessage = "Punishment is not allowed in this round.";
+            }
+            else if ( ! getCurrentRoundConfiguration().isSanctioningAllowed(sourceClient.getZone(), targetClient.getZone())) {
+                errorMessage = String.format("You cannot punish members of %s team.",
+                        sourceClient.getZone() == targetClient.getZone() ? "your" : "the other");
+            }
+            else if (sourceClient.getCurrentTokens() == 0) {
+                errorMessage = "You do not have enough tokens.";
+            }
+            else if (targetClient.getCurrentTokens() == 0) {
+                errorMessage = String.format("Player %d does not have any tokens to reduce.", targetClient.getAssignedNumber());
+            }
+            else if (sourceClient.getGroupDataModel().isResourceDistributionEmpty()) {
+                errorMessage = "No punishment if there are no tokens on the screen.";
+            }
+            else {
+                validSanctionRequest = true;
+            }
+
+            if ( ! validSanctionRequest) {
                 getLogger().warning("Ignoring token reduction request, sending new client error message event to : " + sourceClient.getId());
-                if (getCurrentRoundConfiguration().isSanctioningEnabled()) {
-                    transmit(new ClientMessageEvent(sourceClient.getId(),
-                            String.format("Ignoring token reduction request: # %d does not have any tokens to reduce.", targetClient.getAssignedNumber())));
-                }
-                else {
-                    transmit(new ClientMessageEvent(sourceClient.getId(),
-                            String.format("Ignoring token reduction request: Sanctioning not allowed in this round", targetClient.getAssignedNumber())));
-                }
+                transmit(new ClientMessageEvent(sourceClient.getId(), "Ignoring token reduction request: " + errorMessage));
                 return;
             }
+
             sourceClient.sanctionCost();
             int sanctionCost = getCurrentRoundConfiguration().getSanctionCost();
             int subtractedTokens = targetClient.sanctionPenalty();
@@ -772,30 +787,48 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             Identifier target = request.getTarget();
             ClientData clientData = clients.get(source);
             ArrayList<Identifier> targets = new ArrayList<Identifier>();
+            RoundConfiguration currentConfiguration = getCurrentRoundConfiguration();
             if (Identifier.ALL.equals(target)) {
                 // relay to all clients in this client's group.
-                RoundConfiguration currentConfiguration = getCurrentRoundConfiguration();
                 // check for field of vision
-                if (currentConfiguration.isFieldOfVisionEnabled()) {
+                if (serverState == ServerState.ROUND_IN_PROGRESS && currentConfiguration.isFieldOfVisionEnabled()) {
                     // FIXME: replace with clientData.getFieldOfVision?
                     Circle circle = new Circle(clientData.getPosition(), currentConfiguration.getViewSubjectsRadius());
-                    targets.addAll(clientData.getGroupDataModel().getClientIdentifiersWithin(circle));
+                    // Send the message to all allowed recipients within field of vision
+                    for (Identifier id : clientData.getGroupDataModel().getClientIdentifiersWithin(circle)) {
+                        if (id.equals(source) || currentConfiguration.isChatAllowed(clientData.getZone(), clients.get(id).getZone())) {
+                            targets.add(id);
+                        }
+                    }
                 }
                 else {
-                    targets.addAll(clientData.getGroupDataModel().getClientIdentifiers());
+                    // Send the message to all allowed recipients
+                    for (Identifier id : clientData.getGroupDataModel().getClientIdentifiers()) {
+                        if (id.equals(source) || currentConfiguration.isChatAllowed(clientData.getZone(), clients.get(id).getZone())) {
+                            targets.add(id);
+                        }
+                    }
                 }
             }
             else {
-                targets.add(request.getTarget());
+                // Single target. Send the message if chat is allowed to the given recipient
+                if (target.equals(source) || currentConfiguration.isChatAllowed(clientData.getZone(), clients.get(target).getZone())) {
+                    targets.add(target);
+                }
             }
             sendChatEvent(request, targets);
             persister.store(request);
         }
 
         private void sendChatEvent(ChatRequest request, Collection<Identifier> identifiers) {
-            sendFacilitatorMessage(String.format("%s->%s : [%s]", request.getSource(), identifiers, request));
+
+            // Get the server's version of the source Identifier.
+            // The Identifier returned by request.getSource() comes from the client and may not have the correct chat handle.
+            Identifier source = clients.get(request.getSource()).getId();
+
+            sendFacilitatorMessage(String.format("%s->%s : [%s]", source, identifiers, request));
             for (Identifier targetId : identifiers) {
-                ChatEvent chatEvent = new ChatEvent(targetId, request.toString(), request.getSource(), true);
+                ChatEvent chatEvent = new ChatEvent(targetId, request.toString(), source, true);
                 transmitAndStore(chatEvent);
             }
         }
@@ -1028,8 +1061,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             // 2. when we move from a private property round to a open access round
             // 3. when the clients per group in the current round is different from the
             // clients per group in the next round (FIXME: is this too broad or can #2 just be a special case of this?)
+            // 4. when the team sizes change
             return currentRoundConfiguration.shouldRandomizeGroup()
-                    || (previousRoundConfiguration.getClientsPerGroup() != currentRoundConfiguration.getClientsPerGroup());
+                    || (previousRoundConfiguration.getClientsPerGroup() != currentRoundConfiguration.getClientsPerGroup())
+                    || (previousRoundConfiguration.getMaxTeamSize(0) != currentRoundConfiguration.getMaxTeamSize(0));
         }
 
         private void shuffleParticipants() {

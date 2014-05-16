@@ -38,6 +38,12 @@ public abstract class GridView extends JPanel {
     protected Image scaledTokenImage, scaledOtherSubjectImage, scaledSelfImage,
             scaledSelfExplicitCollectionModeImage, scaledBeingSanctionedImage, scaledSanctioningImage, scaledMonitorImage;
 
+    // The following are different versions of the images above to be shown in
+    // Zone B.
+    protected Image tokenImageB, otherSubjectImageB, selfImageB, selfExplicitCollectionModeImageB, beingSanctionedImageB, sanctioningImageB, monitorImageB;
+    protected Image scaledTokenImageB, scaledOtherSubjectImageB, scaledSelfImageB,
+            scaledSelfExplicitCollectionModeImageB, scaledBeingSanctionedImageB, scaledSanctioningImageB, scaledMonitorImageB;
+
     /**
      * Represents the width and height of a grid cell, respectively.
      */
@@ -54,6 +60,7 @@ public abstract class GridView extends JPanel {
     // how big the entire screen is.
     protected Dimension screenSize;
     
+    // Size of the board in pixels
     protected int actualWidth;
     protected int actualHeight;
 
@@ -79,11 +86,12 @@ public abstract class GridView extends JPanel {
         // FIXME: this forces square proportions on all views.
         dw = dh = Math.min(dw, dh);
         
-        actualWidth = actualHeight = (int) Math.min(availableWidth, availableHeight);
+        actualWidth = (int) (dw * boardSize.getWidth());
+        actualHeight = (int) (dh * boardSize.getHeight());
 
         // centered on the screen so we divide by 2 to take into account both sides of the screen.
-        xoffset = (int) Math.floor((availableWidth - (dw * boardSize.getWidth())) / 2);
-        yoffset = (int) Math.floor((availableHeight - (dh * boardSize.getHeight())) / 2);
+        xoffset = (int) Math.floor((availableWidth - actualWidth) / 2);
+        yoffset = (int) Math.floor((availableHeight - actualHeight) / 2);
 
         fontSize = (int)(0.85 * dh);
         font = new Font("sansserif", Font.BOLD, fontSize);
@@ -93,6 +101,7 @@ public abstract class GridView extends JPanel {
         // get scaled instances of the originals
         int cellWidth = (int) dw;
         int cellHeight = (int) dh;
+
         scaledTokenImage = tokenImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledOtherSubjectImage = otherSubjectImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledSelfImage = selfImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
@@ -100,6 +109,16 @@ public abstract class GridView extends JPanel {
         scaledBeingSanctionedImage = beingSanctionedImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledSanctioningImage = sanctioningImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledMonitorImage = monitorImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+
+        // Scale the Zone B images
+        scaledTokenImageB = tokenImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledOtherSubjectImageB = otherSubjectImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledSelfImageB = selfImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledSelfExplicitCollectionModeImageB = selfExplicitCollectionModeImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledBeingSanctionedImageB = beingSanctionedImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledSanctioningImageB = sanctioningImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledMonitorImageB = monitorImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+
         System.err.println("cell width: " + dw);
         System.err.println("cell height: " + dh);
         System.err.println("x offset: " + xoffset);
@@ -156,6 +175,30 @@ public abstract class GridView extends JPanel {
         // FIXME: generate a new image for the monitor, for now just use the explicit-mode image.
         if (monitorImage == null) {
             monitorImage = loadImage("images/gem-self-explicit.gif");
+        }
+
+        // Load the Zone B images
+        if (tokenImageB == null) {
+            tokenImageB = loadImage("images/gem-token-b.gif");
+        }
+        if (selfImageB == null) {
+            selfImageB = loadImage("images/gem-self-b.gif");
+        }
+        if (otherSubjectImageB == null) {
+            otherSubjectImageB = loadImage("images/gem-other-b.gif");
+        }
+        if (selfExplicitCollectionModeImageB == null) {
+            selfExplicitCollectionModeImageB = loadImage("images/gem-self-explicit-b.gif");
+        }
+        if (beingSanctionedImageB == null) {
+            beingSanctionedImageB = loadImage("images/gem-red-b.gif");
+        }
+        if (sanctioningImageB == null) {
+            sanctioningImageB = loadImage("images/gem-purple-b.gif");
+        }
+        // FIXME: generate a new image for the monitor, for now just use the explicit-mode image.
+        if (monitorImageB == null) {
+            monitorImageB = loadImage("images/gem-self-explicit-b.gif");
         }
     }
     

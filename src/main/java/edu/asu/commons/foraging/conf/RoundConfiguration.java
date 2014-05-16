@@ -243,6 +243,21 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     /**
+     * Number of participants in each group to be assigned to the given
+     * zone/team, which may be 0 or 1. The default value is half the group size,
+     * rounded up.
+     *
+     * @return
+     */
+    public int getMaxTeamSize(int zone) {
+        if (zone == 0) {
+            return getIntProperty("team-0-size", getClientsPerGroup() / 2 + getClientsPerGroup() % 2);
+        } else {
+            return getClientsPerGroup() - getMaxTeamSize(0);
+        }
+    }
+
+    /**
      * Returns an int specifying how many tokens the sanctioner must pay to
      * penalize another player.
      * 
@@ -280,6 +295,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public boolean isSanctioningEnabled() {
         return isRealTimeSanctioningEnabled() || isPostRoundSanctioningEnabled();
+    }
+
+    /**
+     * Returns true if participants assigned to zoneA should be allowed to
+     * sanction participants assigned to zoneB
+     */
+    public boolean isSanctioningAllowed(int zoneA, int zoneB) {
+        return getBooleanProperty("sanction-allowed-" + zoneA + "-" + zoneB, true);
     }
 
     public boolean shouldCheckOccupancy() {
@@ -442,6 +465,30 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("resource-generator", ResourceDispenser.Type.DENSITY_DEPENDENT.toString());
     }
 
+    /**
+     * Returns true if the top and bottom resource zones should be indicated visually
+     * using a line and different token images.
+     */
+    public boolean showResourceZones() {
+        return getBooleanProperty("show-resource-zones", false);
+    }
+
+    /**
+     * Returns true if participants should be assigned to resource zones.
+     * Different images will be used for avatars depending on assigned zone.
+     */
+    public boolean areZonesAssigned() {
+        return getBooleanProperty("assign-zones", false);
+    }
+
+    /**
+     * Returns true if participants assigned to the given zone should be
+     * restricted from crossing the border.
+     */
+    public boolean isTravelRestricted(int zone) {
+        return getBooleanProperty("restrict-travel-zone-" + zone, false);
+    }
+
     public int getWorldWidth() {
         return getResourceWidth() * getResourceWorldScale();
     }
@@ -460,6 +507,28 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public boolean isChatEnabled() {
         return isChatRoundEnabled() || isInRoundChatEnabled() || isCensoredChat();
+    }
+
+    /**
+     * Returns true if chat handles should be numeric rather than letters.
+     */
+    public boolean areChatHandlesNumeric() {
+        return getBooleanProperty("chat-handles-numeric", false);
+    }
+
+    /**
+     * Returns a prefix to be prepended to chat handles.
+     */
+    public String getChatHandlePrefix() {
+        return getStringProperty("chat-handle-prefix", "");
+    }
+
+    /**
+     * Returns true if chat messages should be allowed from participants
+     * assigned to zoneA to participants assigned to zoneB
+     */
+    public boolean isChatAllowed(int zoneA, int zoneB) {
+        return getBooleanProperty("chat-allowed-" + zoneA + "-" + zoneB, true);
     }
 
     public int getMaximumResourceAge() {
@@ -876,4 +945,26 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getParentConfiguration().getPlayerTwoAmountToKeepValidation();
     }
 
+    /**
+     * If true, all player input will be automatically generated.
+     */
+    public boolean isRobotControlled() {
+        return getBooleanProperty("robot-controlled", false);
+    }
+
+    /**
+     * When the robot-controlled parameter is true, specifies the number of
+     * moves per second each player will make.
+     */
+    public int getRobotMovesPerSecond() {
+        return getIntProperty("robot-moves-per-second", 10);
+    }
+
+    /**
+     * Probability that a robot-controlled player will attempt to harvest after
+     * making a move
+     */
+    public double getRobotHarvestProbability() {
+        return getDoubleProperty("robot-harvest-probability", 0.5d);
+    }
 }
