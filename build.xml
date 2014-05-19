@@ -4,35 +4,9 @@
      Version: $Revision$
  -->
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="foraging" default="build-all" basedir=".">
-  <!-- ensure ivy availability -->
-  <property name="ivy.install.version" value="2.3.0"/>
-  <condition property="ivy.home" value="${env.IVY_HOME}">
-    <isset property="env.IVY_HOME"/>
-  </condition>
-  <property name="ivy.home" value="${user.home}/.ant"/>
-  <property name="ivy.jar.dir" value="${ivy.home}/lib"/>
-  <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
-  <available file="${conf.dir}/server.xml" property="configuration.exists"/>
-  <available file="${basedir}/build.properties" property="build.properties.exists"/>
-  <target name="download-ivy" unless="offline">
-    <mkdir dir="${ivy.jar.dir}"/>
-    <!-- download Ivy from web site so that it can be used even without any special installation -->
-    <get src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true"/>
-  </target>
-  <target name="init-ivy" depends="download-ivy">
-    <!-- try to load ivy here from ivy home, in case the user has not already dropped
-              it into ant's lib dir (note that the latter copy will always take precedence).
-              We will not fail as long as local lib dir exists (it may be empty) and
-              ivy is in at least one of ant's lib dir or the local lib dir. -->
-    <path id="ivy.lib.path">
-      <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
-    </path>
-    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
-  </target>
   <!-- Load all properties from the build.properties file,
-       then try to define defaults for all the properties.
-       The property definitions in the build.properties file
-       will have precedence.
+       then define defaults for all the properties.
+       NOTE: property definitions in the build.properties file take precedence.
     -->
   <property file="build.properties"/>
   <!-- default compilation properties -->
@@ -139,34 +113,33 @@
     <chmod dir="${deploy.dir}" perm="664" type="file" includes="**"/>
     <chmod dir="${deploy.dir}" perm="775" type="dir" includes="**"/>
   </target>
-  <target name='demo-configuration' depends='compile' unless='configuration.exists'>
+  <target name='demo-configuration' depends='check-configuration,compile' unless='configuration.exists'>
     <copy todir="${conf.dir}">
       <fileset dir="${conf.dir}/demo"/>
     </copy>
   </target>
-  <target name='demo-build-properties' depends='compile' unless='build.properties.exists'>
+  <target name='demo-build-properties' depends='check-configuration,compile' unless='build.properties.exists'>
     <copy tofile='${basedir}/build.properties' file='${basedir}/build.properties.example'/>
   </target>
-  <target name='demo-prepare' depends='compile,demo-configuration,demo-build-properties'>
+  <target name='prepare-demo' depends='demo-configuration,demo-build-properties,compile'>
   </target>
-  <target name="demo" depends="compile,demo-prepare">
-    <antcall target="configure"/>
+  <target name="demo" depends="prepare-demo">
     <antcall target='deploy'/>
     <parallel>
       <daemons>
         <antcall target='server' />
       </daemons>
       <sequential>
-        <sleep seconds='10'/>
+        <sleep seconds='5'/>
         <antcall target='client'/>
       </sequential>
       <sequential>
-        <sleep seconds='10'/>
+        <sleep seconds='5'/>
         <antcall target='fac'/>
       </sequential>
     </parallel>
   </target>
-  <target name="deploy" depends="check-configuration" if="configuration.exists">
+  <target name="deploy" depends="check-configuration,configure" if="configuration.exists">
     <antcall target="deploy-to">
       <param name="deploy.dir" value="${web.dir}"/>
     </antcall>
@@ -211,13 +184,13 @@
     <chmod file="${dist.dir}/${jar.name}" perm="664"/>
   </target>
   <!-- Prepare for a build by creating appropriate directories -->
-  <target name="prepare" depends="init-ivy">
+  <target name="prepare">
     <mkdir dir="${build.dir}"/>
     <mkdir dir="${test.build.dir}"/>
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${lib.dir}"/>
   </target>
-  <target name="resolve" depends="init-ivy" description="--&gt; retrieve dependencies with ivy">
+  <target name="resolve" description="retrieve dependencies with ivy">
     <!-- FIXME: should include revision numbers as well, e.g., 
          <ivy:retrieve pattern='${lib.dir}/[artifact]-[revision].[ext]'/>  
          but this makes the rewritten JNLP files a bit trickier. revisit after we implement dropwizard, spark or other
@@ -242,6 +215,8 @@
   </target>
   <!-- fails if requisite build.properties or src/main/resources/configuration/server.xml do not exist -->
   <target name="check-configuration">
+    <available file="${conf.dir}/server.xml" property="configuration.exists"/>
+    <available file="${basedir}/build.properties" property="build.properties.exists"/>
     <fail message="Did not find any configuration files in ${conf.dir}, please copy over an appropriate set of configuration files into ${conf.dir}" unless="configuration.exists"/>
     <fail message="Please copy build.properties.example to build.properties and edit before proceeding." unless="build.properties.exists"/>
   </target>
@@ -286,7 +261,7 @@
     <java classname="${facilitator.class}" classpathref="project.classpath" fork="yes"/>
   </target>
   <target name="deploy-server" depends="deploy, server"/>
-  <target name="server" depends="compile,check-configuration" if="configuration.exists">
+  <target name="server" depends="compile,check-configuration">
     <!-- make sure we update the configuration -->
     <copy todir="${build.dir}/conf" overwrite="true">
       <fileset dir="${conf.dir}"/>
@@ -300,7 +275,7 @@
       <jvmarg value="-server"/>
     </java>
   </target>
-  <target name="server-debug" depends="compile,check-configuration" if="configuration.exists">
+  <target name="server-debug" depends="compile,check-configuration">
     <!-- make sure we update the configuration -->
     <copy todir="${build.dir}/conf" overwrite="true">
       <fileset dir="${conf.dir}"/>

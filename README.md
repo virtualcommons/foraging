@@ -20,17 +20,22 @@ at [Arizona State University](http://www.asu.edu), [Indiana University](http://w
 
 Quickstart:
 
-* [install Java, Ant, and Maven](https://bitbucket.org/virtualcommons/csidex/wiki/Home)
-* download and unpack the foraging codebase
-* `% cp build.properties.example build.properties`
-* `% cp src/main/resources/configuration/demo/* src/main/resources/configuration`
-* `% ant deploy`
-
-For more detailed instructions, please see our [wiki](wiki/Home).
+* [install and setup Java, Ant, and Maven](https://bitbucket.org/virtualcommons/csidex/wiki/Home)
+* [download and unpack the foraging codebase](/virtualcommons/foraging/downloads)
+* From the command-line (e.g., Windows PowerShell or Command Prompt, Mac OSX Terminal.app, or any Linux terminal program)
+```
+#!bash
+% ant prepare-demo
+% ant demo
+```
+For more detailed instructions, please see the [installation instructions on our wiki](wiki/Installation).
 
 ### publications
 
-* [Lab Experiments for the Study of Social-Ecological Systems](http://www.sciencemag.org/cgi/content/abstract/328/5978/613)
+Data generated from the foraging framework has been published in 
+[Lab Experiments for the Study of Social-Ecological Systems](http://www.sciencemag.org/cgi/content/abstract/328/5978/613). 
+Archives of the [the configuration files used](src/main/resources/configuration/iu/archived) and the
+[generated data](http://dev.commons.asu.edu/data/foraging/2008/all-iu-foraging-data.zip) are available.
 
 ### status
 This project is not under active development but is actively maintained. If you'd like to add new features or experience
