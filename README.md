@@ -18,14 +18,15 @@ at [Arizona State University](http://www.asu.edu), [Indiana University](http://w
 
 ### how to run the software
 
+Quickstart:
+
 * [install Java, Ant, and Maven](https://bitbucket.org/virtualcommons/csidex/wiki/Home)
 * download and unpack the foraging codebase
 * `% cp build.properties.example build.properties`
 * `% cp src/main/resources/configuration/demo/* src/main/resources/configuration`
 * `% ant deploy`
-* To run a server: `ant server` or `java -jar -server server.jar`
-* To run the facilitator: `ant fac` or `java -jar facilitator.jar` or visit `${codebase.url}/facilitator.jnlp` where `${codebase.url}` is as defined in your `build.properties` file 
-* To run a client:  `ant client` or `java -jar client.jar` or visit `${codebase.url}`
+
+For more detailed instructions, please see our [wiki](wiki/Home).
 
 ### publications
 
