@@ -12,6 +12,8 @@
   <property name="ivy.home" value="${user.home}/.ant"/>
   <property name="ivy.jar.dir" value="${ivy.home}/lib"/>
   <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
+  <available file="${conf.dir}/server.xml" property="configuration.exists"/>
+  <available file="${basedir}/build.properties" property="build.properties.exists"/>
   <target name="download-ivy" unless="offline">
     <mkdir dir="${ivy.jar.dir}"/>
     <!-- download Ivy from web site so that it can be used even without any special installation -->
@@ -56,7 +58,6 @@
   <property name="javadoc.private.dir" value="docs/private"/>
   <property name="lib.dir" value="lib"/>
   <property name="remote.debug.port" value="1044"/>
-
   <!-- Set up the CLASSPATH, includes all jars in the lib
        directory and all built files for both the main project
        and the tests -->
@@ -81,8 +82,9 @@
             
     Available targets:
       compile     - Compile all the source code and tests.
-      clean       - Remove all compiled source and test classes.
-      clean-build - Same as clean, but leave ~/.ant and ~/.m2 untouched
+      clean       - Remove all compiled source and test classes and build artifacts.
+      purge       - Purges all configuration files and the csidex maven/ivy jars in addition to running a clean
+      demo        - runs a quickstart demo using configuration files from src/main/resources/configuration/demo and the sample build.properties
       docs        - Create JavaDoc documentation for all source code.
       test        - Run all JUnit in the test source tree.
       build-all   - builds the client, server, and facilitator jars.
@@ -137,7 +139,34 @@
     <chmod dir="${deploy.dir}" perm="664" type="file" includes="**"/>
     <chmod dir="${deploy.dir}" perm="775" type="dir" includes="**"/>
   </target>
-  <target name="deploy" depends='check-configuration' if='configuration.present'>
+  <target name='demo-configuration' depends='compile' unless='configuration.exists'>
+    <copy todir="${conf.dir}">
+      <fileset dir="${conf.dir}/demo"/>
+    </copy>
+  </target>
+  <target name='demo-build-properties' depends='compile' unless='build.properties.exists'>
+    <copy tofile='${basedir}/build.properties' file='${basedir}/build.properties.example'/>
+  </target>
+  <target name='demo-prepare' depends='compile,demo-configuration,demo-build-properties'>
+  </target>
+  <target name="demo" depends="compile,demo-prepare">
+    <antcall target="configure"/>
+    <antcall target='deploy'/>
+    <parallel>
+      <daemons>
+        <antcall target='server' />
+      </daemons>
+      <sequential>
+        <sleep seconds='10'/>
+        <antcall target='client'/>
+      </sequential>
+      <sequential>
+        <sleep seconds='10'/>
+        <antcall target='fac'/>
+      </sequential>
+    </parallel>
+  </target>
+  <target name="deploy" depends="check-configuration" if="configuration.exists">
     <antcall target="deploy-to">
       <param name="deploy.dir" value="${web.dir}"/>
     </antcall>
@@ -186,31 +215,35 @@
     <mkdir dir="${build.dir}"/>
     <mkdir dir="${test.build.dir}"/>
     <mkdir dir="${dist.dir}"/>
-    <mkdir dir='${lib.dir}'/>
+    <mkdir dir="${lib.dir}"/>
   </target>
-  <target name='resolve' depends='init-ivy' description='--> retrieve dependencies with ivy'>
-    <ivy:retrieve pattern='${lib.dir}/[artifact].[ext]'/> 
-  </target>
-  <!-- Clean up build by deleting build directories -->
-  <target name="clean">
-    <echo message="Removing ${user.home}/.ant/cache" />
-    <delete dir='${user.home}/.ant/cache' />
-    <delete dir='${user.home}/.m2/repository/edu/asu/commons' />
-    <delete dir="${build.dir}"/>
-    <delete dir="${test.build.dir}"/>
-    <delete dir="${lib.dir}"/>
-    <delete file="server.jar"/>
-    <delete file="client.jar"/>
-    <delete file="facilitator.jar"/>
+  <target name="resolve" depends="init-ivy" description="--&gt; retrieve dependencies with ivy">
+    <!-- FIXME: should include revision numbers as well, e.g., 
+         <ivy:retrieve pattern='${lib.dir}/[artifact]-[revision].[ext]'/>  
+         but this makes the rewritten JNLP files a bit trickier. revisit after we implement dropwizard, spark or other
+         smarter web deployment
+         -->
+    <ivy:retrieve pattern="${lib.dir}/[artifact].[ext]"/>
   </target>
   <!-- Clean project directory only, leaving ~/.ant and ~/.m2 untouched -->
-  <target name="clean-build">
+  <target name="clean">
     <delete dir="${build.dir}"/>
     <delete dir="${test.build.dir}"/>
     <delete dir="${lib.dir}"/>
     <delete file="server.jar"/>
     <delete file="client.jar"/>
     <delete file="facilitator.jar"/>
+  </target>
+  <!-- delete ivy and maven caches to force reload a new csidex snapshot -->
+  <target name="purge" depends="clean">
+    <echo message="Removing ${user.home}/.ant/cache"/>
+    <delete dir="${user.home}/.ant/cache"/>
+    <delete dir="${user.home}/.m2/repository/edu/asu/commons"/>
+  </target>
+  <!-- fails if requisite build.properties or src/main/resources/configuration/server.xml do not exist -->
+  <target name="check-configuration">
+    <fail message="Did not find any configuration files in ${conf.dir}, please copy over an appropriate set of configuration files into ${conf.dir}" unless="configuration.exists"/>
+    <fail message="Please copy build.properties.example to build.properties and edit before proceeding." unless="build.properties.exists"/>
   </target>
   <!-- Compile project source files -->
   <target name="compile" depends="prepare, resolve">
@@ -240,7 +273,10 @@
   </target>
   <!-- Build project documentation -->
   <target name="docs">
-    <javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" packagenames="*" source="1.6" classpathref="project.classpath" link="http://java.sun.com/javase/6/docs/api/              http://commons.asu.edu/src/csidex/api" overview="${src.dir}/overview.html"/>
+    <javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" packagenames="*" source="1.7" classpathref="project.classpath" overview="${src.dir}/overview.html">
+      <link href="http://docs.oracle.com/javase/7/docs/api/"/>
+      <link href="http://commons.asu.edu/src/csidex/api"/>
+    </javadoc>
   </target>
   <!-- RUN TARGETS -->
   <target name="client" depends="compile">
@@ -250,13 +286,7 @@
     <java classname="${facilitator.class}" classpathref="project.classpath" fork="yes"/>
   </target>
   <target name="deploy-server" depends="deploy, server"/>
-  <target name='check-configuration'>
-    <available file='${conf.dir}/server.xml' property='configuration.present'/>
-    <fail message="Did not find any configuration files in ${conf.dir}, please copy over an appropriate set of configuration files into ${conf.dir}"
-      unless="configuration.present" />
-  </target>
-
-  <target name="server" depends="compile,check-configuration" if='configuration.present'>
+  <target name="server" depends="compile,check-configuration" if="configuration.exists">
     <!-- make sure we update the configuration -->
     <copy todir="${build.dir}/conf" overwrite="true">
       <fileset dir="${conf.dir}"/>
@@ -266,13 +296,11 @@
         <filter token="CODEBASE_URL" value="${codebase.url}"/>
       </filterset>
     </copy>
-
     <java classname="${server.class}" classpathref="project.classpath" fork="yes">
       <jvmarg value="-server"/>
     </java>
   </target>
-
-  <target name="server-debug" depends="compile,check-configuration" if='configuration.present'>
+  <target name="server-debug" depends="compile,check-configuration" if="configuration.exists">
     <!-- make sure we update the configuration -->
     <copy todir="${build.dir}/conf" overwrite="true">
       <fileset dir="${conf.dir}"/>
@@ -282,16 +310,12 @@
         <filter token="CODEBASE_URL" value="${codebase.url}"/>
       </filterset>
     </copy>
-
     <java classname="${server.class}" classpathref="project.classpath" fork="yes">
       <jvmarg value="-server"/>
-
       <!-- Enable remote debugging -->
       <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${remote.debug.port}"/>
-
     </java>
   </target>
-
   <!-- Compile Tests -->
   <target name="compile-tests" depends="compile">
     <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" source="1.6" target="1.6" debug="on">
