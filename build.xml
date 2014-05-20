@@ -32,6 +32,8 @@
   <property name="javadoc.private.dir" value="docs/private"/>
   <property name="lib.dir" value="lib"/>
   <property name="remote.debug.port" value="1044"/>
+  <available file="${conf.dir}/server.xml" property="configuration.exists"/>
+  <available file="${basedir}/build.properties" property="build.properties.exists"/>
   <!-- Set up the CLASSPATH, includes all jars in the lib
        directory and all built files for both the main project
        and the tests -->
@@ -113,12 +115,12 @@
     <chmod dir="${deploy.dir}" perm="664" type="file" includes="**"/>
     <chmod dir="${deploy.dir}" perm="775" type="dir" includes="**"/>
   </target>
-  <target name='demo-configuration' depends='check-configuration,compile' unless='configuration.exists'>
+  <target name='demo-configuration' unless='${configuration.exists}'>
     <copy todir="${conf.dir}">
       <fileset dir="${conf.dir}/demo"/>
     </copy>
   </target>
-  <target name='demo-build-properties' depends='check-configuration,compile' unless='build.properties.exists'>
+  <target name='demo-build-properties' unless='${build.properties.exists}'>
     <copy tofile='${basedir}/build.properties' file='${basedir}/build.properties.example'/>
   </target>
   <target name='prepare-demo' depends='demo-configuration,demo-build-properties,compile'>
@@ -130,16 +132,32 @@
         <antcall target='server' />
       </daemons>
       <sequential>
-        <sleep seconds='5'/>
+        <sleep seconds='2'/>
+        <antcall target='fac'/>
+      </sequential>
+      <sequential>
+        <sleep seconds='3'/>
+        <antcall target='client'/>
+      </sequential>
+      <sequential>
+        <sleep seconds='4'/>
         <antcall target='client'/>
       </sequential>
       <sequential>
         <sleep seconds='5'/>
-        <antcall target='fac'/>
+        <antcall target='client'/>
+      </sequential>
+      <sequential>
+        <sleep seconds='6'/>
+        <antcall target='client'/>
+      </sequential>
+      <sequential>
+        <sleep seconds='7'/>
+        <antcall target='client'/>
       </sequential>
     </parallel>
   </target>
-  <target name="deploy" depends="check-configuration,configure" if="configuration.exists">
+  <target name="deploy" depends="check-configuration,configure" if="${configuration.exists}">
     <antcall target="deploy-to">
       <param name="deploy.dir" value="${web.dir}"/>
     </antcall>
@@ -215,10 +233,8 @@
   </target>
   <!-- fails if requisite build.properties or src/main/resources/configuration/server.xml do not exist -->
   <target name="check-configuration">
-    <available file="${conf.dir}/server.xml" property="configuration.exists"/>
-    <available file="${basedir}/build.properties" property="build.properties.exists"/>
-    <fail message="Did not find any configuration files in ${conf.dir}, please copy over an appropriate set of configuration files into ${conf.dir}" unless="configuration.exists"/>
-    <fail message="Please copy build.properties.example to build.properties and edit before proceeding." unless="build.properties.exists"/>
+    <fail message="Did not find any configuration files in ${conf.dir}, please copy over an appropriate set of configuration files into ${conf.dir}" unless="${configuration.exists}"/>
+    <fail message="Please copy build.properties.example to build.properties and edit before proceeding." unless="${build.properties.exists}"/>
   </target>
   <!-- Compile project source files -->
   <target name="compile" depends="prepare, resolve">
