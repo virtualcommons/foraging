@@ -20,7 +20,7 @@
   <property name="client.class" value="edu.asu.commons.foraging.client.ForagingClient"/>
   <property name="facilitator.class" value="edu.asu.commons.foraging.facilitator.Facilitator"/>
   <property name="server.class" value="edu.asu.commons.foraging.server.ForagingServer"/>
-  <property name="framework.jar" value="csidex.jar"/>
+  <property name="framework.jar" value="sesef.jar"/>
   <property name="dist.dir" value="."/>
   <property name="resources.dir" value="src/main/resources"/>
   <property name="conf.dir" value="${resources.dir}/configuration"/>
@@ -59,7 +59,7 @@
     Available targets:
       compile     - Compile all the source code and tests.
       clean       - Remove all compiled source and test classes and build artifacts.
-      purge       - Purges all configuration files and the csidex maven/ivy jars in addition to running a clean
+      purge       - Purges all configuration files and the sesef maven/ivy jars in addition to running a clean
       demo        - runs a quickstart demo using configuration files from src/main/resources/configuration/demo and the sample build.properties
       docs        - Create JavaDoc documentation for all source code.
       test        - Run all JUnit in the test source tree.
@@ -69,12 +69,12 @@
     </echo>
   </target>
   <target name="build-all" depends="facilitator-jar, client-jar, server-jar, compile"/>
-  <!-- deploys the client + facilitator + csidex jarfiles to the appropriate
+  <!-- deploys the client + facilitator + sesef jarfiles to the appropriate
      webapps directory. -->
   <target name="deploy-to" depends="build-all">
     <mkdir dir="${deploy.dir}"/>
     <!-- 
-    copy client jar, facilitator jar, and csidex.jar to web deployment
+    copy client jar, facilitator jar, and sesef.jar to web deployment
     directory 
     -->
     <copy todir="${deploy.dir}" overwrite="true">
@@ -225,7 +225,7 @@
     <delete file="client.jar"/>
     <delete file="facilitator.jar"/>
   </target>
-  <!-- delete ivy and maven caches to force reload a new csidex snapshot -->
+  <!-- delete ivy and maven caches to force reload a new sesef snapshot -->
   <target name="purge" depends="clean">
     <echo message="Removing ${user.home}/.ant/cache"/>
     <delete dir="${user.home}/.ant/cache"/>
@@ -266,7 +266,7 @@
   <target name="docs">
     <javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" packagenames="*" source="1.7" classpathref="project.classpath" overview="${src.dir}/overview.html">
       <link href="http://docs.oracle.com/javase/7/docs/api/"/>
-      <link href="http://commons.asu.edu/src/csidex/api"/>
+      <link href="http://commons.asu.edu/src/sesef/api"/>
     </javadoc>
   </target>
   <!-- RUN TARGETS -->

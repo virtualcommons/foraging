@@ -73,7 +73,7 @@ vim:sts=2:sw=2
     </dependency>
     <dependency>
       <groupId>edu.asu.commons</groupId>
-      <artifactId>csidex</artifactId>
+      <artifactId>sesef</artifactId>
       <version>0.7-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -101,7 +101,7 @@ vim:sts=2:sw=2
         <version>2.9.1</version>
         <configuration>
           <links>
-            <link>http://commons.asu.edu/api/csidex/</link>
+            <link>http://commons.asu.edu/api/sesef/</link>
           </links>
           <detectLinks>true</detectLinks>
         </configuration>

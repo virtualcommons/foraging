@@ -2,7 +2,7 @@
 
 The foraging experiment is a common pool resource experiment where participants are placed in randomized groups and
 interact with a spatially explicit renewable resource. It is built on the
-[csidex](http://bitbucket.org/virtualcommons/csidex) experiment framework and has been used to conduct research studies
+[Social Ecological Systems Experiment Framework](http://bitbucket.org/virtualcommons/sesef) and has been used to conduct research studies
 at [Arizona State University](http://www.asu.edu), [Indiana University](http://www.iu.edu), and the [University of Alaska-Anchorage](http://www.uaa.alaska.edu).
 
 ### features
@@ -25,7 +25,7 @@ at [Arizona State University](http://www.asu.edu), [Indiana University](http://w
 
 Quickstart:
 
-* [install and setup Java, Ant, and Maven](https://bitbucket.org/virtualcommons/csidex/wiki/Home)
+* [install and setup Java, Ant, and Maven](https://bitbucket.org/virtualcommons/sesef/wiki/Home)
 * [download and unpack the foraging codebase](https://bitbucket.org/virtualcommons/foraging/downloads)
 * From the command-line (e.g., Windows PowerShell or Command Prompt, Mac OSX Terminal.app, or any Linux terminal)
 ```
