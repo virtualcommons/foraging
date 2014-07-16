@@ -8,29 +8,13 @@ vim:sts=2:sw=2
     <name>The Virtual Commons</name>
     <url>http://commons.asu.edu</url>
   </organization>
-  <developers>
-    <developer>
-      <id>allen</id>
-      <name>Allen Lee</name>
-      <email>allen.lee@asu.edu</email>
-      <url>http://libai.la.asu.edu/allen.lee</url>
-      <organization>Center for the Study of Institutional Diversity</organization>
-      <organizationUrl>http://csid.asu.edu</organizationUrl>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-        <role>manager</role>
-      </roles>
-      <timezone>-7</timezone>
-    </developer>
-  </developers>
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.asu.commons</groupId>
   <artifactId>foraging</artifactId>
   <packaging>jar</packaging>
   <version>1.1-SNAPSHOT</version>
   <name>foraging</name>
-  <url>http://commons.asu.edu/foraging</url>
+  <url>http://bitbucket.org/virtualcommons/foraging</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -42,7 +26,7 @@ vim:sts=2:sw=2
     </license>
   </licenses>
   <scm>
-    <url>https://bitbucket.org/virtualcommons/foraging</url>
+    <url>scm:hg:https://bitbucket.org/virtualcommons/foraging</url>
   </scm>
   <issueManagement>
     <system>Bitbucket</system>
@@ -114,58 +98,6 @@ vim:sts=2:sw=2
           <target>1.7</target>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>8.1.15.v20140411</version>
-        <configuration>
-          <stopKey>STOP</stopKey>
-          <stopPort>9999</stopPort>
-          <contextPath>/</contextPath>
-          <webDefaultXml>src/main/resources/web/webdefault.xml</webDefaultXml>
-          <scanIntervalSeconds>5</scanIntervalSeconds>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>ant</id>
-      <build>
-        <defaultGoal>antrun:run</defaultGoal>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <goals>
-              <goal>load</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <!-- 
-                can be invoked via 
-                mvn -P ant -D target=deploy
-                -->
-                <property name="compile.classpath" refid="maven.compile.classpath"/>
-                <property name="runtime.classpath" refid="maven.runtime.classpath"/>
-                <property name="test.classpath" refid="maven.test.classpath"/>
-                <property name="plugin.classpath" refid="maven.plugin.classpath"/>
-                <ant antfile="${basedir}/build.xml" inheritRefs="true" inheritAll="true">
-                  <target name="${target}"/>
-                </ant>
-              </tasks>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-      <dependencies>
-        <dependency>
-          <groupId>ant-contrib</groupId>
-          <artifactId>ant-contrib</artifactId>
-          <version>1.0b2</version>
-        </dependency>
-      </dependencies>
-    </profile>
-
-  </profiles>
 </project>

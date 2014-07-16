@@ -307,6 +307,9 @@
       <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${remote.debug.port}"/>
     </java>
   </target>
+  <target name='webserver' depends='compile'>
+
+  </target>
   <!-- Compile Tests -->
   <target name="compile-tests" depends="compile">
     <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" source="1.6" target="1.6" debug="on">

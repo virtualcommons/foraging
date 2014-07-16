@@ -239,7 +239,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         if (isPrivateProperty()) {
             return 1;
         }
-        return getIntProperty("clients-per-group", Integer.MAX_VALUE);
+        return getIntProperty("clients-per-group", getParentConfiguration().getClientsPerGroup());
     }
 
     /**

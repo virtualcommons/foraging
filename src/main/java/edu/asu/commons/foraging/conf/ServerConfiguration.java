@@ -33,6 +33,7 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
     private static final String SAME_ROUND_AS_PREVIOUS_INSTRUCTIONS = "<h3>Round {self.roundNumber} Instructions</h3><hr><p>Round {self.roundNumber} is the same as the previous round.</p><p>The length of this round is {duration}.</p><p>If you have any questions please raise your hand.  <b>Do you have any questions so far?</b></p>";
     private static final String DEFAULT_LOG_FILE_DESTINATION = "foraging-server.log";
     private static final double DEFAULT_DOLLARS_PER_TOKEN = .02d;
+    private static final int DEFAULT_CLIENTS_PER_GROUP = 5;
     
     public ServerConfiguration() {
         super();
@@ -190,6 +191,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
 
     public String getPlayerTwoAmountToKeepValidation() {
         return getProperty("trust-game-p2-validation", "Please select the amount you would like to keep as player 1.");
+    }
+
+    public int getClientsPerGroup() {
+        return getIntProperty("clients-per-group", DEFAULT_CLIENTS_PER_GROUP);
     }
 
 }
