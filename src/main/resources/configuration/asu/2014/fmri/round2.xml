@@ -9,4 +9,5 @@
 <entry key='initial-distribution'>.25</entry>
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
+<entry key='in-round-chat-enabled'>true</entry>
 </properties>
