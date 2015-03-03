@@ -39,8 +39,8 @@ For more detailed instructions, please see the [installation instructions on our
 
 Data generated from the foraging framework has been published in 
 [Lab Experiments for the Study of Social-Ecological Systems](http://www.sciencemag.org/cgi/content/abstract/328/5978/613). 
-Archives of the [the configuration files used](https://bitbucket.org/virtualcommons/foraging/src/tip/src/main/resources/configuration/iu/archived/) and the
-[generated data](http://dev.commons.asu.edu/data/foraging/2008/all-iu-foraging-data.zip) are available.
+Archives of the [configuration files used](https://bitbucket.org/virtualcommons/foraging/src/tip/src/main/resources/configuration/iu/archived/) and the
+[experiment data](http://dev.commons.asu.edu/data/foraging/2008/all-iu-foraging-data.zip) are available.
 
 ### status
 This project is not under active development but is actively maintained. If you'd like to add new features or find any
