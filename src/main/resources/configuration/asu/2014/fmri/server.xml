@@ -11,6 +11,7 @@
 <entry key="round4">round4.xml</entry>
 <entry key="round5">round5.xml</entry>
 <entry key="round6">round6.xml</entry>
+<entry key='quiz-correct-answer-reward'>0.10</entry>
 <entry key='clients-per-group'>2</entry>
 <entry key="wait-for-participants">true</entry>
 <entry key="number-of-rounds">7</entry>
@@ -58,15 +59,6 @@ Please <b>wait quietly</b> and <b>do not close this window, open any other appli
 <![CDATA[
 <h1>General Instructions</h1>
 <hr>
-<p>
-    <b>Welcome</b>. You have already earned {showUpPayment} dollars just for showing up at this experiment. 
-</p>
-<p>
-You can earn more, up to a maximum of about 40 dollars, by participating in this
-experiment which will take about an hour to an hour and a half. The amount of money
-you earn depends on your decisions AND the decisions of other people in this room
-over the course of the experiment.
-</p>
 <h2>How to participate</h2>
 <hr>
 <p>
