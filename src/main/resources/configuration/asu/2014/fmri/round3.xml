@@ -15,7 +15,7 @@
 <h1>Round {self.roundNumber} Instructions</h1>
 <hr>
 <p>
-    This is round {self.roundNumber} of the experiment. The length of the round is again {duration} minutes. As in the
+    This is round {self.roundNumber} of the experiment. The length of the round is again {duration}. As in the
     previous rounds you can collect green tokens.
 </p>
 <h3>Groups</h3>
