@@ -4,8 +4,8 @@
 <comment>Foraging XML experiment round configuration</comment>
 <entry key="display-group-tokens">true</entry>
 <entry key="duration">240</entry>
-<entry key="resource-width">13</entry>
-<entry key="resource-depth">13</entry>
+<entry key="resource-width">14</entry>
+<entry key="resource-depth">14</entry>
 <entry key="private-property">true</entry>
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
@@ -14,12 +14,16 @@
 <h1>Round {self.roundNumber} Instructions</h1>
 <hr>
 <p>
-    This is the first round of the experiment. The length of the round is
-    {duration}. As in the practice round you can collect green tokens but now
-    you will earn <b>{dollarsPerToken}</b> for each token collected.  You
+    This is the first round of the experiment. The length of the round is {duration}. As in the practice round you can
+    collect green tokens. However, this time you will earn <b>{dollarsPerToken}</b> for each token collected.  You
     <b>cannot</b> reset the distribution of green tokens. 
 </p>
-<p><b>Do you have any questions so far?</b>  If you have any questions at this time, raise your hand and someone will come over to your station and answer it.</p>
+<p>
+    On the top right corner of the screen you can see how many tokens you have collected. On the top left corner of the
+    screen you can see the amount of time remaining in the round.
+</p>
+<p><b>Do you have any questions so far?</b>  If you have any questions at this time, raise your hand and someone will
+    come over to your station and answer it.</p>
 ]]>
 </entry>
 </properties>
