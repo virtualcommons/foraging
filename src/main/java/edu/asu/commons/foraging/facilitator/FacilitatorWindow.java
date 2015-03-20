@@ -246,6 +246,13 @@ public class FacilitatorWindow extends JPanel {
         });
         menu.add(menuItem);
 
+        createMenuItem(menu, "Reconnect", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                facilitator.connect();
+            }
+        });
+
         // create copy to clipboard menu item
         createMenuItem(menu, "Copy to clipboard", new ActionListener() {
             @Override

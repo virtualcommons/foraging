@@ -138,15 +138,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
                 dataModel.setRoundConfiguration(configuration);
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-//                        clientPanel.removeAll();
-                        // only needed for defunct 3d case, getting rid of this now.
-//                        if (gameWindow != null) {
-//                            gameWindow.dispose();
-//                        }
-//                        clientPanel.add(gameWindow.getPanel(), BorderLayout.CENTER);
                         gameWindow.init();
-//                        clientPanel.revalidate();
-//                        clientPanel.repaint();
                     }
                 });
 

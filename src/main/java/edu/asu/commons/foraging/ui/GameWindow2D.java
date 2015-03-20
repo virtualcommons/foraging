@@ -455,6 +455,12 @@ public class GameWindow2D implements GameWindow {
             @Override
             public void keyPressed(KeyEvent keyEvent) {
                 if (! client.isRoundInProgress()) {
+                    // check for reconnect signal
+                    if (e.getKeyChar() == 'c') {
+                        if (e.isShiftDown() && e.isControlDown()) {
+                            client.connect();
+                        }
+                    }
                     return;
                 }
                 int keyChar = (int) keyEvent.getKeyChar();
