@@ -79,11 +79,11 @@ press the <b>R</b> key you will reset the distribution of the tokens to randomly
 <input type="radio" name="q6" value="Possible">Possible<br>
 <input type="radio" name="q6" value="Impossible">Impossible<br>
 <br><br>
-<span class='q7'>Q7. If you have collected 100 tokens in four minutes, you have earned 3 dollars.</span> <br>
+<span class='q7'>Q7. If each token is worth $0.02 and you collect 100 tokens in a round, you have earned 3 dollars in that round.</span> <br>
 <input type="radio" name="q7" value="T">True<br>
 <input type="radio" name="q7" value="F">False<br>
 <br><br>
-<span class='q8'>Q8. The duration of a round is four minutes.</span> <br>
+<span class='q8'>Q8. The duration of the practice round is four minutes.</span> <br>
 <input type="radio" name="q8" value="T">True<br>
 <input type="radio" name="q8" value="F">False<br>
 <br><br>
@@ -152,16 +152,16 @@ press the <b>R</b> key you will reset the distribution of the tokens to randomly
         No, this sequence is not possible. New tokens cannot regenerate on an empty cell when all neighboring cells are also empty.
     </b>
     <br><br>
-<span class='q7'>Q7. If you collect 100 tokens in a round, you have earned 3 dollars.</span> <br>
+<span class='q7'>Q7. If each token is worth $0.02 and you collect 100 tokens in a round, you have earned 3 dollars in that round.</span> <br>
     <b>
         {incorrect_q7} 
-        This statement is false. Each token you collect is worth $0.02 so if you collected 100 tokens you would have earned 2 dollars in that round.
+        This statement is false. You would have earned 100 * $0.02 = $2.00 in that round.
     </b>
     <br><br>
-<span class='q8'>Q8. The duration of a round is four minutes.</span> <br>
+<span class='q8'>Q8. The duration of the practice round is four minutes.</span> <br>
     <b>
         {incorrect_q8} 
-        This statement is true. Each round will last four minutes.
+        This statement is true. The practice round will last four minutes.
     </b>
     <br><br>
 <span class='q9'>Q9. All the cells are filled with green tokens at the start of the experiment.</span> <br>
