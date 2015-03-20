@@ -188,6 +188,7 @@
     <chmod dir="${build.dir}" perm="a+rx" type="dir" includes="**"/>
     <chmod dir="${build.dir}" perm="a+r" type="file" includes="**"/>
     <manifest file="manifest.mf">
+      <attribute name="Application-Name" value="${main.class}"/>
       <attribute name="Main-Class" value="${main.class}"/>
       <attribute name="Class-Path" value="${manifest.classpath}"/>
     </manifest>
