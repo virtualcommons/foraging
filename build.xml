@@ -215,7 +215,7 @@
          but this makes the rewritten JNLP files a bit trickier. revisit after we implement dropwizard, spark or other
          smarter web deployment
          -->
-    <ivy:retrieve pattern="${lib.dir}/[artifact].[ext]"/>
+    <ivy:retrieve/>
   </target>
   <!-- Clean project directory only, leaving ~/.ant and ~/.m2 untouched -->
   <target name="clean">
