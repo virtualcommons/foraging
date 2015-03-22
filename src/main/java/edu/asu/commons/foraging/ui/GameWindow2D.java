@@ -414,6 +414,9 @@ public class GameWindow2D implements GameWindow {
         mainPanel.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent event) {
                 RoundConfiguration configuration = dataModel.getRoundConfiguration();
+                if (configuration == null) {
+                    return;
+                }
                 Component component = event.getComponent();
                 int width = component.getWidth();
                 if (configuration.isInRoundChatEnabled()) {

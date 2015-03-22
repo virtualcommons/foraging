@@ -7,15 +7,18 @@
     <homepage href="http://commons.asu.edu"/>
     <description>Foraging 2D facilitator interface to control the Foraging 2D experiment.</description>
     <icon href="commons.gif"/> 
+    <offline-allowed />
   </information> 
-  <offline-allowed />
+  <security>
+      <all-permissions />
+  </security>
   <resources> 
     <j2se version="1.7+"/>
     <jar href="facilitator.jar"/>
-    <jar href='ST4.jar'/>
-    <jar href='antlr-runtime.jar'/>
+    <jar href='ST4-4.0.8.jar'/>
+    <jar href='antlr-runtime-3.5.2.jar'/>
     <jar href='@FRAMEWORK_JAR@'/>
   </resources>
-  <application-desc main-class="@MAIN_CLASS@"/> 
+  <application-desc name='Foraging Facilitator' main-class="@MAIN_CLASS@"/> 
 </jnlp>
 

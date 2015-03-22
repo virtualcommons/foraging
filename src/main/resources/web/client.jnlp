@@ -7,18 +7,20 @@
     <homepage href="http://commons.asu.edu"/>
     <description>An experiment brought to you courtesy of The Virtual Commons - http://commons.asu.edu</description>
   </information> 
-  <offline-allowed />
+  <security>
+      <all-permissions />
+  </security>
   <resources> 
     <j2se version="1.7+"/>
     <jar href="client.jar"/>
-    <jar href='ST4.jar'/>
-    <jar href='antlr-runtime.jar'/>
+    <jar href='ST4-4.0.8.jar'/>
+    <jar href='antlr-runtime-3.5.2.jar'/>
     <jar href='@FRAMEWORK_JAR@'/>
     <!--
     <property name="sun.java2d.noddraw" value="true"/> 
     <extension name="jogl" href="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp"/>
     -->
   </resources>
-  <application-desc main-class="@MAIN_CLASS@"/> 
+  <application-desc name='Foraging client' main-class="@MAIN_CLASS@"/> 
 </jnlp>
 

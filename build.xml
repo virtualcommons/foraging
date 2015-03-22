@@ -21,7 +21,7 @@
   <property name="facilitator.class" value="edu.asu.commons.foraging.facilitator.Facilitator"/>
   <property name="server.class" value="edu.asu.commons.foraging.server.ForagingServer"/>
   <property name="framework.jar" value="sesef.jar"/>
-  <property name="dist.dir" value="."/>
+  <property name="dist.dir" value="." />
   <property name="resources.dir" value="src/main/resources"/>
   <property name="conf.dir" value="${resources.dir}/configuration"/>
   <!-- test properties -->
@@ -32,6 +32,7 @@
   <property name="javadoc.private.dir" value="docs/private"/>
   <property name="lib.dir" value="lib"/>
   <property name="remote.debug.port" value="1044"/>
+  <property name='keystore.file' value='commons.jks' />
   <available file="${conf.dir}/server.xml" property="configuration.exists"/>
   <available file="${basedir}/build.properties" property="build.properties.exists"/>
   <!-- Set up the CLASSPATH, includes all jars in the lib
@@ -69,9 +70,23 @@
     </echo>
   </target>
   <target name="build-all" depends="facilitator-jar, client-jar, server-jar, compile"/>
+  <target name='sign-jars'>
+    <signjar destDir='${dist.dir}' alias='commons' keystore='${keystore.file}' lazy='true' storepass='${keystore.password}'>
+      <path>
+        <fileset dir='${dist.dir}' includes='*.jar' />
+      </path>
+    </signjar>
+  </target>
+  <target name='sign-dependencies'>
+    <signjar destDir='${lib.dir}' alias='commons' keystore='commons.jks' lazy='true' storepass='${keystore.password}'>
+      <path>
+        <fileset dir='${lib.dir}' includes='*.jar' />
+      </path>
+    </signjar>
+  </target>
   <!-- deploys the client + facilitator + sesef jarfiles to the appropriate
      webapps directory. -->
-  <target name="deploy-to" depends="build-all">
+  <target name="deploy-to" depends="build-all, sign-jars, sign-dependencies">
     <mkdir dir="${deploy.dir}"/>
     <!-- 
     copy client jar, facilitator jar, and sesef.jar to web deployment
@@ -191,6 +206,7 @@
       <attribute name="Application-Name" value="${main.class}"/>
       <attribute name="Main-Class" value="${main.class}"/>
       <attribute name="Class-Path" value="${manifest.classpath}"/>
+      <attribute name='Permissions' value='all-permissions' />
     </manifest>
     <jar destfile="${dist.dir}/${jar.name}" manifest="manifest.mf">
       <fileset dir="${build.dir}">
