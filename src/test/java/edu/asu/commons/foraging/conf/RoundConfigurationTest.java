@@ -1,11 +1,14 @@
 package edu.asu.commons.foraging.conf;
 
-import static org.junit.Assert.*;
-
+import java.text.NumberFormat;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import edu.asu.commons.net.Identifier;
+import edu.asu.commons.foraging.model.ClientData;
+
+ 
 
 public class RoundConfigurationTest {
     
@@ -39,6 +42,27 @@ public class RoundConfigurationTest {
         assertTrue(interpolatedInstructions.contains(SURVEY_ID));
         assertTrue(interpolatedInstructions.contains("http"));
         
+    }
+
+    @Test
+    public void testClientDebriefingGeneration() {
+        ClientData data = new ClientData(new Identifier.Mock());
+        ServerConfiguration serverConfiguration = roundConfiguration.getParentConfiguration();
+        data.addCorrectQuizAnswers(5);
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+        double quizEarnings = serverConfiguration.getQuizEarnings(data);
+        int currentTokens = 15;
+        int totalTokens = 60;
+        double totalEarnings = quizEarnings + serverConfiguration.getShowUpPayment() + (totalTokens * serverConfiguration.getDollarsPerToken());
+        System.err.println("total earnings: " + totalEarnings);
+        data.setCurrentTokens(currentTokens);
+        data.setTotalTokens(totalTokens);
+        String debriefing = roundConfiguration.generateClientDebriefing(data, false);
+        System.err.println("debriefing: " + debriefing);
+        assertTrue(debriefing.contains("Quiz earnings: " + formatter.format(quizEarnings)));
+        assertTrue(debriefing.contains(formatter.format(currentTokens*serverConfiguration.getDollarsPerToken())));
+        // FIXME: this doesn't work currently because ClientData.totalIncome is only added to during addTokens()
+        // assertTrue(debriefing.contains(formatter.format(totalEarnings)));
     }
 
 }
