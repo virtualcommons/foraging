@@ -50,12 +50,6 @@ press the <b>R</b> key you will reset the distribution of the tokens to randomly
 <h2>Quiz</h2>
 <hr>
 <p>
-We will soon begin a practice round, where you will have {duration} to practice with the experimental environment. The
-decisions you make in this round will NOT influence your earnings.  At the beginning of the practice round
-{initialDistribution} of the cells are occupied with green tokens.  The environment is a {self.resourceWidth} x
-{self.resourceDepth} grid of cells.
-</p>
-<p>
     Before we begin the practice round, please mark the following ten statements as true / false. You have five minutes to
     complete this quiz and you will earn {quizCorrectAnswerReward} for each correct answer.
 </p>

@@ -113,6 +113,12 @@ checkerboard diagram shown below.
 <br>
 <img src="@CODEBASE_URL@/images/foraging-checkerboard.png" alt="Checkerboard Resource">
 </p>
+<h2>Practice round</h2>
+<hr>
+<p>
+We will soon begin a practice round, where you will have {duration} to practice with the experimental environment. The
+decisions you make in this round will NOT influence your earnings. 
+</p>
 ]]>
 </entry>
 
