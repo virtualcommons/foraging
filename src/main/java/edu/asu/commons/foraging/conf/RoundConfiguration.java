@@ -28,7 +28,7 @@ import edu.asu.commons.util.Duration;
 
 
 /**
- * $Id$
+ * $Id: RoundConfiguration.java,v ec656450a643 2015/03/23 17:41:38 allen $
  * 
  * At some point this should be persistent database objects in a key-value store..?
  * 
@@ -50,7 +50,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public final static String[] CHAT_HANDLES = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S" };
     public final static double DEFAULT_REGROWTH_RATE = 0.01;
     public final static int DEFAULT_ROUND_TIME = 5 * 60;
-    
+
     private static final double DEFAULT_PATCHY_BOTTOM_INITIAL_DISTRIBUTION = 0.25;
     private static final double DEFAULT_PATCHY_TOP_INITIAL_DISTRIBUTION = 0.50;
     private static final double DEFAULT_TOP_REGROWTH_RATE = 0.02;
@@ -74,12 +74,12 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
             }
         }
     }
-    
+
     public enum PositionType {
         LINE, SQUARE;
     }
 
-    private final static Map<String, ExperimentType> experimentTypeMap = new HashMap<String, ExperimentType>(3);
+    private final static Map<String, ExperimentType> experimentTypeMap = new HashMap<>(3);
 
     public enum ExperimentType {
         TWO_DIMENSIONAL("2d"), ABSTRACT("abstract"), FORESTRY("forestry");
@@ -149,7 +149,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public boolean shouldRandomizeGroup() {
         return (isPracticeRound() && isPrivateProperty())
-                || getBooleanProperty("randomize-group", false);
+            || getBooleanProperty("randomize-group", false);
     }
 
     /**
@@ -328,7 +328,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         ST template = createStringTemplate(getProperty("instructions", getParentConfiguration().getSameAsPreviousRoundInstructions()));
         // FIXME: probably should just lift these out into methods on RoundConfiguration
         // and refer to them as self.durationInMinutes or self.dollarsPerTokenCurrencyString, etc.
-        template.add("duration", inMinutes(getDuration()) + " minutes");
+        template.add("duration", getDurationInMinutes());
         template.add("dollarsPerToken", toCurrencyString(getDollarsPerToken()));
         template.add("initialDistribution", NumberFormat.getPercentInstance().format(getInitialDistribution()));
         return template.render();
@@ -345,15 +345,15 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String getChatInstructions() {
         return createStringTemplate(getProperty("chat-instructions")).render();
     }
-    
+
     public long inMinutes(Duration duration) {
         return inMinutes(duration.getTimeLeftInSeconds());
     }
-    
+
     public long inMinutes(long seconds) {
         return TimeUnit.MINUTES.convert(seconds, TimeUnit.SECONDS);
     }
-    
+
     public String getRegulationInstructions() {
         return getProperty("regulation-instructions");
     }
@@ -369,7 +369,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         template.add("quizCorrectAnswerReward", toCurrencyString(getQuizCorrectAnswerReward()));
         return template.render();
     }
-    
+
     public String toCurrencyString(double amount) {
         return NumberFormat.getCurrencyInstance().format(amount);
     }
@@ -500,7 +500,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public int getResourceWorldScale() {
         return getIntProperty("resource-scale", 32);
     }
-    
+
     public boolean isChatRoundEnabled() {
         return getBooleanProperty("chat-enabled");
     }
@@ -622,9 +622,9 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public boolean isVotingEnabled() {
         return getBooleanProperty("voting-enabled");
     }
-    
+
     public boolean isImposedStrategyEnabled() {
-    	return getBooleanProperty("imposed-strategy-enabled");
+        return getBooleanProperty("imposed-strategy-enabled");
     }
 
     public String getVotingInstructions() {
@@ -634,7 +634,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String getInitialVotingInstructions() {
         return createStringTemplate(getProperty("initial-voting-instructions")).render();
     }
-    
+
     public boolean isVotingAndRegulationEnabled() {
         return getBooleanProperty("voting-and-regulation-enabled", false);
     }
@@ -701,11 +701,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
             return buildInstructions(instructionsBuilder);
         }
     }
-        
+
     public StringBuilder buildInstructions() {
         return buildInstructions(new StringBuilder());
     }
-    
+
     public StringBuilder buildInstructions(StringBuilder instructionsBuilder) {
         return addAllSpecialInstructions(instructionsBuilder.append(getInstructions()));
     }
@@ -794,13 +794,13 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String getSubmittedVoteInstructions() {
         return render(getProperty("submitted-vote-instructions")); 
     }
-    
+
     public String generateVotingResults(List<Strategy> selectedRules, Map<Strategy, Integer> nominations) {
-    	List<ForagingStrategyNomination> sortedNominations = new ArrayList<ForagingStrategyNomination>();
-    	for (Map.Entry<Strategy, Integer> entry: new TreeMap<Strategy, Integer>(nominations).entrySet()) {
-    		Strategy strategy = entry.getKey();
-    		sortedNominations.add(new ForagingStrategyNomination(strategy, entry.getValue(), strategy.equals(selectedRules.get(0))));
-    	}
+        List<ForagingStrategyNomination> sortedNominations = new ArrayList<ForagingStrategyNomination>();
+        for (Map.Entry<Strategy, Integer> entry: new TreeMap<Strategy, Integer>(nominations).entrySet()) {
+            Strategy strategy = entry.getKey();
+            sortedNominations.add(new ForagingStrategyNomination(strategy, entry.getValue(), strategy.equals(selectedRules.get(0))));
+        }
         setSelectedRules(selectedRules);
         ST template = createStringTemplate(getVotingResultsTemplate());
         template.add("nominations", sortedNominations);
@@ -811,25 +811,25 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public List<ForagingStrategy> getForagingStrategies() {
         return Arrays.asList(ForagingStrategy.values());
     }
-    
+
     public String getVotingResultsTemplate() {
         return getProperty("voting-results", getParentConfiguration().getVotingResults());
     }
-    
+
     public String getFacilitatorDebriefingTemplate() {
-    	return getProperty("facilitator-debriefing", getParentConfiguration().getFacilitatorDebriefing());
+        return getProperty("facilitator-debriefing", getParentConfiguration().getFacilitatorDebriefing());
     }
-    
+
     @Override
     public String toString() {
         List<RoundConfiguration> allParameters = getParentConfiguration().getAllParameters();
         return String.format("Round %d of %d", allParameters.indexOf(this) + 1, allParameters.size());
     }
-    
+
     public String fullStatus() {
-    	return toString() + "\n\t" + getProperties();
+        return toString() + "\n\t" + getProperties();
     }
-    
+
     public String getQuizResults(List<String> incorrectQuestionNumbers, Map<Object, Object> actualAnswers) {
         ST template = createStringTemplate(getProperty("quiz-results"));
         // FIXME: actual answers includes the submit button, so there's an off-by-one that we need to deal with.
@@ -844,7 +844,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         }
         return template.render();
     }
-    
+
     public List<Strategy> getSelectedRules() {
         return selectedRules;
     }
@@ -852,15 +852,15 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public void setSelectedRules(List<Strategy> selectedRules) {
         this.selectedRules = selectedRules;
     }
-    
+
     public double tokensToDollars(int tokens) {
-    	return isPracticeRound() ? 0.0d : tokens * getDollarsPerToken();
+        return isPracticeRound() ? 0.0d : tokens * getDollarsPerToken();
     }
-    
+
     public String getClientDebriefing() {
         return getProperty("client-debriefing", getParentConfiguration().getClientDebriefing());
     }
-    
+
     public String generateClientDebriefing(ClientData data, boolean showExitInstructions) {
         ST st = createStringTemplate(getClientDebriefing());
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -879,42 +879,42 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         data.setTrustGameEarnings(formatter.format(data.getTrustGameIncome()));
     }
 
-	public String generateFacilitatorDebriefing(ServerDataModel serverDataModel) {
-		ST template = createStringTemplate(getFacilitatorDebriefingTemplate());
-		template.add("lastRound", serverDataModel.isLastRound());
-		ServerConfiguration serverConfiguration = getParentConfiguration();
-		NumberFormat formatter = NumberFormat.getCurrencyInstance();
-		for (ClientData data: serverDataModel.getClientDataMap().values()) {
-		    populateClientEarnings(data, serverConfiguration, formatter, true);
-		}
-		template.add("clientDataList", serverDataModel.getClientDataMap().values());
-		return template.render();
-	}
-	
-	// returns the next round configuration without advancing the pointer in ServerConfiguration
-	public RoundConfiguration nextRound() {
-		return getParentConfiguration().getNextRoundConfiguration();
-	}
+    public String generateFacilitatorDebriefing(ServerDataModel serverDataModel) {
+        ST template = createStringTemplate(getFacilitatorDebriefingTemplate());
+        template.add("lastRound", serverDataModel.isLastRound());
+        ServerConfiguration serverConfiguration = getParentConfiguration();
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+        for (ClientData data: serverDataModel.getClientDataMap().values()) {
+            populateClientEarnings(data, serverConfiguration, formatter, true);
+        }
+        template.add("clientDataList", serverDataModel.getClientDataMap().values());
+        return template.render();
+    }
 
-	public boolean shouldWaitForFacilitatorSignal() {
-		return isPostRoundSanctioningEnabled() || (isTrustGameEnabled() && isLastRound());
-	}
-	
-	public String getLastChatHandle() {
-	    return CHAT_HANDLES[getClientsPerGroup() - 1];
-	}
-	
-	public String getChatDurationInMinutes() {
-	    return inMinutes(getChatDuration()) + " minutes";
-	}
-	
-	public String getDurationInMinutes() {
-	    return inMinutes(getDuration()) + " minutes";
-	}
-	
-	public boolean showTokenAnimation() {
-		return getBooleanProperty("show-token-animation", true);
-	}
+    // returns the next round configuration without advancing the pointer in ServerConfiguration
+    public RoundConfiguration nextRound() {
+        return getParentConfiguration().getNextRoundConfiguration();
+    }
+
+    public boolean shouldWaitForFacilitatorSignal() {
+        return isPostRoundSanctioningEnabled() || (isTrustGameEnabled() && isLastRound());
+    }
+
+    public String getLastChatHandle() {
+        return CHAT_HANDLES[getClientsPerGroup() - 1];
+    }
+
+    public String getChatDurationInMinutes() {
+        return inMinutes(getChatDuration()) + " minutes";
+    }
+
+    public String getDurationInMinutes() {
+        return inMinutes(getDuration()) + " minutes";
+    }
+
+    public boolean showTokenAnimation() {
+        return getBooleanProperty("show-token-animation", true);
+    }
 
     public String getSurveyConfirmationMessage() {
         return getProperty("survey-confirmation-message", "Please make sure you have completed the survey before continuing.  Have you completed the survey?");

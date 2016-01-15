@@ -3,8 +3,8 @@
 <properties>
 <comment>Foraging XML-ized experiment round configuration</comment>
 <entry key="display-group-tokens">true</entry>
-<entry key="resource-depth">20</entry>
-<entry key="resource-width">20</entry>
+<entry key="resource-depth">18</entry>
+<entry key="resource-width">18</entry>
 <entry key="duration">240</entry>
 <entry key="initial-distribution">.25</entry>
 <!-- in round chat enabled -->

@@ -2,8 +2,8 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 <comment>Foraging Experiment Round Configuration</comment>
-<entry key="resource-width">14</entry>
-<entry key="resource-depth">14</entry>
+<entry key="resource-width">13</entry>
+<entry key="resource-depth">13</entry>
 <entry key="practice-round">true</entry>
 <entry key="private-property">true</entry>
 <entry key="duration">240</entry>
