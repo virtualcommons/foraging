@@ -2,7 +2,7 @@
 
 The foraging experiment is a common pool resource experiment where participants are placed in randomized groups and
 interact with a spatially explicit renewable resource. It is built on the
-[Social Ecological Systems Experiment Framework](http://bitbucket.org/virtualcommons/sesef) and has been used to conduct research studies
+[Social Ecological Systems Experiment Framework](http://github.com/virtualcommons/sesef) and has been used to conduct research studies
 at [Arizona State University](http://www.asu.edu), [Indiana University](http://www.iu.edu), and the [University of Alaska-Anchorage](http://www.uaa.alaska.edu).
 
 ### features
@@ -25,21 +25,20 @@ at [Arizona State University](http://www.asu.edu), [Indiana University](http://w
 
 Quickstart:
 
-* [install and setup Java, Ant, and Maven](https://bitbucket.org/virtualcommons/sesef/wiki/Home)
-* [download and unpack the foraging codebase](https://bitbucket.org/virtualcommons/foraging/downloads)
+* [install and setup Java, Ant, and Maven](https://github.com/virtualcommons/sesef/wiki/Home)
+* [download and unpack the foraging codebase](https://github.com/virtualcommons/foraging)
 * From the command-line (e.g., Windows PowerShell or Command Prompt, Mac OSX Terminal.app, or any Linux terminal)
 ```
-#!bash
 % ant prepare-demo
 % ant demo % this will start a server, a facilitator, and 5 clients in the demo treatment
 ```
-For more detailed instructions, please see the [installation instructions on our wiki](https://bitbucket.org/virtualcommons/foraging/wiki/Installation).
+For more detailed instructions, please see the [installation instructions on our wiki](https://github.com/virtualcommons/foraging/wiki/Installation).
 
 ### publications
 
 Data generated from the foraging framework has been published in 
 [Lab Experiments for the Study of Social-Ecological Systems](http://www.sciencemag.org/cgi/content/abstract/328/5978/613). 
-Archives of the [configuration files used](https://bitbucket.org/virtualcommons/foraging/src/tip/src/main/resources/configuration/iu/archived/) and the
+Archives of the [configuration files used](https://github.com/virtualcommons/foraging/tree/master/src/main/resources/configuration/iu/archived) and the
 [experiment data](http://dev.commons.asu.edu/data/foraging/2008/all-iu-foraging-data.zip) are available.
 
 ### status
