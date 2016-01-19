@@ -61,10 +61,11 @@
   <property name="javadoc.private.dir" value="docs/private"/>
   <property name="lib.dir" value="lib"/>
   <property name="remote.debug.port" value="1044"/>
-  <!-- default keystore properties, override in build.properties -->
+  <!-- default keystore and jar signing properties, override in build.properties -->
   <property name='keystore.alias' value='foraging' />
   <property name='keystore.file' value='commons.jks' />
   <property name='keystore.storepass' value='default_keystore_storepass' />
+  <property name='tsa.url' value='http://timestamp.digicert.com' />
 
   <available file="${conf.dir}/server.xml" property="configuration.exists"/>
   <available file="${basedir}/build.properties" property="build.properties.exists"/>
@@ -120,14 +121,14 @@
     </genkey>
   </target>
   <target name='sign-jars' depends='generate-keystore'>
-    <signjar destDir='${dist.dir}' alias='${keystore.alias}' keystore='${keystore.file}' lazy='true' storepass='${keystore.storepass}'>
+    <signjar destDir='${dist.dir}' alias='${keystore.alias}' keystore='${keystore.file}' lazy='true' storepass='${keystore.storepass}' tsaurl='${tsa.url}'>
       <path>
         <fileset dir='${dist.dir}' includes='*.jar' />
       </path>
     </signjar>
   </target>
   <target name='sign-dependencies'>
-    <signjar destDir='${lib.dir}' alias='${keystore.alias}' keystore='${keystore.file}' lazy='true' storepass='${keystore.storepass}'>
+    <signjar destDir='${lib.dir}' alias='${keystore.alias}' keystore='${keystore.file}' lazy='true' storepass='${keystore.storepass}' tsaurl='${tsa.url}'>
       <path>
         <fileset dir='${lib.dir}' includes='*.jar' />
       </path>
