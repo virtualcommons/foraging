@@ -61,7 +61,11 @@
   <property name="javadoc.private.dir" value="docs/private"/>
   <property name="lib.dir" value="lib"/>
   <property name="remote.debug.port" value="1044"/>
+  <!-- default keystore properties, override in build.properties -->
+  <property name='keystore.alias' value='foraging' />
   <property name='keystore.file' value='commons.jks' />
+  <property name='keystore.storepass' value='default_keystore_storepass' />
+
   <available file="${conf.dir}/server.xml" property="configuration.exists"/>
   <available file="${basedir}/build.properties" property="build.properties.exists"/>
   <!-- Set up the CLASSPATH, includes all jars in the lib
@@ -99,15 +103,31 @@
     </echo>
   </target>
   <target name="build-all" depends="facilitator-jar, client-jar, server-jar, compile"/>
-  <target name='sign-jars'>
-    <signjar destDir='${dist.dir}' alias='commons' keystore='${keystore.file}' lazy='true' storepass='${keystore.password}'>
+  <target name='check-keystore'>
+    <available file='${keystore.file}' property='keystore.present'/>
+  </target>
+  <target name='generate-keystore' depends='check-keystore' unless='keystore.present'>
+    <genkey alias='${keystore.alias}' verbose='true' storepass='${keystore.storepass}'
+      validity='365' keystore='${keystore.file}'>
+      <dname>
+        <param name='CN' value='commons.asu.edu'/>
+        <param name='O' value='Arizona State University'/>
+        <param name='OU' value='Center for Behavior, Institutions, and the Environment'/>
+        <param name='L' value='Tempe'/>
+        <param name='ST' value='Arizona'/>
+        <param name='C' value='US'/>
+      </dname>
+    </genkey>
+  </target>
+  <target name='sign-jars' depends='generate-keystore'>
+    <signjar destDir='${dist.dir}' alias='${keystore.alias}' keystore='${keystore.file}' lazy='true' storepass='${keystore.storepass}'>
       <path>
         <fileset dir='${dist.dir}' includes='*.jar' />
       </path>
     </signjar>
   </target>
   <target name='sign-dependencies'>
-    <signjar destDir='${lib.dir}' alias='commons' keystore='commons.jks' lazy='true' storepass='${keystore.password}'>
+    <signjar destDir='${lib.dir}' alias='${keystore.alias}' keystore='${keystore.file}' lazy='true' storepass='${keystore.storepass}'>
       <path>
         <fileset dir='${lib.dir}' includes='*.jar' />
       </path>
