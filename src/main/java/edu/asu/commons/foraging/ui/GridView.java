@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Paint;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.ImageObserver;
@@ -24,7 +25,8 @@ import edu.asu.commons.util.ResourceLoader;
  * @author Allen Lee
  * @version $Revision$
  * 
- * Superclass for experimenter and subject views of the simulation world.
+ *          Superclass for experimenter and subject views of the simulation
+ *          world.
  */
 @SuppressWarnings("serial")
 public abstract class GridView extends JPanel {
@@ -33,16 +35,19 @@ public abstract class GridView extends JPanel {
      * If the parameters call for a background, this object is created so that
      * the scaling calculation does not have to be performed for each paint.
      */
-    protected Image tokenImage, otherSubjectImage, selfImage, selfExplicitCollectionModeImage, beingSanctionedImage, sanctioningImage, monitorImage;
+    protected Image tokenImage, otherSubjectImage, selfImage, selfExplicitCollectionModeImage, beingSanctionedImage,
+            sanctioningImage, monitorImage;
 
-    protected Image scaledTokenImage, scaledOtherSubjectImage, scaledSelfImage,
-            scaledSelfExplicitCollectionModeImage, scaledBeingSanctionedImage, scaledSanctioningImage, scaledMonitorImage;
+    protected Image scaledTokenImage, scaledOtherSubjectImage, scaledSelfImage, scaledSelfExplicitCollectionModeImage,
+            scaledBeingSanctionedImage, scaledSanctioningImage, scaledMonitorImage;
 
     // The following are different versions of the images above to be shown in
     // Zone B.
-    protected Image tokenImageB, otherSubjectImageB, selfImageB, selfExplicitCollectionModeImageB, beingSanctionedImageB, sanctioningImageB, monitorImageB;
+    protected Image tokenImageB, otherSubjectImageB, selfImageB, selfExplicitCollectionModeImageB,
+            beingSanctionedImageB, sanctioningImageB, monitorImageB;
     protected Image scaledTokenImageB, scaledOtherSubjectImageB, scaledSelfImageB,
-            scaledSelfExplicitCollectionModeImageB, scaledBeingSanctionedImageB, scaledSanctioningImageB, scaledMonitorImageB;
+            scaledSelfExplicitCollectionModeImageB, scaledBeingSanctionedImageB, scaledSanctioningImageB,
+            scaledMonitorImageB;
 
     /**
      * Represents the width and height of a grid cell, respectively.
@@ -59,7 +64,7 @@ public abstract class GridView extends JPanel {
 
     // how big the entire screen is.
     protected Dimension screenSize;
-    
+
     // Size of the board in pixels
     protected int actualWidth;
     protected int actualHeight;
@@ -70,13 +75,14 @@ public abstract class GridView extends JPanel {
     public GridView(Dimension screenSize) {
         loadImages();
         this.screenSize = screenSize;
-        setPreferredSize(screenSize);        
+        setPreferredSize(screenSize);
     }
-    
+
     public final static int IMAGE_SCALING_STRATEGY = Image.SCALE_SMOOTH;
 
     public void setImageSizes() {
-        if (boardSize == null) return;
+        if (boardSize == null)
+            return;
         double availableWidth = screenSize.getWidth();
         double availableHeight = screenSize.getHeight();
 
@@ -85,19 +91,20 @@ public abstract class GridView extends JPanel {
         dh = (availableHeight / boardSize.getHeight());
         // FIXME: this forces square proportions on all views.
         dw = dh = Math.min(dw, dh);
-        
+
         actualWidth = (int) (dw * boardSize.getWidth());
         actualHeight = (int) (dh * boardSize.getHeight());
 
-        // centered on the screen so we divide by 2 to take into account both sides of the screen.
+        // centered on the screen so we divide by 2 to take into account both
+        // sides of the screen.
         xoffset = (int) Math.floor((availableWidth - actualWidth) / 2);
         yoffset = (int) Math.floor((availableHeight - actualHeight) / 2);
 
-        fontSize = (int)(0.85 * dh);
+        fontSize = (int) (0.85 * dh);
         font = new Font("sansserif", Font.BOLD, fontSize);
-        
+
         setPreferredSize(screenSize);
-        //FIXME: reduce code duplication
+        // FIXME: reduce code duplication
         // get scaled instances of the originals
         int cellWidth = (int) dw;
         int cellHeight = (int) dh;
@@ -105,8 +112,10 @@ public abstract class GridView extends JPanel {
         scaledTokenImage = tokenImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledOtherSubjectImage = otherSubjectImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledSelfImage = selfImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
-        scaledSelfExplicitCollectionModeImage = selfExplicitCollectionModeImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
-        scaledBeingSanctionedImage = beingSanctionedImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledSelfExplicitCollectionModeImage = selfExplicitCollectionModeImage.getScaledInstance(cellWidth, cellHeight,
+                IMAGE_SCALING_STRATEGY);
+        scaledBeingSanctionedImage = beingSanctionedImage.getScaledInstance(cellWidth, cellHeight,
+                IMAGE_SCALING_STRATEGY);
         scaledSanctioningImage = sanctioningImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledMonitorImage = monitorImage.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
 
@@ -114,8 +123,10 @@ public abstract class GridView extends JPanel {
         scaledTokenImageB = tokenImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledOtherSubjectImageB = otherSubjectImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledSelfImageB = selfImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
-        scaledSelfExplicitCollectionModeImageB = selfExplicitCollectionModeImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
-        scaledBeingSanctionedImageB = beingSanctionedImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledSelfExplicitCollectionModeImageB = selfExplicitCollectionModeImageB.getScaledInstance(cellWidth,
+                cellHeight, IMAGE_SCALING_STRATEGY);
+        scaledBeingSanctionedImageB = beingSanctionedImageB.getScaledInstance(cellWidth, cellHeight,
+                IMAGE_SCALING_STRATEGY);
         scaledSanctioningImageB = sanctioningImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledMonitorImageB = monitorImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
 
@@ -135,7 +146,7 @@ public abstract class GridView extends JPanel {
         setBoardSize(configuration.getBoardSize());
         setImageSizes();
     }
-    
+
     public void setScreenSize(Dimension screenSize) {
         this.screenSize = screenSize;
     }
@@ -143,12 +154,11 @@ public abstract class GridView extends JPanel {
     private void setBoardSize(Dimension boardSize) {
         this.boardSize = boardSize;
         setBackground(Color.BLACK);
-//        setForeground(Color.WHITE);
+        // setForeground(Color.WHITE);
     }
 
     /**
-     * Loads the images
-     *         // FIXME: reduce code duplication
+     * Loads the images // FIXME: reduce code duplication
      */
     private void loadImages() {
         // XXX: images still aren't fully loaded. When you actually invoke
@@ -172,7 +182,8 @@ public abstract class GridView extends JPanel {
         if (sanctioningImage == null) {
             sanctioningImage = loadImage("images/gem-purple.gif");
         }
-        // FIXME: generate a new image for the monitor, for now just use the explicit-mode image.
+        // FIXME: generate a new image for the monitor, for now just use the
+        // explicit-mode image.
         if (monitorImage == null) {
             monitorImage = loadImage("images/gem-self-explicit.gif");
         }
@@ -196,27 +207,29 @@ public abstract class GridView extends JPanel {
         if (sanctioningImageB == null) {
             sanctioningImageB = loadImage("images/gem-purple-b.gif");
         }
-        // FIXME: generate a new image for the monitor, for now just use the explicit-mode image.
+        // FIXME: generate a new image for the monitor, for now just use the
+        // explicit-mode image.
         if (monitorImageB == null) {
             monitorImageB = loadImage("images/gem-self-explicit-b.gif");
         }
     }
-    
+
     private Image loadImage(String path) {
         try {
             return ImageIO.read(ResourceLoader.getResourceAsUrl(path));
-        }
-        catch (IOException exception) {
+        } catch (IOException exception) {
             return null;
         }
-//        return Toolkit.getDefaultToolkit().getImage(ResourceLoader.getResourceAsUrl(path));
+        // return
+        // Toolkit.getDefaultToolkit().getImage(ResourceLoader.getResourceAsUrl(path));
     }
 
     protected void paintComponent(Graphics graphics) {
         Graphics2D graphics2D = (Graphics2D) graphics;
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        // FIXME: can be made more efficient.  
-        // Could just update the parts that have changed (tokens removed, subjects moved) 
+        // FIXME: can be made more efficient.
+        // Could just update the parts that have changed (tokens removed,
+        // subjects moved)
         // paint the background
         paintBackground(graphics2D);
         // paint resources
@@ -225,27 +238,49 @@ public abstract class GridView extends JPanel {
         paintSubjects(graphics2D);
     }
 
+    /**
+     * Uses filled s
+     * 
+     * @param points
+     * @param graphics2D
+     * @param color
+     */
+    protected void paintCollection(Collection<Point> points, Graphics2D graphics2D, Color color) {
+        Paint originalPaint = graphics2D.getPaint();
+        graphics2D.setPaint(color);
+        synchronized (points) {
+            int width = getCellWidth();
+            int height = getCellHeight();
+            for (Point point : points) {
+                int x = scaleX(point.x);
+                int y = scaleY(point.y);
+                graphics2D.fillRect(x, y, width, height);
+            }
+        }
+        graphics2D.setPaint(originalPaint);
+    }
+
     protected void paintCollection(Collection<Point> collection, Graphics2D graphics2D, Image image) {
         paintCollection(collection, graphics2D, image, this);
     }
 
     protected void paintCollection(Collection<Point> collection, Graphics2D graphics2D, Image image, ImageObserver observer) {
         synchronized (collection) {
-            for (Point point: collection) {
+            for (Point point : collection) {
                 int x = scaleX(point.x);
                 int y = scaleY(point.y);
-                graphics2D.drawImage(image, x, y, observer);                    
+                graphics2D.drawImage(image, x, y, observer);
             }
         }
     }
 
     protected void paintCollection(Collection<Point> collection, Graphics2D graphics2D, Image image, ImageObserver observer, Circle fieldOfView) {
         synchronized (collection) {
-            for (Point point: collection) {
+            for (Point point : collection) {
                 if (fieldOfView.contains(point)) {
                     int x = scaleX(point.x);
                     int y = scaleY(point.y);
-                    graphics2D.drawImage(image, x, y, observer);                    
+                    graphics2D.drawImage(image, x, y, observer);
                 }
             }
         }
@@ -254,11 +289,13 @@ public abstract class GridView extends JPanel {
     protected int getCellWidth() {
         return (int) dw;
     }
+
     protected int getCellHeight() {
         return (int) dh;
     }
 
-    // FIXME: profiling shows that both scaleX and scaleY are called a lot at runtime, 
+    // FIXME: profiling shows that both scaleX and scaleY are called a lot at
+    // runtime,
     // should see if we can optimize them further.
     protected int scaleX(int x) {
         return (int) ((dw * x) + xoffset);
@@ -276,13 +313,12 @@ public abstract class GridView extends JPanel {
         return ((dh * y) + yoffset);
     }
 
-
     protected abstract void paintTokens(Graphics2D graphics2D);
 
     protected abstract void paintSubjects(Graphics2D graphics2D);
 
     /**
-     * Invoked via paintComponent, this method should be overidden for a custom
+     * Invoked via paintComponent, this method should be overridden for a custom
      * background.
      */
     protected void paintBackground(Graphics2D graphics2D) {

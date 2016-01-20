@@ -47,8 +47,13 @@ public class SubjectView extends GridView {
     
     private boolean tokenFieldOfVisionEnabled;
     private boolean subjectFieldOfVisionEnabled;
+    private boolean shouldNumberPlayers;   
+    private boolean useTokenImage;
     
     public final static Color FIELD_OF_VISION_COLOR = new Color(255, 255, 255, 150);
+
+	private final static Color COLLECTED_TOKEN_COLOR = Color.GREEN;
+	private final static Color TOKEN_COLOR = Color.YELLOW;
 
     // associates a Duration with a piece of token consumed at the given Point -
     // the duration is used to render the token as shrinking.
@@ -94,6 +99,10 @@ public class SubjectView extends GridView {
                 viewSubjectsField = new Circle(dataModel.getCurrentPosition(), viewSubjectsRadius);
             }
         }
+        
+        shouldNumberPlayers = configuration.getClientsPerGroup() > 2;
+        useTokenImage = configuration.isTokenImageEnabled();
+        
         super.setup(configuration);
         if (tokenFieldOfVisionEnabled || subjectFieldOfVisionEnabled) {
             fieldOfVisionOffset = (dw * 0.3d);
@@ -142,22 +151,26 @@ public class SubjectView extends GridView {
                 paintCollection(dataModel.getResourcePositions(), graphics2D, scaledTokenImage, this, viewTokensField);
             }
         }
+        else if (showResourceZones) {
+        	paintCollection(resourcePositionsA, graphics2D, scaledTokenImage);
+        	paintCollection(resourcePositionsB, graphics2D, scaledTokenImageB);
+        } 
+        else if (useTokenImage) {       
+        	paintCollection(dataModel.getResourcePositions(), graphics2D, scaledTokenImage);         
+        }
         else {
-            if (showResourceZones) {
-                paintCollection(resourcePositionsA, graphics2D, scaledTokenImage);
-                paintCollection(resourcePositionsB, graphics2D, scaledTokenImageB);
-            } else {
-                paintCollection(dataModel.getResourcePositions(), graphics2D, scaledTokenImage);
-            }
+        	paintCollection(dataModel.getResourcePositions(), graphics2D, TOKEN_COLOR);
         }
         // display animation for food that has been eaten.
         long elapsedTime = 0;
         int width = (int) dw;
-        int height = (int) dh;
-        int offset = 1;
+        int height = (int) dh;       
         // paint shrinking tokens that this client has consumed.
         if (dataModel.getRoundConfiguration().showTokenAnimation()) {
+        	
         	synchronized (collectedTokens) {
+        		Paint originalPaint = graphics2D.getPaint();
+        		
         		for (Iterator<Map.Entry<Point, Duration>> iter = collectedTokens.entrySet().iterator(); iter.hasNext();) {
         			Map.Entry<Point, Duration> entry = iter.next();
         			Point point = entry.getKey();
@@ -165,37 +178,43 @@ public class SubjectView extends GridView {
         			elapsedTime = duration.getElapsedTime();
         			// FIXME: offset should be proportional to the actual size.
         			if (elapsedTime < 333L) {
-        				offset = 1;
+        				graphics2D.setPaint(COLLECTED_TOKEN_COLOR);        				
         			} else if (elapsedTime < 666L) {
-        				offset = 2;
+        				graphics2D.setPaint(TOKEN_COLOR);
         			} else if (elapsedTime < 1000L) {
-        				offset = 3;
+        				graphics2D.setPaint(COLLECTED_TOKEN_COLOR);
         			} else {
         				// After the time threshold has been exceeded, prune old food 
         				// that shouldn't be displayed.
         				iter.remove();
         				continue;
         			}
-        			// food pellets shrink over time
-        			paintToken(point, graphics2D, width/offset, height/offset);
+        			// highlight square behind the dot green
+        			paintCollectedToken(point, graphics2D, width, height);        			
         		}
+        		graphics2D.setPaint(originalPaint);
         	}
         }
     }
 
-    private void paintToken(Point point, Graphics2D graphics2D, int width, int height) {
-
-        Image image;
-        if (showResourceZones) {
-            // Use token image for zone A or zone B depending on board position
-            image = (point.y < (int) boardSize.getHeight() / 2) ? scaledTokenImage : scaledTokenImageB;
-        } else {
-            image = scaledTokenImage;
-        }
-
+    private void paintCollectedToken(Point point, Graphics2D graphics2D, int width, int height) {
         int x = scaleX(point.x);
         int y = scaleY(point.y);
-        graphics2D.drawImage(image, x, y, width, height, null);
+        
+        if (useTokenImage) {
+        	Image image;
+        	if (showResourceZones) {
+        		// Use token image for zone A or zone B depending on board position
+        		image = (point.y < (int) boardSize.getHeight() / 2) ? scaledTokenImage : scaledTokenImageB;
+        	} 
+        	else {
+        		image = scaledTokenImage;
+        	}
+        	graphics2D.drawImage(image, x, y, width, height, null);
+        }
+        else {
+        	graphics2D.fillRect(x, y, width, height);
+        }
     }
 
     protected void paintSubjects(Graphics2D graphics2D) {
@@ -236,13 +255,15 @@ public class SubjectView extends GridView {
                 drawParticipant( graphics2D, id, scaledX, scaledY );
                 //            graphics2D.drawImage( getImage(id), scaledX, scaledY, null);
                 graphics2D.setColor( getSubjectNumberColor(id) );
-                //          Paint the subject's number
-                String subjectNumber = String.valueOf( dataModel.getAssignedNumber(id) );
-                //Calculate x and y so that the text is center aligned
-                int characterWidth = fontMetrics.stringWidth(subjectNumber);
-                int x = (int) (scaledX + ( (dw - characterWidth) * 0.5d));
-                int y = (int) (scaledY + characterHeight - verticalCharacterSpacing);
-                graphics2D.drawString(subjectNumber, x, y);
+                // Paint the subject's number
+                if (shouldNumberPlayers) {
+                	String subjectNumber = String.valueOf( dataModel.getAssignedNumber(id) );
+                	//Calculate x and y so that the text is center aligned
+                	int characterWidth = fontMetrics.stringWidth(subjectNumber);
+                	int x = (int) (scaledX + ( (dw - characterWidth) * 0.5d));
+                	int y = (int) (scaledY + characterHeight - verticalCharacterSpacing);
+                	graphics2D.drawString(subjectNumber, x, y);
+                }
             }
         }
     }

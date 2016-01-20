@@ -177,6 +177,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public boolean isSubjectsFieldOfVisionEnabled() {
         return getBooleanProperty("subjects-field-of-vision", false);
     }
+    
+    public boolean isTokenImageEnabled() {
+    	return getBooleanProperty("use-token-image", false);
+    }
 
     /**
      * FIXME: rename for consistency, getSubjectsFieldOfVisionRadius()
