@@ -179,7 +179,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
     
     public boolean isTokenImageEnabled() {
-    	return getBooleanProperty("use-token-image", false);
+    	return getBooleanProperty("use-token-image", getParentConfiguration().isTokenImageEnabled());
+    }
+    
+    public boolean isTexturedBackgroundEnabled() {
+        return getBooleanProperty("use-background-texture", getParentConfiguration().isTexturedBackgroundEnabled());
     }
 
     /**
@@ -971,4 +975,5 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public double getRobotHarvestProbability() {
         return getDoubleProperty("robot-harvest-probability", 0.5d);
     }
+
 }

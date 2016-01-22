@@ -305,7 +305,7 @@
   </target>
   <!-- Compile project source files -->
   <target name="compile" depends="prepare, resolve">
-    <javac srcdir="${src.dir}" destdir="${build.dir}" debug="on" optimize="off" deprecation="on" source="1.7" target="1.7" includeAntRuntime="false">
+    <javac srcdir="${src.dir}" destdir="${build.dir}" debug="on" optimize="off" deprecation="on" includeAntRuntime="false">
       <compilerarg value="-Xlint:unchecked"/>
       <classpath refid="project.classpath"/>
     </javac>
@@ -331,7 +331,7 @@
   </target>
   <!-- Build project documentation -->
   <target name="docs">
-    <javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" packagenames="*" source="1.7" classpathref="project.classpath" overview="${src.dir}/overview.html">
+    <javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" packagenames="*" classpathref="project.classpath" overview="${src.dir}/overview.html">
       <link href="http://docs.oracle.com/javase/7/docs/api/"/>
       <link href="http://commons.asu.edu/src/sesef/api"/>
     </javadoc>
@@ -379,7 +379,7 @@
   </target>
   <!-- Compile Tests -->
   <target name="compile-tests" depends="compile">
-    <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" source="1.6" target="1.6" debug="on">
+    <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" debug="on">
       <!-- <compilerarg value='-Xlint:unchecked'/> -->
       <classpath refid="project.classpath"/>
     </javac>

@@ -69,6 +69,15 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
         }
         return false;
     }
+    
+    public boolean isTokenImageEnabled() {
+        return getBooleanProperty("use-token-image", true);
+    }
+    
+    public boolean isTexturedBackgroundEnabled() {
+        return getBooleanProperty("use-background-texture", false);
+    }
+    
     public boolean shouldInitialize2D() {
         for (RoundConfiguration configuration : getAllParameters()) {
             if (configuration.is2dExperiment()) {

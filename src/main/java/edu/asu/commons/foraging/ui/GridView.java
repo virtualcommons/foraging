@@ -9,6 +9,9 @@ import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.TexturePaint;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.IOException;
 import java.util.Collection;
@@ -49,6 +52,10 @@ public abstract class GridView extends JPanel {
             scaledSelfExplicitCollectionModeImageB, scaledBeingSanctionedImageB, scaledSanctioningImageB,
             scaledMonitorImageB;
 
+    public static final Color BROWN_BACKGROUND_COLOR = new Color(205, 175, 149);
+    
+    private Paint background = BROWN_BACKGROUND_COLOR;
+    
     /**
      * Represents the width and height of a grid cell, respectively.
      */
@@ -129,11 +136,6 @@ public abstract class GridView extends JPanel {
                 IMAGE_SCALING_STRATEGY);
         scaledSanctioningImageB = sanctioningImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
         scaledMonitorImageB = monitorImageB.getScaledInstance(cellWidth, cellHeight, IMAGE_SCALING_STRATEGY);
-
-        System.err.println("cell width: " + dw);
-        System.err.println("cell height: " + dh);
-        System.err.println("x offset: " + xoffset);
-        System.err.println("y offset: " + yoffset);
     }
 
     /**
@@ -145,6 +147,11 @@ public abstract class GridView extends JPanel {
     public void setup(RoundConfiguration configuration) {
         setBoardSize(configuration.getBoardSize());
         setImageSizes();
+        if (configuration.isTexturedBackgroundEnabled()) {
+            System.err.println("Loading textured background");
+            BufferedImage image = (BufferedImage) loadImage("images/sandstone.jpg");
+            background = new TexturePaint(image, new Rectangle2D.Double(0, 0, image.getWidth(), image.getHeight()));
+        }
     }
 
     public void setScreenSize(Dimension screenSize) {
@@ -153,7 +160,6 @@ public abstract class GridView extends JPanel {
 
     private void setBoardSize(Dimension boardSize) {
         this.boardSize = boardSize;
-        setBackground(Color.BLACK);
         // setForeground(Color.WHITE);
     }
 
@@ -322,7 +328,7 @@ public abstract class GridView extends JPanel {
      * background.
      */
     protected void paintBackground(Graphics2D graphics2D) {
-        graphics2D.setColor(Color.BLACK);
+        graphics2D.setPaint(background);
         graphics2D.fillRect(xoffset, yoffset, actualWidth, actualHeight);
     }
 

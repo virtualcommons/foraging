@@ -52,8 +52,8 @@ public class SubjectView extends GridView {
     
     public final static Color FIELD_OF_VISION_COLOR = new Color(255, 255, 255, 150);
 
-	private final static Color COLLECTED_TOKEN_COLOR = Color.GREEN;
-	private final static Color TOKEN_COLOR = Color.YELLOW;
+	private final static Color COLLECTED_TOKEN_COLOR = Color.YELLOW;
+	private final static Color TOKEN_COLOR = Color.GREEN;
 
     // associates a Duration with a piece of token consumed at the given Point -
     // the duration is used to render the token as shrinking.
@@ -177,11 +177,11 @@ public class SubjectView extends GridView {
         			Duration duration = entry.getValue();
         			elapsedTime = duration.getElapsedTime();
         			// FIXME: offset should be proportional to the actual size.
-        			if (elapsedTime < 333L) {
+        			if (elapsedTime < 100L) {
         				graphics2D.setPaint(COLLECTED_TOKEN_COLOR);        				
-        			} else if (elapsedTime < 666L) {
+        			} else if (elapsedTime < 200L) {
         				graphics2D.setPaint(TOKEN_COLOR);
-        			} else if (elapsedTime < 1000L) {
+        			} else if (elapsedTime < 300L) {
         				graphics2D.setPaint(COLLECTED_TOKEN_COLOR);
         			} else {
         				// After the time threshold has been exceeded, prune old food 

@@ -16,6 +16,8 @@
 <entry key="wait-for-participants">true</entry>
 <entry key="number-of-rounds">7</entry>
 <entry key="duration">240</entry>
+<entry key="use-background-texture">true</entry>
+<entry key="use-token-image">false</entry>
 <entry key="facilitator-instructions">
 <![CDATA[
 <p>
