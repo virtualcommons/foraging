@@ -42,5 +42,4 @@ Archives of the [configuration files used](https://github.com/virtualcommons/for
 [experiment data](http://dev.commons.asu.edu/data/foraging/2008/all-iu-foraging-data.zip) are available.
 
 ### status
-This project is not under active development but is actively maintained. If you'd like to add new features or find any
-bugs, please [let us know](http://vcweb.asu.edu/contact).
+If you'd like to add new features or find any bugs, please [let us know](http://vcweb.asu.edu/contact).
