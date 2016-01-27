@@ -49,7 +49,7 @@
   <property name="client.class" value="edu.asu.commons.foraging.client.ForagingClient"/>
   <property name="facilitator.class" value="edu.asu.commons.foraging.facilitator.Facilitator"/>
   <property name="server.class" value="edu.asu.commons.foraging.server.ForagingServer"/>
-  <property name="framework.jar" value="sesef.jar"/>
+  <property name="framework.jar" value="sesef-${sesef.version}.jar"/>
   <property name="dist.dir" value="." />
   <property name="resources.dir" value="src/main/resources"/>
   <property name="conf.dir" value="${resources.dir}/configuration"/>
