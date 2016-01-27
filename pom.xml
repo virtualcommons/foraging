@@ -14,9 +14,10 @@ vim:sts=2:sw=2
   <packaging>jar</packaging>
   <version>1.1-SNAPSHOT</version>
   <name>foraging</name>
-  <url>http://bitbucket.org/virtualcommons/foraging</url>
+  <url>http://github.com/virtualcommons/foraging</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jetty.version>9.3.0.M1</jetty.version>
   </properties>
   <licenses>
     <license>
@@ -26,11 +27,11 @@ vim:sts=2:sw=2
     </license>
   </licenses>
   <scm>
-    <url>scm:hg:https://bitbucket.org/virtualcommons/foraging</url>
+    <url>scm:git:https://github.com/virtualcommons/foraging</url>
   </scm>
   <issueManagement>
-    <system>Bitbucket</system>
-    <url>https://bitbucket.org/virtualcommons/foraging/issues</url>
+    <system>GitHub</system>
+    <url>https://github.com/virtualcommons/foraging/issues</url>
   </issueManagement>
   <repositories>
     <repository>
@@ -52,7 +53,7 @@ vim:sts=2:sw=2
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -66,11 +67,6 @@ vim:sts=2:sw=2
       <version>1.1.1-rc6</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.3.2</version>
-    </dependency>
-    <dependency>
       <groupId>javax.media</groupId>
       <artifactId>jmf</artifactId>
       <version>2.1.1e</version>
@@ -82,7 +78,7 @@ vim:sts=2:sw=2
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9.1</version>
+        <version>2.10.3</version>
         <configuration>
           <links>
             <link>http://commons.asu.edu/api/sesef/</link>
@@ -92,16 +88,22 @@ vim:sts=2:sw=2
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.5</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>7.6.8.v20121106</version>
+        <version>${jetty.version}</version>
+        <configuration>
+          <scanIntervalSeconds>10</scanIntervalSeconds>
+          <webApp>
+            <contextPath>/</contextPath>
+          </webApp>
+        </configuration>
       </plugin>
     </plugins>
   </build>
