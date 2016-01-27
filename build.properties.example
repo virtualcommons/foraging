@@ -1,30 +1,33 @@
 # Any configuration properties set here will override the defaults provided in
 # the build.xml file.  If you are using the builtin Maven Jetty webserver, you
-# just need to change the server address (and the port listed in the
-# codebase.url property if you are running on a port other than 8080).
+# just need to change:
+# 1. server.address
+# 2. codebase.url port if you are running Jetty on a port other than 8080
 
-# server name, set this to the IP address or domain name that will be running
-# the experiment server 
-# FIXME: currently, this MUST be the same as the IP address/domain name of the
-# webserver you are deploying the software on.  
+# Set to the IP address or domain name of the experiment server.
+#  
+# NOTE: Due to restrictions by from Java security model, this must be the same as the IP address/domain name of the
+# webserver you are deploying the software on.
 server.address=localhost
 
-# the absolute path of where you would like to deploy the experiment JNLP and
-# jar files
-# (should be accessible / mounted by the webserver)
+# Filesystem path to experiment's client and facilitator JNLP and jar files, must be accessible & mounted by the webserver
+#
 # NOTE: for windows, use double backslashes as a path separator
 # web.dir=C:\\WebServer\\foraging
+#
+# Default value for Maven jetty webserver
 web.dir=src/main/webapp
 
 # The URL that maps to the path above.  If you don't mind using "foraging" as
 # part of the URL you can just set the server.address and leave this property
-# blank since the build.xml that loads this properties file sets the codebase
-# url to the ${server.address} + "/foraging" by default.
+# blank. 
+#
+# The build.xml that loads this properties file defaults to ${server.address} + "/foraging"
+# 
+# Default value for Maven jetty webserver
 codebase.url=http://${server.address}:8080/
 
-# set to whatever port you want the Java experiment server to run on (this is
-# *not* the webserver port, this is the experiment server port used to
-# communicate with the individual experiment clients)
+# The experiment server port used to communicate with each individual experiment client
 server.port=16001
 
 # SESEF framework version: https://github.com/virtualcommons/sesef 
