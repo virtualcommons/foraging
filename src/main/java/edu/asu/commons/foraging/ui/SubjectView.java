@@ -1,6 +1,8 @@
 package edu.asu.commons.foraging.ui;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -142,9 +144,9 @@ public class SubjectView extends GridView {
             graphics2D.setColor(Color.WHITE);
             graphics2D.draw(new Line2D.Double(0, lineY, scaleXDouble(boardSize.getWidth()), lineY));
         }
-
         // three cases - show all food on the game board, show all food within
         // visible radius of the current player, or don't show any food.
+        // UAA added resource zones support for 2014 experiments
         if (tokenFieldOfVisionEnabled) {
             viewTokensField.setCenter(dataModel.getCurrentPosition());
             if (showResourceZones) {
@@ -174,7 +176,6 @@ public class SubjectView extends GridView {
             int height = getCellHeight();
             synchronized (collectedTokens) {
                 Paint originalPaint = graphics2D.getPaint();
-                
                 for (Iterator<Map.Entry<Point, Duration>> iter = collectedTokens.entrySet().iterator(); iter.hasNext();) {
                     Map.Entry<Point, Duration> entry = iter.next();
                     Point point = entry.getKey();
@@ -284,9 +285,12 @@ public class SubjectView extends GridView {
     
     private void drawParticipant(Graphics2D graphics2D, Identifier id, int x, int y) {
         if (! useAvatarImage && id.equals(dataModel.getId())) {
+            Composite originalComposite = graphics2D.getComposite();
             graphics2D.setColor(Color.BLUE);
             Shape avatarCircle = new Ellipse2D.Double(x, y, dw, dh);
-            graphics2D.draw(avatarCircle);
+            graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+            graphics2D.fill(avatarCircle);
+            graphics2D.setComposite(originalComposite);
             return;
         }
         // The image to use is determined based on the client's assigned zone.
