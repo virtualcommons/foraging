@@ -146,12 +146,12 @@ public abstract class GridView extends JPanel {
      */
     public void setup(RoundConfiguration configuration) {
         setBoardSize(configuration.getBoardSize());
-        setImageSizes();
-        if (configuration.isTexturedBackgroundEnabled()) {
-            System.err.println("Loading textured background");
-            BufferedImage image = (BufferedImage) loadImage("images/sandstone.jpg");
-            background = new TexturePaint(image, new Rectangle2D.Double(0, 0, image.getWidth(), image.getHeight()));
+        // change self / token images as needed
+        if (configuration.isTokenImageEnabled()) {
+            tokenImage = loadImage(configuration.getTokenImagePath());
+            System.err.println("Set token image to " + tokenImage + ":" + configuration.getTokenImagePath());
         }
+        setImageSizes();
     }
 
     public void setScreenSize(Dimension screenSize) {
@@ -222,8 +222,10 @@ public abstract class GridView extends JPanel {
 
     private Image loadImage(String path) {
         try {
+            System.err.println("located url: " + ResourceLoader.getResourceAsUrl(path));
             return ImageIO.read(ResourceLoader.getResourceAsUrl(path));
         } catch (IOException exception) {
+            exception.printStackTrace();
             return null;
         }
         // return

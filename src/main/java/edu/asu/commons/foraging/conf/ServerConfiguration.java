@@ -69,15 +69,7 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
         }
         return false;
     }
-    
-    public boolean isTokenImageEnabled() {
-        return getBooleanProperty("use-token-image", true);
-    }
-    
-    public boolean isTexturedBackgroundEnabled() {
-        return getBooleanProperty("use-background-texture", false);
-    }
-    
+
     public boolean shouldInitialize2D() {
         for (RoundConfiguration configuration : getAllParameters()) {
             if (configuration.is2dExperiment()) {
@@ -214,6 +206,26 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
 
     public String getDurationInMinutes() {
         return TimeUnit.MINUTES.convert(getDuration(), TimeUnit.SECONDS) + " minutes";
+    }
+    
+    public boolean isTexturedBackgroundEnabled() {
+        return getBooleanProperty("use-background-texture", false);
+    }
+    
+    public boolean isTokenImageEnabled() {
+        return getBooleanProperty("use-token-image", true);
+    }
+    
+    public String getTokenImagePath() {
+        return getProperty("token-image-path", "images/gem-token.gif");
+    }
+
+    public boolean isAvatarImageEnabled() {
+        return getBooleanProperty("use-avatar-image", true);
+    }
+    
+    public String getAvatarImagePath() {
+        return getProperty("avatar-image-path", "images/gem-self.gif");
     }
 
 }

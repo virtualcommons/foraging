@@ -4,12 +4,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
-import java.awt.Image;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,6 +50,7 @@ public class SubjectView extends GridView {
     private boolean subjectFieldOfVisionEnabled;
     private boolean shouldNumberPlayers;   
     private boolean useTokenImage;
+    private boolean useAvatarImage;
     
     public final static Color FIELD_OF_VISION_COLOR = new Color(255, 255, 255, 150);
 
@@ -57,7 +59,7 @@ public class SubjectView extends GridView {
 
     // associates a Duration with a piece of token consumed at the given Point -
     // the duration is used to render the token as shrinking.
-    private Map<Point, Duration> collectedTokens = new HashMap<Point, Duration>();
+    private Map<Point, Duration> collectedTokens = new HashMap<>();
 
     private int viewSubjectsRadius;
 
@@ -102,11 +104,12 @@ public class SubjectView extends GridView {
         
         shouldNumberPlayers = configuration.getClientsPerGroup() > 2;
         useTokenImage = configuration.isTokenImageEnabled();
+        useAvatarImage = configuration.isAvatarImageEnabled();
         
         super.setup(configuration);
+        
         if (tokenFieldOfVisionEnabled || subjectFieldOfVisionEnabled) {
             fieldOfVisionOffset = (dw * 0.3d);
-            System.err.println("field of vision offset: " + fieldOfVisionOffset);
         }
     }
 
@@ -124,8 +127,8 @@ public class SubjectView extends GridView {
 
         // When showing the resource zones, paint top and bottom tokens using different images,
         // and draw a line between the zones.
-        HashSet<Point> resourcePositionsA = new HashSet<Point>();
-        HashSet<Point> resourcePositionsB = new HashSet<Point>();
+        HashSet<Point> resourcePositionsA = new HashSet<>();
+        HashSet<Point> resourcePositionsB = new HashSet<>();
         int midHeight = (int) boardSize.getHeight() / 2;
         if (showResourceZones) {
             for (Point point : dataModel.getResourcePositions()) {
@@ -161,39 +164,41 @@ public class SubjectView extends GridView {
         else {
         	paintCollection(dataModel.getResourcePositions(), graphics2D, TOKEN_COLOR);
         }
-        // display animation for food that has been eaten.
-        long elapsedTime = 0;
-        int width = (int) dw;
-        int height = (int) dh;       
+    }
+    
+    private void animateCollectedTokens(Graphics2D graphics2D) {
         // paint shrinking tokens that this client has consumed.
         if (dataModel.getRoundConfiguration().showTokenAnimation()) {
-        	
-        	synchronized (collectedTokens) {
-        		Paint originalPaint = graphics2D.getPaint();
-        		
-        		for (Iterator<Map.Entry<Point, Duration>> iter = collectedTokens.entrySet().iterator(); iter.hasNext();) {
-        			Map.Entry<Point, Duration> entry = iter.next();
-        			Point point = entry.getKey();
-        			Duration duration = entry.getValue();
-        			elapsedTime = duration.getElapsedTime();
-        			// FIXME: offset should be proportional to the actual size.
-        			if (elapsedTime < 100L) {
-        				graphics2D.setPaint(COLLECTED_TOKEN_COLOR);        				
-        			} else if (elapsedTime < 200L) {
-        				graphics2D.setPaint(TOKEN_COLOR);
-        			} else if (elapsedTime < 300L) {
-        				graphics2D.setPaint(COLLECTED_TOKEN_COLOR);
-        			} else {
-        				// After the time threshold has been exceeded, prune old food 
-        				// that shouldn't be displayed.
-        				iter.remove();
-        				continue;
-        			}
-        			// highlight square behind the dot green
-        			paintCollectedToken(point, graphics2D, width, height);        			
-        		}
-        		graphics2D.setPaint(originalPaint);
-        	}
+            long elapsedTime = 0;
+            int width = getCellWidth();
+            int height = getCellHeight();
+            synchronized (collectedTokens) {
+                Paint originalPaint = graphics2D.getPaint();
+                
+                for (Iterator<Map.Entry<Point, Duration>> iter = collectedTokens.entrySet().iterator(); iter.hasNext();) {
+                    Map.Entry<Point, Duration> entry = iter.next();
+                    Point point = entry.getKey();
+                    Duration duration = entry.getValue();
+                    elapsedTime = duration.getElapsedTime();
+                    // FIXME: offset should be proportional to the actual size.
+                    if (elapsedTime < 100L) {
+                        // 
+                        graphics2D.setPaint(COLLECTED_TOKEN_COLOR);                     
+                    } else if (elapsedTime < 200L) {
+                        graphics2D.setPaint(TOKEN_COLOR);
+                    } else if (elapsedTime < 300L) {
+                        graphics2D.setPaint(COLLECTED_TOKEN_COLOR);
+                    } else {
+                        // After the time threshold has been exceeded, prune old food 
+                        // that shouldn't be displayed.
+                        iter.remove();
+                        continue;
+                    }
+                    // highlight square behind the dot green
+                    paintCollectedToken(point, graphics2D, width, height);                  
+                }
+                graphics2D.setPaint(originalPaint);
+            }
         }
     }
 
@@ -278,6 +283,12 @@ public class SubjectView extends GridView {
     }
     
     private void drawParticipant(Graphics2D graphics2D, Identifier id, int x, int y) {
+        if (! useAvatarImage && id.equals(dataModel.getId())) {
+            graphics2D.setColor(Color.BLUE);
+            Shape avatarCircle = new Ellipse2D.Double(x, y, dw, dh);
+            graphics2D.draw(avatarCircle);
+            return;
+        }
         // The image to use is determined based on the client's assigned zone.
         Image image;
         if (dataModel.isBeingSanctioned(id)) {
@@ -307,7 +318,7 @@ public class SubjectView extends GridView {
             }
         }
         else {
-            image = dataModel.getClientZone(id) == 1? scaledOtherSubjectImageB : scaledOtherSubjectImage;
+            image = dataModel.getClientZone(id) == 1 ? scaledOtherSubjectImageB : scaledOtherSubjectImage;
         	graphics2D.drawImage(image, x, y, this);
         }
     }

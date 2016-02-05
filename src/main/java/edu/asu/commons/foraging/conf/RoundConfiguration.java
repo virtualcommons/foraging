@@ -182,6 +182,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     	return getBooleanProperty("use-token-image", getParentConfiguration().isTokenImageEnabled());
     }
     
+    public boolean isAvatarImageEnabled() {
+        return getBooleanProperty("use-avatar-image", getParentConfiguration().isAvatarImageEnabled());
+    }
+    
+    public String getAvatarImagePath() {
+        return getProperty("avatar-image-path", getParentConfiguration().getAvatarImagePath());
+    }
+    
     public boolean isTexturedBackgroundEnabled() {
         return getBooleanProperty("use-background-texture", getParentConfiguration().isTexturedBackgroundEnabled());
     }
@@ -974,6 +982,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      */
     public double getRobotHarvestProbability() {
         return getDoubleProperty("robot-harvest-probability", 0.5d);
+    }
+
+    public String getTokenImagePath() {
+        return getStringProperty("token-image-path", getParentConfiguration().getTokenImagePath());
     }
 
 }
