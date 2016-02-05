@@ -76,6 +76,10 @@ public class SubjectView extends GridView {
     // Set from the the show-resource-zones parameter
     private boolean showResourceZones;
 
+    private Color selfParticipantColor = Color.BLUE;
+
+    private Color otherParticipantColor = Color.ORANGE;
+
     public SubjectView(Dimension screenSize, ClientDataModel dataModel) {
         super(screenSize);
         this.dataModel = dataModel;
@@ -259,10 +263,9 @@ public class SubjectView extends GridView {
                 int scaledX = scaleX(subjectLocation.x);
                 int scaledY = scaleY(subjectLocation.y);
                 drawParticipant( graphics2D, id, scaledX, scaledY );
-                //            graphics2D.drawImage( getImage(id), scaledX, scaledY, null);
-                graphics2D.setColor( getSubjectNumberColor(id) );
                 // Paint the subject's number
                 if (shouldNumberPlayers) {
+                    graphics2D.setColor( getSubjectNumberColor(id) );
                 	String subjectNumber = String.valueOf( dataModel.getAssignedNumber(id) );
                 	//Calculate x and y so that the text is center aligned
                 	int characterWidth = fontMetrics.stringWidth(subjectNumber);
@@ -283,10 +286,19 @@ public class SubjectView extends GridView {
         }
     }
     
+    private Color getParticipantColor(Identifier id) {
+        if (id.equals(dataModel.getId())) {
+            return selfParticipantColor;
+        }
+        else {
+            return otherParticipantColor;
+        }
+    }
+    
     private void drawParticipant(Graphics2D graphics2D, Identifier id, int x, int y) {
-        if (! useAvatarImage && id.equals(dataModel.getId())) {
+        if (! useAvatarImage) {
             Composite originalComposite = graphics2D.getComposite();
-            graphics2D.setColor(Color.BLUE);
+            graphics2D.setColor(getParticipantColor(id));
             Shape avatarCircle = new Ellipse2D.Double(x, y, dw, dh);
             graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
             graphics2D.fill(avatarCircle);
@@ -326,5 +338,6 @@ public class SubjectView extends GridView {
         	graphics2D.drawImage(image, x, y, this);
         }
     }
+
     
 }
