@@ -125,7 +125,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
     // private Duration chatDuration;
 
     private volatile boolean experimentStarted;
-    
+
     // FIXME: add the ability to reconfigure an already instantiated server
     public ForagingServer() {
         this(new ServerConfiguration());
@@ -207,6 +207,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private ResourceDispenser resourceDispenser;
         private ServerState serverState;
         private final Duration secondTick = Duration.create(1000L);
+        private final Duration botTick = Duration.create(100L);
         private volatile boolean groupsInitialized;
 
         /**
@@ -241,7 +242,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 public void handle(ConnectionEvent event) {
                     // handles incoming connections
                     if (experimentStarted) {
-                        // currently not allowing any new connections 
+                        // currently not allowing any new connections
                         // FIXME: would be nice to allow for reconnection /
                         // reassociation of clients to ids and data. should be
                         // logged however so we can remember the context of the data
@@ -261,13 +262,13 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 @Override
                 public void handle(DisconnectionRequest event) {
                     synchronized (clients) {
-                    	Identifier id = event.getId();
-                    	if (id.equals(getFacilitatorId())) {
-                    	    getLogger().log(Level.SEVERE, "Disconnecting facilitator.", event.getException());
-                    	}
-                    	else {
-                    	    sendFacilitatorMessage("Received DisconnectionRequest, removing " + id + " from clients " + clients.keySet(), event.getException());
-                    	}
+                        Identifier id = event.getId();
+                        if (id.equals(getFacilitatorId())) {
+                            getLogger().log(Level.SEVERE, "Disconnecting facilitator.", event.getException());
+                        }
+                        else {
+                            sendFacilitatorMessage("Received DisconnectionRequest, removing " + id + " from clients " + clients.keySet(), event.getException());
+                        }
                         clients.remove(id);
                         serverDataModel.removeClient(id);
                     }
@@ -297,14 +298,15 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<ClientReadyEvent>(ClientReadyEvent.class) {
                 private int readyClients = 0;
+
                 @Override
                 public void handle(ClientReadyEvent event) {
-                	readyClients++;
-                	sendFacilitatorMessage(String.format("%d of %d clients are ready: %s", readyClients, clients.size(), event));
-                	if (readyClients >= clients.size()) {
-                		sendFacilitatorMessage("All clients are ready to move on.");
-                		readyClients = 0;
-                	}
+                    readyClients++;
+                    sendFacilitatorMessage(String.format("%d of %d clients are ready: %s", readyClients, clients.size(), event));
+                    if (readyClients >= clients.size()) {
+                        sendFacilitatorMessage("All clients are ready to move on.");
+                        readyClients = 0;
+                    }
                 }
             });
 
@@ -375,6 +377,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<RuleVoteRequest>(RuleVoteRequest.class) {
                 int votesReceived = 0;
+
                 @Override
                 public void handle(RuleVoteRequest request) {
                     sendFacilitatorMessage("Received vote rule request: " + request);
@@ -382,7 +385,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     client.setVotedRule(request.getRule());
                     votesReceived++;
                     if (votesReceived >= clients.size()) {
-                    	processNominations();
+                        processNominations();
                     }
                 }
             });
@@ -405,23 +408,23 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
 
         }
-        
+
         private void processNominations() {
-        	boolean imposedStrategyEnabled = getCurrentRoundConfiguration().isImposedStrategyEnabled();
-        	for (GroupDataModel group : serverDataModel.getGroups()) {
+            boolean imposedStrategyEnabled = getCurrentRoundConfiguration().isImposedStrategyEnabled();
+            for (GroupDataModel group : serverDataModel.getGroups()) {
                 // calculate votes
-        		Map<Strategy, Integer> votingResults = group.generateVotingResults(imposedStrategyEnabled);
-        		List<Strategy> selectedRules = group.getSelectedRules();
+                Map<Strategy, Integer> votingResults = group.generateVotingResults(imposedStrategyEnabled);
+                List<Strategy> selectedRules = group.getSelectedRules();
                 sendFacilitatorMessage(String.format(
                         "%s selected [%s] from all rules %s (imposed? %s)",
                         group, selectedRules, votingResults, imposedStrategyEnabled));
-                if (! imposedStrategyEnabled) {
+                if (!imposedStrategyEnabled) {
                     for (Identifier id : group.getClientIdentifiers()) {
                         transmit(new RuleSelectedUpdateEvent(id, group, selectedRules, votingResults));
                     }
-        		}
-        		store(new RuleSelectedUpdateEvent(getFacilitatorId(), group, selectedRules, votingResults));
-        	}
+                }
+                store(new RuleSelectedUpdateEvent(getFacilitatorId(), group, selectedRules, votingResults));
+            }
         }
 
         @Deprecated
@@ -542,10 +545,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             // validate request
             boolean validSanctionRequest = false;
             String errorMessage = "";
-            if ( ! getCurrentRoundConfiguration().isRealTimeSanctioningEnabled()) {
+            if (!getCurrentRoundConfiguration().isRealTimeSanctioningEnabled()) {
                 errorMessage = "Punishment is not allowed in this round.";
             }
-            else if ( ! getCurrentRoundConfiguration().isSanctioningAllowed(sourceClient.getZone(), targetClient.getZone())) {
+            else if (!getCurrentRoundConfiguration().isSanctioningAllowed(sourceClient.getZone(), targetClient.getZone())) {
                 errorMessage = String.format("You cannot punish members of %s team.",
                         sourceClient.getZone() == targetClient.getZone() ? "your" : "the other");
             }
@@ -562,7 +565,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 validSanctionRequest = true;
             }
 
-            if ( ! validSanctionRequest) {
+            if (!validSanctionRequest) {
                 getLogger().warning("Ignoring token reduction request, sending new client error message event to : " + sourceClient.getId());
                 transmit(new ClientMessageEvent(sourceClient.getId(), "Ignoring token reduction request: " + errorMessage));
                 return;
@@ -610,37 +613,37 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 }
             });
             addEventProcessor(new EventTypeProcessor<ImposeStrategyEvent>(ImposeStrategyEvent.class) {
-            	@Override
-            	public void handle(ImposeStrategyEvent event) {
-            		if (! event.getId().equals(getFacilitatorId())) {
-            			sendFacilitatorMessage("Ignoring request to impose strategy " + event);
-            			return;
-            		}
-            		serverDataModel.setImposedStrategyDistribution(event.getStrategyDistribution());
+                @Override
+                public void handle(ImposeStrategyEvent event) {
+                    if (!event.getId().equals(getFacilitatorId())) {
+                        sendFacilitatorMessage("Ignoring request to impose strategy " + event);
+                        return;
+                    }
+                    serverDataModel.setImposedStrategyDistribution(event.getStrategyDistribution());
                     sendFacilitatorMessage("Setting imposed strategy distribution to " + event.getStrategyDistribution());
-        			persister.store(event);
-            	}
+                    persister.store(event);
+                }
             });
             addEventProcessor(new EventTypeProcessor<ShowRequest>(ShowRequest.class, true) {
                 @Override
                 public void handle(ShowRequest request) {
-                	// validity checks: request from facilitator?
-                    if (! request.getId().equals(getFacilitatorId())) {
+                    // validity checks: request from facilitator?
+                    if (!request.getId().equals(getFacilitatorId())) {
                         sendFacilitatorMessage("Ignoring show request from non facilitator id: " + request.getId());
                         return;
                     }
-                    // FIXME: bah, more special casing.  figure out a better way 
+                    // FIXME: bah, more special casing. figure out a better way
                     // to determine when to send the imposed strategy..
                     if (request instanceof ShowVoteScreenRequest && getCurrentRoundConfiguration().isImposedStrategyEnabled()) {
                         sendImposedStrategy();
                     }
                     // if this is a ShowExitInstructionsRequest, is this the last round at least?
-                    if (request instanceof ShowExitInstructionsRequest && ! getCurrentRoundConfiguration().isLastRound()) {
-                    	sendFacilitatorMessage("Ignoring request to show exit instructions, we are not at the last round yet.");
-                    	return;
+                    if (request instanceof ShowExitInstructionsRequest && !getCurrentRoundConfiguration().isLastRound()) {
+                        sendFacilitatorMessage("Ignoring request to show exit instructions, we are not at the last round yet.");
+                        return;
                     }
                     for (Identifier id : clients.keySet()) {
-                    	transmit(request.clone(id));
+                        transmit(request.clone(id));
                     }
                 }
             });
@@ -705,11 +708,11 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         sendFacilitatorMessage(String.format("Received trust game submission %s (%d total)", request, numberOfSubmissions));
                     }
                     else {
-                    	sendFacilitatorMessage("Received trust game submission request but trust game wasn't enabled: " + request);
+                        sendFacilitatorMessage("Received trust game submission request but trust game wasn't enabled: " + request);
                     }
                     if (numberOfSubmissions >= clients.size()) {
-                    	// once all clients have submitted their decisions, execute the trust game.
-                    	processTrustGame();
+                        // once all clients have submitted their decisions, execute the trust game.
+                        processTrustGame();
                         numberOfSubmissions = 0;
                     }
                 }
@@ -730,50 +733,50 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             // FIXME: handle reconfiguration requests from facilitator
         }
-        
+
         /**
          * Performs a random pairing of every member in the group to generate trust game payment results.
          */
-		protected void processTrustGame() {
-			List<TrustGameResult> allTrustGameResults = new ArrayList<TrustGameResult>();
-        	for (GroupDataModel group : serverDataModel.getGroups()) {
-        		LinkedList<ClientData> clientList = new LinkedList<ClientData>(group.getClientDataMap().values());
-        		Collections.shuffle(clientList);
-        		getLogger().info("TRUST GAME shuffled client list: " + clientList);
-        		ClientData first = clientList.getFirst();
+        protected void processTrustGame() {
+            List<TrustGameResult> allTrustGameResults = new ArrayList<TrustGameResult>();
+            for (GroupDataModel group : serverDataModel.getGroups()) {
+                LinkedList<ClientData> clientList = new LinkedList<ClientData>(group.getClientDataMap().values());
+                Collections.shuffle(clientList);
+                getLogger().info("TRUST GAME shuffled client list: " + clientList);
+                ClientData first = clientList.getFirst();
 
-        		// using an iterator to consume both players and ensure that a player doesn't
-        		// have the trust game calculated on them twice (except as a player 2 selection)
-        		for (ListIterator<ClientData> iter = clientList.listIterator(); iter.hasNext();) {
-        			ClientData playerOne = iter.next();
-        			ClientData playerTwo = first;
-        			if (iter.hasNext()) {
-        				playerTwo = iter.next();
-        			}
-        			// FIXME: upon second thought, this isn't strictly necessary as the list is already
-        			// being shuffled and the random strategy needed to complete the pairings
-        			// doesn't need to be doubly randomized
-//        			else {
-        				// clumsy, see if we can express this differently
-        				// why doesn't listIterator offer a currentIndex() method as well?
-//        				playerTwo = clientList.get(random.nextInt(iter.previousIndex() + 1));
-//        			}
-        			getLogger().info("TRUST GAME: about to pair " + playerOne + " with " + playerTwo);
-        			TrustGameResult trustGameLog = serverDataModel.calculateTrustGame(playerOne, playerTwo);
-        			allTrustGameResults.add(trustGameLog);
-        			sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in:\n%s", playerOne, playerTwo,
-        					trustGameLog));
-        		}
-        	}
-        	// show the exit instructions and update debriefing for all clients if this is the last round.
+                // using an iterator to consume both players and ensure that a player doesn't
+                // have the trust game calculated on them twice (except as a player 2 selection)
+                for (ListIterator<ClientData> iter = clientList.listIterator(); iter.hasNext();) {
+                    ClientData playerOne = iter.next();
+                    ClientData playerTwo = first;
+                    if (iter.hasNext()) {
+                        playerTwo = iter.next();
+                    }
+                    // FIXME: upon second thought, this isn't strictly necessary as the list is already
+                    // being shuffled and the random strategy needed to complete the pairings
+                    // doesn't need to be doubly randomized
+                    // else {
+                    // clumsy, see if we can express this differently
+                    // why doesn't listIterator offer a currentIndex() method as well?
+                    // playerTwo = clientList.get(random.nextInt(iter.previousIndex() + 1));
+                    // }
+                    getLogger().info("TRUST GAME: about to pair " + playerOne + " with " + playerTwo);
+                    TrustGameResult trustGameLog = serverDataModel.calculateTrustGame(playerOne, playerTwo);
+                    allTrustGameResults.add(trustGameLog);
+                    sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in:\n%s", playerOne, playerTwo,
+                            trustGameLog));
+                }
+            }
+            // show the exit instructions and update debriefing for all clients if this is the last round.
             if (getConfiguration().isLastRound()) {
-                for (ClientData data: clients.values()) {
+                for (ClientData data : clients.values()) {
                     transmit(new ShowExitInstructionsRequest(data.getId(), data.getGroupDataModel()));
                 }
             }
-			transmitAndStore(new TrustGameResultsFacilitatorEvent(getFacilitatorId(), serverDataModel, allTrustGameResults));
-			Utils.notify(facilitatorSignal);
-		}
+            transmitAndStore(new TrustGameResultsFacilitatorEvent(getFacilitatorId(), serverDataModel, allTrustGameResults));
+            Utils.notify(facilitatorSignal);
+        }
 
         protected boolean isReadyToStartRound() {
             if (getCurrentRoundConfiguration().isQuizEnabled()) {
@@ -855,11 +858,12 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     break;
                 case IN_BETWEEN_ROUNDS:
                     // FIXME: there is an inherent nastiness going on with this model of control flow
-                    // when we first spin up the server, there are no connected clients. 
+                    // when we first spin up the server, there are no connected clients.
                     // We enters this code block, initialize the round (with no participants, etc.) and then wait on the quiz signal
 
                     // the issue is that we need to initialize the groups at some clear, well-defined time.
-                    // we have to do it after all the clients are connected, so either on a showInstructions or explicit "allocate groups" signal from the facilitator
+                    // we have to do it after all the clients are connected, so either on a showInstructions or explicit "allocate groups" signal from the
+                    // facilitator
                     // the previous way which I've been slowly refactoring was to do it on the beginning of the first round (as a special case)
                     // in the handler for BeginRoundRequest) and to do it at the end of every round. Probably better to do it in round initialization
                     setupRound();
@@ -874,8 +878,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     startRound();
                     break;
                 case WAITING_FOR_CONNECTIONS:
-                	// while waiting for connections we must defer group initialization till all clients
-                	// are connected (which is unknown, we allow clients to connect until the experiment has started)
+                    // while waiting for connections we must defer group initialization till all clients
+                    // are connected (which is unknown, we allow clients to connect until the experiment has started)
                     setupRound();
                     sendFacilitatorMessage("Ready to show instructions and start the next round.");
                     if (getCurrentRoundConfiguration().isQuizEnabled()) {
@@ -892,30 +896,29 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     break;
             }
         }
-        
+
         private void sendImposedStrategy() {
             try {
                 List<GroupDataModel> groups = serverDataModel.allocateImposedStrategyDistribution();
                 StringBuilder builder = new StringBuilder();
-                for (GroupDataModel group: groups) {
+                for (GroupDataModel group : groups) {
                     builder.append('[').append(group).append(':').append(group.getImposedStrategy()).append(']');
-                    for (Identifier id: group.getClientIdentifiers()) {
+                    for (Identifier id : group.getClientIdentifiers()) {
                         transmit(new SetImposedStrategyEvent(id, group.getImposedStrategy()));
                     }
                 }
                 sendFacilitatorMessage("Server has imposed strategies for all groups: " + builder);
-            }
-            catch (IllegalArgumentException exception) {
+            } catch (IllegalArgumentException exception) {
                 sendFacilitatorMessage("Couldn't allocate strategy distribution: " + serverDataModel.getImposedStrategyDistribution(), exception);
             }
         }
 
         /**
          * initialize persister first so we store all relevant events.
-         * persister MUST be initialized early so that we store pre-round 
+         * persister MUST be initialized early so that we store pre-round
          * events like QuizResponseEvent, ChatEvent, and the various Ranking requests.
          */
-        private void setupRound() {            
+        private void setupRound() {
             persister.initialize(getCurrentRoundConfiguration());
         }
 
@@ -966,42 +969,47 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             boolean botsEnabled = getCurrentRoundConfiguration().isBotGroupsEnabled();
             if (secondHasPassed) {
                 // XXX: rotating monitor handling currently disabled, find a new place for this logic.
-//                if (getCurrentRoundConfiguration().isRotatingMonitorEnabled()
-//                        && currentRoundDuration.getElapsedTimeInSeconds() % monitorRotationInterval == 0)
-//                {
-//                    for (GroupDataModel group : serverDataModel.getGroups()) {
-//                        boolean rotated = group.rotateMonitorIfNecessary();
-//                        if (rotated) {
-//                            // send new roles to all clients
-//                            // FIXME: this is inefficient, we could synchronize twice.
-//                            for (ClientData clientData : group.getClientDataMap().values()) {
-//                                transmit(new SynchronizeClientEvent(clientData, currentRoundDuration.getTimeLeft()));
-//                            }
-//                        }
-//
-//                    }
-//                }
-            	for (ClientData data: clients.values()) {
-            		if (shouldSynchronize(data)) {
-            			getLogger().info("Sending full sync to: " + data);
-            			transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
-            			syncSet.add(data.getId());
-            		}
-            	}
-            	// clear all bot action taken counters
-            	if (botsEnabled) {
-            	    for (GroupDataModel group: serverDataModel.getGroups()) {
-            	        group.clearBotActionsTaken();
-            	    }
-            	}
-            	
+                // if (getCurrentRoundConfiguration().isRotatingMonitorEnabled()
+                // && currentRoundDuration.getElapsedTimeInSeconds() % monitorRotationInterval == 0)
+                // {
+                // for (GroupDataModel group : serverDataModel.getGroups()) {
+                // boolean rotated = group.rotateMonitorIfNecessary();
+                // if (rotated) {
+                // // send new roles to all clients
+                // // FIXME: this is inefficient, we could synchronize twice.
+                // for (ClientData clientData : group.getClientDataMap().values()) {
+                // transmit(new SynchronizeClientEvent(clientData, currentRoundDuration.getTimeLeft()));
+                // }
+                // }
+                //
+                // }
+                // }
+                for (ClientData data : clients.values()) {
+                    if (shouldSynchronize(data)) {
+                        getLogger().info("Sending full sync to: " + data);
+                        transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
+                        syncSet.add(data.getId());
+                    }
+                }
+
                 resourceDispenser.generateResources();
                 secondTick.restart();
             }
-            for (GroupDataModel group : serverDataModel.getGroups()) {
-                if (botsEnabled) {
-                    group.activateBots();                    
+            if (botsEnabled) {
+                if (botTick.hasExpired()) {
+                    for (GroupDataModel group : serverDataModel.getGroups()) {
+                        // only activate bots every 100 ms or so, otherwise they frontload all their actions.
+                        group.activateBots();
+                        // clear all bot action taken counters every 1 s
+                        if (botTick.getStartCount() % 10 == 0) {
+                            group.clearBotActionsTaken();
+                        }
+                    }
+                    botTick.restart();
                 }
+            }
+            for (GroupDataModel group : serverDataModel.getGroups()) {
+
                 Set<Resource> addedTokensSet = group.getAddedResources();
                 Resource[] addedResources = addedTokensSet.toArray(new Resource[addedTokensSet.size()]);
                 Set<Resource> removedTokensSet = group.getRemovedResources();
@@ -1009,14 +1017,14 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 Map<Identifier, Integer> clientTokens = group.getClientTokens();
                 Map<Identifier, Point> clientPositions = group.getClientPositions();
                 for (ClientData data : group.getClientDataMap().values()) {
-                	if (syncSet.contains(data.getId())) {
-                		// skip this update, then remove them from the sync set.
-                		syncSet.remove(data.getId());
-                	}
-                	else {
-                		transmit(new ClientPositionUpdateEvent(data, addedResources, removedResources, clientTokens, clientPositions,
-                				currentRoundDuration.getTimeLeft()));
-                	}
+                    if (syncSet.contains(data.getId())) {
+                        // skip this update, then remove them from the sync set.
+                        syncSet.remove(data.getId());
+                    }
+                    else {
+                        transmit(new ClientPositionUpdateEvent(data, addedResources, removedResources, clientTokens, clientPositions,
+                                currentRoundDuration.getTimeLeft()));
+                    }
                     // post-process cleanup of transient data structures on ClientData
                     data.clearCollectedTokens();
                     data.resetLatestSanctions();
@@ -1037,7 +1045,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
         private boolean shouldSynchronize(ClientData data) {
             long startCount = secondTick.getStartCount();
-            int assignedNumber = data.getAssignedNumber(); 
+            int assignedNumber = data.getAssignedNumber();
             return (startCount == 0) || ((startCount % SYNCHRONIZATION_FREQUENCY) == (assignedNumber * 10));
         }
 
@@ -1109,7 +1117,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 // add bots to each GroupDataModel
                 int botsPerGroup = roundConfiguration.getBotsPerGroup();
                 BotType botType = BotType.valueOf(roundConfiguration.getBotType());
-                for (GroupDataModel group: serverDataModel.getGroups()) {
+                for (GroupDataModel group : serverDataModel.getGroups()) {
                     for (int i = 0; i < botsPerGroup; i++) {
                         if (group.getNumberOfBots() < botsPerGroup) {
                             group.addBot(botType, i + 1);
@@ -1145,6 +1153,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             currentRoundDuration.start();
             transmit(new FacilitatorUpdateEvent(getFacilitatorId(), serverDataModel, currentRoundDuration.getTimeLeft()));
             secondTick.start();
+            if (roundConfiguration.isBotGroupsEnabled()) {
+                botTick.start();
+            }
             serverState = ServerState.ROUND_IN_PROGRESS;
         }
     }
@@ -1161,9 +1172,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         server.repl();
     }
 
-	@Override
-	public IPersister<ServerConfiguration, RoundConfiguration> getPersister() {
-		return persister;
-	}
+    @Override
+    public IPersister<ServerConfiguration, RoundConfiguration> getPersister() {
+        return persister;
+    }
 
 }

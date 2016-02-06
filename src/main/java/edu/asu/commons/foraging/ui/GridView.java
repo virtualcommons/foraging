@@ -149,7 +149,6 @@ public abstract class GridView extends JPanel {
         // change self / token images as needed
         if (configuration.isTokenImageEnabled()) {
             tokenImage = loadImage(configuration.getTokenImagePath());
-            System.err.println("Set token image to " + tokenImage + ":" + configuration.getTokenImagePath());
         }
         setImageSizes();
     }
@@ -222,7 +221,6 @@ public abstract class GridView extends JPanel {
 
     private Image loadImage(String path) {
         try {
-            System.err.println("located url: " + ResourceLoader.getResourceAsUrl(path));
             return ImageIO.read(ResourceLoader.getResourceAsUrl(path));
         } catch (IOException exception) {
             exception.printStackTrace();

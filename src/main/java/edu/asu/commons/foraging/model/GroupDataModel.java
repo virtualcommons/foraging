@@ -418,6 +418,9 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         for (ClientData clientData : clients.values()) {
             positions.put(clientData.getId(), clientData.getPoint());
         }
+        for (Bot bot: bots) {
+            positions.put(bot.getIdentifier(), bot.getCurrentPosition());
+        }
         return positions;
     }
 
