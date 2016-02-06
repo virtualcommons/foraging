@@ -8,7 +8,7 @@
 <entry key="private-property">true</entry>
 <entry key="duration">240</entry>
 
-<entry key="quiz">true</entry>
+<entry key="quiz">false</entry>
 <entry key="q1">F</entry>
 <entry key="q2">T</entry>
 <entry key="q3">T</entry>
