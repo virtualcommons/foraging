@@ -32,6 +32,7 @@ import edu.asu.commons.experiment.AbstractExperiment;
 import edu.asu.commons.experiment.IPersister;
 import edu.asu.commons.experiment.Persister;
 import edu.asu.commons.experiment.StateMachine;
+import edu.asu.commons.foraging.client.BotType;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.data.ForagingSaveFileConverter;
@@ -1081,7 +1082,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private void initializeClientPositions() {
             // reinitialize all client positions. We don't have to do this if we are randomizing the group
             // because client positions get initialized when they are added to the group
-            // (during the randomization process).
+            // during the randomization process
             for (ClientData clientData : clients.values()) {
                 clientData.initializePosition();
             }
@@ -1094,10 +1095,23 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 shuffleParticipants();
             }
             else {
-                getLogger().info("Didn't need to shuffle participants : " + getCurrentRoundConfiguration());
+                getLogger().info("Didn't need to shuffle participants, initializing client positions.");
                 // shuffleParticipants automatically initializes the client positions
                 // if we don't shuffle, we need to manually re-initialize them.
                 initializeClientPositions();
+            }
+            RoundConfiguration roundConfiguration = getCurrentRoundConfiguration();
+            if (roundConfiguration.isBotGroupsEnabled()) {
+                // add bots to each GroupDataModel
+                int botsPerGroup = roundConfiguration.getBotsPerGroup();
+                BotType botType = BotType.valueOf(roundConfiguration.getBotType());
+                for (GroupDataModel group: serverDataModel.getGroups()) {
+                    for (int i = 0; i < botsPerGroup; i++) {
+                        if (group.getNumberOfBots() < botsPerGroup) {
+                            group.addBot(botType);
+                        }
+                    }
+                }
             }
             // set up the resource dispenser, generates the initial resource distributions for the
             // groups, must be done after creating the client group relationships.

@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import org.stringtemplate.v4.ST;
 
 import edu.asu.commons.conf.ExperimentRoundParameters;
+import edu.asu.commons.foraging.client.BotType;
 import edu.asu.commons.foraging.graphics.Point3D;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
@@ -994,6 +995,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     
     public int getBotsPerGroup() {
         return getIntProperty("bots-per-group", getParentConfiguration().getBotsPerGroup());
+    }
+    
+    public String getBotType() {
+        return getProperty("bot-type", getParentConfiguration().getBotType());
     }
 
 }

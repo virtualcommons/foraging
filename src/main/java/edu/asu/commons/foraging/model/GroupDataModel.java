@@ -15,6 +15,9 @@ import java.util.logging.Logger;
 
 import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.experiment.DataModel;
+import edu.asu.commons.foraging.client.Bot;
+import edu.asu.commons.foraging.client.BotFactory;
+import edu.asu.commons.foraging.client.BotType;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
@@ -53,6 +56,8 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     private final Map<Identifier, ClientData> clients = new HashMap<Identifier, ClientData>();
     // FIXME: making this transient causes a NPE in the facilitator, should be transient however.
     private final Map<Point, Resource> resourceDistribution = new HashMap<Point, Resource>();
+    // list of bots
+    private final List<Bot> bots = new ArrayList<Bot>();
     
     private final transient Map<Identifier, Resource> resourceOwners = new HashMap<Identifier, Resource>();
     private transient Set<Resource> removedResources;
@@ -874,5 +879,15 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 	public void setImposedStrategy(Strategy imposedStrategy) {
 	    this.imposedStrategy = imposedStrategy;
 	}
+
+    public void addBot(BotType botType, int botNumber) {
+        Bot bot = BotFactory.getInstance().create(botType);
+        bot.setBotNumber(botNumber);
+        bots.add(bot);
+    }
+    
+    public int getNumberOfBots() {
+        return bots.size();
+    }
 
 }

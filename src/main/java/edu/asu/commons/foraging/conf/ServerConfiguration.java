@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.stringtemplate.v4.ST;
 
 import edu.asu.commons.conf.ExperimentConfiguration;
+import edu.asu.commons.foraging.client.BotType;
 import edu.asu.commons.foraging.model.ClientData;
 
 /**
@@ -234,6 +235,14 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
     
     public int getBotsPerGroup() {
         return getIntProperty("bots-per-group", 1);
+    }
+    
+    /**
+     * Will need to revisit if we want multiple bot types coexisting in the same round.
+     * @return
+     */
+    public String getBotType() {
+        return getProperty("bot-type", "AGGRESSIVE");
     }
 
 }
