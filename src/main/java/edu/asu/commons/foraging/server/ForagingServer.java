@@ -1108,7 +1108,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 for (GroupDataModel group: serverDataModel.getGroups()) {
                     for (int i = 0; i < botsPerGroup; i++) {
                         if (group.getNumberOfBots() < botsPerGroup) {
-                            group.addBot(botType);
+                            group.addBot(botType, i + 1);
                         }
                     }
                 }

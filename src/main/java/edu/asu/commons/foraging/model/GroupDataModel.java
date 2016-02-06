@@ -883,6 +883,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public void addBot(BotType botType, int botNumber) {
         Bot bot = BotFactory.getInstance().create(botType);
         bot.setBotNumber(botNumber);
+        bot.initializePosition(serverDataModel.getRoundConfiguration());
         bots.add(bot);
     }
     
