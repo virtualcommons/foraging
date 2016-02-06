@@ -1,10 +1,10 @@
 package edu.asu.commons.foraging.client;
 
 import edu.asu.commons.foraging.model.Direction;
-import edu.asu.commons.foraging.model.GroupDataModel;
 
 public class RandomBot extends Bot.SimpleBot {
 
+    private static final long serialVersionUID = 8669701168883630901L;
     public final static BotType TYPE = BotType.RANDOM;
     
     public RandomBot() {
@@ -16,7 +16,7 @@ public class RandomBot extends Bot.SimpleBot {
     }
 
     @Override
-    public Direction getNextMove(GroupDataModel model) {
+    public Direction getNextMove() {
         return Direction.random();
     }
 

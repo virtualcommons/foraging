@@ -24,6 +24,7 @@ import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
 import edu.asu.commons.foraging.event.EnforcementRankingRequest;
 import edu.asu.commons.foraging.event.LockResourceRequest;
 import edu.asu.commons.foraging.event.MonitorTaxEvent;
+import edu.asu.commons.foraging.event.MovementEvent;
 import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
@@ -454,6 +455,14 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             }
         }
         return ids;
+    }
+    
+    public void move(Bot bot, Direction direction) {
+        Point newPosition = direction.apply(bot.getCurrentPosition());
+        if (serverDataModel.isValidPosition(newPosition) && isCellAvailable(newPosition)) {
+            bot.setCurrentPosition(newPosition);
+            getEventChannel().handle(new MovementEvent(bot.getIdentifier(), direction));
+        }
     }
 
     /**
@@ -894,8 +903,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 	}
 
     public void addBot(BotType botType, int botNumber) {
-        Bot bot = BotFactory.getInstance().create(botType, this);
-        bot.setBotNumber(botNumber);
+        Bot bot = BotFactory.getInstance().create(botType, botNumber, this);
         bot.initializePosition(serverDataModel.getRoundConfiguration());
         bots.add(bot);
     }
@@ -906,7 +914,13 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     public void activateBots() {
         for (Bot bot: bots) {
-            bot.act(this);
+            bot.act();
+        }
+    }
+    
+    public void clearBotActionsTaken() {
+        for (Bot bot: bots) {
+            bot.resetActionsTakenPerSecond();
         }
     }
 

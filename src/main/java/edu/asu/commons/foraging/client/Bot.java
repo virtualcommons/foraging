@@ -18,7 +18,7 @@ public interface Bot {
      * @param model
      *            the state of the world in which this bot is embedded
      */
-    public void act(GroupDataModel model);
+    public void act();
 
     public BotType getBotType();
 
@@ -29,10 +29,12 @@ public interface Bot {
     public void setCurrentPosition(Point location);
 
     public int getActionsPerSecond();
+    
+    public void resetActionsTakenPerSecond();
 
     public double getMovementProbability();
 
-    public Direction getNextMove(GroupDataModel model);
+    public Direction getNextMove();
 
     public void initializePosition(RoundConfiguration configuration);
 
@@ -40,10 +42,10 @@ public interface Bot {
 
     public void setBotNumber(int botNumber);
 
+    public void setGroupDataModel(GroupDataModel model);
+
     public class BotIdentifier extends Identifier.Base<BotIdentifier> {
-
         private static final long serialVersionUID = 1609142256924017761L;
-
     }
 
     public abstract class SimpleBot implements Bot, Serializable {
@@ -61,12 +63,12 @@ public interface Bot {
         private double movementProbability;
         private int actionsPerSecond;
         private int botNumber = 0;
-
         private int numberOfActionsTaken = 0;
+        private GroupDataModel model;
 
         private final transient Random random = new Random();
 
-        protected final Logger logger = Logger.getLogger(getClass().getName());
+        protected final transient Logger logger = Logger.getLogger(getClass().getName());
 
         public SimpleBot() {
             this(DEFAULT_ACTIONS_PER_SECOND, DEFAULT_MOVEMENT_PROBABILITY, DEFAULT_HARVEST_PROBABILITY);
@@ -78,10 +80,10 @@ public interface Bot {
             this.harvestProbability = harvestProbability;
         }
 
-        public void act(GroupDataModel model) {
+        public void act() {
             // first, check number of actions taken vs actions per second
             if (numberOfActionsTaken > actionsPerSecond) {
-                logger.info(String.format("Number of actions taken {0} exceeds allowable actions per second {1}",
+                logger.info(String.format("Number of actions taken %d exceeds allowable actions per second %d",
                         numberOfActionsTaken, actionsPerSecond));
                 return;
             }
@@ -91,19 +93,17 @@ public interface Bot {
                     model.collectToken(this);
                 }
             }
-            else if (model.isResourceDistributionEmpty()) {
-                model.moveClient(getIdentifier(), Direction.random());
-            }
             else {
-                Direction nextMove = getNextMove(model);
+                Direction nextMove = getNextMove();
                 if (random.nextDouble() <= getMovementProbability()) {
                     logger.info("Bot moving " + nextMove);
-                    model.moveClient(getIdentifier(), nextMove);
+                    model.move(this, nextMove);
                 }
             }
+            numberOfActionsTaken++;
         }
 
-        public void resetNumberOfActionsTaken() {
+        public void resetActionsTakenPerSecond() {
             this.numberOfActionsTaken = 0;
         }
 
@@ -115,7 +115,7 @@ public interface Bot {
             this.currentPosition = currentPosition;
         }
 
-        public Direction getNextMove(GroupDataModel model) {
+        public Direction getNextMove() {
             Point closestToken = getClosestToken(model);
             Point currentLocation = getCurrentPosition();
             if (closestToken == null) {
@@ -202,6 +202,10 @@ public interface Bot {
 
         public Identifier getIdentifier() {
             return identifier;
+        }
+
+        public void setGroupDataModel(GroupDataModel groupDataModel) {
+            this.model = groupDataModel;
         }
 
     }

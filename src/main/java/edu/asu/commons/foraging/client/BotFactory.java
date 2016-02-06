@@ -1,5 +1,7 @@
 package edu.asu.commons.foraging.client;
 
+import edu.asu.commons.foraging.model.GroupDataModel;
+
 
 public class BotFactory {
 
@@ -12,16 +14,20 @@ public class BotFactory {
         return INSTANCE;
     }
     
-    public Bot create(BotType botType) {
+    public Bot create(BotType botType, int botNumber, GroupDataModel groupDataModel) {
+        Bot bot = null;
         switch (botType) {
             case AGGRESSIVE:
-                return new AggressiveBot();
+                bot = new AggressiveBot();
             case COOPERATIVE:
-                return new CooperativeBot();
+                bot = new CooperativeBot();
             case RANDOM:
             default:
-                return new RandomBot();
+                bot = new RandomBot();
         }
+        bot.setBotNumber(botNumber);
+        bot.setGroupDataModel(groupDataModel);
+        return bot;
     }
 
 }

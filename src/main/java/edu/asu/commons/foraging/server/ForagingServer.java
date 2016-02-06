@@ -963,6 +963,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
         private void processRound() {
             boolean secondHasPassed = secondTick.hasExpired();
+            boolean botsEnabled = getCurrentRoundConfiguration().isBotGroupsEnabled();
             if (secondHasPassed) {
                 // XXX: rotating monitor handling currently disabled, find a new place for this logic.
 //                if (getCurrentRoundConfiguration().isRotatingMonitorEnabled()
@@ -987,11 +988,18 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             			syncSet.add(data.getId());
             		}
             	}
+            	// clear all bot action taken counters
+            	if (botsEnabled) {
+            	    for (GroupDataModel group: serverDataModel.getGroups()) {
+            	        group.clearBotActionsTaken();
+            	    }
+            	}
+            	
                 resourceDispenser.generateResources();
                 secondTick.restart();
             }
             for (GroupDataModel group : serverDataModel.getGroups()) {
-                if (getCurrentRoundConfiguration().isBotGroupsEnabled()) {
+                if (botsEnabled) {
                     group.activateBots();                    
                 }
                 Set<Resource> addedTokensSet = group.getAddedResources();
