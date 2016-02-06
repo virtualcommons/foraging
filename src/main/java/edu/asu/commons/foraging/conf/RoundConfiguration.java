@@ -990,7 +990,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public boolean isBotGroupsEnabled() {
-        return getBooleanProperty("bot-groups-enabled", getParentConfiguration().isBotGroupsEnabled());
+        return ! isPrivateProperty() && getBooleanProperty("bot-groups-enabled", getParentConfiguration().isBotGroupsEnabled());
     }
     
     public int getBotsPerGroup() {
