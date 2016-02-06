@@ -2,6 +2,8 @@ package edu.asu.commons.foraging.client;
 
 import java.awt.Point;
 import java.io.Serializable;
+import java.util.Random;
+import java.util.logging.Logger;
 
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.model.Direction;
@@ -9,6 +11,14 @@ import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.net.Identifier;
 
 public interface Bot {
+
+    /**
+     * The main entry point into a bot's behavior, invoked by the server every N milliseconds.
+     * 
+     * @param model
+     *            the state of the world in which this bot is embedded
+     */
+    public void act(GroupDataModel model);
 
     public BotType getBotType();
 
@@ -52,6 +62,12 @@ public interface Bot {
         private int actionsPerSecond;
         private int botNumber = 0;
 
+        private int numberOfActionsTaken = 0;
+
+        private final transient Random random = new Random();
+
+        protected final Logger logger = Logger.getLogger(getClass().getName());
+
         public SimpleBot() {
             this(DEFAULT_ACTIONS_PER_SECOND, DEFAULT_MOVEMENT_PROBABILITY, DEFAULT_HARVEST_PROBABILITY);
         }
@@ -60,6 +76,35 @@ public interface Bot {
             this.actionsPerSecond = actionsPerSecond;
             this.movementProbability = movementProbability;
             this.harvestProbability = harvestProbability;
+        }
+
+        public void act(GroupDataModel model) {
+            // first, check number of actions taken vs actions per second
+            if (numberOfActionsTaken > actionsPerSecond) {
+                logger.info(String.format("Number of actions taken {0} exceeds allowable actions per second {1}",
+                        numberOfActionsTaken, actionsPerSecond));
+                return;
+            }
+            // check if we are sitting on top of a token
+            if (model.isResourceAt(getCurrentPosition())) {
+                if (random.nextDouble() <= getHarvestProbability()) {
+                    model.collectToken(this);
+                }
+            }
+            else if (model.isResourceDistributionEmpty()) {
+                model.moveClient(getIdentifier(), Direction.random());
+            }
+            else {
+                Direction nextMove = getNextMove(model);
+                if (random.nextDouble() <= getMovementProbability()) {
+                    logger.info("Bot moving " + nextMove);
+                    model.moveClient(getIdentifier(), nextMove);
+                }
+            }
+        }
+
+        public void resetNumberOfActionsTaken() {
+            this.numberOfActionsTaken = 0;
         }
 
         public Point getCurrentPosition() {
@@ -136,11 +181,13 @@ public interface Bot {
         }
 
         public void initializePosition(RoundConfiguration roundConfiguration) {
-            int groupSize = roundConfiguration.getClientsPerGroup() + roundConfiguration.getBotsPerGroup();
+            int clientsPerGroup = roundConfiguration.getClientsPerGroup();
+            int groupSize = clientsPerGroup + roundConfiguration.getBotsPerGroup();
+            int positionNumber = getBotNumber() + clientsPerGroup;
             int resourceWidth = roundConfiguration.getResourceWidth();
             int resourceHeight = roundConfiguration.getResourceDepth();
             double cellWidth = resourceWidth / (double) groupSize;
-            int x = (int) ((cellWidth / 2) + (cellWidth * (getBotNumber() - 1)));
+            int x = (int) ((cellWidth / 2) + (cellWidth * (positionNumber - 1)));
             int y = resourceHeight / 2;
             setCurrentPosition(new Point(x, y));
         }

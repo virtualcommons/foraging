@@ -990,14 +990,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 resourceDispenser.generateResources();
                 secondTick.restart();
             }
-            // FIXME: commented out since we're now collecting tokens as the requests come in..
-//            for (GroupDataModel group : serverDataModel.getGroups()) {
-//                for (ClientData clientData : group.getClientDataMap().values()) {
-//                    // ask each client if it wants to grab a token, wherever it is.
-//                    group.collectToken(clientData);
-//                }
-//            }
             for (GroupDataModel group : serverDataModel.getGroups()) {
+                if (getCurrentRoundConfiguration().isBotGroupsEnabled()) {
+                    group.activateBots();                    
+                }
                 Set<Resource> addedTokensSet = group.getAddedResources();
                 Resource[] addedResources = addedTokensSet.toArray(new Resource[addedTokensSet.size()]);
                 Set<Resource> removedTokensSet = group.getRemovedResources();

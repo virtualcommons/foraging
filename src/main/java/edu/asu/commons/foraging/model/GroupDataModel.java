@@ -520,11 +520,24 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     
     public void collectToken(ClientData clientData) {
         Point position = clientData.getPoint();
-        if (resourceDistribution.containsKey(position)) {
-            getRemovedResources().add( resourceDistribution.remove(position) );
-            tokensCollectedDuringInterval++;
-            clientData.addToken(position);
-            serverDataModel.getEventChannel().handle(new TokenCollectedEvent(clientData.getId(), position));
+        synchronized (resourceDistribution) {
+            if (resourceDistribution.containsKey(position)) {
+                getRemovedResources().add( resourceDistribution.remove(position) );
+                tokensCollectedDuringInterval++;
+                clientData.addToken(position);
+                serverDataModel.getEventChannel().handle(new TokenCollectedEvent(clientData.getId(), position));
+            }
+        }
+    }
+    
+    public void collectToken(Bot bot) {
+        Point position = bot.getCurrentPosition();
+        synchronized (resourceDistribution) {
+            if (resourceDistribution.containsKey(position)) {
+                getRemovedResources().add(resourceDistribution.remove(position));
+                tokensCollectedDuringInterval++;
+                serverDataModel.getEventChannel().handle(new TokenCollectedEvent(bot.getIdentifier(), position));
+            }
         }
     }
     
@@ -881,7 +894,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 	}
 
     public void addBot(BotType botType, int botNumber) {
-        Bot bot = BotFactory.getInstance().create(botType);
+        Bot bot = BotFactory.getInstance().create(botType, this);
         bot.setBotNumber(botNumber);
         bot.initializePosition(serverDataModel.getRoundConfiguration());
         bots.add(bot);
@@ -889,6 +902,12 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     
     public int getNumberOfBots() {
         return bots.size();
+    }
+
+    public void activateBots() {
+        for (Bot bot: bots) {
+            bot.act(this);
+        }
     }
 
 }
