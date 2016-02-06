@@ -1,6 +1,5 @@
 package edu.asu.commons.foraging.client;
 
-import edu.asu.commons.foraging.model.Direction;
 
 public class AggressiveBot extends Bot.SimpleBot {
     
@@ -35,7 +34,7 @@ public class AggressiveBot extends Bot.SimpleBot {
     }
 
     public int getActionsPerSecond() {
-        return 10;
+        return actionsPerSecond;
     }
 
     public double getMovementProbability() {

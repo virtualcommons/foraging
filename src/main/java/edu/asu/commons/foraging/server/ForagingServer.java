@@ -854,17 +854,13 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     break;
                 case IN_BETWEEN_ROUNDS:
                     // FIXME: there is an inherent nastiness going on with this model of control flow
-                    // the problem is this: when we first spin up the server, there are no connected clients. control flow
-                    // enters here, we initialize the round (with no participants, etc.) and then wait on the quiz signal
+                    // when we first spin up the server, there are no connected clients. 
+                    // We enters this code block, initialize the round (with no participants, etc.) and then wait on the quiz signal
 
                     // the issue is that we need to initialize the groups at some clear, well-defined time.
-                    // we have to do it after all the clients are connected, so perhaps showInstructions can be the time to do it?
+                    // we have to do it after all the clients are connected, so either on a showInstructions or explicit "allocate groups" signal from the facilitator
                     // the previous way which I've been slowly refactoring was to do it on the beginning of the first round (as a special case)
                     // in the handler for BeginRoundRequest) and to do it at the end of every round. Probably better to do it in round initialization
-
-                    // initialize persister first so we store all relevant events.
-                    // persister MUST be initialized early so that we store pre-round events like QuizResponseEvent, ChatEvent, and the various Ranking
-                    // requests.
                     setupRound();
                     initializeGroups();
                     sendFacilitatorMessage("Ready to show instructions and the start next round.");
@@ -913,7 +909,12 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             }
         }
 
-        private void setupRound() {
+        /**
+         * initialize persister first so we store all relevant events.
+         * persister MUST be initialized early so that we store pre-round 
+         * events like QuizResponseEvent, ChatEvent, and the various Ranking requests.
+         */
+        private void setupRound() {            
             persister.initialize(getCurrentRoundConfiguration());
         }
 
@@ -1104,16 +1105,19 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             groupsInitialized = true;
         }
 
+        /**
+         * Starts the playable round. Typically only triggered by an explicit signal from the Facilitator.
+         */
         private void startRound() {
             RoundConfiguration roundConfiguration = getCurrentRoundConfiguration();
-            // actually start the round once we receive the facilitator signal.
+            persister.store(new RoundStartedMarkerEvent());
             // send RoundStartedEvents to all connected clients
             for (Map.Entry<Identifier, ClientData> entry : clients.entrySet()) {
                 Identifier id = entry.getKey();
                 ClientData data = entry.getValue();
                 transmit(new RoundStartedEvent(id, data.getGroupDataModel()));
             }
-            persister.store(new RoundStartedMarkerEvent());
+
             // start timers
             currentRoundDuration = roundConfiguration.getRoundDuration();
             if (roundConfiguration.isVotingAndRegulationEnabled()) {

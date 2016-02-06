@@ -988,4 +988,12 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getStringProperty("token-image-path", getParentConfiguration().getTokenImagePath());
     }
 
+    public boolean isBotGroupsEnabled() {
+        return getBooleanProperty("bot-groups-enabled", getParentConfiguration().isBotGroupsEnabled());
+    }
+    
+    public int getBotsPerGroup() {
+        return getIntProperty("bots-per-group", getParentConfiguration().getBotsPerGroup());
+    }
+
 }

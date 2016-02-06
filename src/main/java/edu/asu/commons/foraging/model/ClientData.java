@@ -440,10 +440,7 @@ public class ClientData implements Serializable {
     }
 
     public void collectToken() {
-//        if (collecting) {
         getGroupDataModel().collectToken(this);
-//        }
-//        collecting = false;
     }
 
     public boolean isExplicitCollectionMode() {

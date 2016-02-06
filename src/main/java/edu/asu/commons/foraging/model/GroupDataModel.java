@@ -533,7 +533,6 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
 
     public void addClient(ClientData clientData) {
-
         // Assign the client to a zone/team, if this round has zone assignment
         if (getRoundConfiguration().areZonesAssigned()) {
             int thisZone = nextZone;

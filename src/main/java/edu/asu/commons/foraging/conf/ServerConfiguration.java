@@ -228,4 +228,12 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
         return getProperty("avatar-image-path", "images/gem-self.gif");
     }
 
+    public boolean isBotGroupsEnabled() {
+        return getBooleanProperty("bot-groups-enabled", false);
+    }
+    
+    public int getBotsPerGroup() {
+        return getIntProperty("bots-per-group", 1);
+    }
+
 }

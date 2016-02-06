@@ -3,23 +3,27 @@ package edu.asu.commons.foraging.client;
 import java.awt.Point;
 
 import edu.asu.commons.foraging.model.Direction;
-import edu.asu.commons.util.Pair;
+import edu.asu.commons.foraging.model.GroupDataModel;
 
 public interface Bot {
-    
+
     public BotType getBotType();
+    
+    public Point getCurrentPosition();
+    
+    public void setCurrentPosition(Point location);
 
     public int getActionsPerSecond();
 
     public double getMovementProbability();
 
-    public Direction getNextMove(ClientDataModel model);
+    public Direction getNextMove(GroupDataModel model);
 
     public abstract class SimpleBot implements Bot {
-        
-        public Direction getNextMove(ClientDataModel model) {
+
+        public Direction getNextMove(GroupDataModel model) {
             Point closestToken = getClosestToken(model);
-            Point currentLocation = model.getCurrentPosition();
+            Point currentLocation = getCurrentPosition();
             if (closestToken == null) {
                 return Direction.random();
             }
@@ -44,11 +48,11 @@ public interface Bot {
             }
         }
 
-        protected Point getClosestToken(ClientDataModel model) {
-            Point currentLocation = model.getCurrentPosition();
+        protected Point getClosestToken(GroupDataModel model) {
+            Point currentLocation = getCurrentPosition();
             Point closestToken = null;
             double closestTokenDistance = Double.MAX_VALUE;
-            for (Point resourcePosition: model.getResourcePositions()) {
+            for (Point resourcePosition : model.getResourcePositions()) {
                 double distance = currentLocation.distanceSq(resourcePosition);
                 if (distance < closestTokenDistance) {
                     closestTokenDistance = distance;
@@ -60,5 +64,3 @@ public interface Bot {
 
     }
 }
-
-
