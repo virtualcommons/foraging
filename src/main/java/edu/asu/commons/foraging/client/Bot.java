@@ -37,6 +37,10 @@ public interface Bot {
     public Direction getNextMove();
 
     public void initializePosition(RoundConfiguration configuration);
+    
+    public int getTicksToWait();
+    
+    public void setTicksToWait(int ticksToWait);
 
     public int getBotNumber();
 
@@ -58,6 +62,7 @@ public interface Bot {
         private final Identifier identifier = new BotIdentifier();
 
         private Point currentPosition;
+        private Point targetLocation;
 
         private double harvestProbability;
         private double movementProbability;
@@ -65,6 +70,7 @@ public interface Bot {
         private int botNumber = 0;
         private int numberOfActionsTaken = 0;
         private GroupDataModel model;
+        private int ticksToWait;
 
         private final transient Random random = new Random();
 
@@ -87,16 +93,22 @@ public interface Bot {
                         numberOfActionsTaken, actionsPerSecond));
                 return;
             }
-            // check if we are sitting on top of a token
+            // next, check if we have a wait enforced on us
+            else if (ticksToWait > 0) {
+                logger.info("waiting for " + ticksToWait);
+                ticksToWait--;
+                return;
+            }
+            // if neither, check if we are sitting on top of a token
             if (model.isResourceAt(getCurrentPosition())) {
                 if (random.nextDouble() <= getHarvestProbability()) {
                     model.collectToken(this);
                 }
             }
+            // or figure out our next move and roll the dice to see if we can go.
             else {
                 Direction nextMove = getNextMove();
                 if (random.nextDouble() <= getMovementProbability()) {
-                    logger.info("Bot moving " + nextMove);
                     model.move(this, nextMove);
                 }
             }
@@ -116,37 +128,41 @@ public interface Bot {
         }
 
         public Direction getNextMove() {
-            Point closestToken = getClosestToken(model);
-            Point currentLocation = getCurrentPosition();
-            if (closestToken == null) {
-                return Direction.random();
+            if (! hasTarget()) {
+                setNewTargetLocation();
             }
-            else {
-                int dx = currentLocation.x - closestToken.x;
-                int dy = currentLocation.y - closestToken.y;
-                if (dx > 0) {
-                    return Direction.LEFT;
-                }
-                else if (dx < 0) {
-                    return Direction.RIGHT;
-                }
-                else if (dy > 0) {
-                    return Direction.UP;
-                }
-                else if (dy < 0) {
-                    return Direction.DOWN;
-                }
-                else {
-                    return Direction.random();
-                }
+            
+            Direction nextMove = Direction.towards(getCurrentPosition(), getTargetLocation());
+            logger.info("Target location: " + getTargetLocation());
+            logger.info("Moving in direction: " + nextMove);
+            if (nextMove == Direction.NONE) {
+                // at target location
+                reachedTargetLocation();
+            }
+            return nextMove;
+        }
+        
+        protected void setNewTargetLocation() {
+            targetLocation = getClosestToken();
+            if (targetLocation == null) {
+                // pick a random location on the board
+                int x = random.nextInt(model.getRoundConfiguration().getResourceWidth());
+                int y = random.nextInt(model.getRoundConfiguration().getResourceDepth());
+                targetLocation = new Point(x, y);
             }
         }
 
-        protected Point getClosestToken(GroupDataModel model) {
+        protected void reachedTargetLocation() {
+            this.targetLocation = null;
+            this.ticksToWait = 2;
+        }
+
+        protected Point getClosestToken() {
             Point currentLocation = getCurrentPosition();
-            Point closestToken = null;
+            Point closestToken = new Point(0, 0);
             double closestTokenDistance = Double.MAX_VALUE;
             for (Point resourcePosition : model.getResourcePositions()) {
+                System.err.println("Comparing resource position " + resourcePosition + " with " + currentLocation);
                 double distance = currentLocation.distanceSq(resourcePosition);
                 if (distance < closestTokenDistance) {
                     closestTokenDistance = distance;
@@ -206,6 +222,22 @@ public interface Bot {
 
         public void setGroupDataModel(GroupDataModel groupDataModel) {
             this.model = groupDataModel;
+        }
+
+        public Point getTargetLocation() {
+            return targetLocation;
+        }
+        
+        public boolean hasTarget() {
+            return targetLocation == null;
+        }
+
+        public int getTicksToWait() {
+            return ticksToWait;
+        }
+
+        public void setTicksToWait(int ticksToWait) {
+            this.ticksToWait = ticksToWait;
         }
 
     }
