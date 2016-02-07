@@ -19,11 +19,14 @@ public class BotFactory {
         switch (botType) {
             case AGGRESSIVE:
                 bot = new AggressiveBot();
+                break;
             case COOPERATIVE:
                 bot = new CooperativeBot();
+                break;
             case RANDOM:
             default:
                 bot = new RandomBot();
+                break;
         }
         bot.setBotNumber(botNumber);
         bot.setGroupDataModel(groupDataModel);

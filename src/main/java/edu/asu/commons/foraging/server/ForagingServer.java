@@ -1009,7 +1009,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 }
             }
             for (GroupDataModel group : serverDataModel.getGroups()) {
-
                 Set<Resource> addedTokensSet = group.getAddedResources();
                 Resource[] addedResources = addedTokensSet.toArray(new Resource[addedTokensSet.size()]);
                 Set<Resource> removedTokensSet = group.getRemovedResources();

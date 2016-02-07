@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import edu.asu.commons.experiment.Experiment;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.model.GroupDataModel;
@@ -89,13 +90,13 @@ public interface Bot {
         public void act() {
             // first, check number of actions taken vs actions per second
             if (numberOfActionsTaken > actionsPerSecond) {
-                logger.info(String.format("Number of actions taken %d exceeds allowable actions per second %d",
+                logger.warning(String.format("Number of actions taken %d exceeds allowable actions per second %d",
                         numberOfActionsTaken, actionsPerSecond));
                 return;
             }
             // next, check if we have a wait enforced on us
             else if (ticksToWait > 0) {
-                logger.info("waiting for " + ticksToWait);
+                logger.warning("waiting for " + ticksToWait);
                 ticksToWait--;
                 return;
             }
@@ -131,7 +132,6 @@ public interface Bot {
             if (! hasTarget()) {
                 setNewTargetLocation();
             }
-            
             Direction nextMove = Direction.towards(getCurrentPosition(), getTargetLocation());
             logger.info("Target location: " + getTargetLocation());
             logger.info("Moving in direction: " + nextMove);
@@ -143,7 +143,7 @@ public interface Bot {
         }
         
         protected void setNewTargetLocation() {
-            targetLocation = getClosestToken();
+            targetLocation = getNearestToken();
             if (targetLocation == null) {
                 // pick a random location on the board
                 int x = random.nextInt(model.getRoundConfiguration().getResourceWidth());
@@ -154,22 +154,23 @@ public interface Bot {
 
         protected void reachedTargetLocation() {
             this.targetLocation = null;
-            this.ticksToWait = 2;
+            // FIXME: parameterize this?
+            this.ticksToWait = random.nextInt(5);
         }
 
-        protected Point getClosestToken() {
+        protected Point getNearestToken() {
             Point currentLocation = getCurrentPosition();
-            Point closestToken = new Point(0, 0);
-            double closestTokenDistance = Double.MAX_VALUE;
+            Point nearestToken = new Point(0, 0);
+            double nearestTokenDistance = Double.MAX_VALUE;
             for (Point resourcePosition : model.getResourcePositions()) {
-                System.err.println("Comparing resource position " + resourcePosition + " with " + currentLocation);
+                logger.warning("Comparing resource position " + resourcePosition + " with " + currentLocation);
                 double distance = currentLocation.distanceSq(resourcePosition);
-                if (distance < closestTokenDistance) {
-                    closestTokenDistance = distance;
-                    closestToken = resourcePosition;
+                if (distance < nearestTokenDistance) {
+                    nearestTokenDistance = distance;
+                    nearestToken = resourcePosition;
                 }
             }
-            return closestToken;
+            return nearestToken;
         }
 
         public void setHarvestProbability(double harvestProbability) {
@@ -206,6 +207,7 @@ public interface Bot {
             int x = (int) ((cellWidth / 2) + (cellWidth * (positionNumber - 1)));
             int y = resourceHeight / 2;
             setCurrentPosition(new Point(x, y));
+            logger.info("setting current bot position to " + getCurrentPosition());
         }
 
         public int getBotNumber() {
@@ -229,7 +231,7 @@ public interface Bot {
         }
         
         public boolean hasTarget() {
-            return targetLocation == null;
+            return targetLocation != null;
         }
 
         public int getTicksToWait() {
