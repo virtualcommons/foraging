@@ -134,6 +134,14 @@
       </path>
     </signjar>
   </target>
+  <!-- specialized target for 2016 fmri configuration deployment -->
+  <target name='fmri-configuration'>
+    <copy todir="${conf.dir}">
+      <fileset dir="${conf.dir}/asu/2016/fmri/"/>
+    </copy>
+  </target>
+  <target name='fmri-deploy' depends='fmri-configuration, deploy'>
+  </target>
   <!-- deploys the client + facilitator + sesef jarfiles to the appropriate
      webapps directory. -->
   <target name="deploy-to" depends="build-all, sign-jars, sign-dependencies">
