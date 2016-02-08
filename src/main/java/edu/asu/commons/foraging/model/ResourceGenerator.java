@@ -31,7 +31,7 @@ public interface ResourceGenerator {
             boolean ageMatters = ! configuration.is2dExperiment();
             int maximumResourceAge = configuration.getMaximumResourceAge();
             boolean shouldVaryAge = maximumResourceAge > 0;
-            Set<Resource> newResources = new HashSet<Resource>();
+            Set<Resource> newResources = new HashSet<>();
             while (newResources.size() < tokensNeeded) {
                 Point point = new Point(random.nextInt(width), random.nextInt(height));
                 Resource resource = new Resource(point);
@@ -41,7 +41,6 @@ public interface ResourceGenerator {
                     }
                     newResources.add(resource);
                 }
-
             }
             return newResources;
         }
