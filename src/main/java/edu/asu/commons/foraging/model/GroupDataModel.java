@@ -498,9 +498,20 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
     
     private boolean isCellAvailable(Point position) {
-        if (serverDataModel.getRoundConfiguration().shouldCheckOccupancy()) {
-            int maximumOccupancyPerCell = serverDataModel.getRoundConfiguration().getMaximumOccupancyPerCell();
+        RoundConfiguration currentRoundConfiguration = getRoundConfiguration();
+        if (currentRoundConfiguration.shouldCheckOccupancy()) {
+            int maximumOccupancyPerCell = currentRoundConfiguration.getMaximumOccupancyPerCell();
             int currentOccupancy = 0;
+            if (currentRoundConfiguration.isBotGroupsEnabled()) {
+                for (Bot bot: bots) {
+                    if (bot.getCurrentPosition().equals(position)) {
+                        currentOccupancy++;
+                    }
+                    if (currentOccupancy >= maximumOccupancyPerCell) {
+                        return false;
+                    }
+                }
+            }
             for (ClientData data: clients.values()) {
                 if (data.getPosition().equals(position)) {
                     currentOccupancy++;
@@ -509,6 +520,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
                     }
                 }
             }
+
         }
         return true;
     }

@@ -69,56 +69,22 @@ Please <b>wait quietly</b> and <b>do not close this window, open any other appli
 <h2>How to participate</h2>
 <hr>
 <p>
-You will appear on the screen as a yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif"></img>. 
+You will appear on the screen as a blue circle <img width='23' height='23' src="@CODEBASE_URL@/images/blue-circle.png"></img>. 
 You can move by pressing the four arrow keys on your keyboard.  
 </p>
 <p>
-    You can move up, down, left, or right.  You have to press a key for each and
-    every move of your yellow dot.  As you move around you can collect green diamond
-    shaped tokens <img src="@CODEBASE_URL@/images/gem-token.gif"></img> and earn two
-    cents for each collected token.  To collect a token, move your yellow dot over a
-    green token and <b>press the space bar</b>.  Simply moving your avatar over a
-    token does NOT collect that token.
+    You can move up, down, left, or right.  You have to press a key for each and every move of your yellow dot.  As you
+    move around you can collect tokens <img width='23' height='23' src="@CODEBASE_URL@/images/plant-token.png"></img>
+    and earn two cents for each collected token.  To collect a token, move your avatar over a token and <b>press the
+    space bar</b>.  Simply moving your avatar over a token does NOT collect that token.
 </p>
 
 <h2>Tokens</h2>
 <hr>
 <p>
-The tokens that you collect have the potential to regenerate.  After you have
-collected a green token, a new token can re-appear on that empty cell. The rate at
-which new tokens appear is dependent on the number of adjacent cells with tokens.
-The more tokens in the eight cells that surround an empty cell, the faster a new
-token will appear on that empty cell.  In other words, <b>existing tokens can
-generate new tokens</b>.  To illustrate this, please refer to Image 1 and Image 2.
-The middle cell in Image 1 denoted with an X has a greater chance of regeneration
-than the middle cell in Image 2.  When all neighboring cells are empty, there is
-<b>no chance for regeneration</b>.
-</p>
-<table width="100%">
-<tr>
-<td align="center"><b>Image 1</b></td>
-<td align="center"><b>Image 2</b></td>
-</tr>
-<tr>
-<td align="center">
-    <img src="@CODEBASE_URL@/images/8neighbors.jpg" alt="image 1">
-</td>
-<td align="center">
-    <img src="@CODEBASE_URL@/images/5neighbors.jpg" alt="image 2">
-</td>
-</tr>
-</table>
-
-<h2>Best Strategy</h2>
-<hr>
-<p>
-The chance that a token will regenerate on an empty cell increases as there are
-more tokens surrounding it.  Therefore, you want to have as many tokens around an
-empty cell as possible.  However, you also need empty cells to benefit from this
-regrowth.  The best arrangement of tokens that maximizes overall regrowth is the
-checkerboard diagram shown below.
-<br>
-<img src="@CODEBASE_URL@/images/foraging-checkerboard.png" alt="Checkerboard Resource">
+The tokens that you collect have the potential to regenerate.  After you have collected a token, a new token can
+re-appear on that empty cell. The rate at which new tokens appear is dependent on the number of resources remaining and
+the number of available empty cells where they can grow.
 </p>
 <h2>Practice round</h2>
 <hr>
