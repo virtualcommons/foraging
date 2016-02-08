@@ -25,10 +25,6 @@
 <h2>Practice Round Instructions</h2>
 <hr>
 <p>
-    Once everyone has finished the quiz, we will start a practice round of the token
-    task.
-</p>
-<p>
 During the practice round, you will have {duration} to practice with the
 experimental environment. The decisions you make in this round will NOT influence
 your earnings.  At the beginning of the practice round {initialDistribution} of the

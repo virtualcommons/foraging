@@ -74,7 +74,7 @@ You can move by pressing the four arrow keys on your keyboard.
 </p>
 <p>
     You can move up, down, left, or right.  You have to press a key for each and every move of your yellow dot.  As you
-    move around you can collect tokens <img width='23' height='23' src="@CODEBASE_URL@/images/plant-token.png"></img>
+    move around you can collect tokens <img width='40' height='40' src="@CODEBASE_URL@/images/plant-token.png"></img>
     and earn two cents for each collected token.  To collect a token, move your avatar over a token and <b>press the
     space bar</b>.  Simply moving your avatar over a token does NOT collect that token.
 </p>
@@ -86,7 +86,7 @@ The tokens that you collect have the potential to regenerate.  After you have co
 re-appear on that empty cell. The rate at which new tokens appear is dependent on the number of resources remaining and
 the number of available empty cells where they can grow.
 </p>
-<h2>Practice round</h2>
+<h2>Practice Round</h2>
 <hr>
 <p>
 We will soon begin a practice round, where you will have {duration} to practice with the experimental environment. The
