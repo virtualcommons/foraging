@@ -479,7 +479,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getResourceGeneratorType() {
-        return getProperty("resource-generator", ResourceDispenser.Type.DENSITY_DEPENDENT.toString());
+        return getProperty("resource-generator", ResourceDispenser.Type.NEIGHBORHOOD_DENSITY_DEPENDENT.toString());
     }
 
     /**
