@@ -20,7 +20,7 @@
 <entry key="duration">240</entry>
 <entry key="use-background-texture">false</entry>
 <entry key="use-token-image">true</entry>
-<entry key='token-image-path'>images/gem-token.gif</entry>
+<entry key='token-image-path'>images/green-diamond.png</entry>
 <entry key="use-avatar-image">false</entry>
 <entry key="facilitator-instructions">
 <![CDATA[
