@@ -12,7 +12,6 @@
 <entry key="round4">round4.xml</entry>
 <entry key="round5">round5.xml</entry>
 <entry key="round6">round6.xml</entry>
-<entry key="round7">round7.xml</entry>
 <entry key='quiz-correct-answer-reward'>0.10</entry>
 <entry key='clients-per-group'>1</entry>
 <entry key='bot-groups-enabled'>true</entry>
