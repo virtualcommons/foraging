@@ -4,7 +4,7 @@
 <comment>Costly Sanctioning XML-ized experiment round configuration</comment>
 <entry key="hostname">@SERVER_ADDRESS@</entry>
 <entry key="port">@PORT_NUMBER@</entry>
-<entry key="number-of-rounds">8</entry>
+<entry key="number-of-rounds">7</entry>
 <entry key="round0">round0.xml</entry>
 <entry key="round1">round1.xml</entry>
 <entry key="round2">round2.xml</entry>

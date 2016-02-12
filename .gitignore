@@ -19,3 +19,4 @@ docs
 *.jks
 *.save
 /bin/
+lib
