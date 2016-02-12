@@ -76,7 +76,7 @@
 <input type="radio" name="q7" value="T">True<br>
 <input type="radio" name="q7" value="F">False<br>
 <br><br>
-<span class='q8'>Q8. The duration of the practice round is four minutes.</span> <br>
+<span class='q8'>Q8. The duration of a round is four minutes.</span> <br>
 <input type="radio" name="q8" value="T">True<br>
 <input type="radio" name="q8" value="F">False<br>
 <br><br>
@@ -151,10 +151,10 @@
         This statement is false. You would have earned 100 * $0.02 = $2.00 in that round.
     </b>
     <br><br>
-<span class='q8'>Q8. The duration of the practice round is four minutes.</span> <br>
+<span class='q8'>Q8. The duration of a round is four minutes.</span> <br>
     <b>
         {incorrect_q8} 
-        This statement is true. The practice round will last four minutes.
+        This statement is true. The round will last four minutes.
     </b>
     <br><br>
 <span class='q9'>Q9. All the cells are filled with green tokens at the start of the experiment.</span> <br>
