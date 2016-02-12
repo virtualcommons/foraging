@@ -7,8 +7,18 @@
 <entry key="resource-width">18</entry>
 <entry key="duration">240</entry>
 <entry key="initial-distribution">.25</entry>
-<!-- in round chat enabled -->
-<entry key="in-round-chat-enabled">true</entry>
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
+<entry key='regrowth-rate'>0.02</entry>
+<entry key="instructions">
+<![CDATA[
+<h1>Round {self.roundNumber} Instructions</h1>
+<hr>
+<p>
+    This round is the same as the previous round, but the tokens will now <b>regenerate more quickly</b>.
+</p>
+<p><b>Do you have any questions so far?</b>  If you have any questions at this time, raise your hand and someone will
+    come over to your station and answer it.</p>
+]]>
+</entry>
 </properties>

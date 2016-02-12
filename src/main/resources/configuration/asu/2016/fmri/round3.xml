@@ -4,45 +4,21 @@
 <comment>Foraging XML-ized experiment round configuration</comment>
 <entry key="display-group-tokens">true</entry>
 <entry key="duration">240</entry>
-<entry key="resource-width">18</entry>
-<entry key="resource-depth">18</entry>
+<entry key="resource-depth">13</entry>
+<entry key="resource-width">13</entry>
+<entry key="private-property">true</entry>
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
-<!-- resource regrowth parameters -->
-<entry key="initial-distribution">.25</entry>
+<entry key='regrowth-rate'>0.02</entry>
 <entry key="instructions">
 <![CDATA[
 <h1>Round {self.roundNumber} Instructions</h1>
 <hr>
 <p>
-    This is round {self.roundNumber} of the experiment. The length of the round is again {duration}. As in the
-    previous rounds you can collect green tokens.
+    This round is the same as the previous round, but the tokens will now <b>regenerate more quickly</b>.
 </p>
-<h3>Groups</h3>
-<hr>
-<p>
-In this round the renewable resource will become twice as big. You will share this larger environment with one other
-player in this room that has been randomly selected. Each group of two's resource environment is distinct from the other
-groups.
-</p>
-<p>
-You will stay in the same group for the entire experiment. The other player will appear on
-the screen as an orange circle <img width='23' height='23' src="@CODEBASE_URL@/images/orange-circle.png">.
-</p>
-<p>
-    In each round you can see how many tokens each player has collected at the top right corner of the screen.  On the
-    top left corner of the screen you will see the remaining time in the round.
-</p>
-<h3>Anonymity</h3>
-<hr>
-<p>
-    Because group membership was randomly assigned by the computer, neither you nor the experimenter will be able to
-    identify which person in the room has been assigned to a particular group. Your anonymity is
-    guaranteed.
-</p>
-<p><b>Do you have any questions so far?</b>  If you have any questions at this time, raise your hand and someone will come over to your station and answer it.</p>
+<p><b>Do you have any questions so far?</b>  If you have any questions at this time, raise your hand and someone will
+    come over to your station and answer it.</p>
 ]]>
 </entry>
-
-
 </properties>

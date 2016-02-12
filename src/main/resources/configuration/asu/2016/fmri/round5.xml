@@ -6,29 +6,19 @@
 <entry key="resource-depth">18</entry>
 <entry key="resource-width">18</entry>
 <entry key="duration">240</entry>
-<entry key="initial-distribution">.25</entry>
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
-<entry key="in-round-chat-enabled">true</entry>
+<entry key="initial-distribution">.25</entry>
+<entry key='regrowth-rate'>0.005</entry>
 <entry key="instructions">
 <![CDATA[
-<h3>Round {roundNumber} Instructions</h3>
+<h1>Round {self.roundNumber} Instructions</h1>
 <hr>
 <p>
-    This round is the same as the previous rounds with one exception. You will be able to communicate anonymously with
-    the other participant in your group. To write a text message, hit the enter key, type your message, and then hit the enter
-    key again.  You must hit the enter key before every message you type, otherwise control will return to the game
-    screen where you can use the arrow keys to move around.
+    This round is the same as the previous round, but the tokens will now <b>regenerate more slowly</b>.
 </p>
-<p>
-    You can use this opportunity to discuss the experiment and coordinate your actions to improve your earnings. You may
-    not promise side payments after the experiment is completed or make any threats. You are also not allowed to reveal
-    your real identity. We are monitoring the chat traffic while you chat.
-</p>
-<p>
-    The length of this round is {duration}.
-</p>
-<p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
+<p><b>Do you have any questions so far?</b>  If you have any questions at this time, raise your hand and someone will
+    come over to your station and answer it.</p>
 ]]>
 </entry>
 </properties>
