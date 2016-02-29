@@ -66,12 +66,14 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 ClientMovementTokenCount client = clientMovementTokenCounts.get(event.getId());
                 client.moves++;
                 GroupDataModel group = clientData.getGroupDataModel();
-                String line = String.format("%s, %s, %d, %d, %s, %s, %s",
+                String line = String.format("%s, %s, %s, %d, %d, %s, %s, %s, %s",
+                        event.getCreationTime(),
                         savedRoundData.toSecondString(event),
                         clientData.getId(),
                         group.getGroupId(),
                         client.moves,
-                        clientData.getPosition(),
+                        clientData.getPosition().x,
+                        clientData.getPosition().y,
                         movementEvent.getDirection(),
                         "movement event"
                 );
@@ -84,7 +86,8 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 Point location = tokenCollectedEvent.getLocation();
                 client.tokens++;
                 GroupDataModel group = clientData.getGroupDataModel();
-                String line = String.format("%s, %s, %d, %d, %d, %d, %s", 
+                String line = String.format("%s, %s, %s, %d, %d, %d, %d, %s", 
+                        event.getCreationTime(),
                         savedRoundData.toSecondString(event),
                         clientData.getId(),
                         location.x,
@@ -96,7 +99,7 @@ class AllDataProcessor extends SaveFileProcessor.Base {
             }
             else if (event instanceof ResourcesAddedEvent) {
                 ResourcesAddedEvent resourcesAddedEvent = (ResourcesAddedEvent) event;
-                String line = String.format("%s, %s, %s, %s", savedRoundData.toSecondString(event), resourcesAddedEvent.getClass(), resourcesAddedEvent.getGroup().toString(), resourcesAddedEvent.getResourcePositions());
+                String line = String.format("%s, %s, %s, %s, %s", event.getCreationTime(), savedRoundData.toSecondString(event), resourcesAddedEvent.getClass(), resourcesAddedEvent.getGroup().toString(), resourcesAddedEvent.getResourcePositions());
                 writer.println(line);
             }
             else if (event instanceof ChatRequest) {
@@ -113,7 +116,6 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                     for (Map.Entry<Identifier, Point> entry: group.getClientPositions().entrySet()) {
                         Identifier id = entry.getKey();
                         Point position = entry.getValue();
-//                        System.err.println(String.format("id %s at position %s", id, position));
                         if (id.equals(sourceId)) {
                             continue;
                         }
@@ -126,15 +128,14 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 else {
                     targetStringBuilder.append(request.getTarget());
                 }
-                String line = String.format("%s, %s, %s, %s, Chat event", savedRoundData.toSecondString(event), sourceId, targetStringBuilder.toString(), message);
-                System.err.println(line);
+                String line = String.format("%s, %s, %s, %s, %s, Chat event", event.getCreationTime(), savedRoundData.toSecondString(event), sourceId, targetStringBuilder.toString(), message);
                 writer.println(line);
             }
             else if (event instanceof RealTimeSanctionRequest) {
                 RealTimeSanctionRequest request = (RealTimeSanctionRequest) event;
                 Identifier source = request.getSource();
                 Identifier target = request.getTarget();
-                String line = String.format("%s, %s, %s, %s", savedRoundData.toSecondString(event), source, target, request.toString());
+                String line = String.format("%s, %s, %s, %s, %s", event.getCreationTime(), savedRoundData.toSecondString(event), source, target, request.toString());
                 writer.println(line);
             }
             else if (event instanceof SanctionAppliedEvent) {
@@ -150,26 +151,24 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 writer.println(line);
             }
             else if (event instanceof EnforcementRankingRequest) {
-                System.err.println("enforcement ranking request: " + event);
                 EnforcementRankingRequest request = (EnforcementRankingRequest) event;
-                String line = String.format("%s, %s", savedRoundData.toSecondString(event), request.toString());
+                String line = String.format("%s, %s, %s", event.getCreationTime(), savedRoundData.toSecondString(event), request.toString());
                 writer.println(line);
             }
             else if (event instanceof RuleVoteRequest) {
-                System.err.println("rule vote request: " + event);
                 RuleVoteRequest request = (RuleVoteRequest) event;
-                String line = String.format("%s, %s, %s, Strategy Nomination", savedRoundData.toSecondString(event), request.getId(), request.getRule());
+                String line = String.format("%s, %s, %s, %s, Rule Vote Request", event.getCreationTime(), savedRoundData.toSecondString(event), request.getId(), request.getRule());
                 writer.println(line);
             }
             else if (event instanceof RuleSelectedUpdateEvent) {
-                System.err.println("rule selected update event: " + event);
                 RuleSelectedUpdateEvent update = (RuleSelectedUpdateEvent) event;
-                String line = String.format("%s, %s, \"%s\", \"%s\", Rule selected", 
-                        savedRoundData.toSecondString(event), update.getGroup(), update.getSelectedStrategies(), update.getVotingResults());
+                String line = String.format("%s, %s, %s, \"%s\", \"%s\", Rule selected", 
+                        event.getCreationTime(),  savedRoundData.toSecondString(event),
+                        update.getGroup(), update.getSelectedStrategies(), update.getVotingResults());
                 writer.println(line);
             }
             else {
-                writer.println(String.format("%s, %s", savedRoundData.toSecondString(event), event.toString()));
+                writer.println(String.format("%s, %s, %s", event.getCreationTime(), savedRoundData.toSecondString(event), event.toString()));
             }
         }
     }
@@ -206,7 +205,8 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 ClientMovementTokenCount clientStats = clientStatsMap.get(event.getId());
                 clientStats.tokens += roundConfiguration.getTokensPerFruits();
                 Resource resource = request.getResource();
-                String line = String.format("%s, %s, %d, %d, %d, %d, %d, %d, %s", 
+                String line = String.format("%s, %s, %s, %d, %d, %d, %d, %d, %d, %s", 
+                        event.getCreationTime(),
                         savedRoundData.toSecondString(event), 
                         event.getId(),
                         resource.getPosition().x,
@@ -223,7 +223,8 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 Resource resource = request.getResource();
                 ClientMovementTokenCount clientStats = clientStatsMap.get(event.getId());
                 clientStats.tokens += roundConfiguration.ageToTokens(resource.getAge());
-                String line = String.format("%s, %s, %d, %d, %d, %d, %d, %d, %s", 
+                String line = String.format("%s, %s, %s, %d, %d, %d, %d, %d, %d, %s", 
+                        event.getCreationTime(),
                         savedRoundData.toSecondString(event), 
                         event.getId(),
                         resource.getPosition().x,
@@ -233,7 +234,6 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                         roundConfiguration.ageToTokens(resource.getAge()),
                         clientStats.tokens,
                 "harvest resource");
-                System.err.println("harvest resource request: " + line);
                 writer.println(line);
             }
         }
