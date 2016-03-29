@@ -160,10 +160,11 @@ public interface Bot {
 
         protected Point getNearestToken() {
             Point currentLocation = getCurrentPosition();
-            Point nearestToken = new Point(0, 0);
+            Point nearestToken = null;
             double nearestTokenDistance = Double.MAX_VALUE;
+            // naive implementation, scans all positions
+            // Could instead scan in a concentric ring around the current location and stop at the first hit.
             for (Point resourcePosition : model.getResourcePositions()) {
-                logger.warning("Comparing resource position " + resourcePosition + " with " + currentLocation);
                 double distance = currentLocation.distanceSq(resourcePosition);
                 if (distance < nearestTokenDistance) {
                     nearestTokenDistance = distance;

@@ -33,6 +33,7 @@ import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
+import edu.asu.commons.util.Duration;
 
 
 /**
@@ -927,9 +928,14 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         return bots.size();
     }
 
-    public void activateBots() {
+    public void activateBots(Duration botTick) {
+        // clear all bot action taken counters every 1 s
+        boolean resetBotActions = botTick.getStartCount() % 10 == 0;
         for (Bot bot: bots) {
             bot.act();
+            if (resetBotActions) {
+                bot.resetActionsTakenPerSecond();
+            }
         }
     }
     

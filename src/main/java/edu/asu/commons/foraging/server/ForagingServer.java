@@ -968,22 +968,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             boolean secondHasPassed = secondTick.hasExpired();
             boolean botsEnabled = getCurrentRoundConfiguration().isBotGroupsEnabled();
             if (secondHasPassed) {
-                // XXX: rotating monitor handling currently disabled, find a new place for this logic.
-                // if (getCurrentRoundConfiguration().isRotatingMonitorEnabled()
-                // && currentRoundDuration.getElapsedTimeInSeconds() % monitorRotationInterval == 0)
-                // {
-                // for (GroupDataModel group : serverDataModel.getGroups()) {
-                // boolean rotated = group.rotateMonitorIfNecessary();
-                // if (rotated) {
-                // // send new roles to all clients
-                // // FIXME: this is inefficient, we could synchronize twice.
-                // for (ClientData clientData : group.getClientDataMap().values()) {
-                // transmit(new SynchronizeClientEvent(clientData, currentRoundDuration.getTimeLeft()));
-                // }
-                // }
-                //
-                // }
-                // }
                 for (ClientData data : clients.values()) {
                     if (shouldSynchronize(data)) {
                         getLogger().info("Sending full sync to: " + data);
@@ -991,7 +975,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         syncSet.add(data.getId());
                     }
                 }
-
                 resourceDispenser.generateResources();
                 secondTick.restart();
             }
@@ -999,11 +982,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 if (botTick.hasExpired()) {
                     for (GroupDataModel group : serverDataModel.getGroups()) {
                         // only activate bots every 100 ms or so, otherwise they frontload all their actions.
-                        group.activateBots();
-                        // clear all bot action taken counters every 1 s
-                        if (botTick.getStartCount() % 10 == 0) {
-                            group.clearBotActionsTaken();
-                        }
+                        group.activateBots(botTick);
                     }
                     botTick.restart();
                 }

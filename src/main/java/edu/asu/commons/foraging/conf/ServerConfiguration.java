@@ -61,6 +61,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
     public boolean isCensoredChat() {
         return getBooleanProperty("censored-chat-enabled", false);
     }
+    
+    public boolean isSinglePlayer() {
+        return getBooleanProperty("single-player", false);
+    }
 
     public boolean shouldInitialize3D() {
         for (RoundConfiguration configuration : getAllParameters()) {
