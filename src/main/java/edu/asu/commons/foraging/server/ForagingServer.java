@@ -1064,8 +1064,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
         private boolean shouldShuffleParticipants() {
             // guard to ensure that we don't shuffle participants twice in a round (in the event there was a chat round preceding the normal game round)
-            if (groupsInitialized)
+            if (groupsInitialized) {
                 return false;
+            }
             RoundConfiguration currentRoundConfiguration = getCurrentRoundConfiguration();
             RoundConfiguration previousRoundConfiguration = getConfiguration().getPreviousRoundConfiguration();
             // we shuffle participants:

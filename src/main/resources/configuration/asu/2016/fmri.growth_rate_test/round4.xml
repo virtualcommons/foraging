@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Foraging XML-ized experiment round configuration</comment>
+<entry key="display-group-tokens">true</entry>
+<entry key="duration">240</entry>
+<entry key="resource-width">18</entry>
+<entry key="resource-depth">18</entry>
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+<!-- resource regrowth parameters -->
+<entry key="initial-distribution">.50</entry>
+<entry key='regrowth-rate'>0.12</entry>
+<entry key="instructions">
+<![CDATA[
+<h1>Round {self.roundNumber} Instructions</h1>
+<hr>
+<p>
+    This is round {self.roundNumber} of the experiment. This is a growth rate test configuration, with a growth rate of {self.regrowthRate}.
+</p>
+]]>
+</entry>
+
+
+</properties>
