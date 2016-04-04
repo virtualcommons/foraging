@@ -961,6 +961,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String getPlayerTwoAmountToKeepValidation() {
         return getParentConfiguration().getPlayerTwoAmountToKeepValidation();
     }
+    
+    public boolean isSinglePlayer() {
+        return getBooleanProperty("single-player", getParentConfiguration().isSinglePlayer());
+    }
 
     /**
      * If true, all player input will be automatically generated.

@@ -65,6 +65,7 @@ import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.SetImposedStrategyEvent;
 import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
+import edu.asu.commons.foraging.event.SinglePlayerUpdateRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
@@ -345,6 +346,13 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         Utils.notify(facilitatorSignal);
                         numberOfCompletedSanctions = 0;
                     }
+                }
+            });
+            addEventProcessor(new EventTypeProcessor<SinglePlayerUpdateRequest>(SinglePlayerUpdateRequest.class) {
+                public void handle(SinglePlayerUpdateRequest request) {
+                    ClientData data = request.getClientData();
+                    GroupDataModel gdm = data.getGroupDataModel();
+                    
                 }
             });
             addEventProcessor(new EventTypeProcessor<ClientMovementRequest>(ClientMovementRequest.class) {
@@ -852,7 +860,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         break;
                     }
                     processRound();
-
                     // Thread.yield();
                     Utils.sleep(SERVER_SLEEP_INTERVAL);
                     break;
@@ -966,55 +973,59 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
         private void processRound() {
             boolean secondHasPassed = secondTick.hasExpired();
-            boolean botsEnabled = getCurrentRoundConfiguration().isBotGroupsEnabled();
+            RoundConfiguration currentRoundConfiguration = getCurrentRoundConfiguration();
+            boolean singlePlayer = currentRoundConfiguration.isSinglePlayer(); 
             if (secondHasPassed) {
-                for (ClientData data : clients.values()) {
-                    if (shouldSynchronize(data)) {
-                        getLogger().info("Sending full sync to: " + data);
-                        transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
-                        syncSet.add(data.getId());
+                if (!singlePlayer) {
+                    for (ClientData data : clients.values()) {
+                        if (shouldSynchronize(data)) {
+                            getLogger().info("Sending full sync to: " + data);
+                            transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
+                            syncSet.add(data.getId());
+                        }
                     }
                 }
                 resourceDispenser.generateResources();
                 secondTick.restart();
             }
-            if (botsEnabled) {
-                if (botTick.hasExpired()) {
-                    for (GroupDataModel group : serverDataModel.getGroups()) {
-                        // only activate bots every 100 ms or so, otherwise they frontload all their actions.
-                        group.activateBots(botTick);
+            if (!singlePlayer) {
+                if (currentRoundConfiguration.isBotGroupsEnabled()) {
+                    if (botTick.hasExpired()) {
+                        for (GroupDataModel group : serverDataModel.getGroups()) {
+                            // only activate bots every 100 ms or so, otherwise they frontload all their actions.
+                            group.activateBots(botTick);
+                        }
+                        botTick.restart();
                     }
-                    botTick.restart();
                 }
-            }
-            for (GroupDataModel group : serverDataModel.getGroups()) {
-                Set<Resource> addedTokensSet = group.getAddedResources();
-                Resource[] addedResources = addedTokensSet.toArray(new Resource[addedTokensSet.size()]);
-                Set<Resource> removedTokensSet = group.getRemovedResources();
-                Resource[] removedResources = removedTokensSet.toArray(new Resource[removedTokensSet.size()]);
-                Map<Identifier, Integer> clientTokens = group.getClientTokens();
-                Map<Identifier, Point> clientPositions = group.getClientPositions();
-                for (ClientData data : group.getClientDataMap().values()) {
-                    if (syncSet.contains(data.getId())) {
-                        // skip this update, then remove them from the sync set.
-                        syncSet.remove(data.getId());
+                for (GroupDataModel group : serverDataModel.getGroups()) {
+                    Set<Resource> addedTokensSet = group.getAddedResources();
+                    Resource[] addedResources = addedTokensSet.toArray(new Resource[addedTokensSet.size()]);
+                    Set<Resource> removedTokensSet = group.getRemovedResources();
+                    Resource[] removedResources = removedTokensSet.toArray(new Resource[removedTokensSet.size()]);
+                    Map<Identifier, Integer> clientTokens = group.getClientTokens();
+                    Map<Identifier, Point> clientPositions = group.getClientPositions();
+                    for (ClientData data : group.getClientDataMap().values()) {
+                        if (syncSet.contains(data.getId())) {
+                            // skip this update, then remove them from the sync set.
+                            syncSet.remove(data.getId());
+                        }
+                        else {
+                            transmit(new ClientPositionUpdateEvent(data, addedResources, removedResources, clientTokens, clientPositions,
+                                    currentRoundDuration.getTimeLeft()));
+                        }
+                        // post-process cleanup of transient data structures on ClientData
+                        data.clearCollectedTokens();
+                        data.resetLatestSanctions();
                     }
-                    else {
-                        transmit(new ClientPositionUpdateEvent(data, addedResources, removedResources, clientTokens, clientPositions,
-                                currentRoundDuration.getTimeLeft()));
-                    }
-                    // post-process cleanup of transient data structures on ClientData
-                    data.clearCollectedTokens();
-                    data.resetLatestSanctions();
-                }
-                // after transmitting all the changes to the group, make sure to cleanup
-                group.clearDiffLists();
+                    // after transmitting all the changes to the group, make sure to cleanup
+                    group.clearDiffLists();
+                }                
             }
             // FIXME: refine this, send basic info to the facilitator (how many resources left, etc.)
             if (shouldUpdateFacilitator()) {
                 transmit(new FacilitatorUpdateEvent(getFacilitatorId(), serverDataModel, currentRoundDuration.getTimeLeft()));
             }
-
         }
 
         private boolean shouldUpdateFacilitator() {
