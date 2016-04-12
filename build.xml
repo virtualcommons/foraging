@@ -135,12 +135,17 @@
     </signjar>
   </target>
   <!-- specialized target for 2016 fmri configuration deployment -->
-  <target name='fmri-configuration'>
-    <copy todir="${conf.dir}">
-      <fileset dir="${conf.dir}/asu/2016/fmri/"/>
-    </copy>
+  <target name='fmri-test-gr'>
+    <antcall target='copy-configuration'>
+      <param name='treatment.dir' value='asu/2016/fmri.growth_rate_test' />
+    </antcall>
+    <antcall target='deploy' />
   </target>
-  <target name='fmri-deploy' depends='fmri-configuration, deploy'>
+  <target name='fmri-deploy'>
+    <antcall target='copy-configuration'>
+      <param name='treatment.dir' value='asu/2016/fmri' />
+    </antcall>
+    <antcall target='deploy' />
   </target>
   <!-- deploys the client + facilitator + sesef jarfiles to the appropriate
      webapps directory. -->
@@ -188,10 +193,15 @@
     <chmod dir="${deploy.dir}" perm="664" type="file" includes="**"/>
     <chmod dir="${deploy.dir}" perm="775" type="dir" includes="**"/>
   </target>
-  <target name='demo-configuration' unless='${configuration.exists}'>
+  <target name='copy-configuration'>
     <copy todir="${conf.dir}">
-      <fileset dir="${conf.dir}/demo"/>
+      <fileset dir="${conf.dir}/${treatment.dir}"/>
     </copy>
+  </target>
+  <target name='demo-configuration' unless='${configuration.exists}'>
+    <antcall target='copy-configuration'>
+      <param name='treatment.dir' value='demo'/>
+    </antcall>
   </target>
   <target name='demo-build-properties' unless='${build.properties.exists}'>
     <copy tofile='${basedir}/build.properties' file='${basedir}/build.properties.example'/>
