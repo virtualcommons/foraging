@@ -19,8 +19,8 @@ public class SinglePlayerUpdateRequest extends AbstractEvent implements ClientRe
 
     private static final long serialVersionUID = -871452113459811998L;
 
-    private final List<ClientMovementRequest> clientMovements = new ArrayList<>();
-    private final List<ClientMovementRequest> botMovements = new ArrayList<>();
+    private final List<MovementEvent> clientMovements = new ArrayList<>();
+    private final List<MovementEvent> botMovements = new ArrayList<>();
     
     private final ClientData clientData;
     
@@ -29,11 +29,11 @@ public class SinglePlayerUpdateRequest extends AbstractEvent implements ClientRe
         this.clientData = clientData;
     }
     
-    public List<ClientMovementRequest> getClientMovements() {
+    public List<MovementEvent> getClientMovements() {
         return clientMovements;
     }
 
-    public List<ClientMovementRequest> getBotMovements() {
+    public List<MovementEvent> getBotMovements() {
         return botMovements;
     }
 
@@ -42,7 +42,8 @@ public class SinglePlayerUpdateRequest extends AbstractEvent implements ClientRe
     }
 
     public String toString() {
-        return "Single player client update: " + getId() + "\n\t";
+        return String.format("Single player update for id %1s.\n\t Client movements %2s\n\tBot movements %3s",
+                getId(), clientMovements, botMovements);
     }
 
 }
