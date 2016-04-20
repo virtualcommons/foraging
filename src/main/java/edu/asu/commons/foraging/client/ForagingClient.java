@@ -39,6 +39,7 @@ import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
 import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
 import edu.asu.commons.foraging.event.ShowVotingInstructionsRequest;
+import edu.asu.commons.foraging.event.SinglePlayerClientUpdateEvent;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
@@ -200,6 +201,12 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
                     }
                     state = ClientState.WAITING;
                 }
+            }
+        });
+        addEventProcessor(new EventTypeProcessor<SinglePlayerClientUpdateEvent>(SinglePlayerClientUpdateEvent.class) {
+            public void handle(SinglePlayerClientUpdateEvent event) {
+                dataModel.update(event);
+                getGameWindow().update(event.getTimeLeft());
             }
         });
         addEventProcessor(new EventTypeProcessor<ClientPositionUpdateEvent>(ClientPositionUpdateEvent.class) {

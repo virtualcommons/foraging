@@ -512,4 +512,10 @@ public class ServerDataModel extends ForagingDataModel {
         return imposedStrategyDistribution;
     }
 
+    public synchronized void handleTokenCollectionRequest(ClientData clientData) {
+        GroupDataModel group = getGroup(clientData.getId());
+        group.collectToken(clientData);
+        getEventChannel().handle(new TokenCollectedEvent(clientData.getId(), clientData.getPosition()));
+    }
+
 }

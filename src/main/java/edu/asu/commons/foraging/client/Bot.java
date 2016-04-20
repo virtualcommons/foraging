@@ -25,7 +25,7 @@ public interface Bot {
 
     public Identifier getIdentifier();
 
-    public Point getCurrentPosition();
+    public Point getPosition();
 
     public void setCurrentPosition(Point location);
 
@@ -101,7 +101,7 @@ public interface Bot {
                 return;
             }
             // if neither, check if we are sitting on top of a token
-            if (model.isResourceAt(getCurrentPosition())) {
+            if (model.isResourceAt(getPosition())) {
                 if (random.nextDouble() <= getHarvestProbability()) {
                     model.collectToken(this);
                 }
@@ -120,7 +120,7 @@ public interface Bot {
             this.numberOfActionsTaken = 0;
         }
 
-        public Point getCurrentPosition() {
+        public Point getPosition() {
             return currentPosition;
         }
 
@@ -132,7 +132,7 @@ public interface Bot {
             if (! hasTarget()) {
                 setNewTargetLocation();
             }
-            Direction nextMove = Direction.towards(getCurrentPosition(), getTargetLocation());
+            Direction nextMove = Direction.towards(getPosition(), getTargetLocation());
             logger.info("Target location: " + getTargetLocation());
             logger.info("Moving in direction: " + nextMove);
             if (nextMove == Direction.NONE) {
@@ -159,7 +159,7 @@ public interface Bot {
         }
 
         protected Point getNearestToken() {
-            Point currentLocation = getCurrentPosition();
+            Point currentLocation = getPosition();
             Point nearestToken = null;
             double nearestTokenDistance = Double.MAX_VALUE;
             // naive implementation, scans all positions
@@ -208,7 +208,7 @@ public interface Bot {
             int x = (int) ((cellWidth / 2) + (cellWidth * (positionNumber - 1)));
             int y = resourceHeight / 2;
             setCurrentPosition(new Point(x, y));
-            logger.info("setting current bot position to " + getCurrentPosition());
+            logger.info("setting current bot position to " + getPosition());
         }
 
         public int getBotNumber() {

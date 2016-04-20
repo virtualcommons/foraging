@@ -29,7 +29,7 @@ import edu.asu.commons.util.Duration;
 public class ClientData implements Serializable {
 
     private static final long serialVersionUID = 5281922601551921005L;
-    
+
     private final Identifier id;
     private GroupDataModel groupDataModel;
 
@@ -37,9 +37,9 @@ public class ClientData implements Serializable {
 
     private int[] regulationRankings;
     private int[] enforcementRankings;
-    
+
     private ForagingRole foragingRole = ForagingRole.HARVEST;
-    
+
     private int totalTokens;
     private int currentTokens;
     private int tokensCollectedLastRound;
@@ -49,24 +49,24 @@ public class ClientData implements Serializable {
     private int sanctionCosts;
     private int assignedNumber;
     private Point3D position;
-    
+
     private volatile boolean collecting;
     private volatile boolean explicitCollectionMode;
     private Duration freezeDuration;
     private LinkedList<RealTimeSanctionRequest> latestSanctions = new LinkedList<RealTimeSanctionRequest>();
     private AnimationData animationData;
-    
+
     private boolean subjectsFieldOfVisionEnabled;
     private boolean tokensFieldOfVisionEnabled;
     private double viewSubjectsRadius;
     private double viewTokensRadius;
-    
+
     // only needed if this client has already received a tax.
     private boolean taxReceived = false;
-    
+
     private double trustGamePlayerOneAmountToKeep;
     private double[] trustGamePlayerTwoAmountsToKeep;
-    
+
     private ForagingStrategy votedRule;
     private ArrayList<String> trustGameLog = new ArrayList<String>();
     private ArrayList<Point> collectedTokenPositions = new ArrayList<Point>();
@@ -76,7 +76,7 @@ public class ClientData implements Serializable {
     private String currentIncome;
     private String quizEarnings;
     private String trustGameEarnings;
-    
+
     private double totalIncome = 0.0d;
     private double trustGameIncome = 0.0d;
     private int correctQuizAnswers = 0;
@@ -100,19 +100,18 @@ public class ClientData implements Serializable {
     public double[] getTrustGamePlayerTwoAmountsToKeep() {
         return trustGamePlayerTwoAmountsToKeep;
     }
-    
 
-	// this is only used in the Rotating Monitor enforcement mechanism.
+    // this is only used in the Rotating Monitor enforcement mechanism.
     private int tokensCollectedDuringInterval = 0;
 
     public ClientData(Identifier id) {
         this.id = id;
     }
-    
+
     public Point getPoint() {
-        return new Point( Math.round(position.x), Math.round(position.y) );
+        return new Point(Math.round(position.x), Math.round(position.y));
     }
-    
+
     public Point3D getPoint3D() {
         return position;
     }
@@ -120,7 +119,7 @@ public class ClientData implements Serializable {
     public Point getPosition() {
         return getPoint();
     }
-        
+
     public void setPosition(Point position) {
         setPosition(new Point3D((float) position.x, (float) position.y, 0.0f));
     }
@@ -128,8 +127,7 @@ public class ClientData implements Serializable {
     public void setPosition(Point3D position) {
         this.position = position;
     }
-    
-    
+
     /**
      * Returns the current number of tokens this participant has collected.
      * Sanctions from or against this participant are reflected in the total.
@@ -137,12 +135,12 @@ public class ClientData implements Serializable {
     public int getCurrentTokens() {
         return currentTokens;
     }
-    
+
     public void addTokens(int tokens) {
         currentTokens += tokens;
         // this can only be invoked on the server side
         RoundConfiguration configuration = getGroupDataModel().getRoundConfiguration();
-        if ( ! configuration.isPracticeRound() ) {
+        if (!configuration.isPracticeRound()) {
             totalTokens += tokens;
             totalIncome += (tokens * configuration.getDollarsPerToken());
         }
@@ -150,70 +148,68 @@ public class ClientData implements Serializable {
     }
 
     public Circle getSubjectsFieldOfVision() {
-    	if (isSubjectsFieldOfVisionEnabled()) {
-    		return new Circle(getPoint(), viewSubjectsRadius);
-    	}
-    	else {
-    		return null;
-    	}
+        if (isSubjectsFieldOfVisionEnabled()) {
+            return new Circle(getPoint(), viewSubjectsRadius);
+        } else {
+            return null;
+        }
     }
-    
+
     public boolean isSanctioningAllowed() {
-    	return foragingRole != null && foragingRole.isSanctioningAllowed();
+        return foragingRole != null && foragingRole.isSanctioningAllowed();
     }
-    
+
     public boolean isHarvestingAllowed() {
-    	return foragingRole != null && foragingRole.isHarvestingAllowed();
+        return foragingRole != null && foragingRole.isHarvestingAllowed();
     }
-    
-    public boolean isSubjectInFieldOfVision(Point subjectPosition) { 
-    	Circle circle = getSubjectsFieldOfVision();
-    	if (circle == null) {
-    		// if the field of vision is null that means that there is no
-    		// field of vision enabled.
-    		return true;
-    	}
-    	return circle.contains(subjectPosition);
-    	// could also do return circle == null || circle.contains(point);
+
+    public boolean isSubjectInFieldOfVision(Point subjectPosition) {
+        Circle circle = getSubjectsFieldOfVision();
+        if (circle == null) {
+            // if the field of vision is null that means that there is no
+            // field of vision enabled.
+            return true;
+        }
+        return circle.contains(subjectPosition);
+        // could also do return circle == null || circle.contains(point);
     }
-    
+
     public Circle getTokensFieldOfVision() {
-    	if (isTokensFieldOfVisionEnabled()) {
-    		return new Circle(getPoint(), viewTokensRadius);
-    	}
-    	else {
-    		return null;
-    	}
+        if (isTokensFieldOfVisionEnabled()) {
+            return new Circle(getPoint(), viewTokensRadius);
+        } else {
+            return null;
+        }
     }
-    
+
     public void addToken(Point position) {
         addTokens(1);
         synchronized (collectedTokenPositions) {
             collectedTokenPositions.add(position);
         }
     }
-    
+
     public void clearCollectedTokens() {
         synchronized (collectedTokenPositions) {
             collectedTokenPositions.clear();
         }
     }
-    
+
     public List<Point> getCollectedTokenPositions() {
         return collectedTokenPositions;
     }
-    
+
     public int applyMonitorTax() {
         int monitorTax = tokensCollectedDuringInterval / 4;
         subtractTokens(monitorTax);
         return monitorTax;
     }
-    
+
     // used for post round sanctioning
     public synchronized void postRoundSanctionCost(int cost) {
         sanctionCosts += Math.abs(cost);
     }
-    
+
     // used for real time sanctioning
     public void sanctionCost() {
         RoundConfiguration roundConfiguration = getGroupDataModel().getRoundConfiguration();
@@ -222,36 +218,34 @@ public class ClientData implements Serializable {
             final int sanctionCost = roundConfiguration.getSanctionCost();
             sanctionCosts += sanctionCost;
             subtractTokens(sanctionCost);
-        }
-        else if (sanctionAction.isFreeze()) {
-            freeze( roundConfiguration.getSanctionCost() );
+        } else if (sanctionAction.isFreeze()) {
+            freeze(roundConfiguration.getSanctionCost());
         }
     }
-    
+
     private int subtractTokens(int amount) {
         int tokensToSubtract = Math.min(currentTokens, amount);
         currentTokens -= tokensToSubtract;
         RoundConfiguration configuration = getGroupDataModel().getRoundConfiguration();
-        if ( ! configuration.isPracticeRound() ) {
+        if (!configuration.isPracticeRound()) {
             totalTokens -= tokensToSubtract;
             totalIncome -= (tokensToSubtract * configuration.getDollarsPerToken());
         }
         return tokensToSubtract;
     }
-    
+
     public int sanctionPenalty() {
         RoundConfiguration roundConfiguration = getGroupDataModel().getRoundConfiguration();
         SanctionAction sanctionAction = roundConfiguration.getSanctionAction();
         // FIXME: add logic to SanctionAction instead, i.e.,
-        // sanctionAction.apply(clientData); 
+        // sanctionAction.apply(clientData);
         // that performs this conditional logic based on the actual action in place.
         if (sanctionAction.isFine()) {
             final int sanctionPenalty = roundConfiguration.getSanctionPenalty();
             sanctionPenalties += sanctionPenalty;
             return subtractTokens(sanctionPenalty);
-        }
-        else if (sanctionAction.isFreeze()) {
-            freeze( roundConfiguration.getSanctionPenalty() );
+        } else if (sanctionAction.isFreeze()) {
+            freeze(roundConfiguration.getSanctionPenalty());
         }
         // in the case of freeze, the return value is meaningless.
         return -1;
@@ -261,7 +255,7 @@ public class ClientData implements Serializable {
     /**
      * If this ClientData is already frozen, this method returns false and does nothing.
      * If not, sets or resets the freeze duration for this ClientData and returns true.
-     *        
+     * 
      * @param seconds
      * @return false if this ClientData is already frozen, true otherwise.
      */
@@ -269,7 +263,7 @@ public class ClientData implements Serializable {
         if (freezeDuration == null || freezeDuration.hasExpired()) {
             // always recreate the freeze duration since we may be switching
             // from sanction cost to sanction penalty.
-            freezeDuration = Duration.create( seconds, TimeUnit.SECONDS );
+            freezeDuration = Duration.create(seconds, TimeUnit.SECONDS);
             return true;
         }
         return false;
@@ -278,35 +272,34 @@ public class ClientData implements Serializable {
     }
 
     public boolean isFrozen() {
-        return freezeDuration != null && ! freezeDuration.hasExpired();
+        return freezeDuration != null && !freezeDuration.hasExpired();
     }
-   
+
     public synchronized void postRoundSanctionPenalty(final int tokens) {
         if (tokens < 0) {
             sanctionPenalties += Math.abs(tokens);
-        }
-        else {
+        } else {
             sanctionBonuses += tokens;
         }
     }
-    
+
     public void applyPostRoundSanctioning() {
-    	System.out.println("Apply post round sanctioning");
+        System.out.println("Apply post round sanctioning");
         tokensCollectedLastRound = currentTokens;
         int netGain = sanctionBonuses - sanctionPenalties - sanctionCosts;
         if (netGain < 0 && Math.abs(netGain) > currentTokens) {
             // lose everything this round.
             totalTokens -= currentTokens;
             currentTokens = 0;
-        }
-        else {
+        } else {
             currentTokens += netGain;
             totalTokens += netGain;
         }
     }
-    
+
     /**
      * Returns a queue of sanction requests that have been most recently applied to this client.
+     * 
      * @return
      */
     public Queue<RealTimeSanctionRequest> getLatestSanctions() {
@@ -316,18 +309,18 @@ public class ClientData implements Serializable {
     public Identifier getId() {
         return id;
     }
+
     public int getTotalTokens() {
         return totalTokens;
     }
-    
+
     public void setCurrentTokens(int currentTokens) {
         this.currentTokens = currentTokens;
     }
-    
+
     public void setTotalTokens(int totalTokens) {
         this.totalTokens = totalTokens;
     }
-
 
     /**
      * Returns the number of tokens used to sanction others in this round.
@@ -352,7 +345,6 @@ public class ClientData implements Serializable {
         sanctionPenalties += penalty;
     }
 
-    
     public int getSanctionCosts() {
         return sanctionCosts;
     }
@@ -367,11 +359,11 @@ public class ClientData implements Serializable {
         foragingRole = ForagingRole.HARVEST;
         taxReceived = false;
     }
-    
+
     public void resetLatestSanctions() {
-    	if (latestSanctions != null) {
-    		latestSanctions.clear();
-    	}
+        if (latestSanctions != null) {
+            latestSanctions.clear();
+        }
     }
 
     private void resetCurrentTokens() {
@@ -381,7 +373,7 @@ public class ClientData implements Serializable {
         sanctionCosts = 0;
         tokensCollectedDuringInterval = 0;
     }
-    
+
     public void resetTokensCollectedDuringInterval() {
         tokensCollectedDuringInterval = 0;
     }
@@ -405,36 +397,36 @@ public class ClientData implements Serializable {
     public void setGroupDataModel(GroupDataModel groupDataModel) {
         this.groupDataModel = groupDataModel;
     }
-    
+
     public RegulationData getRegulationData() {
         return regulationData;
     }
 
     public void setRegulationData(RegulationData regulationData) {
-		this.regulationData = regulationData;
+        this.regulationData = regulationData;
     }
-    
+
     // FIXME: generalize for arbitrary clients per group.
     public Point3D generate3DPosition() {
-//        float x = assignedNumber * getGroupDataModel().getCurrentConfiguration().getWorldWidth() / getGroupDataModel().getNumberOfClients() + 1;
+        // float x = assignedNumber * getGroupDataModel().getCurrentConfiguration().getWorldWidth() / getGroupDataModel().getNumberOfClients() + 1;
         RoundConfiguration currentConfiguration = getGroupDataModel().getRoundConfiguration();
         Point3D topLeftCorner = currentConfiguration.getTopLeftCornerCoordinate();
         float worldDepth = currentConfiguration.getWorldDepth() / 4.0f;
         float worldWidth = currentConfiguration.getWorldWidth() / 4.0f;
         switch (assignedNumber) {
-        case 1:
-            return ( topLeftCorner.add(new Point3D(worldWidth, 0, worldDepth)) );
-        case 2:
-            return ( topLeftCorner.add(new Point3D(worldWidth * 3, 0, worldDepth)) );
-        case 3:
-            return ( topLeftCorner.add(new Point3D(worldWidth, 0, worldDepth * 3)) );
-        case 4:
-            return ( topLeftCorner.add(new Point3D(worldWidth * 3, 0, worldDepth * 3)) );
-        default:
-            throw new IllegalArgumentException("generate3DPosition is hardcoded to only support up to 4 clients");
+            case 1:
+                return (topLeftCorner.add(new Point3D(worldWidth, 0, worldDepth)));
+            case 2:
+                return (topLeftCorner.add(new Point3D(worldWidth * 3, 0, worldDepth)));
+            case 3:
+                return (topLeftCorner.add(new Point3D(worldWidth, 0, worldDepth * 3)));
+            case 4:
+                return (topLeftCorner.add(new Point3D(worldWidth * 3, 0, worldDepth * 3)));
+            default:
+                throw new IllegalArgumentException("generate3DPosition is hardcoded to only support up to 4 clients");
         }
     }
-    
+
     public void setCollecting() {
         collecting = true;
     }
@@ -450,22 +442,21 @@ public class ClientData implements Serializable {
     public void setExplicitCollectionMode(boolean explicitCollectionMode) {
         this.explicitCollectionMode = explicitCollectionMode;
     }
-    
+
     public void initializePosition() {
         RoundConfiguration roundConfiguration = getGroupDataModel().getRoundConfiguration();
         setExplicitCollectionMode(roundConfiguration.isAlwaysInExplicitCollectionMode());
         subjectsFieldOfVisionEnabled = roundConfiguration.isSubjectsFieldOfVisionEnabled();
         if (subjectsFieldOfVisionEnabled) {
-        	viewSubjectsRadius = roundConfiguration.getViewSubjectsRadius();
+            viewSubjectsRadius = roundConfiguration.getViewSubjectsRadius();
         }
-        tokensFieldOfVisionEnabled = roundConfiguration.isTokensFieldOfVisionEnabled(); 
+        tokensFieldOfVisionEnabled = roundConfiguration.isTokensFieldOfVisionEnabled();
         if (tokensFieldOfVisionEnabled) {
-        	viewTokensRadius = roundConfiguration.getViewTokensRadius();
+            viewTokensRadius = roundConfiguration.getViewTokensRadius();
         }
         if (roundConfiguration.isPrivateProperty()) {
-            setPosition (new Point(roundConfiguration.getResourceWidth() / 2, roundConfiguration.getResourceDepth() / 2));
-        }
-        else if (roundConfiguration.is2dExperiment()) {
+            setPosition(new Point(roundConfiguration.getResourceWidth() / 2, roundConfiguration.getResourceDepth() / 2));
+        } else if (roundConfiguration.is2dExperiment()) {
             int clientsPerGroup = roundConfiguration.getClientsPerGroup();
             double cellWidth = roundConfiguration.getResourceWidth() / (double) clientsPerGroup;
             int x = (int) ((cellWidth / 2) + (cellWidth * (getAssignedNumber() - 1)));
@@ -479,10 +470,9 @@ public class ClientData implements Serializable {
             }
 
             setPosition(new Point(x, y));
-        }
-        else {
+        } else {
             // 3d initialize position
-            setPosition( generate3DPosition() );
+            setPosition(generate3DPosition());
         }
     }
 
@@ -569,30 +559,30 @@ public class ClientData implements Serializable {
         return totalIncome;
     }
 
-	public boolean isSubjectsFieldOfVisionEnabled() {
-		return subjectsFieldOfVisionEnabled;
-	}
+    public boolean isSubjectsFieldOfVisionEnabled() {
+        return subjectsFieldOfVisionEnabled;
+    }
 
-	public boolean isTokensFieldOfVisionEnabled() {
-		return tokensFieldOfVisionEnabled;
-	}
+    public boolean isTokensFieldOfVisionEnabled() {
+        return tokensFieldOfVisionEnabled;
+    }
 
-	public double getViewSubjectsRadius() {
-		return viewSubjectsRadius;
-	}
+    public double getViewSubjectsRadius() {
+        return viewSubjectsRadius;
+    }
 
-	public double getViewTokensRadius() {
-		return viewTokensRadius;
-	}
-	
-	public ForagingRole getForagingRole() {
-	    return foragingRole;
-	}
+    public double getViewTokensRadius() {
+        return viewTokensRadius;
+    }
+
+    public ForagingRole getForagingRole() {
+        return foragingRole;
+    }
 
     public void setForagingRole(ForagingRole foragingRole) {
         this.foragingRole = foragingRole;
     }
-    
+
     public boolean isMonitor() {
         return foragingRole != null && foragingRole.isMonitor();
     }
@@ -625,8 +615,7 @@ public class ClientData implements Serializable {
         String surveyId = id.getSurveyId();
         if (surveyId == null || surveyId.trim().isEmpty()) {
             return String.format("%s, #%d", id, assignedNumber);
-        }
-        else {
+        } else {
             return String.format("%s, Survey id: %s, #%d", id, surveyId, assignedNumber);
         }
     }
@@ -634,7 +623,7 @@ public class ClientData implements Serializable {
     public void addTrustGameEarnings(double trustGameEarnings) {
         this.trustGameIncome += trustGameEarnings;
     }
-    
+
     public double getTrustGameIncome() {
         return trustGameIncome;
     }
@@ -662,42 +651,42 @@ public class ClientData implements Serializable {
     public void setVotedRule(ForagingStrategy votedRule) {
         this.votedRule = votedRule;
     }
-    
+
     public String getSurveyId() {
         return getId().getSurveyId();
     }
 
-	public String getGrandTotalIncome() {
-		return grandTotalIncome;
-	}
+    public String getGrandTotalIncome() {
+        return grandTotalIncome;
+    }
 
-	public void setGrandTotalIncome(String grandTotalIncome) {
-		this.grandTotalIncome = grandTotalIncome;
-	}
+    public void setGrandTotalIncome(String grandTotalIncome) {
+        this.grandTotalIncome = grandTotalIncome;
+    }
 
-	public String getCurrentIncome() {
-		return currentIncome;
-	}
+    public String getCurrentIncome() {
+        return currentIncome;
+    }
 
-	public void setCurrentIncome(String currentIncome) {
-		this.currentIncome = currentIncome;
-	}
+    public void setCurrentIncome(String currentIncome) {
+        this.currentIncome = currentIncome;
+    }
 
-	public String getQuizEarnings() {
-		return quizEarnings;
-	}
+    public String getQuizEarnings() {
+        return quizEarnings;
+    }
 
-	public void setQuizEarnings(String quizEarnings) {
-		this.quizEarnings = quizEarnings;
-	}
+    public void setQuizEarnings(String quizEarnings) {
+        this.quizEarnings = quizEarnings;
+    }
 
-	public void setTrustGameEarnings(String trustGameEarnings) {
-		this.trustGameEarnings = trustGameEarnings;
-	}
+    public void setTrustGameEarnings(String trustGameEarnings) {
+        this.trustGameEarnings = trustGameEarnings;
+    }
 
-	public String getTrustGameEarnings() {
-		return trustGameEarnings;
-	}
+    public String getTrustGameEarnings() {
+        return trustGameEarnings;
+    }
 
     public int getZone() {
         return zone;

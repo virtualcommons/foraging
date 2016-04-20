@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.experiment.DataModel;
@@ -99,8 +100,8 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public GroupDataModel(ServerDataModel serverDataModel, long groupId) {
         this.serverDataModel = serverDataModel;
         this.groupId = groupId;
-        this.removedResources = new HashSet<Resource>();
-        this.addedResources = new HashSet<Resource>();
+        this.removedResources = new HashSet<>();
+        this.addedResources = new HashSet<>();
     }
     
     public void handleSanctionRequest(PostRoundSanctionRequest sanctionRequest) {
@@ -415,12 +416,12 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
 
     public Map<Identifier, Point> getClientPositions() {
-        Map<Identifier, Point> positions = new HashMap<Identifier, Point>();
+        Map<Identifier, Point> positions = new HashMap<>();
         for (ClientData clientData : clients.values()) {
             positions.put(clientData.getId(), clientData.getPoint());
         }
         for (Bot bot: bots) {
-            positions.put(bot.getIdentifier(), bot.getCurrentPosition());
+            positions.put(bot.getIdentifier(), bot.getPosition());
         }
         return positions;
     }
@@ -462,7 +463,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
     
     public void move(Bot bot, Direction direction) {
-        Point newPosition = direction.apply(bot.getCurrentPosition());
+        Point newPosition = direction.apply(bot.getPosition());
         if (serverDataModel.isValidPosition(newPosition) && isCellAvailable(newPosition)) {
             bot.setCurrentPosition(newPosition);
             getEventChannel().handle(new MovementEvent(bot.getIdentifier(), direction));
@@ -503,25 +504,14 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         if (currentRoundConfiguration.shouldCheckOccupancy()) {
             int maximumOccupancyPerCell = currentRoundConfiguration.getMaximumOccupancyPerCell();
             int currentOccupancy = 0;
-            if (currentRoundConfiguration.isBotGroupsEnabled()) {
-                for (Bot bot: bots) {
-                    if (bot.getCurrentPosition().equals(position)) {
-                        currentOccupancy++;
-                    }
-                    if (currentOccupancy >= maximumOccupancyPerCell) {
-                        return false;
-                    }
-                }
-            }
-            for (ClientData data: clients.values()) {
-                if (data.getPosition().equals(position)) {
+            for (Point otherPosition: getClientPositions().values()) {
+                if (position.equals(otherPosition)) {
                     currentOccupancy++;
-                    if (currentOccupancy >= maximumOccupancyPerCell) {
-                        return false;
-                    }
+                }
+                if (currentOccupancy >= maximumOccupancyPerCell) {
+                    return false;
                 }
             }
-
         }
         return true;
     }
@@ -550,13 +540,12 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
                 getRemovedResources().add( resourceDistribution.remove(position) );
                 tokensCollectedDuringInterval++;
                 clientData.addToken(position);
-                serverDataModel.getEventChannel().handle(new TokenCollectedEvent(clientData.getId(), position));
             }
         }
     }
     
     public void collectToken(Bot bot) {
-        Point position = bot.getCurrentPosition();
+        Point position = bot.getPosition();
         synchronized (resourceDistribution) {
             if (resourceDistribution.containsKey(position)) {
                 getRemovedResources().add(resourceDistribution.remove(position));
@@ -757,14 +746,14 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     public Set<Resource> getRemovedResources() {
         if (removedResources == null) {
-            removedResources = new HashSet<Resource>();
+            removedResources = new HashSet<>();
         }
         return removedResources;
     }
     
     public Set<Resource> getAddedResources() {
         if (addedResources == null) {
-            addedResources = new HashSet<Resource>();
+            addedResources = new HashSet<>();
         }
         return addedResources;
     }
@@ -943,6 +932,10 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         for (Bot bot: bots) {
             bot.resetActionsTakenPerSecond();
         }
+    }
+    
+    public Stream<Point> getBotPositions() {
+        return bots.stream().map((bot) -> bot.getPosition());
     }
 
 }

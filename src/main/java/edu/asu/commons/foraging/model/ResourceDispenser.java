@@ -104,8 +104,8 @@ public class ResourceDispenser {
 
     protected ResourceGenerator getResourceGenerator(Type resourceGeneratorType) {
         switch (resourceGeneratorType) {
-            case DENSITY_DEPENDENT:
-                return densityDependentGenerator;
+//            case DENSITY_DEPENDENT:
+//                return densityDependentGenerator;
             case NEIGHBORHOOD_DENSITY_DEPENDENT:
                 return neighborhoodDensityDependentGenerator;
             case TOP_BOTTOM_PATCHY:
@@ -125,14 +125,16 @@ public class ResourceDispenser {
         }
     }
 
-    public void generateResources() {
-        generateResources(getCurrentResourceGenerator());
+    public Map<GroupDataModel, Set<Resource>> generateResources() {
+        return generateResources(getCurrentResourceGenerator());
     }
 
-    public void generateResources(ResourceGenerator generator) {
+    public Map<GroupDataModel, Set<Resource>> generateResources(ResourceGenerator generator) {
+        Map<GroupDataModel, Set<Resource>> map = new HashMap<>();
         for (GroupDataModel group : serverDataModel.getGroups()) {
-            generator.generate(group);
+            map.put(group, generator.generate(group));
         }
+        return map;
     }
 
     public ResourceGenerator getCurrentResourceGenerator() {
@@ -160,16 +162,16 @@ public class ResourceDispenser {
          * 
          * @param group
          */
-        public void generate(GroupDataModel group) {
+        public Set<Resource> generate(GroupDataModel group) {
             // getResourcePositions() returns a new HashSet
             // this Set will contain the most up-to-date resource positions as a working copy.
             final Set<Point> currentResourcePositions = group.getResourcePositions();
-            final Set<Point> addedResources = new HashSet<Point>();
-            final Set<Point> removedResources = new HashSet<Point>();
+            final Set<Point> addedResources = new HashSet<>();
+            final Set<Point> removedResources = new HashSet<>();
             // iterate over a copy so we can update currentResourcePositions.
             // we need to update them one-at-a-time, otherwise a resource might move to a location that
             // has already been moved to...
-            final List<Point> shuffledCopy = new ArrayList<Point>(currentResourcePositions);
+            final List<Point> shuffledCopy = new ArrayList<>(currentResourcePositions);
             Collections.shuffle(shuffledCopy);
             // iterate through a new randomized copy of the points
             for (Point currentResourcePosition : shuffledCopy) {
@@ -195,7 +197,7 @@ public class ResourceDispenser {
             shuffledCopy.clear();
             shuffledCopy.addAll(currentResourcePositions);
             Collections.shuffle(shuffledCopy);
-            Set<Resource> addedOffspring = new HashSet<Resource>();
+            Set<Resource> addedOffspring = new HashSet<>();
             // next, generate offspring.
             // use current resource positions.
             for (Point currentResourcePosition : currentResourcePositions) {
@@ -210,10 +212,11 @@ public class ResourceDispenser {
                 }
             }
             serverDataModel.addResources(group, addedOffspring);
+            return addedOffspring;
         }
 
         private List<Point> getValidMooreNeighborhood(Point referencePoint, Set<Point> existingPositions) {
-            List<Point> neighborhoodPoints = new ArrayList<Point>();
+            List<Point> neighborhoodPoints = new ArrayList<>();
             int currentX = referencePoint.x;
             int currentY = referencePoint.y;
             int endX = currentX + 2;
@@ -291,11 +294,11 @@ public class ResourceDispenser {
         }
 
         @Override
-        public void generate(GroupDataModel group) {
+        public Set<Resource> generate(GroupDataModel group) {
             // partition the grid into north and south halves.
             // regenerate food for the top half.
             int divisionPoint = serverDataModel.getBoardHeight() / 2;
-            Set<Resource> newResources = new HashSet<Resource>();
+            Set<Resource> newResources = new HashSet<>();
             for (int y = 0; y < divisionPoint; y++) {
                 for (int x = 0; x < serverDataModel.getBoardWidth(); x++) {
                     Point currentPoint = new Point(x, y);
@@ -319,6 +322,7 @@ public class ResourceDispenser {
             }
             // add all resources to the server
             serverDataModel.addResources(group, newResources);
+            return newResources;
         }
 
         @Override
@@ -349,7 +353,7 @@ public class ResourceDispenser {
         }
 
         @Override
-        public void generate(GroupDataModel group) {
+        public Set<Resource> generate(GroupDataModel group) {
             Set<Resource> newResources = new HashSet<>();
             Map<Point, Resource> resourceDistribution = group.getResourceDistribution();
             int totalNumberOfResources = resourceDistribution.size();
@@ -364,7 +368,6 @@ public class ResourceDispenser {
             else if (random.nextDouble() <= rawRegrowth) {
                 regrowth = 1;
             }
-
             logger.info("Regrowth: " + regrowth);
             if (regrowth > 0) {
                 ArrayList<Point> availableLocations = new ArrayList<>();
@@ -380,6 +383,7 @@ public class ResourceDispenser {
                 }
                 serverDataModel.addResources(group, newResources);
             }
+            return newResources;
         }
 
     }
@@ -391,8 +395,7 @@ public class ResourceDispenser {
      * 2. multiply ratio by regrowth rate configuration parameter
      * 3. if result > random.nextDouble(), add token to that grid cell.
      */
-    public class NeighborhoodDensityDependentResourceGenerator extends ResourceGenerator.Base
-            implements StochasticGenerator {
+    public class NeighborhoodDensityDependentResourceGenerator extends ResourceGenerator.Base implements StochasticGenerator {
         private double rate;
 
         public void initialize(RoundConfiguration roundConfiguration) {
@@ -439,13 +442,14 @@ public class ResourceDispenser {
         // FIXME: can make this algorithm more efficient. Instead of scanning
         // across the entire grid, look at existing set of Food points and check
         // their neighbor probabilities
-        public void generate(GroupDataModel group) {
+        public Set<Resource> generate(GroupDataModel group) {
             // FIXME: extremely important - add to a scratch space first and then copy over all at once to avoid copy problem.
-            Set<Resource> newResources = new HashSet<Resource>();
+            Set<Resource> newResources = new HashSet<>();
             for (int y = 0; y < serverDataModel.getBoardHeight(); y++) {
                 for (int x = 0; x < serverDataModel.getBoardWidth(); x++) {
                     Point currentPoint = new Point(x, y);
-                    if (!group.isResourceAt(currentPoint)) {
+                    if (! group.isResourceAt(currentPoint)) {
+                        random.doubles();
                         if (random.nextDouble() < getProbabilityForCell(group, x, y)) {
                             // FIXME: should initial age be parameterizable?
                             newResources.add(new Resource(currentPoint, 1));
@@ -454,6 +458,7 @@ public class ResourceDispenser {
                 }
             }
             serverDataModel.addResources(group, newResources);
+            return newResources;
         }
     }
 

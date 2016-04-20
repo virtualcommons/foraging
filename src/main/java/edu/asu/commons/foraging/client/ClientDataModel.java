@@ -13,6 +13,7 @@ import java.util.Set;
 import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
 import edu.asu.commons.foraging.event.ExplicitCollectionModeRequest;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
+import edu.asu.commons.foraging.event.SinglePlayerClientUpdateEvent;
 import edu.asu.commons.foraging.graphics.Point3D;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.ForagingDataModel;
@@ -186,6 +187,19 @@ public class ClientDataModel extends ForagingDataModel {
         Identifier id = getId();
         clientData.setPosition(clientPositions.get(id));
         clientData.setCurrentTokens(clientTokens.get(id));
+    }
+    
+    public void update(SinglePlayerClientUpdateEvent event) {
+        this.clientTokens = event.getClientTokens();
+        this.clientPositions = event.getClientPositions();
+        synchronized (resourceDistribution) {
+            for (Point p: event.getRemovedResources()) {
+                resourceDistribution.remove(p);
+            }
+            for (Resource r: event.getAddedResources()) {
+                resourceDistribution.put(r.getPosition(), r);
+            }
+        }
     }
     
     public void update(Map<Identifier, Integer> clientTokens, 

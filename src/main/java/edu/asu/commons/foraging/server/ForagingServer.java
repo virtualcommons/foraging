@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import edu.asu.commons.event.BeginRoundRequest;
 import edu.asu.commons.event.ChatEvent;
@@ -21,6 +23,7 @@ import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.ClientMessageEvent;
 import edu.asu.commons.event.ClientReadyEvent;
 import edu.asu.commons.event.EndRoundRequest;
+import edu.asu.commons.event.Event;
 import edu.asu.commons.event.EventTypeProcessor;
 import edu.asu.commons.event.FacilitatorRegistrationRequest;
 import edu.asu.commons.event.RoundStartedMarkerEvent;
@@ -53,19 +56,20 @@ import edu.asu.commons.foraging.event.HarvestResourceRequest;
 import edu.asu.commons.foraging.event.ImposeStrategyEvent;
 import edu.asu.commons.foraging.event.LockResourceEvent;
 import edu.asu.commons.foraging.event.LockResourceRequest;
-import edu.asu.commons.foraging.event.MovementEvent;
 import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
 import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.QuizCompletedEvent;
 import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
+import edu.asu.commons.foraging.event.ResourcesAddedEvent;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.SetImposedStrategyEvent;
 import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
+import edu.asu.commons.foraging.event.SinglePlayerClientUpdateEvent;
 import edu.asu.commons.foraging.event.SinglePlayerUpdateRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
@@ -101,8 +105,8 @@ import edu.asu.commons.util.Utils;
  */
 public class ForagingServer extends AbstractExperiment<ServerConfiguration, RoundConfiguration> {
 
-    private final Map<Identifier, ClientData> clients = new HashMap<Identifier, ClientData>();
-    private final HashSet<Identifier> syncSet = new HashSet<Identifier>();
+    private final Map<Identifier, ClientData> clients = new HashMap<>();
+    private final HashSet<Identifier> synchronizedClients = new HashSet<>();
 
     public final static int SYNCHRONIZATION_FREQUENCY = 60;
     public final static int SERVER_SLEEP_INTERVAL = 75;
@@ -345,12 +349,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             addEventProcessor(new EventTypeProcessor<SinglePlayerUpdateRequest>(SinglePlayerUpdateRequest.class) {
                 public void handleInExperimentThread(SinglePlayerUpdateRequest request) {
                     ClientData data = request.getClientData();
-                    GroupDataModel gdm = data.getGroupDataModel();
-                    List<MovementEvent> clientMovements = request.getClientMovements();
-                    clientMovements.forEach((clientMove) -> getEventChannel().handle(clientMove));
-                    List<MovementEvent> botMovements = request.getBotMovements();
-                    botMovements.forEach((botMove) -> getEventChannel().handle(botMove));
-                    // synchronize server's group data model with client group data model
+                    // persist all client events
+                    request.getPersistableEvents().forEach((event) -> getPersister().store(event));
+                    // synchronize server's ClientData object with client's ClientData.
+                    serverDataModel.getClientData(request.getId()).setPosition(data.getPosition());
                 }
             });
             addEventProcessor(new EventTypeProcessor<ClientMovementRequest>(ClientMovementRequest.class) {
@@ -372,7 +374,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 @Override
                 public void handleInExperimentThread(CollectTokenRequest event) {
                     ClientData clientData = clients.get(event.getId());
-                    clientData.collectToken();
+                    serverDataModel.handleTokenCollectionRequest(clientData);
                 }
             });
             addEventProcessor(new EventTypeProcessor<ResetTokenDistributionRequest>(ResetTokenDistributionRequest.class) {
@@ -398,20 +400,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 @Override
                 public void handleInExperimentThread(final RealTimeSanctionRequest request) {
                     handleRealTimeSanctionRequest(request);
-                    // validate request
-                    // a user can sanction iff the following hold:
-                    // 1. sanctioning is enabled or they are the monitor
-                    // 2. the sanctioner has tokens
-                    // 3. the resource distribution is non-empty
-                    // if (getCurrentRoundConfiguration().isVotingAndRegulationEnabled()) {
-                    // handleEnforcementSanctionRequest(request);
-                    // }
-                    // else {
-
-                    // }
                 }
             });
-
         }
 
         private void processNominations() {
@@ -957,12 +947,62 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             transmit(new SetConfigurationEvent<ServerConfiguration, RoundConfiguration>(getFacilitatorId(), nextRoundConfiguration));
         }
 
+        private <E extends Event> void broadcast(GroupDataModel group, Function<Identifier, E> eventProducer) {
+            group.getClientIdentifiers().stream().map(eventProducer).forEach((e) -> transmit(e));
+        }
+
+        private void processSinglePlayerRound() {
+            // generate resources every second
+            // resources added
+            secondTick.onTick((duration) -> {
+                resourceDispenser.generateResources();
+                long startCount = duration.getStartCount();
+                if (startCount % 10 == 0) {
+                    clients.forEach((id, data) -> { 
+                        transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
+                        synchronizedClients.add(id);
+                    });
+                }
+                
+            });
+            // activate bots
+            botTick.onTick((duration) -> {
+                // only activate bots every 100 ms or so, otherwise they frontload all their actions.
+                serverDataModel.getGroups().forEach((group) -> group.activateBots(botTick)); 
+            });
+            // update client with bot positions and updated resource totals
+            for (GroupDataModel group : serverDataModel.getGroups()) {
+                group.getClientIdentifiers().forEach((id) -> {
+                    if (synchronizedClients.contains(id)) {
+                        // skip this one and remove from the synchronized clients list
+                        synchronizedClients.remove(id);
+                    }
+                    else {
+                        Point[] removedResources = group.getRemovedResources().stream().map((resource) -> resource.getPosition()).toArray(Point[]::new);
+                        Set<Resource> addedResources = group.getAddedResources();
+                        getLogger().info("added resources: " + addedResources);
+                        transmit(new SinglePlayerClientUpdateEvent(
+                                id, 
+                                currentRoundDuration.getTimeLeft(),
+                                group.getClientPositions(),
+                                group.getClientTokens(),
+                                addedResources.toArray(new Resource[addedResources.size()]),
+                                removedResources
+                                ));
+                    }
+                });
+                group.clearDiffLists();
+            }
+            // post-process cleanup of transient data structures on ClientData
+
+        }
+
         private void processRound() {
             RoundConfiguration currentRoundConfiguration = getCurrentRoundConfiguration();
             boolean singlePlayer = currentRoundConfiguration.isSinglePlayer();
+
             if (singlePlayer) {
-                // only check the timer to generate resources, everything else is client side.
-                secondTick.onTick((duration) -> resourceDispenser.generateResources());
+                processSinglePlayerRound();
                 return;
             }
             secondTick.onTick(
@@ -971,7 +1011,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                             if (shouldSynchronize(data, duration)) {
                                 getLogger().info("Sending full sync to: " + data.getId());
                                 transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
-                                syncSet.add(data.getId());
+                                synchronizedClients.add(data.getId());
                             }
                         }
                         resourceDispenser.generateResources();
@@ -991,10 +1031,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 Resource[] removedResources = removedTokensSet.toArray(new Resource[removedTokensSet.size()]);
                 Map<Identifier, Integer> clientTokens = group.getClientTokens();
                 Map<Identifier, Point> clientPositions = group.getClientPositions();
-                for (ClientData data : group.getClientDataMap().values()) {
-                    if (syncSet.contains(data.getId())) {
+                group.getClientDataMap().forEach((id, data) -> {
+                    if (synchronizedClients.contains(id)) {
                         // skip this update, then remove them from the sync set.
-                        syncSet.remove(data.getId());
+                        synchronizedClients.remove(id);
                     } else {
                         transmit(new ClientPositionUpdateEvent(data, addedResources, removedResources, clientTokens, clientPositions,
                                 currentRoundDuration.getTimeLeft()));
@@ -1002,7 +1042,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     // post-process cleanup of transient data structures on ClientData
                     data.clearCollectedTokens();
                     data.resetLatestSanctions();
-                }
+                });
                 // after transmitting all the changes to the group, make sure to cleanup
                 group.clearDiffLists();
             }
@@ -1057,7 +1097,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         }
 
         private void shuffleParticipants() {
-            List<ClientData> randomizedClients = new ArrayList<ClientData>(clients.values());
+            List<ClientData> randomizedClients = new ArrayList<>(clients.values());
             Collections.shuffle(randomizedClients);
             // clear all existing group linkages
             serverDataModel.clear();

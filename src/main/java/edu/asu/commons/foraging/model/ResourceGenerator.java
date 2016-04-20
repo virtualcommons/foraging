@@ -18,7 +18,7 @@ import edu.asu.commons.foraging.conf.RoundConfiguration;
 public interface ResourceGenerator {
     public void initialize(RoundConfiguration roundConfiguration);
     public Set<Resource> generateInitialDistribution(GroupDataModel group);
-    public void generate(GroupDataModel group);
+    public Set<Resource> generate(GroupDataModel group);
     
     public static abstract class Base implements ResourceGenerator {
         private final Random random = new Random();
