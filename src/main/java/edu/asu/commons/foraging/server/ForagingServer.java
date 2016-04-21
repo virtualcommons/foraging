@@ -975,7 +975,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     else {
                         Point[] removedResources = group.getRemovedResources().stream().map((resource) -> resource.getPosition()).toArray(Point[]::new);
                         Set<Resource> addedResources = group.getAddedResources();
-                        getLogger().info("added resources: " + addedResources);
                         transmit(new SinglePlayerClientUpdateEvent(
                                 id, 
                                 currentRoundDuration.getTimeLeft(),

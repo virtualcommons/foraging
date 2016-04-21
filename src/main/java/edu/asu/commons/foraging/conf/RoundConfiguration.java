@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 import org.stringtemplate.v4.ST;
 
 import edu.asu.commons.conf.ExperimentRoundParameters;
-import edu.asu.commons.foraging.client.BotType;
 import edu.asu.commons.foraging.graphics.Point3D;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.EnforcementMechanism;
@@ -26,7 +25,6 @@ import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategyNomination;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
-
 
 /**
  * $Id: RoundConfiguration.java,v ec656450a643 2015/03/23 17:41:38 allen $
@@ -150,7 +148,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public boolean shouldRandomizeGroup() {
         return (isPracticeRound() && isPrivateProperty())
-            || getBooleanProperty("randomize-group", false);
+                || getBooleanProperty("randomize-group", false);
     }
 
     /**
@@ -178,25 +176,26 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public boolean isSubjectsFieldOfVisionEnabled() {
         return getBooleanProperty("subjects-field-of-vision", false);
     }
-    
+
     public boolean isTokenImageEnabled() {
-    	return getBooleanProperty("use-token-image", getParentConfiguration().isTokenImageEnabled());
+        return getBooleanProperty("use-token-image", getParentConfiguration().isTokenImageEnabled());
     }
-    
+
     public boolean isAvatarImageEnabled() {
         return getBooleanProperty("use-avatar-image", getParentConfiguration().isAvatarImageEnabled());
     }
-    
+
     public String getAvatarImagePath() {
         return getProperty("avatar-image-path", getParentConfiguration().getAvatarImagePath());
     }
-    
+
     public boolean isTexturedBackgroundEnabled() {
         return getBooleanProperty("use-background-texture", getParentConfiguration().isTexturedBackgroundEnabled());
     }
 
     /**
      * FIXME: rename for consistency, getSubjectsFieldOfVisionRadius()
+     * 
      * @return
      */
     public int getViewSubjectsRadius() {
@@ -323,7 +322,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public boolean shouldCheckOccupancy() {
-        return getMaximumOccupancyPerCell() < getClientsPerGroup();
+        return (getMaximumOccupancyPerCell() < getClientsPerGroup())
+                || (isSinglePlayer() && getMaximumOccupancyPerCell() > 0);
     }
 
     public int getMaximumOccupancyPerCell() {
@@ -339,7 +339,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     /**
-     * Returns the instructions for this round.  If undefined at the round level it uses default instructions at the parent ServerConfiguration level.
+     * Returns the instructions for this round. If undefined at the round level it uses default instructions at the parent ServerConfiguration level.
      */
     public String getInstructions() {
         ST template = createStringTemplate(getProperty("instructions", getParentConfiguration().getSameAsPreviousRoundInstructions()));
@@ -634,7 +634,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     /**
      * Returns true if voting is enabled before the beginning of this round.
-     * @return 
+     * 
+     * @return
      */
     public boolean isVotingEnabled() {
         return getBooleanProperty("voting-enabled");
@@ -693,7 +694,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     /**
-     * Returns a StringBuilder containing all instructions for the given round.  
+     * Returns a StringBuilder containing all instructions for the given round.
      * FIXME: Need to refactor this + buildInstructions variants, this logic should be simplified.
      * 
      * Given a StringBuilder, will append the various instructions conditionally relevant
@@ -713,8 +714,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         if (isQuizEnabled()) {
             // first show quiz instructions only
             return instructionsBuilder.append(getQuizInstructions());
-        }
-        else {
+        } else {
             return buildInstructions(instructionsBuilder);
         }
     }
@@ -735,8 +735,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         }
         if (isInRoundChatEnabled()) {
             addSpecialInstructions(builder, getInRoundChatInstructions());
-        }
-        else if (isChatEnabled()) {
+        } else if (isChatEnabled()) {
             addSpecialInstructions(builder,
                     "Before the beginning of this round you will be able to chat with the other members of your group for " + getChatDuration() + " seconds.");
         }
@@ -746,14 +745,12 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         String resourceGeneratorType = getResourceGeneratorType();
         if (resourceGeneratorType.equals("mobile")) {
             addSpecialInstructions(builder, getMobileResourceInstructions());
-        }
-        else if (resourceGeneratorType.equals("top-bottom-patchy")) {
+        } else if (resourceGeneratorType.equals("top-bottom-patchy")) {
             addSpecialInstructions(builder, getPatchyResourceInstructions());
         }
         if (builder.length() == 0) {
             return instructionsBuilder;
-        }
-        else {
+        } else {
             // FIXME: localize via ResourceBundle
             return instructionsBuilder.append("<hr><ul>").append(builder).append("</ul>");
         }
@@ -768,7 +765,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     private String getPatchyResourceInstructions() {
-        return getProperty("patch-resource-instructiosn", "<p>The resource is not uniformly distributed.  There are patches of high growth and low growth.</p>");
+        return getProperty("patch-resource-instructiosn",
+                "<p>The resource is not uniformly distributed.  There are patches of high growth and low growth.</p>");
     }
 
     private String getInRoundChatInstructions() {
@@ -785,6 +783,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     /**
      * Returns true if we should have a survey at the beginning of this round.
+     * 
      * @return
      */
     public boolean isExternalSurveyEnabled() {
@@ -803,18 +802,18 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public String getSurveyInstructions(Identifier id) {
         String surveyInstructions = getSurveyInstructions();
-        ST template = createStringTemplate(surveyInstructions); 
+        ST template = createStringTemplate(surveyInstructions);
         template.add("surveyUrl", getSurveyUrl(id));
         return template.render();
     }
 
     public String getSubmittedVoteInstructions() {
-        return render(getProperty("submitted-vote-instructions")); 
+        return render(getProperty("submitted-vote-instructions"));
     }
 
     public String generateVotingResults(List<Strategy> selectedRules, Map<Strategy, Integer> nominations) {
         List<ForagingStrategyNomination> sortedNominations = new ArrayList<ForagingStrategyNomination>();
-        for (Map.Entry<Strategy, Integer> entry: new TreeMap<Strategy, Integer>(nominations).entrySet()) {
+        for (Map.Entry<Strategy, Integer> entry : new TreeMap<Strategy, Integer>(nominations).entrySet()) {
             Strategy strategy = entry.getKey();
             sortedNominations.add(new ForagingStrategyNomination(strategy, entry.getValue(), strategy.equals(selectedRules.get(0))));
         }
@@ -901,7 +900,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         template.add("lastRound", serverDataModel.isLastRound());
         ServerConfiguration serverConfiguration = getParentConfiguration();
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
-        for (ClientData data: serverDataModel.getClientDataMap().values()) {
+        for (ClientData data : serverDataModel.getClientDataMap().values()) {
             populateClientEarnings(data, serverConfiguration, formatter, true);
         }
         template.add("clientDataList", serverDataModel.getClientDataMap().values());
@@ -961,7 +960,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String getPlayerTwoAmountToKeepValidation() {
         return getParentConfiguration().getPlayerTwoAmountToKeepValidation();
     }
-    
+
     public boolean isSinglePlayer() {
         return getBooleanProperty("single-player", getParentConfiguration().isSinglePlayer());
     }
@@ -994,13 +993,13 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public boolean isBotGroupsEnabled() {
-        return ! isPrivateProperty() && getBooleanProperty("bot-groups-enabled", getParentConfiguration().isBotGroupsEnabled());
+        return !isPrivateProperty() && getBooleanProperty("bot-groups-enabled", getParentConfiguration().isBotGroupsEnabled());
     }
-    
+
     public int getBotsPerGroup() {
         return getIntProperty("bots-per-group", getParentConfiguration().getBotsPerGroup());
     }
-    
+
     public String getBotType() {
         return getProperty("bot-type", getParentConfiguration().getBotType());
     }
