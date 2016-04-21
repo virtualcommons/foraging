@@ -42,4 +42,6 @@ Archives of the [configuration files used](https://github.com/virtualcommons/for
 [experiment data](http://dev.commons.asu.edu/data/foraging/2008/all-iu-foraging-data.zip) are available.
 
 ### status
+[![Build Status](https://travis-ci.org/virtualcommons/foraging.svg?branch=master)](https://travis-ci.org/virtualcommons/foraging)
+
 If you'd like to add new features or find any bugs, please [let us know](http://vcweb.asu.edu/contact).
