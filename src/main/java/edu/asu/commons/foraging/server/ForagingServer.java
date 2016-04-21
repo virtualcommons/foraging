@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import edu.asu.commons.event.BeginRoundRequest;
 import edu.asu.commons.event.ChatEvent;
@@ -62,7 +61,6 @@ import edu.asu.commons.foraging.event.QuizCompletedEvent;
 import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
-import edu.asu.commons.foraging.event.ResourcesAddedEvent;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
@@ -374,6 +372,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 @Override
                 public void handleInExperimentThread(CollectTokenRequest event) {
                     ClientData clientData = clients.get(event.getId());
+                    if (event.isSinglePlayer()) {
+                        clientData.setPosition(event.getPosition());
+                    }
                     serverDataModel.handleTokenCollectionRequest(clientData);
                 }
             });
@@ -947,28 +948,22 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             transmit(new SetConfigurationEvent<ServerConfiguration, RoundConfiguration>(getFacilitatorId(), nextRoundConfiguration));
         }
 
-        private <E extends Event> void broadcast(GroupDataModel group, Function<Identifier, E> eventProducer) {
-            group.getClientIdentifiers().stream().map(eventProducer).forEach((e) -> transmit(e));
-        }
-
         private void processSinglePlayerRound() {
             // generate resources every second
             // resources added
             secondTick.onTick((duration) -> {
                 resourceDispenser.generateResources();
-                long startCount = duration.getStartCount();
-                if (startCount % 10 == 0) {
+                if (duration.isModulo(10)) {
                     clients.forEach((id, data) -> { 
                         transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
                         synchronizedClients.add(id);
                     });
                 }
-                
             });
             // activate bots
             botTick.onTick((duration) -> {
                 // only activate bots every 100 ms or so, otherwise they frontload all their actions.
-                serverDataModel.getGroups().forEach((group) -> group.activateBots(botTick)); 
+                serverDataModel.getGroups().forEach((group) -> group.activateBots(duration.isModulo(10))); 
             });
             // update client with bot positions and updated resource totals
             for (GroupDataModel group : serverDataModel.getGroups()) {
@@ -984,7 +979,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         transmit(new SinglePlayerClientUpdateEvent(
                                 id, 
                                 currentRoundDuration.getTimeLeft(),
-                                group.getClientPositions(),
+                                group.getBotPositions(),
                                 group.getClientTokens(),
                                 addedResources.toArray(new Resource[addedResources.size()]),
                                 removedResources
@@ -1020,7 +1015,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 botTick.onTick((duration) -> {
                     for (GroupDataModel group : serverDataModel.getGroups()) {
                         // only activate bots every 100 ms or so, otherwise they frontload all their actions.
-                        group.activateBots(botTick);
+                        // and clear all bot action taken counters every 1 s
+                        boolean resetBotActions = duration.isModulo(10);
+                        group.activateBots(resetBotActions);
                     }
                 });
             }

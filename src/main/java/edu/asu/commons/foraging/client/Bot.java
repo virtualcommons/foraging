@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import edu.asu.commons.experiment.Experiment;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.model.GroupDataModel;
@@ -23,24 +22,28 @@ public interface Bot {
 
     public BotType getBotType();
 
-    public Identifier getIdentifier();
+    public Identifier getId();
 
     public Point getPosition();
+
+    public int getCurrentTokens();
+
+    public void addToken(Point location);
 
     public void setCurrentPosition(Point location);
 
     public int getActionsPerSecond();
-    
+
     public void resetActionsTakenPerSecond();
 
     public double getMovementProbability();
 
     public Direction getNextMove();
 
-    public void initializePosition(RoundConfiguration configuration);
-    
+    public void initialize(RoundConfiguration configuration);
+
     public int getTicksToWait();
-    
+
     public void setTicksToWait(int ticksToWait);
 
     public int getBotNumber();
@@ -63,6 +66,8 @@ public interface Bot {
         private final Identifier identifier = new BotIdentifier();
 
         private Point currentPosition;
+        private int currentTokens = 0;
+
         private Point targetLocation;
 
         private double harvestProbability;
@@ -129,7 +134,7 @@ public interface Bot {
         }
 
         public Direction getNextMove() {
-            if (! hasTarget()) {
+            if (!hasTarget()) {
                 setNewTargetLocation();
             }
             Direction nextMove = Direction.towards(getPosition(), getTargetLocation());
@@ -141,7 +146,7 @@ public interface Bot {
             }
             return nextMove;
         }
-        
+
         protected void setNewTargetLocation() {
             targetLocation = getNearestToken();
             if (targetLocation == null) {
@@ -198,7 +203,7 @@ public interface Bot {
             return harvestProbability;
         }
 
-        public void initializePosition(RoundConfiguration roundConfiguration) {
+        public void initialize(RoundConfiguration roundConfiguration) {
             int clientsPerGroup = roundConfiguration.getClientsPerGroup();
             int groupSize = clientsPerGroup + roundConfiguration.getBotsPerGroup();
             int positionNumber = getBotNumber() + clientsPerGroup;
@@ -209,6 +214,7 @@ public interface Bot {
             int y = resourceHeight / 2;
             setCurrentPosition(new Point(x, y));
             logger.info("setting current bot position to " + getPosition());
+            currentTokens = 0;
         }
 
         public int getBotNumber() {
@@ -219,7 +225,7 @@ public interface Bot {
             this.botNumber = botNumber;
         }
 
-        public Identifier getIdentifier() {
+        public Identifier getId() {
             return identifier;
         }
 
@@ -230,7 +236,7 @@ public interface Bot {
         public Point getTargetLocation() {
             return targetLocation;
         }
-        
+
         public boolean hasTarget() {
             return targetLocation != null;
         }
@@ -241,6 +247,18 @@ public interface Bot {
 
         public void setTicksToWait(int ticksToWait) {
             this.ticksToWait = ticksToWait;
+        }
+
+        public int getCurrentTokens() {
+            return currentTokens;
+        }
+
+        public Point getCurrentPosition() {
+            return currentPosition;
+        }
+
+        public void addToken(Point location) {
+            this.currentTokens++;
         }
 
     }

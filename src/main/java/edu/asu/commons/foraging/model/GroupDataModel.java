@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.experiment.DataModel;
@@ -27,7 +26,6 @@ import edu.asu.commons.foraging.event.LockResourceRequest;
 import edu.asu.commons.foraging.event.MonitorTaxEvent;
 import edu.asu.commons.foraging.event.MovementEvent;
 import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
-import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
 import edu.asu.commons.foraging.rules.Strategy;
@@ -36,11 +34,10 @@ import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 
-
 /**
  * $Id$
  * 
- * Represents a collection of Clients and associates them with a token distribution.  In the
+ * Represents a collection of Clients and associates them with a token distribution. In the
  * case of a shared resource model where all clients share the same world space, there will
  * be a single group and hence a single token distribution for all clients.
  * 
@@ -56,18 +53,17 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     private transient Logger logger = Logger.getLogger(getClass().getName());
 
     // the subset of clients in ServerDataModel
-    private final Map<Identifier, ClientData> clients = new HashMap<Identifier, ClientData>();
+    private final Map<Identifier, ClientData> clients = new HashMap<>();
     // FIXME: making this transient causes a NPE in the facilitator, should be transient however.
-    private final Map<Point, Resource> resourceDistribution = new HashMap<Point, Resource>();
-    // list of bots
-    private final List<Bot> bots = new ArrayList<Bot>();
-    
-    private final transient Map<Identifier, Resource> resourceOwners = new HashMap<Identifier, Resource>();
+    private final Map<Point, Resource> resourceDistribution = new HashMap<>();
+    private final List<Bot> bots = new ArrayList<>();
+
+    private final transient Map<Identifier, Resource> resourceOwners = new HashMap<>();
     private transient Set<Resource> removedResources;
     private transient Set<Resource> addedResources;
-    
+
     private transient ServerDataModel serverDataModel;
-    
+
     private final long groupId;
     private volatile static long nextGroupId = 0;
 
@@ -78,12 +74,10 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     private SanctionMechanism activeSanctionMechanism = SanctionMechanism.NONE;
     private RegulationData activeRegulation;
     private Strategy imposedStrategy;
-        
+
     private List<ClientData> waitingMonitors;
-    
+
     private ClientData activeMonitor;
-    
-    private int tokensCollectedDuringInterval = 0;
 
     private ArrayList<RegulationData> submittedRegulations = new ArrayList<RegulationData>();
 
@@ -91,7 +85,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     // Used when assigning clients to zones/teams
     private int nextZone = 0;
-    private int[] currentTeamSize = {0, 0};
+    private int[] currentTeamSize = { 0, 0 };
 
     public GroupDataModel(ServerDataModel serverDataModel) {
         this(serverDataModel, nextGroupId++);
@@ -103,7 +97,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         this.removedResources = new HashSet<>();
         this.addedResources = new HashSet<>();
     }
-    
+
     public void handleSanctionRequest(PostRoundSanctionRequest sanctionRequest) {
         Map<Identifier, Integer> sanctions = sanctionRequest.getSanctions();
         for (Map.Entry<Identifier, Integer> entry : sanctions.entrySet()) {
@@ -112,15 +106,14 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             if (id.equals(sanctionRequest.getId())) {
                 // this is a sanction cost
                 clients.get(id).postRoundSanctionCost(change);
-            }
-            else {
+            } else {
                 clients.get(id).postRoundSanctionPenalty(change);
             }
         }
     }
-    
+
     public int getNumberOfNeighboringTokens(Point referencePoint) {
-    	int numberOfNeighboringTokens = 0;
+        int numberOfNeighboringTokens = 0;
         int currentX = referencePoint.x;
         int currentY = referencePoint.y;
         int endX = currentX + 2;
@@ -128,7 +121,8 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         for (int x = currentX - 1; x < endX; x++) {
             for (int y = currentY - 1; y < endY; y++) {
                 Point point = new Point(x, y);
-            	if (point.equals(referencePoint)) continue;
+                if (point.equals(referencePoint))
+                    continue;
                 // only add a point to the neighborhood set if it doesn't already have a resource.
                 if (serverDataModel.isValidPosition(point) && resourceDistribution.containsKey(point)) {
                     numberOfNeighboringTokens++;
@@ -136,92 +130,96 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             }
         }
         return numberOfNeighboringTokens;
-    	
+
     }
-    
+
     private double rankToValue(int rank) {
         switch (rank) {
-        case 0: return 1.0d;
-        case 1: return 0.5d;
-        case 2: return 0.33d;
-        case 3: return 0.25d;
-        case 4: return 0.2d;
-        default:
-            System.err.println("Trying to convert invalid rank to value: " + rank);
-            return 0;
+            case 0:
+                return 1.0d;
+            case 1:
+                return 0.5d;
+            case 2:
+                return 0.33d;
+            case 3:
+                return 0.25d;
+            case 4:
+                return 0.2d;
+            default:
+                System.err.println("Trying to convert invalid rank to value: " + rank);
+                return 0;
         }
     }
-    
+
     public int size() {
         return clients.size();
     }
-    
+
     public boolean rotateMonitorIfNecessary() {
-        if (activeEnforcementMechanism.isRotatingMonitor() && ! waitingMonitors.isEmpty()) {
-        	applyMonitorTax();
-        	// set active monitor back to harvest
-        	activeMonitor.setForagingRole(ForagingRole.HARVEST);
-        	if (waitingMonitors.isEmpty()) {
-        		logger.warning("no waiting monitors left but still trying to rotate: " + activeMonitor);
-        		return false;
-        	}
-        	else {
-        		activeMonitor = waitingMonitors.remove(0);
-        		activeMonitor.setForagingRole(ForagingRole.MONITOR);
-        		return true;
-        	}
+        if (activeEnforcementMechanism.isRotatingMonitor() && !waitingMonitors.isEmpty()) {
+            applyMonitorTax();
+            // set active monitor back to harvest
+            activeMonitor.setForagingRole(ForagingRole.HARVEST);
+            if (waitingMonitors.isEmpty()) {
+                logger.warning("no waiting monitors left but still trying to rotate: " + activeMonitor);
+                return false;
+            } else {
+                activeMonitor = waitingMonitors.remove(0);
+                activeMonitor.setForagingRole(ForagingRole.MONITOR);
+                return true;
+            }
         }
         return false;
     }
-    
+
     public RegulationData generateRegulationRankings() {
-    	int numberOfRegulations = submittedRegulations.size();
-    	double[] regulationVotingTally = new double[numberOfRegulations];
-    	Arrays.fill(regulationVotingTally, 0.0d);
-    	int maxRankingIndex = 0;
-    	double maxRankingValue = 0.0d;
-    	for (ClientData clientData : clients.values()) {
-    		int[] regulationRankings = clientData.getRegulationRankings();
-    		logger.info("client: " + clientData.getId() + " ranked regulations: "+ regulationRankings);
-    		for (int rank = 0; rank < numberOfRegulations; rank++) {
-    		    int actualRegulationIndex = regulationRankings[rank];
-    		    if (actualRegulationIndex == -1) {
-    		        continue;
-    		    }
-    			regulationVotingTally[actualRegulationIndex] += rankToValue(rank);
-    			submittedRegulations.get(actualRegulationIndex).setRank(regulationVotingTally[actualRegulationIndex]);
-    			if (regulationVotingTally[actualRegulationIndex] > maxRankingValue) {
-    				maxRankingValue = regulationVotingTally[actualRegulationIndex];
-    				maxRankingIndex = actualRegulationIndex;
-    			}
-    		}
-    	}
-    	activeRegulation = submittedRegulations.get(maxRankingIndex);
-    	logger.info("active regulation: " + activeRegulation.getText() + " max ranking value: " + maxRankingValue);
-    	return activeRegulation;
+        int numberOfRegulations = submittedRegulations.size();
+        double[] regulationVotingTally = new double[numberOfRegulations];
+        Arrays.fill(regulationVotingTally, 0.0d);
+        int maxRankingIndex = 0;
+        double maxRankingValue = 0.0d;
+        for (ClientData clientData : clients.values()) {
+            int[] regulationRankings = clientData.getRegulationRankings();
+            logger.info("client: " + clientData.getId() + " ranked regulations: " + regulationRankings);
+            for (int rank = 0; rank < numberOfRegulations; rank++) {
+                int actualRegulationIndex = regulationRankings[rank];
+                if (actualRegulationIndex == -1) {
+                    continue;
+                }
+                regulationVotingTally[actualRegulationIndex] += rankToValue(rank);
+                submittedRegulations.get(actualRegulationIndex).setRank(regulationVotingTally[actualRegulationIndex]);
+                if (regulationVotingTally[actualRegulationIndex] > maxRankingValue) {
+                    maxRankingValue = regulationVotingTally[actualRegulationIndex];
+                    maxRankingIndex = actualRegulationIndex;
+                }
+            }
+        }
+        activeRegulation = submittedRegulations.get(maxRankingIndex);
+        logger.info("active regulation: " + activeRegulation.getText() + " max ranking value: " + maxRankingValue);
+        return activeRegulation;
     }
 
     public RegulationData getActiveRegulation() {
-		return activeRegulation;
-	}
+        return activeRegulation;
+    }
 
-	public void setActiveRegulation(RegulationData activeRegulation) {
-		this.activeRegulation = activeRegulation;
-	}
-	
-	public void setActiveEnforcementMechanism(EnforcementMechanism enforcementMechanism) {
-		this.activeEnforcementMechanism = enforcementMechanism;
-	}
+    public void setActiveRegulation(RegulationData activeRegulation) {
+        this.activeRegulation = activeRegulation;
+    }
 
-	// FIXME: this algorithm is very similar to generateRegulationRankings, extract to other method.
-	public EnforcementMechanism generateEnforcementRankings() {
-//        resetEnforcementRankingCount();
+    public void setActiveEnforcementMechanism(EnforcementMechanism enforcementMechanism) {
+        this.activeEnforcementMechanism = enforcementMechanism;
+    }
+
+    // FIXME: this algorithm is very similar to generateRegulationRankings, extract to other method.
+    public EnforcementMechanism generateEnforcementRankings() {
+        // resetEnforcementRankingCount();
         // FIXME: change to round config parameter instead?
         double[] enforcementVotingTally = new double[EnforcementMechanism.values().length];
         Arrays.fill(enforcementVotingTally, 0.0d);
         int maxRankingIndex = 0;
         double maxRankingValue = 0.0d;
-        for (ClientData clientData: clients.values()) {
+        for (ClientData clientData : clients.values()) {
             int[] enforcementRankings = clientData.getEnforcementRankings();
             logger.info("XXX: enforcement rankings: " + enforcementRankings);
             for (int rank = 0; rank < enforcementRankings.length; rank++) {
@@ -255,25 +253,24 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             if (activeEnforcementMechanism.isRotatingMonitor()) {
                 waitingMonitors = clientDataList;
             }
-        }
-        else if (activeEnforcementMechanism.isSanctioningEnabled()) {
+        } else if (activeEnforcementMechanism.isSanctioningEnabled()) {
             for (ClientData clientData : clients.values()) {
                 clientData.setForagingRole(ForagingRole.SANCTION_AND_HARVEST);
             }
         }
         return activeEnforcementMechanism;
     }
-	
-	public SanctionMechanism generateSanctionRankings() {
-//        resetSanctionRankingCount();
+
+    public SanctionMechanism generateSanctionRankings() {
+        // resetSanctionRankingCount();
         // FIXME: change to round config parameter instead?
         double[] sanctionVotingTally = new double[SanctionMechanism.values().length];
         Arrays.fill(sanctionVotingTally, 0.0d);
         int maxRankingIndex = 0;
         double maxRankingValue = 0.0d;
-        for (ClientData clientData: clients.values()) {
+        for (ClientData clientData : clients.values()) {
             int[] sanctionRankings = clientData.getEnforcementRankings();
-            System.out.println("Server ranks: "+sanctionRankings[0]+" "+sanctionRankings[1]);
+            System.out.println("Server ranks: " + sanctionRankings[0] + " " + sanctionRankings[1]);
             logger.info("XXX: sanction rankings: " + Arrays.asList(sanctionRankings));
             for (int rank = 0; rank < sanctionRankings.length; rank++) {
                 // 0 is top choice
@@ -283,7 +280,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
                     continue;
                 }
                 sanctionVotingTally[actualSanctionIndex] += rankToValue(rank);
-                //sanctionVotingTally[actualSanctionIndex] += rankToValue(actualSanctionIndex);
+                // sanctionVotingTally[actualSanctionIndex] += rankToValue(actualSanctionIndex);
                 // keep a tally of the max index so we don't have to make another pass.
                 if (sanctionVotingTally[actualSanctionIndex] > maxRankingValue) {
                     maxRankingValue = sanctionVotingTally[actualSanctionIndex];
@@ -293,7 +290,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         }
         activeSanctionMechanism = SanctionMechanism.get(maxRankingIndex);
         logger.info("Active sanction mechanism: " + activeSanctionMechanism.getTitle() + " with rank " + maxRankingValue);
-        
+
         setActiveEnforcementMechanism(EnforcementMechanism.get(maxRankingIndex));
 
         logger.info("Active enforcement mechanism: " + activeEnforcementMechanism.getTitle() + " with rank " + maxRankingValue);
@@ -304,9 +301,9 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public boolean hasReceivedAllEnforcementRankings() {
         return receivedEnforcementRankings >= clients.size();
     }
-    
+
     public boolean hasReceivedAllRegulations() {
-        return submittedRegulations.size() >= clients.size(); 
+        return submittedRegulations.size() >= clients.size();
     }
 
     /**
@@ -321,20 +318,19 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         getAddedResources().clear();
         resourceDistribution.clear();
     }
-    
+
     /**
      * Perform all cleanup.
      */
     public void cleanupRound() {
         resourceDistribution.clear();
         clearDiffLists();
-        tokensCollectedDuringInterval = 0;
         activeEnforcementMechanism = EnforcementMechanism.NONE;
         activeSanctionMechanism = SanctionMechanism.NONE;
         submittedRegulations.clear();
         activeMonitor = null;
     }
-    
+
     public boolean isResourceAt(Point position) {
         return resourceDistribution.containsKey(position);
     }
@@ -342,10 +338,11 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public void addResource(Point position) {
         addResource(position, 0);
     }
+
     public void addResource(Point position, int age) {
         addResource(new Resource(position, age));
     }
-    
+
     public void addResource(Resource resource) {
         Point position = resource.getPosition();
         synchronized (resourceDistribution) {
@@ -353,7 +350,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         }
         getAddedResources().add(resource);
     }
-    
+
     void addResources(Collection<Point> locations) {
         synchronized (resourceDistribution) {
             for (Point point : locations) {
@@ -363,20 +360,20 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             }
         }
     }
-    
+
     public void addResources(Set<Resource> resources) {
         synchronized (resourceDistribution) {
-            for (Resource resource: resources) {
+            for (Resource resource : resources) {
                 Point position = resource.getPosition();
                 resourceDistribution.put(position, resource);
                 getAddedResources().add(resource);
             }
         }
     }
-    
+
     void moveResources(Collection<Point> removedResources, Collection<Point> addedResources) {
         synchronized (resourceDistribution) {
-            for (Point oldLocation: removedResources) {
+            for (Point oldLocation : removedResources) {
                 Resource oldResource = resourceDistribution.remove(oldLocation);
                 getRemovedResources().add(oldResource);
             }
@@ -387,9 +384,10 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             }
         }
     }
-    
+
     /**
      * Currently only invoked when replaying a round and stepping backwards.
+     * 
      * @param position
      */
     public void removeResource(Point position) {
@@ -401,7 +399,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public Set<Identifier> getClientIdentifiers() {
         return Collections.unmodifiableSet(clients.keySet());
     }
-    
+
     public Set<Identifier> getOrderedClientIdentifiers() {
         return new TreeSet<Identifier>(clients.keySet());
     }
@@ -410,7 +408,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         ClientData clientData = clients.get(id);
         if (clientData == null) {
             getLogger().severe("getClientPosition on an id with no ClientData mapping: " + id + " clients: " + clients);
-            return new Point(0,0);
+            return new Point(0, 0);
         }
         return clientData.getPoint();
     }
@@ -420,8 +418,8 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         for (ClientData clientData : clients.values()) {
             positions.put(clientData.getId(), clientData.getPoint());
         }
-        for (Bot bot: bots) {
-            positions.put(bot.getIdentifier(), bot.getPosition());
+        for (Bot bot : bots) {
+            positions.put(bot.getId(), bot.getPosition());
         }
         return positions;
     }
@@ -441,32 +439,35 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
 
     public Map<Identifier, Integer> getClientTokens() {
-        Map<Identifier, Integer> clientTokensMap = new HashMap<Identifier, Integer>();
-        for (ClientData data: clients.values()) {
+        Map<Identifier, Integer> clientTokensMap = new HashMap<>();
+        for (ClientData data : clients.values()) {
             clientTokensMap.put(data.getId(), data.getCurrentTokens());
+        }
+        for (Bot bot : bots) {
+            clientTokensMap.put(bot.getId(), bot.getCurrentTokens());
         }
         return clientTokensMap;
     }
-    
+
     public int getResourceDistributionSize() {
         return resourceDistribution.size();
     }
-    
+
     public Set<Identifier> getClientIdentifiersWithin(Circle circle) {
         HashSet<Identifier> ids = new HashSet<Identifier>();
-        for (ClientData data: clients.values()) {
+        for (ClientData data : clients.values()) {
             if (circle.contains(data.getPosition())) {
                 ids.add(data.getId());
             }
         }
         return ids;
     }
-    
+
     public void move(Bot bot, Direction direction) {
         Point newPosition = direction.apply(bot.getPosition());
         if (serverDataModel.isValidPosition(newPosition) && isCellAvailable(newPosition)) {
             bot.setCurrentPosition(newPosition);
-            getEventChannel().handle(new MovementEvent(bot.getIdentifier(), direction));
+            getEventChannel().handle(new MovementEvent(bot.getId(), direction));
         }
     }
 
@@ -481,12 +482,12 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public void moveClient(Identifier id, Direction direction) {
         ClientData clientData = clients.get(id);
         Point newPosition = direction.apply(clientData.getPoint());
-//        System.err.println(String.format("Moving client %s in direction %s to position %s", id, direction, newPosition));
-        
+        // System.err.println(String.format("Moving client %s in direction %s to position %s", id, direction, newPosition));
+
         if (serverDataModel.isValidPosition(newPosition)) {
             // check occupancy
-            if ( isCellAvailable(newPosition) && isCellAllowed(clientData, newPosition)) {
-//                System.err.println("setting position: " + newPosition);
+            if (isCellAvailable(newPosition) && isCellAllowed(clientData, newPosition)) {
+                // System.err.println("setting position: " + newPosition);
 
                 clientData.setPosition(newPosition);
                 // if the client is explicitly collecting, then movement does not automatically
@@ -498,13 +499,13 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             }
         }
     }
-    
+
     private boolean isCellAvailable(Point position) {
         RoundConfiguration currentRoundConfiguration = getRoundConfiguration();
         if (currentRoundConfiguration.shouldCheckOccupancy()) {
             int maximumOccupancyPerCell = currentRoundConfiguration.getMaximumOccupancyPerCell();
             int currentOccupancy = 0;
-            for (Point otherPosition: getClientPositions().values()) {
+            for (Point otherPosition : getClientPositions().values()) {
                 if (position.equals(otherPosition)) {
                     currentOccupancy++;
                 }
@@ -523,7 +524,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
      */
     private boolean isCellAllowed(ClientData clientData, Point position) {
         if (serverDataModel.getRoundConfiguration().areZonesAssigned() == false ||
-            serverDataModel.getRoundConfiguration().isTravelRestricted(clientData.getZone()) == false) {
+                serverDataModel.getRoundConfiguration().isTravelRestricted(clientData.getZone()) == false) {
             return true;
         }
         int positionZone = position.y < serverDataModel.getBoardHeight() / 2 ? 0 : 1;
@@ -532,29 +533,28 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         }
         return true;
     }
-    
+
     public void collectToken(ClientData clientData) {
         Point position = clientData.getPoint();
         synchronized (resourceDistribution) {
             if (resourceDistribution.containsKey(position)) {
-                getRemovedResources().add( resourceDistribution.remove(position) );
-                tokensCollectedDuringInterval++;
+                getRemovedResources().add(resourceDistribution.remove(position));
                 clientData.addToken(position);
             }
         }
     }
-    
+
     public void collectToken(Bot bot) {
         Point position = bot.getPosition();
         synchronized (resourceDistribution) {
             if (resourceDistribution.containsKey(position)) {
                 getRemovedResources().add(resourceDistribution.remove(position));
-                tokensCollectedDuringInterval++;
-                serverDataModel.getEventChannel().handle(new TokenCollectedEvent(bot.getIdentifier(), position));
+                bot.addToken(position);
+                serverDataModel.getEventChannel().handle(new TokenCollectedEvent(bot.getId(), position));
             }
         }
     }
-    
+
     public void clearDiffLists() {
         if (removedResources != null) {
             removedResources.clear();
@@ -584,7 +584,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         clientData.setGroupDataModel(this);
         clientData.initializePosition();
     }
-    
+
     public void removeClient(Identifier id) {
         clients.remove(id);
     }
@@ -592,14 +592,14 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public boolean isFull() {
         return clients.size() == serverDataModel.getRoundConfiguration().getClientsPerGroup();
     }
-    
+
     public void clear() {
         clients.clear();
         nextZone = 0;
         currentTeamSize[0] = currentTeamSize[1] = 0;
         cleanupRound();
     }
-    
+
     public boolean isResourceDistributionEmpty() {
         return resourceDistribution.isEmpty();
     }
@@ -614,11 +614,11 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
 
     public void resetSanctionCounts() {
-        for (ClientData data: clients.values()) {
+        for (ClientData data : clients.values()) {
             data.resetLatestSanctions();
         }
     }
-    
+
     public RoundConfiguration getRoundConfiguration() {
         return serverDataModel.getRoundConfiguration();
     }
@@ -626,10 +626,10 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     private boolean isResourceOwner(Identifier id, Resource resource) {
         Resource lockedResource = resourceOwners.get(id);
         if (lockedResource == null) {
-            getLogger().severe(String.format("%s harvesting fruits for resource [%s] it doesn't own",  id, resource));
+            getLogger().severe(String.format("%s harvesting fruits for resource [%s] it doesn't own", id, resource));
             return false;
         }
-        if (! lockedResource.equals(resource)) {
+        if (!lockedResource.equals(resource)) {
             getLogger().severe(String.format("%s harvesting fruits for resource [%s] it doesn't own - it actually owns [%s]", id, resource, lockedResource));
             return false;
         }
@@ -637,24 +637,24 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
 
     public void harvestResource(Identifier id, Resource resource) {
-        if ( isResourceOwner(id, resource) ) {
+        if (isResourceOwner(id, resource)) {
             ClientData clientData = clients.get(id);
-            clientData.addTokens( getRoundConfiguration().ageToTokens(resource.getAge()) );
+            clientData.addTokens(getRoundConfiguration().ageToTokens(resource.getAge()));
             Point position = resource.getPosition();
             getRemovedResources().add(resourceDistribution.remove(position));
             resourceOwners.remove(id);
         }
     }
-    
+
     public void harvestFruits(Identifier id, Resource resource) {
-        if ( isResourceOwner(id, resource) ) {
+        if (isResourceOwner(id, resource)) {
             ClientData clientData = clients.get(id);
             clientData.addTokens(getRoundConfiguration().getTokensPerFruits());
             getResourceFromDistribution(resource).setAge(getRoundConfiguration().getMaximumResourceAge() - 1);
             resourceOwners.remove(id);
         }
     }
-    
+
     private Resource getResourceFromDistribution(Resource remoteResource) {
         return resourceDistribution.get(remoteResource.getPosition());
     }
@@ -662,6 +662,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     /**
      * Returns true if the resource is in the resource distribution and is not
      * already owned by a different resource owner.
+     * 
      * @param resource
      * @return
      */
@@ -669,7 +670,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         Identifier id = request.getId();
         Resource remoteResource = request.getResource();
         Resource localResource = getResourceFromDistribution(remoteResource);
-        if (! resourceDistribution.containsKey(remoteResource.getPosition())) {
+        if (!resourceDistribution.containsKey(remoteResource.getPosition())) {
             getLogger().warning(String.format("Trying to lock a resource [%s] that is no longer present.", remoteResource));
             return false;
         }
@@ -678,32 +679,33 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             getLogger().warning("Resource is already owned by the same owner: " + localResource + id);
             return true;
         }
-        if ( resourceOwners.containsValue(localResource) ) {
+        if (resourceOwners.containsValue(localResource)) {
             getLogger().warning("Resource is already owned by another owner: " + localResource + id);
             return false;
         }
         resourceOwners.put(id, localResource);
         return true;
     }
-    
+
     public void unlockResource(UnlockResourceRequest request) {
         resourceOwners.remove(request.getId());
     }
 
     public Set<Point> getResourcePositions() {
         synchronized (resourceDistribution) {
-            return new HashSet<Point>(resourceDistribution.keySet());
+            return new HashSet<>(resourceDistribution.keySet());
         }
     }
-    
+
     public Map<Point, Resource> getResourceDistribution() {
         synchronized (resourceDistribution) {
-            return new HashMap<Point, Resource>(resourceDistribution);
+            return new HashMap<>(resourceDistribution);
         }
     }
-    
+
     /**
      * Only invoked by the client side.
+     * 
      * @param event
      */
     public void updateDiffs(ClientPositionUpdateEvent event) {
@@ -722,20 +724,6 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         }
     }
 
-    /**
-     * Only invoked by the client for bulk update synchronization of the game world (as opposed to the server's incremental updates). 
-     * @param event
-     */
-    public void update(SynchronizeClientEvent event) {
-        clients.putAll(event.getClientDataMap());
-        synchronized (resourceDistribution) {
-            resourceDistribution.clear();
-            for (Point point : event.getTokenPositions()) {
-                resourceDistribution.put(point, null);
-            }
-        }
-    }
-
     private Logger getLogger() {
         if (logger == null) {
             logger = Logger.getLogger(getClass().getName());
@@ -743,29 +731,28 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         return logger;
     }
 
-
     public Set<Resource> getRemovedResources() {
         if (removedResources == null) {
             removedResources = new HashSet<>();
         }
         return removedResources;
     }
-    
+
     public Set<Resource> getAddedResources() {
         if (addedResources == null) {
             addedResources = new HashSet<>();
         }
         return addedResources;
     }
-    
+
     public long getGroupId() {
         return groupId;
     }
-    
+
     public String toString() {
         return "Group #" + groupId;
     }
-    
+
     @Override
     public int compareTo(GroupDataModel other) {
         return Long.valueOf(groupId).compareTo(other.groupId);
@@ -774,13 +761,13 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public EnforcementMechanism getActiveEnforcementMechanism() {
         return activeEnforcementMechanism;
     }
-    
+
     public SanctionMechanism getActiveSanctionMechanism() {
         return activeSanctionMechanism;
     }
-    
+
     public ClientData getActiveMonitor() {
-    	return activeMonitor;
+        return activeMonitor;
     }
 
     public void submitEnforcementRanking(EnforcementRankingRequest request) {
@@ -788,15 +775,15 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         clientData.setEnforcementRankings(request.getRankings());
         receivedEnforcementRankings++;
     }
-    
+
     public boolean isRotatingMonitor() {
-    	return activeEnforcementMechanism != null && activeEnforcementMechanism.isRotatingMonitor();
+        return activeEnforcementMechanism != null && activeEnforcementMechanism.isRotatingMonitor();
     }
 
     public boolean hasReceivedAllRegulationRankings() {
         return receivedRegulationRankings >= clients.size();
     }
-    
+
     public boolean hasReceivedAllSanctionRankings() {
         return receivedSanctionRankings >= clients.size();
     }
@@ -804,30 +791,30 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public List<RegulationData> getSubmittedRegulations() {
         return submittedRegulations;
     }
-    
+
     public void applyMonitorTax() {
-    	if (activeMonitor == null) {
-    		logger.severe("Trying to apply monitor tax for null monitor.");
-    		return;
-    	}
-    	if (activeMonitor.isTaxReceived()) {
-    		logger.severe("active monitor: " + activeMonitor + " already received tax.");
-    		return;
-    	}
-    	ArrayList<ClientData> clientDataList = new ArrayList<ClientData>(clients.values());
-    	clientDataList.remove(activeMonitor);
-    	Map<Identifier, Integer> monitorTaxes = new HashMap<Identifier, Integer>();
-    	int totalTax = 0;
-    	for (ClientData clientData : clientDataList) {
-    		int monitorTax = clientData.applyMonitorTax();
-    		totalTax += monitorTax;
-    		activeMonitor.addTokens(monitorTax);
-    		monitorTaxes.put(clientData.getId(), monitorTax);
-    	}
-    	logger.info("active monitor: " + activeMonitor + " received tax: " + totalTax);
-    	activeMonitor.setTaxReceived();
-    	// persist monitor tax
-		serverDataModel.getEventChannel().handle(new MonitorTaxEvent(activeMonitor.getId(), monitorTaxes, totalTax));
+        if (activeMonitor == null) {
+            logger.severe("Trying to apply monitor tax for null monitor.");
+            return;
+        }
+        if (activeMonitor.isTaxReceived()) {
+            logger.severe("active monitor: " + activeMonitor + " already received tax.");
+            return;
+        }
+        ArrayList<ClientData> clientDataList = new ArrayList<ClientData>(clients.values());
+        clientDataList.remove(activeMonitor);
+        Map<Identifier, Integer> monitorTaxes = new HashMap<Identifier, Integer>();
+        int totalTax = 0;
+        for (ClientData clientData : clientDataList) {
+            int monitorTax = clientData.applyMonitorTax();
+            totalTax += monitorTax;
+            activeMonitor.addTokens(monitorTax);
+            monitorTaxes.put(clientData.getId(), monitorTax);
+        }
+        logger.info("active monitor: " + activeMonitor + " received tax: " + totalTax);
+        activeMonitor.setTaxReceived();
+        // persist monitor tax
+        serverDataModel.getEventChannel().handle(new MonitorTaxEvent(activeMonitor.getId(), monitorTaxes, totalTax));
     }
 
     @Override
@@ -839,9 +826,9 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public EventChannel getEventChannel() {
         return serverDataModel.getEventChannel();
     }
-    
+
     public Map<Strategy, Integer> generateVotingResults() {
-    	return generateVotingResults(getRoundConfiguration().isImposedStrategyEnabled());
+        return generateVotingResults(getRoundConfiguration().isImposedStrategyEnabled());
     }
 
     public Map<Strategy, Integer> generateVotingResults(boolean imposedStrategyEnabled) {
@@ -849,11 +836,11 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         selectedRules = new ArrayList<Strategy>();
         if (imposedStrategyEnabled) {
             // short circuits to use the imposed strategy
-        	tallyMap.put(getImposedStrategy(), 1);
-        	selectedRules.add(getImposedStrategy());
-        	return tallyMap; 
+            tallyMap.put(getImposedStrategy(), 1);
+            selectedRules.add(getImposedStrategy());
+            return tallyMap;
         }
-        for (ClientData client: clients.values()) {
+        for (ClientData client : clients.values()) {
             ForagingStrategy rule = client.getVotedRule();
             Integer count = tallyMap.get(rule);
             if (count == null) {
@@ -865,31 +852,28 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         Integer maxSeenValue = 0;
         for (Map.Entry<Strategy, Integer> entry : tallyMap.entrySet()) {
             Integer currentValue = entry.getValue();
-//            getLogger().info("rule : " + entry.getKey() + " has a vote value of " + currentValue);
-
+            // getLogger().info("rule : " + entry.getKey() + " has a vote value of " + currentValue);
 
             if (currentValue > maxSeenValue) {
                 maxSeenValue = currentValue;
-//                getLogger().info("That was better than " + maxSeenValue + " - clearing out the old rule set and adding this one.");
+                // getLogger().info("That was better than " + maxSeenValue + " - clearing out the old rule set and adding this one.");
                 selectedRules.clear();
                 selectedRules.add(entry.getKey());
-            }
-            else if (currentValue == maxSeenValue) {
-//                getLogger().info("that was the same as " + maxSeenValue + " - adding this one." + selectedRules);
+            } else if (currentValue == maxSeenValue) {
+                // getLogger().info("that was the same as " + maxSeenValue + " - adding this one." + selectedRules);
                 selectedRules.add(entry.getKey());
             }
         }
-//        getLogger().info("tally map is: " + tallyMap);
+        // getLogger().info("tally map is: " + tallyMap);
         getLogger().info("picking first rule from " + selectedRules);
         Collections.shuffle(selectedRules);
         return tallyMap;
     }
-    
+
     public List<Strategy> getSelectedRules() {
         return selectedRules;
     }
-    
-    
+
     public Strategy getSelectedRule() {
         return selectedRules.get(0);
     }
@@ -899,43 +883,43 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         return serverDataModel.getExperimentConfiguration();
     }
 
-	public Strategy getImposedStrategy() {
-		return imposedStrategy;
-	}
+    public Strategy getImposedStrategy() {
+        return imposedStrategy;
+    }
 
-	public void setImposedStrategy(Strategy imposedStrategy) {
-	    this.imposedStrategy = imposedStrategy;
-	}
+    public void setImposedStrategy(Strategy imposedStrategy) {
+        this.imposedStrategy = imposedStrategy;
+    }
 
     public void addBot(BotType botType, int botNumber) {
         Bot bot = BotFactory.getInstance().create(botType, botNumber, this);
-        bot.initializePosition(serverDataModel.getRoundConfiguration());
+        bot.initialize(serverDataModel.getRoundConfiguration());
         bots.add(bot);
     }
-    
+
     public int getNumberOfBots() {
         return bots.size();
     }
 
-    public void activateBots(Duration botTick) {
-        // clear all bot action taken counters every 1 s
-        boolean resetBotActions = botTick.getStartCount() % 10 == 0;
-        for (Bot bot: bots) {
+    public void activateBots(boolean resetBotActions) {
+        for (Bot bot : bots) {
             bot.act();
             if (resetBotActions) {
                 bot.resetActionsTakenPerSecond();
             }
         }
     }
-    
+
     public void clearBotActionsTaken() {
-        for (Bot bot: bots) {
+        for (Bot bot : bots) {
             bot.resetActionsTakenPerSecond();
         }
     }
-    
-    public Stream<Point> getBotPositions() {
-        return bots.stream().map((bot) -> bot.getPosition());
+
+    public Map<Identifier, Point> getBotPositions() {
+        Map<Identifier, Point> botPositions = new HashMap<>();
+        bots.forEach((bot) -> botPositions.put(bot.getId(), bot.getPosition()));
+        return botPositions;
     }
 
 }

@@ -2,6 +2,7 @@ package edu.asu.commons.foraging.client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -27,6 +28,7 @@ import edu.asu.commons.foraging.event.ClientMovementRequest;
 import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
 import edu.asu.commons.foraging.event.CollectTokenRequest;
 import edu.asu.commons.foraging.event.EndRoundEvent;
+import edu.asu.commons.foraging.event.MovementEvent;
 import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
 import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
@@ -40,6 +42,7 @@ import edu.asu.commons.foraging.event.ShowTrustGameRequest;
 import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
 import edu.asu.commons.foraging.event.ShowVotingInstructionsRequest;
 import edu.asu.commons.foraging.event.SinglePlayerClientUpdateEvent;
+import edu.asu.commons.foraging.event.SinglePlayerUpdateRequest;
 import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
@@ -54,12 +57,10 @@ import edu.asu.commons.ui.UserInterfaceUtils;
 import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.Utils;
 
-
-
 /**
  * $Id$
  * 
- * Client for costly sanctioning experiments.  Encompasses both 2D and 3D.
+ * Client for costly sanctioning experiments. Encompasses both 2D and 3D.
  * 
  * @author <a href='mailto:mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  * @version $Revision$
@@ -69,36 +70,34 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
 
     enum ClientState {
         // not connected to the server at all
-        UNCONNECTED, 
+        UNCONNECTED,
         // connected, but in between rounds
-        WAITING, 
+        WAITING,
         // connected and currently running a round
         RUNNING
     };
 
     private ClientState state = ClientState.UNCONNECTED;
-    
+
     private GameWindow gameWindow;
 
     private ClientDataModel dataModel;
-    
+
     private MessageQueue messageQueue;
-    
+
     private JPanel clientPanel = new JPanel();
-    
+
     public ForagingClient(ServerConfiguration configuration) {
         super(configuration);
         dataModel = new ClientDataModel(this);
         clientPanel.setLayout(new BorderLayout());
         if (configuration.shouldInitialize2D()) {
             gameWindow = new GameWindow2D(this);
-        }
-        else if (configuration.shouldInitialize3D()) {
+        } else if (configuration.shouldInitialize3D()) {
             gameWindow = new GameWindow3D(this);
         }
-        clientPanel.add(gameWindow.getPanel(), BorderLayout.CENTER);    
+        clientPanel.add(gameWindow.getPanel(), BorderLayout.CENTER);
     }
-    
 
     @Override
     protected void postConnect() {
@@ -111,11 +110,11 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
     public GameWindow2D getGameWindow2D() {
         return (GameWindow2D) gameWindow;
     }
-    
+
     public GameWindow3D getGameWindow3D() {
         return (GameWindow3D) gameWindow;
     }
-    
+
     public GameWindow getGameWindow() {
         return gameWindow;
     }
@@ -129,7 +128,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         transmit(new AgentInfoRequest(getId(), color));
         getGameWindow3D().removeAgentDesigner();
     }
-    
+
     @Override
     @SuppressWarnings("rawtypes")
     protected void initializeEventProcessors() {
@@ -145,7 +144,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
 
             }
         });
-        
+
         addEventProcessor(new EventTypeProcessor<ShowInstructionsRequest>(ShowInstructionsRequest.class) {
             public void handle(ShowInstructionsRequest request) {
                 getGameWindow().showInstructions();
@@ -157,9 +156,10 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
             }
         });
         addEventProcessor(new EventTypeProcessor<SetImposedStrategyEvent>(SetImposedStrategyEvent.class) {
-        	@Override public void handle(SetImposedStrategyEvent event) {
-        	    dataModel.setSelectedStrategies(Arrays.asList(event.getStrategy()));
-        	}
+            @Override
+            public void handle(SetImposedStrategyEvent event) {
+                dataModel.setSelectedStrategies(Arrays.asList(event.getStrategy()));
+            }
         });
         addEventProcessor(new EventTypeProcessor<ShowVotingInstructionsRequest>(ShowVotingInstructionsRequest.class) {
             public void handle(ShowVotingInstructionsRequest request) {
@@ -185,7 +185,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         });
         addEventProcessor(new EventTypeProcessor<RoundStartedEvent>(RoundStartedEvent.class) {
             public void handle(RoundStartedEvent event) {
-            	dataModel.initialize(event.getGroupDataModel());
+                dataModel.initialize(event.getGroupDataModel());
                 setId(event.getId());
                 messageQueue.start();
             }
@@ -227,27 +227,27 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         addEventProcessor(new EventTypeProcessor<ShowExitInstructionsRequest>(ShowExitInstructionsRequest.class) {
             @Override
             public void handle(ShowExitInstructionsRequest request) {
-            	GroupDataModel groupDataModel = (GroupDataModel) request.getDataModel();
-            	if (groupDataModel != null) {
-            		dataModel.setGroupDataModel((GroupDataModel) request.getDataModel());
-            	}
+                GroupDataModel groupDataModel = (GroupDataModel) request.getDataModel();
+                if (groupDataModel != null) {
+                    dataModel.setGroupDataModel((GroupDataModel) request.getDataModel());
+                }
                 getGameWindow2D().showExitInstructions();
             }
         });
         initialize2DEventProcessors();
-//        initialize3DEventProcessors();
+        // initialize3DEventProcessors();
         messageQueue = new MessageQueue();
     }
-    
-//    private void initialize3DEventProcessors() {
-//        addEventProcessor(new EventTypeProcessor<LockResourceEvent>(LockResourceEvent.class) {
-//            public void handle(LockResourceEvent event) {
-//                // tell the game window to highlight the appropriate resource
-//                getGameWindow3D().highlightResource(event);
-//            }
-//        });
-//    }
-    
+
+    // private void initialize3DEventProcessors() {
+    // addEventProcessor(new EventTypeProcessor<LockResourceEvent>(LockResourceEvent.class) {
+    // public void handle(LockResourceEvent event) {
+    // // tell the game window to highlight the appropriate resource
+    // getGameWindow3D().highlightResource(event);
+    // }
+    // });
+    // }
+
     private void initialize2DEventProcessors() {
         addEventProcessor(new EventTypeProcessor<BeginChatRoundRequest>(BeginChatRoundRequest.class) {
             public void handle(BeginChatRoundRequest request) {
@@ -261,7 +261,6 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
             }
         });
 
-
         addEventProcessor(new EventTypeProcessor<ClientMessageEvent>(ClientMessageEvent.class) {
             public void handle(ClientMessageEvent event) {
                 getGameWindow2D().displayMessage(event.toString());
@@ -270,22 +269,22 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
     }
 
     public boolean canPerformRealTimeSanction() {
-    	return dataModel.isMonitor() 
-    		|| (dataModel.isSanctioningAllowed() && dataModel.getCurrentTokens() > 0);    	
+        return dataModel.isMonitor()
+                || (dataModel.isSanctioningAllowed() && dataModel.getCurrentTokens() > 0);
     }
-    
+
     public void transmit(PostRoundSanctionRequest request) {
         if (state == ClientState.WAITING) {
-        	//System.out.println("Sending post round sanction request");
+            // System.out.println("Sending post round sanction request");
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    getGameWindow2D().showInstructionsPanel();        
+                    getGameWindow2D().showInstructionsPanel();
                 }
             });
             super.transmit(request);
         }
     }
-    
+
     /**
      * Utility class for throttling client-side messages.
      * 
@@ -293,18 +292,19 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
     private class MessageQueue implements Runnable {
         private final static int DEFAULT_MESSAGES_PER_SECOND = 10;
 
-        private final LinkedList<Event> actions =
-            new LinkedList<Event>();
-        
+        private final LinkedList<Event> actions = new LinkedList<>();
+
+        private final ArrayList<MovementEvent> batchedMovements = new ArrayList<>();
+
         private boolean running;
 
         private int messagesPerSecond = DEFAULT_MESSAGES_PER_SECOND;
         private int messagesSent;
-        
+
         private int averageMessagesPerSecond;
-        
-        private Duration secondTick = Duration.create(1);        
-        
+
+        private Duration secondTick = Duration.create(1);
+
         public MessageQueue() {
             EventChannel channel = ForagingClient.this.getEventChannel();
             channel.add(this, new EventTypeProcessor<RealTimeSanctionRequest>(RealTimeSanctionRequest.class) {
@@ -312,50 +312,54 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
                     add(event);
                 }
             });
-        	channel.add(this, new EventTypeProcessor<ClientMovementRequest>(ClientMovementRequest.class) {
+            channel.add(this, new EventTypeProcessor<ClientMovementRequest>(ClientMovementRequest.class) {
                 public void handle(ClientMovementRequest request) {
                     if (isRoundInProgress()) {
                         add(request);
                     }
                 }
-        	});
-        	channel.add(this, new EventTypeProcessor<CollectTokenRequest>(CollectTokenRequest.class) {
-        	    public void handle(CollectTokenRequest request) {
-        	        if (isRoundInProgress()) {
-        	            transmit(request);
-        	        }
-        	    }
-        	});
-        	channel.add(this, new EventTypeProcessor<ResetTokenDistributionRequest>(ResetTokenDistributionRequest.class) {
+            });
+            channel.add(this, new EventTypeProcessor<CollectTokenRequest>(CollectTokenRequest.class) {
+                public void handle(CollectTokenRequest request) {
+                    if (isRoundInProgress()) {
+                        transmit(request);
+                    }
+                }
+            });
+            channel.add(this, new EventTypeProcessor<ResetTokenDistributionRequest>(ResetTokenDistributionRequest.class) {
                 public void handle(ResetTokenDistributionRequest event) {
                     if (isRoundInProgress() && dataModel.getRoundConfiguration().isPracticeRound()) {
                         transmit(event);
                     }
                 }
-        	});
+            });
+            channel.add(this, new EventTypeProcessor<MovementEvent>(MovementEvent.class) {
+                public void handle(MovementEvent event) {
+                    synchronized (batchedMovements) {
+                        batchedMovements.add(event);
+                    }
+                }
+            });
         }
-        
+
         private void add(Event request) {
             if (messagesSent == 0 && actions.isEmpty()) {
                 // first message this second, bypass the queue and send it right away.
-//                moveClient(request);
                 transmit(request);
                 messagesSent++;
-            }
-            else if ( messagesSent < messagesPerSecond ) {
+            } else if (messagesSent < messagesPerSecond) {
                 actions.addLast(request);
-            }
-            else {
+            } else {
                 // otherwise, discard the event (and notify the participant?)
                 System.err.println("Discarding event: " + request + " - already sent " + messagesSent);
             }
         }
 
-		public void start() {
+        public void start() {
             running = true;
             new Thread(this).start();
         }
-        
+
         public void stop() {
             running = false;
             actions.clear();
@@ -369,7 +373,6 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
             while (running) {
                 Event request = get();
                 if (request != null) {
-//                    moveClient(request);
                     transmit(request);
                 }
                 Utils.sleep(ForagingServer.SERVER_SLEEP_INTERVAL);
@@ -377,28 +380,30 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
             }
         }
 
-        private void tick() {
-            if (secondTick.hasExpired()) {
-                secondTick.restart();
-                messagesSent = 0;
-            }
-        }
-
         public Event get() {
-            tick();
+            secondTick.onTick((duration) -> {
+                messagesSent = 0;
+                synchronized (batchedMovements) {
+                    if (!batchedMovements.isEmpty()) {
+                        transmit(new SinglePlayerUpdateRequest(getDataModel().getClientData(), batchedMovements));
+                        batchedMovements.clear();
+                    }
+                }
+
+            });
             if (actions.isEmpty()) {
                 return null;
             }
             messagesSent++;
             return actions.removeFirst();
         }
-        
+
         public int getEnergyLevel() {
             int energyLevel = messagesPerSecond - averageMessagesPerSecond;
             return energyLevel <= 0 ? 1 : energyLevel;
         }
     }
-    
+
     public int getEnergyLevel() {
         return messageQueue.getEnergyLevel();
     }
@@ -406,25 +411,24 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
     public ClientDataModel getDataModel() {
         return dataModel;
     }
-    
+
     public RoundConfiguration getCurrentRoundConfiguration() {
         return dataModel.getRoundConfiguration();
     }
-    
+
     public static void main(String[] args) {
         Runnable createGuiRunnable = new Runnable() {
             public void run() {
-            	//System.out.println("inside client");
-                //Dimension defaultDimension = new Dimension(600, 600);
+                // System.out.println("inside client");
+                // Dimension defaultDimension = new Dimension(600, 600);
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                    
-                } 
-                catch(Exception e) {
+
+                } catch (Exception e) {
                     e.printStackTrace();
-                    System.err.println("Couldn't set native look and feel: "+ e);
+                    System.err.println("Couldn't set native look and feel: " + e);
                 }
-            	JFrame frame = new JFrame();
+                JFrame frame = new JFrame();
                 ForagingClient client = new ForagingClient(new ServerConfiguration());
                 client.connect();
                 frame.setTitle("Client Window: " + client.getId());
@@ -440,7 +444,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         // switch back to instructions window
         getGameWindow2D().trustGameSubmitted();
     }
-    
+
     public void sendSurveyId(String surveyId) {
         getId().setSurveyId(surveyId);
         transmit(new SurveyIdSubmissionRequest(getId(), surveyId));
@@ -453,7 +457,6 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         }
         getGameWindow2D().strategyNominationSubmitted();
     }
-
 
     public boolean isRoundInProgress() {
         return state == ClientState.RUNNING;

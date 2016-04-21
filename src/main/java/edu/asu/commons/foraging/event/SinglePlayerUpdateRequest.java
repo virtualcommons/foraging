@@ -6,7 +6,6 @@ import java.util.stream.Stream;
 
 import edu.asu.commons.event.AbstractEvent;
 import edu.asu.commons.event.ClientRequest;
-import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.foraging.model.ClientData;
 
 /**
@@ -23,9 +22,10 @@ public class SinglePlayerUpdateRequest extends AbstractEvent implements ClientRe
 
     private final ClientData clientData;
 
-    public SinglePlayerUpdateRequest(ClientData clientData) {
+    public SinglePlayerUpdateRequest(ClientData clientData, List<MovementEvent> movements) {
         super(clientData.getId());
         this.clientData = clientData;
+        this.clientMovements.addAll(movements);
     }
     
     public Stream<MovementEvent> getPersistableEvents() {

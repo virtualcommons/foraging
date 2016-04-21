@@ -16,14 +16,15 @@ import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.SinglePlayerClientUpdateEvent;
 import edu.asu.commons.foraging.graphics.Point3D;
 import edu.asu.commons.foraging.model.ClientData;
+import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.model.ForagingDataModel;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.Resource;
 import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
+
 /**
- * $Id$
  * 
  * This class should only provide game state relevant to a particular client.
  * 
@@ -35,32 +36,32 @@ public class ClientDataModel extends ForagingDataModel {
 
     private static final long serialVersionUID = -3424256672940188027L;
 
-//    private GroupDataModel groupDataModel;
+    // private GroupDataModel groupDataModel;
 
     private final List<Identifier> allClientIdentifiers = new ArrayList<Identifier>();
 
     private ClientData clientData;
-    
+
     // these are the subjects whom we have sanctioned
     private Map<Identifier, Duration> sanctioned = new HashMap<Identifier, Duration>();
 
     // these are the subjects that have sanctioned us.
     private Map<Identifier, Duration> sanctioners = new HashMap<Identifier, Duration>();
 
-    private List<Strategy> selectedStrategies = new ArrayList<Strategy>();
+    private List<Strategy> selectedStrategies = new ArrayList<>();
     private ForagingClient client;
 
     private volatile boolean explicitCollectionMode = false;
 
-    private Map<Identifier, Point> clientPositions;
+    private Map<Identifier, Point> clientPositions = new HashMap<>();
 
     private Map<Identifier, Integer> clientTokens;
 
     // Clients need to know the zones of all other clients in the group. This
     // maps client ID's to zone numbers.
     private Map<Identifier, Integer> clientZones;
-    
-    private Map<Point, Resource> resourceDistribution;
+
+    private Map<Point, Resource> resourceDistribution = new HashMap<>();
 
     public ClientDataModel(ForagingClient client) {
         super(client.getEventChannel());
@@ -71,15 +72,15 @@ public class ClientDataModel extends ForagingDataModel {
         explicitCollectionMode = !explicitCollectionMode;
         client.transmit(new ExplicitCollectionModeRequest(client.getId(), explicitCollectionMode));
     }
-    
+
     public boolean isSanctioningAllowed() {
         return getRoundConfiguration().isSanctioningEnabled();
     }
-    
+
     public boolean isHarvestingAllowed() {
-    	return getClientData().isHarvestingAllowed();
+        return getClientData().isHarvestingAllowed();
     }
-    
+
     public boolean isMonitor() {
         return getClientData().getForagingRole().isMonitor();
     }
@@ -103,7 +104,7 @@ public class ClientDataModel extends ForagingDataModel {
     public Map<Point, Resource> getResourceDistribution() {
         return resourceDistribution;
     }
-    
+
     public Point getClientPosition(Identifier sanctionee) {
         return clientPositions.get(sanctionee);
     }
@@ -126,7 +127,7 @@ public class ClientDataModel extends ForagingDataModel {
         sanctioners.clear();
         // FIXME: replace
     }
-    
+
     public void initialize(GroupDataModel groupDataModel) {
         clear();
         Map<Identifier, ClientData> clientDataMap = groupDataModel.getClientDataMap();
@@ -138,7 +139,7 @@ public class ClientDataModel extends ForagingDataModel {
             ClientData data = entry.getValue();
             int index = data.getAssignedNumber() - 1;
             ids[index] = id;
-//            clientAssignedNumbers.put(id, data.getAssignedNumber());
+            // clientAssignedNumbers.put(id, data.getAssignedNumber());
             clientZones.put(id, data.getZone());
         }
         allClientIdentifiers.addAll(Arrays.asList(ids));
@@ -156,10 +157,22 @@ public class ClientDataModel extends ForagingDataModel {
     }
 
     public void setGroupDataModel(GroupDataModel groupDataModel) {
-    	if (groupDataModel == null) return;
-        this.clientData = groupDataModel.getClientData(getId());
-        this.resourceDistribution = groupDataModel.getResourceDistribution();
-        update(groupDataModel.getClientTokens(), groupDataModel.getClientPositions(), clientData.getLatestSanctions(), null, null);
+        if (groupDataModel == null) {
+            return;
+        }
+        boolean singlePlayer = getRoundConfiguration().isSinglePlayer();
+        resourceDistribution = groupDataModel.getResourceDistribution();
+        if (clientData == null || !singlePlayer) {
+            clientData = groupDataModel.getClientData(getId());
+        }
+        if (singlePlayer) {
+            clientTokens = groupDataModel.getClientTokens();
+            clientPositions = groupDataModel.getClientPositions();
+            clientPositions.put(getId(), clientData.getPosition());
+            clientData.setCurrentTokens(clientTokens.get(getId()));
+        } else {
+            update(groupDataModel.getClientTokens(), groupDataModel.getClientPositions(), clientData.getLatestSanctions(), null, null);
+        }
     }
 
     public List<Identifier> getAllClientIdentifiers() {
@@ -169,10 +182,6 @@ public class ClientDataModel extends ForagingDataModel {
     @Deprecated
     public List<ClientData> getOtherClients() {
         throw new UnsupportedOperationException("This is now deprecated.");
-//        List<ClientData> clients = new ArrayList<ClientData>();
-//        clients.addAll(groupDataModel.getClientDataMap().values());
-//        clients.remove(getClientData());
-//        return clients;
     }
 
     public int getAssignedNumber(Identifier id) {
@@ -180,7 +189,7 @@ public class ClientDataModel extends ForagingDataModel {
     }
 
     /**
-     * Updates client positions, current tokens, etc. 
+     * Updates client positions, current tokens, etc.
      */
     public void update(ClientPositionUpdateEvent event) {
         update(event.getClientTokens(), event.getClientPositions(), event.getLatestSanctions(), event.getAddedTokens(), event.getRemovedTokens());
@@ -188,37 +197,37 @@ public class ClientDataModel extends ForagingDataModel {
         clientData.setPosition(clientPositions.get(id));
         clientData.setCurrentTokens(clientTokens.get(id));
     }
-    
+
     public void update(SinglePlayerClientUpdateEvent event) {
-        this.clientTokens = event.getClientTokens();
-        this.clientPositions = event.getClientPositions();
+        clientTokens = event.getClientTokens();
+        clientPositions = event.getClientPositions();
+        clientPositions.put(getId(), clientData.getPosition());
         synchronized (resourceDistribution) {
-            for (Point p: event.getRemovedResources()) {
+            for (Point p : event.getRemovedResources()) {
                 resourceDistribution.remove(p);
             }
-            for (Resource r: event.getAddedResources()) {
+            for (Resource r : event.getAddedResources()) {
                 resourceDistribution.put(r.getPosition(), r);
             }
         }
     }
-    
-    public void update(Map<Identifier, Integer> clientTokens, 
-            Map<Identifier, Point> currentPositions, 
+
+    public void update(Map<Identifier, Integer> clientTokens,
+            Map<Identifier, Point> currentPositions,
             Queue<RealTimeSanctionRequest> latestSanctions,
             Resource[] addedResources,
-            Resource[] removedResources) 
-    {
+            Resource[] removedResources) {
         this.clientTokens = clientTokens;
         this.clientPositions = currentPositions;
         handleRealTimeSanctions(latestSanctions);
         synchronized (resourceDistribution) {
             if (removedResources != null) {
-                for (Resource resource: removedResources) {
+                for (Resource resource : removedResources) {
                     resourceDistribution.remove(resource.getPosition());
                 }
             }
             if (addedResources != null) {
-                for (Resource resource: addedResources) {
+                for (Resource resource : addedResources) {
                     resourceDistribution.put(resource.getPosition(), resource);
                 }
             }
@@ -239,14 +248,14 @@ public class ClientDataModel extends ForagingDataModel {
     public int getCurrentTokens() {
         return clientData.getCurrentTokens();
     }
-    
+
     public int getCurrentTokens(Identifier id) {
         return clientTokens.get(id);
     }
 
-//    public Map<Identifier, ClientData> getClientDataMap() {
-//        return groupDataModel.getClientDataMap();
-//    }
+    // public Map<Identifier, ClientData> getClientDataMap() {
+    // return groupDataModel.getClientDataMap();
+    // }
 
     public synchronized boolean isBeingSanctioned(Identifier id) {
         return checkSanctionStatus(sanctioned, id);
@@ -299,7 +308,7 @@ public class ClientDataModel extends ForagingDataModel {
     public List<Strategy> getSelectedStrategies() {
         return selectedStrategies;
     }
-    
+
     @Deprecated
     public List<Strategy> getSelectedRules() {
         return selectedStrategies;
@@ -315,6 +324,17 @@ public class ClientDataModel extends ForagingDataModel {
      */
     public int getClientZone(Identifier id) {
         return clientZones.get(id);
+    }
+
+    public void moveClient(Direction direction) {
+        synchronized (clientPositions) {
+            Point newLocation = direction.apply(getCurrentPosition());
+            boolean positionTaken = clientPositions.values().contains(newLocation);
+            if (isValidPosition(newLocation) && !positionTaken) {
+                clientData.setPosition(newLocation);
+                clientPositions.put(getId(), newLocation);
+            }
+        }
     }
 
 }
