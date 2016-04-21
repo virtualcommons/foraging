@@ -22,6 +22,7 @@
 <entry key="use-token-image">true</entry>
 <entry key='token-image-path'>images/green-diamond.png</entry>
 <entry key="use-avatar-image">false</entry>
+<entry key='single-player'>true</entry>
 <entry key="facilitator-instructions">
 <![CDATA[
 <p>
