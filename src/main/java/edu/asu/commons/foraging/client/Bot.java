@@ -115,6 +115,9 @@ public interface Bot {
             else {
                 Direction nextMove = getNextMove();
                 if (random.nextDouble() <= getMovementProbability()) {
+                    // FIXME: need a more sophisticated pathfinding algorithm if we want to enable 
+                    // max cell occupancy and blockage so the bot can move around a player if they are directly
+                    // in their way
                     model.move(this, nextMove);
                 }
             }
@@ -138,8 +141,6 @@ public interface Bot {
                 setNewTargetLocation();
             }
             Direction nextMove = Direction.towards(getPosition(), getTargetLocation());
-            logger.info("Target location: " + getTargetLocation());
-            logger.info("Moving in direction: " + nextMove);
             if (nextMove == Direction.NONE) {
                 // at target location
                 reachedTargetLocation();

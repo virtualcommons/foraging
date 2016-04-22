@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.experiment.DataModel;
@@ -32,7 +33,6 @@ import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
-import edu.asu.commons.util.Duration;
 
 /**
  * $Id$
@@ -463,12 +463,14 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         return ids;
     }
 
-    public void move(Bot bot, Direction direction) {
+    public boolean move(Bot bot, Direction direction) {
         Point newPosition = direction.apply(bot.getPosition());
         if (serverDataModel.isValidPosition(newPosition) && isCellAvailable(newPosition)) {
             bot.setCurrentPosition(newPosition);
             getEventChannel().handle(new MovementEvent(bot.getId(), direction));
+            return true;
         }
+        return false;
     }
 
     /**
@@ -487,8 +489,6 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         if (serverDataModel.isValidPosition(newPosition)) {
             // check occupancy
             if (isCellAvailable(newPosition) && isCellAllowed(clientData, newPosition)) {
-                // System.err.println("setting position: " + newPosition);
-
                 clientData.setPosition(newPosition);
                 // if the client is explicitly collecting, then movement does not automatically
                 // collect a token.
@@ -500,7 +500,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         }
     }
 
-    private boolean isCellAvailable(Point position) {
+    public boolean isCellAvailable(Point position) {
         RoundConfiguration currentRoundConfiguration = getRoundConfiguration();
         if (currentRoundConfiguration.shouldCheckOccupancy()) {
             int maximumOccupancyPerCell = currentRoundConfiguration.getMaximumOccupancyPerCell();
@@ -523,13 +523,12 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
      * available), based on zone rules.
      */
     private boolean isCellAllowed(ClientData clientData, Point position) {
-        if (serverDataModel.getRoundConfiguration().areZonesAssigned() == false ||
-                serverDataModel.getRoundConfiguration().isTravelRestricted(clientData.getZone()) == false) {
-            return true;
-        }
-        int positionZone = position.y < serverDataModel.getBoardHeight() / 2 ? 0 : 1;
-        if (positionZone != clientData.getZone()) {
-            return false;
+        RoundConfiguration roundConfiguration = getRoundConfiguration();
+        if (roundConfiguration.areZonesAssigned() && roundConfiguration.isTravelRestricted(clientData.getZone())) {
+            int positionZone = position.y < serverDataModel.getBoardHeight() / 2 ? 0 : 1;
+            if (positionZone != clientData.getZone()) {
+                return false;
+            }
         }
         return true;
     }
@@ -540,6 +539,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             if (resourceDistribution.containsKey(position)) {
                 getRemovedResources().add(resourceDistribution.remove(position));
                 clientData.addToken(position);
+                getEventChannel().handle(new TokenCollectedEvent(clientData.getId(), position));
             }
         }
     }
@@ -550,7 +550,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             if (resourceDistribution.containsKey(position)) {
                 getRemovedResources().add(resourceDistribution.remove(position));
                 bot.addToken(position);
-                serverDataModel.getEventChannel().handle(new TokenCollectedEvent(bot.getId(), position));
+                getEventChannel().handle(new TokenCollectedEvent(bot.getId(), position));
             }
         }
     }
@@ -902,6 +902,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
 
     public void activateBots(boolean resetBotActions) {
+        // FIXME: should do this in parallel or randomize iteration order for > 1 bot
         for (Bot bot : bots) {
             bot.act();
             if (resetBotActions) {
@@ -917,9 +918,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
 
     public Map<Identifier, Point> getBotPositions() {
-        Map<Identifier, Point> botPositions = new HashMap<>();
-        bots.forEach((bot) -> botPositions.put(bot.getId(), bot.getPosition()));
-        return botPositions;
+        return bots.stream().collect(Collectors.toMap(Bot::getId, Bot::getPosition));
     }
 
 }

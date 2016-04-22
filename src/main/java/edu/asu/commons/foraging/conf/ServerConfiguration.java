@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 import org.stringtemplate.v4.ST;
 
 import edu.asu.commons.conf.ExperimentConfiguration;
-import edu.asu.commons.foraging.client.BotType;
 import edu.asu.commons.foraging.model.ClientData;
 
 /**
@@ -247,6 +246,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
      */
     public String getBotType() {
         return getProperty("bot-type", "AGGRESSIVE");
+    }
+
+    public int getMaximumOccupancyPerCell() {
+        return getIntProperty("max-cell-occupancy", 1);
     }
 
 }

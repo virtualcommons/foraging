@@ -50,10 +50,9 @@ public class ClientData implements Serializable {
     private int assignedNumber;
     private Point3D position;
 
-    private volatile boolean collecting;
     private volatile boolean explicitCollectionMode;
     private Duration freezeDuration;
-    private LinkedList<RealTimeSanctionRequest> latestSanctions = new LinkedList<RealTimeSanctionRequest>();
+    private LinkedList<RealTimeSanctionRequest> latestSanctions = new LinkedList<>();
     private AnimationData animationData;
 
     private boolean subjectsFieldOfVisionEnabled;
@@ -68,8 +67,8 @@ public class ClientData implements Serializable {
     private double[] trustGamePlayerTwoAmountsToKeep;
 
     private ForagingStrategy votedRule;
-    private ArrayList<String> trustGameLog = new ArrayList<String>();
-    private ArrayList<Point> collectedTokenPositions = new ArrayList<Point>();
+    private ArrayList<String> trustGameLog = new ArrayList<>();
+    private ArrayList<Point> collectedTokenPositions = new ArrayList<>();
 
     // String fields to be set and formatted for use in templates.
     private String grandTotalIncome;
@@ -84,22 +83,6 @@ public class ClientData implements Serializable {
     // This client's zone number when the assign-zones parameter is set to true.
     // If assign-zones is not set to true, zone is set to 0.
     private int zone = 0;
-
-    public void setTrustGamePlayerOneAmountToKeep(double trustGamePlayerOneAmountToKeep) {
-        this.trustGamePlayerOneAmountToKeep = trustGamePlayerOneAmountToKeep;
-    }
-
-    public void setTrustGamePlayerTwoAmountsToKeep(double[] trustGamePlayerTwoAmountsToKeep) {
-        this.trustGamePlayerTwoAmountsToKeep = trustGamePlayerTwoAmountsToKeep;
-    }
-
-    public double getTrustGamePlayerOneAmountToKeep() {
-        return trustGamePlayerOneAmountToKeep;
-    }
-
-    public double[] getTrustGamePlayerTwoAmountsToKeep() {
-        return trustGamePlayerTwoAmountsToKeep;
-    }
 
     // this is only used in the Rotating Monitor enforcement mechanism.
     private int tokensCollectedDuringInterval = 0;
@@ -427,10 +410,6 @@ public class ClientData implements Serializable {
         }
     }
 
-    public void setCollecting() {
-        collecting = true;
-    }
-
     public void collectToken() {
         getGroupDataModel().collectToken(this);
     }
@@ -686,6 +665,22 @@ public class ClientData implements Serializable {
 
     public String getTrustGameEarnings() {
         return trustGameEarnings;
+    }
+
+    public void setTrustGamePlayerOneAmountToKeep(double trustGamePlayerOneAmountToKeep) {
+        this.trustGamePlayerOneAmountToKeep = trustGamePlayerOneAmountToKeep;
+    }
+
+    public void setTrustGamePlayerTwoAmountsToKeep(double[] trustGamePlayerTwoAmountsToKeep) {
+        this.trustGamePlayerTwoAmountsToKeep = trustGamePlayerTwoAmountsToKeep;
+    }
+
+    public double getTrustGamePlayerOneAmountToKeep() {
+        return trustGamePlayerOneAmountToKeep;
+    }
+
+    public double[] getTrustGamePlayerTwoAmountsToKeep() {
+        return trustGamePlayerTwoAmountsToKeep;
     }
 
     public int getZone() {

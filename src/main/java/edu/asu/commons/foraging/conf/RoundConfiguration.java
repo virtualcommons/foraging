@@ -327,7 +327,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public int getMaximumOccupancyPerCell() {
-        return getIntProperty("max-cell-occupancy", getClientsPerGroup());
+        return getIntProperty("max-cell-occupancy", getParentConfiguration().getMaximumOccupancyPerCell());
     }
 
     public boolean isChatAnonymized() {

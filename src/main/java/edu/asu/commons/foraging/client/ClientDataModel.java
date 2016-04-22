@@ -98,7 +98,9 @@ public class ClientDataModel extends ForagingDataModel {
      * Returns a Set containing the positions of food pellets.
      */
     public Set<Point> getResourcePositions() {
-        return Collections.unmodifiableSet(resourceDistribution.keySet());
+        synchronized (resourceDistribution) {
+            return Collections.unmodifiableSet(resourceDistribution.keySet());
+        }
     }
 
     public Map<Point, Resource> getResourceDistribution() {
@@ -200,8 +202,9 @@ public class ClientDataModel extends ForagingDataModel {
 
     public void update(SinglePlayerClientUpdateEvent event) {
         clientTokens = event.getClientTokens();
+        // dirty hack to keep client position authoritative
+        event.getClientPositions().put(getId(), clientData.getPoint());
         clientPositions = event.getClientPositions();
-        clientPositions.put(getId(), clientData.getPosition());
         synchronized (resourceDistribution) {
             for (Point p : event.getRemovedResources()) {
                 resourceDistribution.remove(p);
@@ -329,8 +332,7 @@ public class ClientDataModel extends ForagingDataModel {
     public void moveClient(Direction direction) {
         synchronized (clientPositions) {
             Point newLocation = direction.apply(getCurrentPosition());
-            boolean positionTaken = clientPositions.values().contains(newLocation);
-            if (isValidPosition(newLocation) && !positionTaken) {
+            if (isValidPosition(newLocation)) {
                 clientData.setPosition(newLocation);
                 clientPositions.put(getId(), newLocation);
             }

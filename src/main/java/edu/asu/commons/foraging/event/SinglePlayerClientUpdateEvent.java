@@ -2,7 +2,6 @@ package edu.asu.commons.foraging.event;
 
 import java.awt.Point;
 import java.util.Map;
-import java.util.Set;
 
 import edu.asu.commons.event.AbstractEvent;
 import edu.asu.commons.foraging.model.Resource;
@@ -26,14 +25,14 @@ public class SinglePlayerClientUpdateEvent extends AbstractEvent {
     private final long timeLeft;
     
     public SinglePlayerClientUpdateEvent(Identifier id, long timeLeft, 
-            Map<Identifier, Point> otherClientPositions,
+            Map<Identifier, Point> clientPositions,
             Map<Identifier, Integer> clientTokens,
             Resource[] addedResources,
             Point[] removedResources) 
     {
         super(id);
         this.timeLeft = timeLeft;
-        this.clientPositions = otherClientPositions;
+        this.clientPositions = clientPositions;
         this.clientTokens = clientTokens;
         this.addedResources = addedResources;
         this.removedResources = removedResources;
