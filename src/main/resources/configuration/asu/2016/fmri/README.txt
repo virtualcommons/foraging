@@ -2,9 +2,9 @@ fMRI Foraging Configuration
 
 Stationary resource
 Full vision
-
-Practice Round
-Round 1-3
-Round 4-6, in-round communication 
-
-Group rounds involve only 2 participants at a time
+Resource size: 6x6
+private property
+40 second rounds
+1. practice round
+2. 25 rounds no growth
+3. quiz and then 25 rounds high growth rate

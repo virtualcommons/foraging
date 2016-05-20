@@ -1,24 +1,204 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<comment>Foraging XML-ized experiment round configuration</comment>
+<comment>BENN-FMRI Round 26-50 configuration</comment>
 <entry key="display-group-tokens">true</entry>
-<entry key="duration">240</entry>
-<entry key="resource-depth">13</entry>
-<entry key="resource-width">13</entry>
 <entry key="private-property">true</entry>
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
-<entry key='regrowth-rate'>0.005</entry>
+<entry key='regrowth-rate'>0.05</entry>
+<entry key='repeat-round'>25</entry>
+<entry key="resource-depth">6</entry>
+<entry key="resource-width">6</entry>
+<entry key="quiz">true</entry>
+<entry key="q1">F</entry>
+<entry key="q2">T</entry>
+<entry key="q3">T</entry>
+<entry key="q4">T</entry>
+<entry key="q5">Possible</entry>
+<entry key="q6">Impossible</entry>
+<entry key="q7">F</entry>
+<entry key="q8">T</entry>
+<entry key="q9">F</entry>
+<entry key="q10">F</entry>
 <entry key="instructions">
 <![CDATA[
-<h1>Round {self.roundNumber} Instructions</h1>
+<h1>Instructions for Rounds 26-50</h1>
+    <p>
+        The setting of the folowing rounds is the same as the first 25 rounds. The only difference is that the green tokens can regenerate.
+    </p>
+<hr>
+<p><b>If you have any questions please raise your hand.</b></p>
+]]>
+</entry>
+<entry key="quiz-instructions">
+<![CDATA[
+<h1>Changes to the Experimental Environment</h1>
 <hr>
 <p>
-    Round 2 is the same as round 1, but the tokens will now <b>regenerate more slowly</b>.
+    We will now make a change to the environment, namely the regeneration of tokens. After you have collected a green
+    token, a new token can reappear on that empty cell. The rate at which new tokens appear depends on the number of
+    adjacent cells with tokens. The more tokens in the eight cells that surround an empty cell, the faster a new token
+    will appear on that empty cell. In other words, <b>existing tokens can generate new tokens</b>. To illustrate
+    this, please refer to Image 1 and Image 2. The middle cell in Image 1 denoted with an X has a greater chance of
+    regeneration than the middle cell in Image 2.  When all neighboring cells are empty, there is 
+    <b>no chance for regeneration</b>.
 </p>
-<p><b>Do you have any questions so far?</b>  If you have any questions at this time, raise your hand and someone will
-    come over to your station and answer it.</p>
+<table width="100%">
+<tr>
+<td align="center"><b>Image 1</b></td>
+<td align="center"><b>Image 2</b></td>
+</tr>
+<tr>
+<td align="center">
+    <img src="@CODEBASE_URL@/images/8neighbors.jpg" alt="image 1">
+</td>
+<td align="center">
+    <img src="@CODEBASE_URL@/images/5neighbors.jpg" alt="image 2">
+</td>
+</tr>
+</table>
+<h2>Best Strategy</h2>
+<hr>
+<p>
+    The chance that a token will regenerate on an empty cell increases as there are
+    more tokens surrounding it.  The best arrangement of tokens that maximizes overall regrowth is the checkerboard
+    diagram shown below.
+<br>
+<img src="@CODEBASE_URL@/images/foraging-checkerboard.png" alt="Checkerboard Resource">
+</p>
+
+<h2>Quiz</h2>
+<hr>
+<p>
+    Before we begin the actual round please answer the following 10 statements. You have five minutes to answer these
+    questions and you will get {quizCorrectAnswerReward} lab dollars for each correct answer. When you are finished
+    please click submit.
+</p>
+<br>
+<form>
+<span class='q1'>Q1. Tokens grow from the middle of the screen.</span> <br>
+<input type="radio" name="q1" value="T">True<br>
+<input type="radio" name="q1" value="F">False<br>
+<br><br>
+<span class='q2'>Q2. In order to collect a token you need to press the space bar while your yellow dot is on a cell with a token.</span> <br>
+<input type="radio" name="q2" value="T">True<br>
+<input type="radio" name="q2" value="F">False<br>
+<br><br>
+<span class='q3'>Q3. When you have collected all tokens on the screen, no new tokens will appear.</span> <br>
+<input type="radio" name="q3" value="T">True<br>
+<input type="radio" name="q3" value="F">False<br>
+<br><br>
+<span class='q4'>Q4. Your decisions of where to collect tokens affects the regeneration of tokens.</span> <br>
+<input type="radio" name="q4" value="T">True<br>
+<input type="radio" name="q4" value="F">False<br>
+<br><br>
+<span class='q5'>Q5. Is the following sequence possible?</span><img src="@CODEBASE_URL@/images/q5.png" /> <br>
+<input type="radio" name="q5" value="Possible">Possible<br>
+<input type="radio" name="q5" value="Impossible">Impossible<br>
+<br><br>
+<span class='q6'>Q6. Is the following sequence possible?</span><img src="@CODEBASE_URL@/images/q6.png" /> <br>
+<input type="radio" name="q6" value="Possible">Possible<br>
+<input type="radio" name="q6" value="Impossible">Impossible<br>
+<br><br>
+<span class='q7'>Q7. If each token is worth $0.02 and you collect 100 tokens in a round, you have earned 3 dollars in that round.</span> <br>
+<input type="radio" name="q7" value="T">True<br>
+<input type="radio" name="q7" value="F">False<br>
+<br><br>
+<span class='q8'>Q8. The duration of a round is four minutes.</span> <br>
+<input type="radio" name="q8" value="T">True<br>
+<input type="radio" name="q8" value="F">False<br>
+<br><br>
+<span class='q9'>Q9. All the cells are filled with green tokens at the start of the experiment.</span> <br>
+<input type="radio" name="q9" value="T">True<br>
+<input type="radio" name="q9" value="F">False<br>
+<br><br>
+<span class='q10'>Q10. The amount of tokens you can earn only depends on how fast you collect the tokens.</span> <br>
+<input type="radio" name="q10" value="T">True<br>
+<input type="radio" name="q10" value="F">False<br>
+
+<input type="submit" name="submit" value="Submit"><br>
+</form>
+]]>
+</entry>
+<entry key='quiz-results'>
+<![CDATA[
+    <h2>Quiz Results</h2>
+    <hr>
+        <p>
+            {if (allCorrect)}
+            You have answered all the questions correctly and earned <b>{totalQuizEarnings}</b>.  
+            {else}
+            You answered {numberCorrect} out of {totalQuestions} questions correctly and earned <b>{totalQuizEarnings}</b>.  Questions you've answered
+            incorrectly are highlighted in red.  Please see below for more details.
+            {endif}
+        </p>
+        <br><hr>
+<form>
+<span class='q1'>Q1. Tokens grow from the middle of the screen.</span> <br>
+    <b>{incorrect_q1}
+        This statement is false. Tokens only regenerate when there are other tokens present in their immediately
+        neighboring cells. They do not spontaneously generate from the middle of the screen.
+    </b>
+<br><br>
+<span class='q2'>Q2. In order to collect a token you need to press the space bar while your yellow dot is on a cell with a token.</span> <br>
+    <b>
+        {incorrect_q2} 
+        This statement is true. You must press the space bar when your yellow dot is on a cell with a token to collect that token.
+    </b>
+    <br><br>
+<span class='q3'>Q3. When you have collected all tokens on the screen, no new tokens will appear.</span> <br>
+    <b>
+        {incorrect_q3} 
+        This statement is true. Tokens can only regenerate if there are other tokens present in their immediately neighboring cells.
+    </b>
+    <br><br>
+<span class='q4'>Q4. Your decisions of where to collect tokens affects the regeneration of tokens.</span> <br>
+    <b>
+        {incorrect_q4} 
+        This statement is true. The chance that a new token will appear in an empty cell is greatest when the eight cells surrounding that
+        empty cell all have tokens. 
+    </b>
+    <br><br>
+<span class='q5'>Q5. Is the following sequence possible?</span>
+<img src="@CODEBASE_URL@/images/q5.png" /> 
+<br>
+    <b>
+        {incorrect_q5} 
+        Yes, this sequence is possible. New tokens can regenerate on an empty cell when neighboring cells have existing tokens.
+    </b>
+    <br><br>
+<span class='q6'>Q6. Is the following sequence possible?</span><img src="@CODEBASE_URL@/images/q6.png" /> <br>
+    <b>
+        {incorrect_q6} 
+        No, this sequence is not possible. New tokens cannot regenerate on an empty cell when all neighboring cells are also empty.
+    </b>
+    <br><br>
+<span class='q7'>Q7. If each token is worth $0.02 and you collect 100 tokens in a round, you have earned 3 dollars in that round.</span> <br>
+    <b>
+        {incorrect_q7} 
+        This statement is false. You would have earned 100 * $0.02 = $2.00 in that round.
+    </b>
+    <br><br>
+<span class='q8'>Q8. The duration of a round is four minutes.</span> <br>
+    <b>
+        {incorrect_q8} 
+        This statement is true. The round will last four minutes.
+    </b>
+    <br><br>
+<span class='q9'>Q9. All the cells are filled with green tokens at the start of the experiment.</span> <br>
+    <b>
+        {incorrect_q9} 
+        This statement is false. At the beginning of each round, 25% of the cells will be filled with green tokens.
+    </b>
+    <br><br>
+<span class='q10'>Q10. The amount of tokens you can earn only depends on how fast you collect the tokens.</span> <br>
+    <b>
+        {incorrect_q10} 
+        This statement is false. The amount of tokens you can earn depends on how you manage your tokens, not how fast you collect them.
+    </b>
+    <br><br>
+</form>
 ]]>
 </entry>
 </properties>

@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<comment>Costly Sanctioning XML-ized experiment round configuration</comment>
+<comment>BENN-FMRI Experiment Configuration</comment>
 <entry key="hostname">@SERVER_ADDRESS@</entry>
 <entry key="port">@PORT_NUMBER@</entry>
-<entry key="number-of-rounds">7</entry>
+<entry key="number-of-rounds">3</entry>
 <entry key="round0">round0.xml</entry>
 <entry key="round1">round1.xml</entry>
 <entry key="round2">round2.xml</entry>
-<entry key="round3">round3.xml</entry>
-<entry key="round4">round4.xml</entry>
-<entry key="round5">round5.xml</entry>
-<entry key="round6">round6.xml</entry>
 <entry key='quiz-correct-answer-reward'>0.10</entry>
 <entry key='clients-per-group'>1</entry>
-<entry key='bot-groups-enabled'>true</entry>
+<entry key='bot-groups-enabled'>false</entry>
 <entry key='bots-per-group'>1</entry>
 <entry key="wait-for-participants">true</entry>
-<entry key="duration">240</entry>
+<entry key="duration">40</entry>
 <entry key="use-background-texture">false</entry>
 <entry key="use-token-image">true</entry>
 <entry key='token-image-path'>images/green-diamond.png</entry>
@@ -42,14 +38,12 @@
 </p>
 ]]>
 </entry>
-
 <entry key='field-of-vision-instructions'>
 <![CDATA[
 Your vision is limited in this experiment.  The area that is visible to you will be
 shaded.
 ]]>
 </entry>
-
 <entry key="welcome-instructions">
 <![CDATA[
 <h1>Welcome</h1>
@@ -62,7 +56,6 @@ Please <b>wait quietly</b> and <b>do not close this window, open any other appli
 </p>
 ]]>
 </entry>
-
 <entry key="general-instructions">
 <![CDATA[
 <h1>General Instructions</h1>
@@ -76,59 +69,11 @@ You can move by pressing the four arrow keys on your keyboard.
 <p>
     You can move up, down, left, or right.  You have to press a key for each and every move of your yellow dot.  As you
     move around you can collect tokens <img width='40' height='40' src="@CODEBASE_URL@/images/green-diamond.png"></img>
-    and earn two cents for each collected token.  To collect a token, move your avatar over a token and <b>press the
-    space bar</b>.  Simply moving your avatar over a token does NOT collect that token.
-</p>
-
-<h2>Tokens</h2>
-<hr>
-<p>
-The tokens that you collect have the potential to regenerate.  After you have
-collected a green token, a new token can re-appear on that empty cell. The rate at
-which new tokens appear depends on the number of adjacent cells with tokens.
-The more tokens in the eight cells that surround an empty cell, the faster a new
-token will appear on that empty cell.  In other words, <b>existing tokens can
-generate new tokens</b>.  To illustrate this, please refer to Image 1 and Image 2.
-The middle cell in Image 1 denoted with an X has a greater chance of regeneration
-than the middle cell in Image 2.  When all neighboring cells are empty, there is
-<b>no chance for regeneration</b>.
-</p>
-<table width="100%">
-<tr>
-<td align="center"><b>Image 1</b></td>
-<td align="center"><b>Image 2</b></td>
-</tr>
-<tr>
-<td align="center">
-    <img src="@CODEBASE_URL@/images/8neighbors.jpg" alt="image 1">
-</td>
-<td align="center">
-    <img src="@CODEBASE_URL@/images/5neighbors.jpg" alt="image 2">
-</td>
-</tr>
-</table>
-
-<h2>Best Strategy</h2>
-<hr>
-<p>
-The chance that a token will regenerate on an empty cell increases as there are
-more tokens surrounding it.  Therefore, you want to have as many tokens around an
-empty cell as possible.  However, you also need empty cells to benefit from this
-regrowth. The best arrangement of tokens that maximizes overall regrowth is the
-checkerboard diagram shown below.
-<br>
-<img src="@CODEBASE_URL@/images/foraging-checkerboard.png" alt="Checkerboard Resource">
-</p>
-
-<h2>Practice Round</h2>
-<hr>
-<p>
-We will soon begin a practice round, where you will have {duration} to practice with the experimental environment. The
-decisions you make in this round will NOT influence your earnings. 
+    and earn <b>{dollarsPerToken} lab dollars</b> for each collected token.  To collect a token, move your avatar over a
+    token and <b>press the space bar</b>.  Simply moving your avatar over a token does NOT collect that token.
 </p>
 ]]>
 </entry>
-
 <entry key='trust-game-instructions'>
 <![CDATA[
 <h1>Instructions</h1>
