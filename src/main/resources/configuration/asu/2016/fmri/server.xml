@@ -49,8 +49,7 @@ shaded.
 <h1>Welcome</h1>
 <hr>
 <p>
-Welcome to the experiment. The experiment will begin shortly after everyone has been
-assigned a station.
+Welcome to the experiment. The experiment will begin shortly.
 <br><br>
 Please <b>wait quietly</b> and <b>do not close this window, open any other applications, or communicate with any of the other participants</b>.
 </p>
@@ -60,17 +59,13 @@ Please <b>wait quietly</b> and <b>do not close this window, open any other appli
 <![CDATA[
 <h1>General Instructions</h1>
 <hr>
-<h2>How to participate</h2>
-<hr>
 <p>
 You will appear on the screen as a blue circle <img width='23' height='23' src="@CODEBASE_URL@/images/blue-circle.png"></img>. 
-You can move by pressing the four arrow keys on your keyboard.  
-</p>
-<p>
-    You can move up, down, left, or right.  You have to press a key for each and every move of your yellow dot.  As you
-    move around you can collect tokens <img width='40' height='40' src="@CODEBASE_URL@/images/green-diamond.png"></img>
-    and earn <b>{dollarsPerToken} lab dollars</b> for each collected token.  To collect a token, move your avatar over a
-    token and <b>press the space bar</b>.  Simply moving your avatar over a token does NOT collect that token.
+You can move by pressing the four arrow keys on your keyboard to move up, down, left, or right.  You must press a key
+for each and every move. As you move around you can collect tokens 
+<img width='40' height='40' src="@CODEBASE_URL@/images/green-diamond.png"></img> and earn <b>{dollarsPerToken} lab dollars</b>
+for each collected token.  To collect a token, move your avatar over it and <b>press the space bar</b>.  Simply moving
+your avatar over a token does <b>not collect</b> that token.
 </p>
 ]]>
 </entry>
