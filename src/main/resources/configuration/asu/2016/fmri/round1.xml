@@ -9,7 +9,7 @@
 <entry key="resource-depth">6</entry>
 <entry key="resource-width">6</entry>
 <entry key='regrowth-rate'>0</entry>
-<entry key='repeat-round'>25</entry>
+<entry key='repeat'>25</entry>
 <entry key="instructions">
 <![CDATA[
 <h1>Instructions for Rounds 1-25</h1>

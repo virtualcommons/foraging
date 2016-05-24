@@ -940,7 +940,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             }
             RoundConfiguration nextRoundConfiguration = getConfiguration().nextRound();
             serverDataModel.setRoundConfiguration(nextRoundConfiguration);
-            getLogger().info("Advancing to round # " + getConfiguration().getCurrentRoundIndex());
+            getLogger().info("Advancing to: " + nextRoundConfiguration.getRoundIndexLabel());
             // send the next round configuration to each client
             for (Identifier id : clients.keySet()) {
                 transmit(new SetConfigurationEvent<ServerConfiguration, RoundConfiguration>(id, nextRoundConfiguration));

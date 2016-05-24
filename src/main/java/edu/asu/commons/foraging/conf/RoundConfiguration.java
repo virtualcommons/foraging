@@ -355,8 +355,12 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getBooleanProperty("display-group-tokens");
     }
 
+    /**
+     * Returns true if the quiz parameter is set on this round configuration and this is the first of any potentially
+     * repeated rounds.
+     */
     public boolean isQuizEnabled() {
-        return getBooleanProperty("quiz");
+        return getBooleanProperty("quiz") && getParentConfiguration().getCurrentRepeatedRoundIndex() == 0;
     }
 
     public String getChatInstructions() {
@@ -375,13 +379,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("regulation-instructions");
     }
 
-    /**
-     * FIXME: quiz instructions and quiz enabled should be tightly coupled..
-     * 
-     * @return
-     */
     public String getQuizInstructions() {
-        // FIXME: cache?
+        // FIXME: cache or regenerate every time?
         ST template = createStringTemplate(getProperty("quiz-instructions"));
         template.add("quizCorrectAnswerReward", toCurrencyString(getQuizCorrectAnswerReward()));
         return template.render();
@@ -391,10 +390,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return NumberFormat.getCurrencyInstance().format(amount);
     }
 
+    /**
+     * Returns quiz questions mapped to their corresponding answers. Quiz questions must be numbered in the
+     * configuration file as q1..qn sequentially, and we stop looking as soon as we don't find one.
+     */
     public Map<String, String> getQuizAnswers() {
         Properties properties = getProperties();
         if (isQuizEnabled()) {
-            Map<String, String> answers = new HashMap<String, String>();
+            Map<String, String> answers = new HashMap<>();
             for (int i = 1; properties.containsKey("q" + i); i++) {
                 String key = "q" + i;
                 String answer = properties.getProperty(key);
