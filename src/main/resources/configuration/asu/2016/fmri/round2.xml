@@ -23,9 +23,10 @@
 <entry key="instructions">
 <![CDATA[
 <h1>Instructions for Rounds 26-50</h1>
-    <p>
-        The setting of the folowing rounds is the same as the first 25 rounds. The only difference is that the green tokens can regenerate.
-    </p>
+<p>
+The length of each of the following {self.repeat} rounds is {self.duration} seconds. 
+However, the green tokens can now regenerate.
+</p>
 <hr>
 <p><b>If you have any questions please raise your hand.</b></p>
 ]]>
@@ -35,13 +36,12 @@
 <h1>Changes to the Experimental Environment</h1>
 <hr>
 <p>
-    We will now make a change to the environment, namely the regeneration of tokens. After you have collected a green
-    token, a new token can reappear on that empty cell. The rate at which new tokens appear depends on the number of
-    adjacent cells with tokens. The more tokens in the eight cells that surround an empty cell, the faster a new token
-    will appear on that empty cell. In other words, <b>existing tokens can generate new tokens</b>. To illustrate
-    this, please refer to Image 1 and Image 2. The middle cell in Image 1 denoted with an X has a greater chance of
-    regeneration than the middle cell in Image 2.  When all neighboring cells are empty, there is 
-    <b>no chance for regeneration</b>.
+    We will now make a change to the environment, namely the regeneration of tokens. New tokens can now reappear in
+    empty cells. The rate at which new tokens appear depends on the number of adjacent cells with tokens. The more
+    tokens in the eight cells that surround an empty cell, the faster a new token will appear on that empty cell. In
+    other words, <b>existing tokens can generate new tokens</b>. To illustrate this, please refer to Image 1 and Image
+    2. The middle cell in Image 1 denoted with an X has a greater chance of regeneration than the middle cell in Image
+    2.  When all neighboring cells are empty, there is <b>no chance for regeneration</b>.
 </p>
 <table width="100%">
 <tr>
@@ -80,7 +80,7 @@
 <input type="radio" name="q1" value="T">True<br>
 <input type="radio" name="q1" value="F">False<br>
 <br><br>
-<span class='q2'>Q2. In order to collect a token you need to press the space bar while your yellow dot is on a cell with a token.</span> <br>
+<span class='q2'>Q2. In order to collect a token you need to press the space bar while your avatar is on a cell with a token.</span> <br>
 <input type="radio" name="q2" value="T">True<br>
 <input type="radio" name="q2" value="F">False<br>
 <br><br>
@@ -92,11 +92,12 @@
 <input type="radio" name="q4" value="T">True<br>
 <input type="radio" name="q4" value="F">False<br>
 <br><br>
-<span class='q5'>Q5. Is the following sequence possible?</span><img src="@CODEBASE_URL@/images/q5.png" /> <br>
+<span class='q5'>Q5. Is this sequence possible?</span> 
+<img src="@CODEBASE_URL@/images/q5.png" /><br>
 <input type="radio" name="q5" value="Possible">Possible<br>
 <input type="radio" name="q5" value="Impossible">Impossible<br>
 <br><br>
-<span class='q6'>Q6. Is the following sequence possible?</span><img src="@CODEBASE_URL@/images/q6.png" /> <br>
+<span class='q6'>Q6. Is this sequence possible?</span><img src="@CODEBASE_URL@/images/q6.png" /><br>
 <input type="radio" name="q6" value="Possible">Possible<br>
 <input type="radio" name="q6" value="Impossible">Impossible<br>
 <br><br>
@@ -140,10 +141,10 @@
         neighboring cells. They do not spontaneously generate from the middle of the screen.
     </b>
 <br><br>
-<span class='q2'>Q2. In order to collect a token you need to press the space bar while your yellow dot is on a cell with a token.</span> <br>
+<span class='q2'>Q2. In order to collect a token you need to press the space bar while your avatar is on a cell with a token.</span> <br>
     <b>
         {incorrect_q2} 
-        This statement is true. You must press the space bar when your yellow dot is on a cell with a token to collect that token.
+        This statement is true. You must press the space bar when your avatar is on a cell with a token to collect that token.
     </b>
     <br><br>
 <span class='q3'>Q3. When you have collected all tokens on the screen, no new tokens will appear.</span> <br>
