@@ -342,20 +342,21 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      * Returns the instructions for this round. If undefined at the round level it uses default instructions at the parent ServerConfiguration level.
      */
     public String getInstructions() {
+        String instructionsTemplate = getParentConfiguration().getSameAsPreviousRoundInstructions();
         if (! isRepeatingRound() || isFirstRepeatingRound()) {
-            ST template = createStringTemplate(getProperty("instructions", getParentConfiguration().getSameAsPreviousRoundInstructions()));
-            // FIXME: consider lifting these to RoundConfiguration and use 
-            // self.durationInMinutes or self.dollarsPerTokenCurrencyString 
-            // to reference them
-            template.add("duration", getDurationInMinutes());
-            template.add("dollarsPerToken", toCurrencyString(getDollarsPerToken()));
-            template.add("initialDistribution", NumberFormat.getPercentInstance().format(getInitialDistribution()));
-            return template.render();
+            instructionsTemplate = getProperty("instructions", instructionsTemplate);
         }
         else {
-            // this is a nth repeating round, use same as previous round instructions
-            return getParentConfiguration().getSameAsPreviousRoundInstructions();
+            instructionsTemplate = getParentConfiguration().getSameAsPreviousRoundInstructions();
         }
+        ST template = createStringTemplate(instructionsTemplate);
+        // FIXME: consider lifting these to RoundConfiguration and use 
+        // self.durationInMinutes or self.dollarsPerTokenCurrencyString 
+        // to reference them
+        template.add("duration", getDurationInMinutes());
+        template.add("dollarsPerToken", toCurrencyString(getDollarsPerToken()));
+        template.add("initialDistribution", NumberFormat.getPercentInstance().format(getInitialDistribution()));
+        return template.render();
     }
 
     public boolean shouldDisplayGroupTokens() {
