@@ -2,7 +2,6 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 <comment>BENN-FMRI Round 26-50 configuration</comment>
-<entry key="display-group-tokens">true</entry>
 <entry key="private-property">true</entry>
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
