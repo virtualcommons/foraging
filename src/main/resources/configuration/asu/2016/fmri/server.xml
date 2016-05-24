@@ -127,16 +127,16 @@ room.
 </entry>
 <entry key="same-as-previous-round-instructions">
 <![CDATA[
-<h3>Round {self.roundNumber} Instructions</h3>
+<h3>Round {self.roundIndexLabel} Instructions</h3>
 <hr>
-<p>Round {self.roundNumber} is the same as the previous round.</p>
+<p>Round {self.roundIndexLabel} is the same as the previous round.</p>
 <p>The length of this round is {duration}.</p>
 <p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
 ]]>
 </entry>
 <entry key='facilitator-debriefing'>
 <![CDATA[
-<h3>Round {self.roundNumber} results</h3>
+<h3>Round {self.roundIndexLabel} results</h3>
 <hr>
 <table border=1 cellspacing=3 cellpadding=3>
 <tr>
@@ -150,7 +150,7 @@ room.
 </entry>
 <entry key='client-debriefing'>
 <![CDATA[
-<h1>{if (self.practiceRound)}Practice Round{else}Round {self.roundNumber}{endif} Results</h1>
+<h1>{if (self.practiceRound)}Practice Round{else}Round {self.roundIndexLabel}{endif} Results</h1>
 <hr>
 <ul>
 <li>Tokens collected in this round: {clientData.currentTokens}</li>
