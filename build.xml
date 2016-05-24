@@ -135,13 +135,7 @@
     </signjar>
   </target>
   <!-- specialized target for 2016 fmri configuration deployment -->
-  <target name='fmri-test-gr'>
-    <antcall target='copy-configuration'>
-      <param name='treatment.dir' value='asu/2016/fmri.growth_rate_test' />
-    </antcall>
-    <antcall target='deploy' />
-  </target>
-  <target name='fmri-deploy'>
+  <target name='fmri' depends='clean-configuration'>
     <antcall target='copy-configuration'>
       <param name='treatment.dir' value='asu/2016/fmri' />
     </antcall>
@@ -310,6 +304,13 @@
     <delete file="client.jar"/>
     <delete file="facilitator.jar"/>
   </target>
+  <!-- remove all files in src/main/resources/configuration directory -->
+  <target name='clean-configuration'>
+    <delete>
+      <fileset dir='${conf.dir}' includes='*.xml' />
+    </delete>
+  </target>
+
   <!-- delete ivy and maven caches to force reload a new sesef snapshot -->
   <target name="purge" depends="clean">
     <echo message="Removing ${user.home}/.ant/cache"/>
