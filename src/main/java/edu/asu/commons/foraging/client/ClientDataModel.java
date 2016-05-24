@@ -201,10 +201,12 @@ public class ClientDataModel extends ForagingDataModel {
     }
 
     public void update(SinglePlayerClientUpdateEvent event) {
+        Identifier id = getId();
         clientTokens = event.getClientTokens();
         // dirty hack to keep client position authoritative
-        event.getClientPositions().put(getId(), clientData.getPoint());
+        event.getClientPositions().put(id, clientData.getPoint());
         clientPositions = event.getClientPositions();
+        clientData.setCurrentTokens(clientTokens.get(id));
         synchronized (resourceDistribution) {
             for (Point p : event.getRemovedResources()) {
                 resourceDistribution.remove(p);
