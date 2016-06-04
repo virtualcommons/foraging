@@ -66,9 +66,10 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 ClientMovementTokenCount client = clientMovementTokenCounts.get(event.getId());
                 client.moves++;
                 GroupDataModel group = clientData.getGroupDataModel();
-                String line = String.format("%s, %s, %s, %d, %d, %s, %s, %s, %s",
+                String line = String.format("%s, %s, %s, %s, %d, %d, %s, %s, %s, %s",
                         event.getCreationTime(),
                         savedRoundData.toSecondString(event),
+                        savedRoundData.getElapsedTimeRelativeToMidnight(event),
                         clientData.getId(),
                         group.getGroupId(),
                         client.moves,
@@ -86,9 +87,10 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 Point location = tokenCollectedEvent.getLocation();
                 client.tokens++;
                 GroupDataModel group = clientData.getGroupDataModel();
-                String line = String.format("%s, %s, %s, %d, %d, %d, %d, %s", 
+                String line = String.format("%s, %s, %s, %s, %d, %d, %d, %d, %s", 
                         event.getCreationTime(),
                         savedRoundData.toSecondString(event),
+                        savedRoundData.getElapsedTimeRelativeToMidnight(event),
                         clientData.getId(),
                         location.x,
                         location.y,
@@ -99,7 +101,13 @@ class AllDataProcessor extends SaveFileProcessor.Base {
             }
             else if (event instanceof ResourcesAddedEvent) {
                 ResourcesAddedEvent resourcesAddedEvent = (ResourcesAddedEvent) event;
-                String line = String.format("%s, %s, %s, %s, %s", event.getCreationTime(), savedRoundData.toSecondString(event), resourcesAddedEvent.getClass(), resourcesAddedEvent.getGroup().toString(), resourcesAddedEvent.getResourcePositions());
+                String line = String.format("%s, %s, %s, %s, %s, %s",
+                        event.getCreationTime(),
+                        savedRoundData.toSecondString(event),
+                        savedRoundData.getElapsedTimeRelativeToMidnight(event),
+                        resourcesAddedEvent.getClass(),
+                        resourcesAddedEvent.getGroup().toString(),
+                        resourcesAddedEvent.getResourcePositions());
                 writer.println(line);
             }
             else if (event instanceof ChatRequest) {
@@ -128,14 +136,24 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 else {
                     targetStringBuilder.append(request.getTarget());
                 }
-                String line = String.format("%s, %s, %s, %s, %s, Chat event", event.getCreationTime(), savedRoundData.toSecondString(event), sourceId, targetStringBuilder.toString(), message);
+                String line = String.format("%s, %s, %s, %s, %s, %s, Chat event",
+                        event.getCreationTime(),
+                        savedRoundData.toSecondString(event),
+                        savedRoundData.getElapsedTimeRelativeToMidnight(event),
+                        sourceId,
+                        targetStringBuilder.toString(),
+                        message);
                 writer.println(line);
             }
             else if (event instanceof RealTimeSanctionRequest) {
                 RealTimeSanctionRequest request = (RealTimeSanctionRequest) event;
                 Identifier source = request.getSource();
                 Identifier target = request.getTarget();
-                String line = String.format("%s, %s, %s, %s, %s", event.getCreationTime(), savedRoundData.toSecondString(event), source, target, request.toString());
+                String line = String.format("%s, %s, %s, %s, %s, %s",
+                        event.getCreationTime(),
+                        savedRoundData.toSecondString(event),
+                        savedRoundData.getElapsedTimeRelativeToMidnight(event),
+                        source, target, request.toString());
                 writer.println(line);
             }
             else if (event instanceof SanctionAppliedEvent) {

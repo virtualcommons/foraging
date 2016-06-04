@@ -166,8 +166,6 @@ public class GameWindow2D implements GameWindow {
     /**
      * In certain cases, init() _can_ be called before endRound() is finished. Need to lock
      * access!
-     * 
-     * @param event
      */
     public synchronized void init() {
         final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
@@ -260,9 +258,9 @@ public class GameWindow2D implements GameWindow {
     }
 
     /**
-     * Invoked when a subject collected a token at Point p.
+     * Invoked when a subject collected token(s) at the given positions.
      * 
-     * @param position
+     * @param positions
      */
     public void collectTokens(Point... positions) {
         subjectView.collectTokens(positions);
@@ -297,7 +295,7 @@ public class GameWindow2D implements GameWindow {
             // FIXME: refactor this ugliness.
             for (Identifier id : dataModel.getAllClientIdentifiers()) {
                 // ClientData clientData = clientDataMap.get(id);
-                String formatString = "";
+                String formatString;
                 if (id.equals(dataModel.getId())) {
                     formatString = " [%d (you) : %d] ";
                     builder.append(String.format(formatString, dataModel.getAssignedNumber(id), dataModel.getCurrentTokens(id)));
@@ -433,9 +431,7 @@ public class GameWindow2D implements GameWindow {
     }
 
     /**
-     * IMPORTANT: this method handles client keyboard inputs within the game.
-     * 
-     * @return
+     * Primary handler for client keyboard inputs within the game.
      */
     private KeyAdapter createGameWindowKeyListener() {
         return new KeyAdapter() {
