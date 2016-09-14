@@ -10,4 +10,20 @@
 <entry key='initial-distribution'>.25</entry>
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
+<entry key="instructions">
+<![CDATA[
+<h3>Round 4-6 Instructions</h3>
+<hr>
+<p>
+    The next {self.repeat} rounds are the same as the previous rounds with one exception - you will 
+    <b>not be able to anonymously communicate</b> with the other participants in your group. 
+    The length of these rounds is again {self.duration} seconds. 
+</p>
+<p> On the top right corner of the screen you can see how many tokens you have collected. On the top left corner of the
+    screen you can see the amount of time remaining in the round. </p>
+<p>
+    If you have any questions please raise your hand.  <b>Do you have any questions so far?</b>
+</p>
+]]>
+</entry>
 </properties>

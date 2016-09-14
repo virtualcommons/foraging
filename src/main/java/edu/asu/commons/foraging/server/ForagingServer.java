@@ -129,6 +129,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
     // private Duration chatDuration;
 
     private volatile boolean experimentStarted;
+    private volatile boolean singlePlayer;
+    private volatile boolean botGroupsEnabled;
 
     // FIXME: add the ability to reconfigure an already instantiated server
     public ForagingServer() {
@@ -706,7 +708,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 }
 
             });
-
             addEventProcessor(new EventTypeProcessor<BeginChatRoundRequest>(BeginChatRoundRequest.class) {
                 public void handle(BeginChatRoundRequest request) {
                     if (getCurrentRoundConfiguration().isChatEnabled()) {
@@ -843,8 +844,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 case IN_BETWEEN_ROUNDS:
                     // FIXME: there is an inherent nastiness going on with this model of control flow
                     // when we first spin up the server, there are no connected clients.
-                    // We enters this code block, initialize the round (with no participants, etc.) and then wait on the quiz signal
-
+                    // We enter this code block, initialize the round (with no participants, etc.) and then wait on the quiz signal
                     // the issue is that we need to initialize the groups at some clear, well-defined time.
                     // we have to do it after all the clients are connected, so either on a showInstructions or explicit "allocate groups" signal from the
                     // facilitator
@@ -852,7 +852,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     // in the handler for BeginRoundRequest) and to do it at the end of every round. Probably better to do it in round initialization
                     setupRound();
                     initializeGroups();
-                    sendFacilitatorMessage("Ready to show instructions and the start next round.");
+                    sendFacilitatorMessage("Ready to show instructions and start next round.");
                     if (getCurrentRoundConfiguration().isQuizEnabled()) {
                         getLogger().info("Waiting for all quizzes to be submitted.");
                         Utils.waitOn(quizSignal);
@@ -865,7 +865,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     // while waiting for connections we must defer group initialization till all clients
                     // are connected (which is unknown, we allow clients to connect until the experiment has started)
                     setupRound();
-                    sendFacilitatorMessage("Ready to show instructions and start the next round.");
+                    sendFacilitatorMessage("Ready to show instructions and start next round.");
                     if (getCurrentRoundConfiguration().isQuizEnabled()) {
                         getLogger().info("Waiting for all quizzes to be submitted.");
                         Utils.waitOn(quizSignal);
@@ -992,9 +992,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         }
 
         private void processRound() {
-            RoundConfiguration currentRoundConfiguration = getCurrentRoundConfiguration();
-            boolean singlePlayer = currentRoundConfiguration.isSinglePlayer();
-
             if (singlePlayer) {
                 processSinglePlayerRound();
                 return;
@@ -1010,7 +1007,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         }
                         resourceDispenser.generateResources();
                     });
-            if (currentRoundConfiguration.isBotGroupsEnabled()) {
+            if (botGroupsEnabled) {
                 botTick.onTick((duration) -> {
                     for (GroupDataModel group : serverDataModel.getGroups()) {
                         // only activate bots every 100 ms or so, otherwise they frontload all their actions.
@@ -1147,6 +1144,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
          */
         private void startRound() {
             RoundConfiguration roundConfiguration = getCurrentRoundConfiguration();
+            singlePlayer = roundConfiguration.isSinglePlayer();
+            botGroupsEnabled = roundConfiguration.isBotGroupsEnabled();
             persister.store(new RoundStartedMarkerEvent());
             // send RoundStartedEvents to all connected clients
             for (Map.Entry<Identifier, ClientData> entry : clients.entrySet()) {

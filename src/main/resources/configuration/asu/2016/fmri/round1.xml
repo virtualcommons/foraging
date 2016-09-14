@@ -11,7 +11,7 @@
 <entry key='repeat'>25</entry>
 <entry key="instructions">
 <![CDATA[
-<h1>Instructions for Rounds 1-25</h1>
+<h1>Instructions for Rounds 1-{self.repeat}</h1>
 <hr>
 <p>
     The length of each of the following {self.repeat} rounds is {self.duration} seconds. As in the practice round you

@@ -1,5 +1,6 @@
 package edu.asu.commons.foraging.conf;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -1013,6 +1014,21 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public String getBotType() {
         return getProperty("bot-type", getParentConfiguration().getBotType());
+    }
+
+    public Color getBackgroundColor() {
+        String color = getProperty("background-color", "BLACK");
+        return Color.getColor(color, Color.BLACK.getRGB());
+    }
+
+    public Color getSelfParticipantColor() {
+        String color = getProperty("self-participant-color", "YELLOW");
+        return Color.getColor(color, Color.YELLOW.getRGB());
+    }
+
+    public Color getOtherParticipantColor() {
+        String color = getProperty("other-participant-color", "BLUE");
+        return Color.getColor(color, Color.BLUE.getRGB());
     }
 
 }

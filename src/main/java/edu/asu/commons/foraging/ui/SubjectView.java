@@ -109,6 +109,8 @@ public class SubjectView extends GridView {
         shouldNumberPlayers = configuration.getClientsPerGroup() > 2;
         useTokenImage = configuration.isTokenImageEnabled();
         useAvatarImage = configuration.isAvatarImageEnabled();
+        selfParticipantColor = configuration.getSelfParticipantColor();
+        otherParticipantColor = configuration.getOtherParticipantColor();
 
         super.setup(configuration);
 
