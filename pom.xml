@@ -17,7 +17,7 @@ vim:sts=2:sw=2
   <url>http://github.com/virtualcommons/foraging</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jetty.version>9.3.0.M1</jetty.version>
+    <jetty.version>9.3.11.v20160721</jetty.version>
   </properties>
   <licenses>
     <license>
@@ -35,14 +35,14 @@ vim:sts=2:sw=2
   </issueManagement>
   <repositories>
     <repository>
-      <id>dev.commons.asu.edu</id>
+      <id>commons.archiva.internal</id>
       <name>dev.commons Maven2 repository</name>
       <url>http://dev.commons.asu.edu/archiva/repository/internal</url>
       <releases><enabled>true</enabled></releases>
       <snapshots><enabled>false</enabled></snapshots>
     </repository>
     <repository>
-      <id>snapshot.dev.commons.asu.edu</id>
+      <id>commons.archiva.snapshots</id>
       <name>dev.commons Maven2 snapshot repository</name>
       <url>http://dev.commons.asu.edu/archiva/repository/snapshots</url>
       <releases><enabled>false</enabled></releases>
@@ -60,6 +60,12 @@ vim:sts=2:sw=2
       <groupId>edu.asu.commons</groupId>
       <artifactId>sesef</artifactId>
       <version>0.8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-maven-plugin</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>net.java.dev.jogl</groupId>
@@ -78,7 +84,7 @@ vim:sts=2:sw=2
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.3</version>
+        <version>2.10.4</version>
         <configuration>
           <links>
             <link>http://commons.asu.edu/api/sesef/</link>
@@ -88,7 +94,7 @@ vim:sts=2:sw=2
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5</version>
+        <version>3.5.1</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
@@ -98,12 +104,6 @@ vim:sts=2:sw=2
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty.version}</version>
-        <configuration>
-          <scanIntervalSeconds>10</scanIntervalSeconds>
-          <webApp>
-            <contextPath>/</contextPath>
-          </webApp>
-        </configuration>
       </plugin>
     </plugins>
   </build>
