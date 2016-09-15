@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>Communication, 3 rounds</comment>
+    <entry key="display-group-tokens">true</entry>
+    <entry key="clients-per-group">5</entry>
+    <entry key="duration">240</entry>
+    <entry key="resource-depth">29</entry>
+    <entry key="resource-width">29</entry>
+
+    <entry key='always-explicit'>true</entry>
+    <entry key='max-cell-occupancy'>1</entry>
+
+    <entry key="initial-distribution">.25</entry>
+    <entry key="regrowth-rate">0.01</entry>
+    <entry key="chat-enabled">true</entry>
+    <entry key='chat-duration'>240</entry>
+    <entry key='repeat'>3</entry>
+    <entry key="instructions">
+        <![CDATA[
+        <h3>Instructions for the Next {self.repeat} Rounds</h3>
+        <hr>
+        <p>
+            The next {self.repeat} rounds are the same as the previous rounds with one exception - you will now be able
+            to communicate with the other participants in your group. Before the next round starts you can anonymously
+            communicate via text messages for {self.chatDuration} seconds with the other participants in your group. You
+            can use this opportunity to discuss the experiment and coordinate your actions to improve your earnings. You
+            may not promise them side-payments after the experiment is completed or make any threats. You are also not
+            allowed to reveal your real identity. We will be monitoring the chat traffic while you chat.
+        </p>
+        <p>
+            The length of this round is again {duration}.
+        </p>
+        <p>
+            If you have any questions please raise your hand.  <b>Do you have any questions so far?</b>
+        </p>
+        ]]>
+    </entry>
+</properties>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <comment>Communication | No Communication or Punishment</comment>
+    <comment>No Communication or Punishment | Communication</comment>
     <entry key="hostname">@SERVER_ADDRESS@</entry>
     <entry key="port">@PORT_NUMBER@</entry>
     <entry key="round0">round0.xml</entry>
@@ -10,10 +10,10 @@
     <entry key="wait-for-participants">true</entry>
     <entry key="number-of-rounds">3</entry>
     <entry key="use-background-texture">false</entry>
-    <entry key='background-color'>BLACK</entry>
     <entry key="use-token-image">true</entry>
     <entry key='token-image-path'>images/green-diamond.png</entry>
     <entry key="use-avatar-image">false</entry>
+    <entry key='background-color'>BLACK</entry>
     <entry key="facilitator-instructions">
         <![CDATA[
         <h3>Facilitator Instructions</h3>
