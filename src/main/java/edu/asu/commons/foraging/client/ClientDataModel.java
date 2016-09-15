@@ -163,7 +163,9 @@ public class ClientDataModel extends ForagingDataModel {
             return;
         }
         boolean singlePlayer = getRoundConfiguration().isSinglePlayer();
-        resourceDistribution = groupDataModel.getResourceDistribution();
+        synchronized (resourceDistribution) {
+            resourceDistribution = groupDataModel.getResourceDistribution();
+        }
         if (clientData == null || !singlePlayer) {
             clientData = groupDataModel.getClientData(getId());
         }

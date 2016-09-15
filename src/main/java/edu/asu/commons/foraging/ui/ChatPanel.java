@@ -5,6 +5,9 @@ import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -24,6 +27,7 @@ import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.event.FacilitatorCensoredChatRequest;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.UserInterfaceUtils;
+import edu.asu.commons.util.Duration;
 
 /**
  * $Id$
@@ -68,10 +72,10 @@ public class ChatPanel extends JPanel {
             JEditorPane instructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
             JScrollPane instructionsScrollPane = new JScrollPane(instructionsEditorPane);
             RoundConfiguration roundConfiguration = client.getCurrentRoundConfiguration();
-            
+
             instructionsEditorPane.setText(roundConfiguration.getChatInstructions());
             instructionsScrollPane.setPreferredSize(new Dimension(300, 300));
-            add(instructionsScrollPane, BorderLayout.EAST);
+            add(instructionsScrollPane, BorderLayout.WEST);
         }
         messagesEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
         messageScrollPane = new JScrollPane(messagesEditorPane);
@@ -111,7 +115,17 @@ public class ChatPanel extends JPanel {
     }
 
     public void initialize(DataModel<ServerConfiguration, RoundConfiguration> dataModel) {
-        this.participants = dataModel.getAllClientIdentifiers();
+        participants = dataModel.getAllClientIdentifiers();
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        Duration chatDuration = Duration.create(dataModel.getRoundConfiguration().getChatDuration()).start();
+        executor.scheduleAtFixedRate(() -> {
+            if (chatDuration.hasExpired()) {
+                executor.shutdown();
+            }
+            else {
+                getTextEntryPanel().updateTimeRemaining(chatDuration.getTimeLeftInSeconds());
+            }
+        }, 0, 1, TimeUnit.SECONDS);
     }
     
     private class TextEntryPanel extends JPanel {
@@ -120,6 +134,8 @@ public class ChatPanel extends JPanel {
 
         private Identifier targetIdentifier = Identifier.ALL;
         private JTextField chatField;
+        private int timeRemaining;
+        private JLabel timeRemainingLabel = new JLabel("");
 
         public TextEntryPanel(ForagingClient client) {
             setLayout(new BorderLayout(3, 3));
@@ -131,10 +147,17 @@ public class ChatPanel extends JPanel {
                     }
                 }
             });
-            JLabel headerLabel = new JLabel("Chat");
+            JPanel headerPanel = new JPanel();
+            JLabel headerLabel = new JLabel("Time remaining: ");
             headerLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
-            add(headerLabel, BorderLayout.NORTH);
+            headerPanel.add(headerLabel);
+            headerPanel.add(timeRemainingLabel);
+            add(headerPanel, BorderLayout.NORTH);
             add(chatField, BorderLayout.CENTER);
+        }
+
+        private void updateTimeRemaining(int timeRemaining) {
+            timeRemainingLabel.setText(String.valueOf(timeRemaining) + "s");
         }
 
         private void sendMessage() {

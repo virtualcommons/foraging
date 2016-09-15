@@ -74,9 +74,9 @@ public class SubjectView extends GridView {
     // Set from the the show-resource-zones parameter
     private boolean showResourceZones;
 
-    private Color selfParticipantColor = Color.BLUE;
+    private Color selfParticipantColor;
 
-    private Color otherParticipantColor = Color.ORANGE;
+    private Color otherParticipantColor;
 
     public SubjectView(Dimension screenSize, ClientDataModel dataModel) {
         super(screenSize);

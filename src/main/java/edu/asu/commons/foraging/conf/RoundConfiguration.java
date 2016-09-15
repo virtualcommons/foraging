@@ -1016,19 +1016,20 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getProperty("bot-type", getParentConfiguration().getBotType());
     }
 
+    public static final Color DEFAULT_BROWN_BACKGROUND_COLOR = new Color(205, 175, 149);
     public Color getBackgroundColor() {
         String color = getProperty("background-color", "BLACK");
-        return Color.getColor(color, Color.BLACK.getRGB());
+        return Color.getColor(color, DEFAULT_BROWN_BACKGROUND_COLOR);
     }
 
     public Color getSelfParticipantColor() {
         String color = getProperty("self-participant-color", "YELLOW");
-        return Color.getColor(color, Color.YELLOW.getRGB());
+        return Color.getColor(color, Color.YELLOW);
     }
 
     public Color getOtherParticipantColor() {
         String color = getProperty("other-participant-color", "BLUE");
-        return Color.getColor(color, Color.BLUE.getRGB());
+        return Color.getColor(color, Color.BLUE);
     }
 
 }

@@ -51,10 +51,8 @@ public abstract class GridView extends JPanel {
     protected Image scaledTokenImageB, scaledOtherSubjectImageB, scaledSelfImageB,
             scaledSelfExplicitCollectionModeImageB, scaledBeingSanctionedImageB, scaledSanctioningImageB,
             scaledMonitorImageB;
-
-    public static final Color BROWN_BACKGROUND_COLOR = new Color(205, 175, 149);
     
-    private Paint background = BROWN_BACKGROUND_COLOR;
+    private Paint background;
     
     /**
      * Represents the width and height of a grid cell, respectively.
@@ -150,6 +148,7 @@ public abstract class GridView extends JPanel {
         if (configuration.isTokenImageEnabled()) {
             tokenImage = loadImage(configuration.getTokenImagePath());
         }
+        background = configuration.getBackgroundColor();
         setImageSizes();
     }
 

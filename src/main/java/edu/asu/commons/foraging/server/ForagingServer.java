@@ -13,23 +13,13 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.logging.Level;
 
-import edu.asu.commons.event.BeginRoundRequest;
-import edu.asu.commons.event.ChatEvent;
-import edu.asu.commons.event.ChatRequest;
-import edu.asu.commons.event.ClientMessageEvent;
-import edu.asu.commons.event.ClientReadyEvent;
-import edu.asu.commons.event.EndRoundRequest;
-import edu.asu.commons.event.Event;
-import edu.asu.commons.event.EventTypeProcessor;
-import edu.asu.commons.event.FacilitatorRegistrationRequest;
-import edu.asu.commons.event.RoundStartedMarkerEvent;
-import edu.asu.commons.event.SetConfigurationEvent;
-import edu.asu.commons.event.ShowExitInstructionsRequest;
-import edu.asu.commons.event.ShowRequest;
-import edu.asu.commons.event.SocketIdentifierUpdateRequest;
+import edu.asu.commons.event.*;
 import edu.asu.commons.experiment.AbstractExperiment;
 import edu.asu.commons.experiment.IPersister;
 import edu.asu.commons.experiment.Persister;
@@ -710,13 +700,26 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<BeginChatRoundRequest>(BeginChatRoundRequest.class) {
                 public void handle(BeginChatRoundRequest request) {
-                    if (getCurrentRoundConfiguration().isChatEnabled()) {
+                    RoundConfiguration currentRoundConfiguration = getCurrentRoundConfiguration();
+                    if (currentRoundConfiguration.isChatEnabled() && ! currentRoundConfiguration.isInRoundChatEnabled()) {
+                        // start a dedicated chat round.
                         sendFacilitatorMessage("Sending begin chat round request to all participants");
                         for (Map.Entry<Identifier, ClientData> entry : clients.entrySet()) {
                             Identifier id = entry.getKey();
                             ClientData clientData = entry.getValue();
                             transmit(new BeginChatRoundRequest(id, clientData.getGroupDataModel()));
                         }
+                        // start a thread of execution to count down from chat duration, starting now
+                        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+                        int chatDuration = currentRoundConfiguration.getChatDuration();
+                        executor.schedule(() -> {
+                            for (Identifier id : clients.keySet()) {
+                                transmit(new ShowInstructionsRequest(id));
+                            }
+                            sendFacilitatorMessage("SYSTEM NOTICE: Dedicated chat round ended, ready to start the next round (Round -> Start)");
+                            executor.shutdown();
+                        }, chatDuration, TimeUnit.SECONDS);
+
                     }
                 }
             });
