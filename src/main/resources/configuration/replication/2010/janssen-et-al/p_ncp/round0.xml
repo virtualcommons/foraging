@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>Initial practice private property round</comment>
+    <entry key="resource-width">13</entry>
+    <entry key="resource-depth">13</entry>
+    <entry key="practice-round">true</entry>
+    <entry key="private-property">true</entry>
+    <entry key="duration">240</entry>
+
+    <entry key='regrowth-rate'>.01</entry>
+    <entry key='initial-distribution'>.25</entry>
+    <entry key='always-explicit'>true</entry>
+
+    <entry key="quiz">true</entry>
+    <entry key="q1">C</entry>
+    <entry key="q2">B</entry>
+    <entry key='instructions'>
+        <![CDATA[
+        <h2>Practice Round Instructions</h2>
+        <hr>
+        <p> Once everyone has finished the quiz, we will start a practice round of the token task. </p>
+        <p>
+            During the practice round, you will have {duration} to practice with the experimental environment. The
+            decisions you make in this round will NOT influence your earnings.  At the beginning of the practice round
+            {initialDistribution} of the cells are occupied with green tokens.  The environment is a
+            {self.resourceWidth} x {self.resourceDepth} grid of cells. 
+        </p>
+        <p> During this practice round, and <b>only during</b> this practice round, you are able to reset the tokens
+            displayed on the screen by pressing the <b>R</b> key.  When you press the <b>R</b> key you will reset the
+            distribution of the tokens to randomly occupying {initialDistribution} of the cells with tokens. 
+        </p>
+        <p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
+        ]]>
+    </entry>
+<entry key="quiz-instructions">
+<![CDATA[
+<h2>Quiz</h2>
+<hr>
+<p>
+    In a moment, you will do a practice round of the token task.  Before we go to
+    the practice round, answer the following questions to make sure you understand
+    the instructions.  You will earn {quizCorrectAnswerReward} for each correct answer.
+</p>
+<br>
+<form>
+<span class='q1'>Q1. Which of these statements is NOT correct?</span> <br>
+<input type="radio" name="q1" value="A">A. Your decisions of where to collect tokens affects the regeneration of tokens.<br>
+<input type="radio" name="q1" value="B">B. When you have collected all tokens on the screen, no new tokens will appear.<br>
+<input type="radio" name="q1" value="C">C. Tokens grow from the middle of the screen.<br>
+<input type="radio" name="q1" value="D">D. To collect a token you need to press the space bar while your yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif"></img> is on a cell with a token.<br>
+<br><br>
+<span class='q2'>Q2. Which sequence of situations is not possible?</span> <br>
+<img src="@CODEBASE_URL@/images/question2.jpg"></img><br>
+<input type="radio" name="q2" value="A">A<br>
+<input type="radio" name="q2" value="B">B<br>
+<input type="radio" name="q2" value="C">C<br>
+<input type="submit" name="submit" value="Submit"><br>
+</form>
+]]>
+</entry>
+<entry key='quiz-results'>
+    <![CDATA[
+    <h2>Quiz Results</h2>
+    <hr>
+        <p>
+            {if (allCorrect)}
+            You have answered all the questions correctly and earned <b>{totalQuizEarnings}</b>.  
+            {else}
+            You answered {numberCorrect} out of {totalQuestions} questions correctly and earned <b>{totalQuizEarnings}</b>.  Questions you've answered
+            incorrectly are highlighted in red.  Please see below for more details.
+            {endif}
+        </p>
+        <br><hr>
+<form>
+<span class='q1'>Q1. Which of these statements is NOT correct?</span> <br>
+    <b>{incorrect_q1}
+        In this question, "A", "B", and "D" are all true.  "C" is false.  Tokens only
+        regenerate when there are other tokens present in their immediately neighboring
+        cells. They do not spontaneously generate from the middle of the screen.
+    </b>
+<br>
+A. Your decisions of where to collect tokens affects the regeneration of tokens.<br>
+B. When you have collected all tokens on the screen, no new tokens will appear.<br>
+C. Tokens grow from the middle of the screen.<br>
+D. To collect a token you need to press the space bar while your yellow dot <img src="@CODEBASE_URL@/images/gem-self.gif"></img> is on a cell with a token.<br>
+<br>
+<span class='q2'>Q2. Which sequence of situations is not possible?</span> <br>
+    <b>
+        {incorrect_q2} 
+        In this question, sequence "B" is not possible.  Tokens cannot regenerate on an empty screen as shown in sequence B.
+    </b>
+    <br>
+<img src="@CODEBASE_URL@/images/question2.jpg"></img><br>
+</form>
+    ]]>
+</entry>
+</properties>

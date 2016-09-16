@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>No Communication or Punishment, 3 rounds</comment>
+    <entry key="display-group-tokens">true</entry>
+    <entry key="clients-per-group">5</entry>
+    <entry key="duration">240</entry>
+    <entry key="resource-depth">29</entry>
+    <entry key="resource-width">29</entry>
+
+    <entry key='always-explicit'>true</entry>
+    <entry key='max-cell-occupancy'>1</entry>
+
+    <entry key="initial-distribution">.25</entry>
+    <entry key="regrowth-rate">0.01</entry>
+    <entry key="chat-enabled">false</entry>
+    <entry key='repeat'>3</entry>
+    <entry key="instructions">
+        <![CDATA[
+        <h3>Instructions for the Next {self.repeat} Rounds</h3>
+        <hr>
+        <p>
+            The next {self.repeat} rounds are the same as the previous rounds with two exceptions - you will not be able
+            to anonymously communicate with the other participants in your group and you will also not be able to remove
+            tokens from other players.
+        </p>
+        <p>
+            The length of this round is again {duration}.
+        </p>
+        <p>
+            If you have any questions please raise your hand.  <b>Do you have any questions so far?</b>
+        </p>
+        ]]>
+    </entry>
+</properties>
