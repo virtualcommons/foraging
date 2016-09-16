@@ -38,8 +38,8 @@ For more detailed instructions, please see the [installation instructions on our
 
 Data generated from the foraging framework has been published in 
 [Lab Experiments for the Study of Social-Ecological Systems](http://www.sciencemag.org/cgi/content/abstract/328/5978/613). 
-Archives of the [configuration files used](https://github.com/virtualcommons/foraging/tree/master/src/main/resources/configuration/iu/archived) and the
-[experiment data](http://dev.commons.asu.edu/data/foraging/2008/all-iu-foraging-data.zip) are available.
+Archives of the [configuration files used](https://github.com/virtualcommons/foraging/tree/master/src/main/resources/configuration/replication/2010/janssen-et-al) and the
+[experiment data](https://osf.io/mdhb7) are also available.
 
 ### status
 [![Build Status](https://travis-ci.org/virtualcommons/foraging.svg?branch=master)](https://travis-ci.org/virtualcommons/foraging)
