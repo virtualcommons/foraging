@@ -38,15 +38,15 @@ public class ClientDataModel extends ForagingDataModel {
 
     // private GroupDataModel groupDataModel;
 
-    private final List<Identifier> allClientIdentifiers = new ArrayList<Identifier>();
+    private final List<Identifier> allClientIdentifiers = new ArrayList<>();
 
     private ClientData clientData;
 
-    // these are the subjects whom we have sanctioned
-    private Map<Identifier, Duration> sanctioned = new HashMap<Identifier, Duration>();
+    // the subjects that have been sanctioned by this participant
+    private Map<Identifier, Duration> sanctioned = new HashMap<>();
 
-    // these are the subjects that have sanctioned us.
-    private Map<Identifier, Duration> sanctioners = new HashMap<Identifier, Duration>();
+    // the subjects that have sanctioned this participant.
+    private Map<Identifier, Duration> sanctioners = new HashMap<>();
 
     private List<Strategy> selectedStrategies = new ArrayList<>();
     private ForagingClient client;

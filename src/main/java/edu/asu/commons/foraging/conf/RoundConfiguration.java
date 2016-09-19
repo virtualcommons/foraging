@@ -64,6 +64,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getDoubleProperty("trust-game-payoff", 0.25d);
     }
 
+
     public enum SanctionType {
         REAL_TIME, POST_ROUND, NONE;
         public static SanctionType find(String name) {
@@ -1030,6 +1031,26 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public Color getOtherParticipantColor() {
         String color = getProperty("other-participant-color", "BLUE");
         return Color.getColor(color, Color.BLUE);
+    }
+
+    public Color getSanctionerBackgroundColor() {
+        String color = getProperty("sanctioner-background-color", "WHITE");
+        return Color.getColor(color, Color.WHITE);
+    }
+
+    public Color getSanctionedBackgroundColor() {
+        String color = getProperty("sanctioned-background-color", "BLUE");
+        return Color.getColor(color, Color.BLUE);
+    }
+
+    public Color getSanctionerParticipantColor() {
+        String color = getProperty("sanctioner-participant-color", "MAGENTA");
+        return Color.getColor(color, Color.MAGENTA);
+    }
+
+    public Color getSanctionedParticipantColor() {
+        String color = getProperty("sanctioned-participant-color", "RED");
+        return Color.getColor(color, Color.RED);
     }
 
 }

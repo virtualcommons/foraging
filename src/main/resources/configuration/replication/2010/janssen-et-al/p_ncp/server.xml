@@ -163,6 +163,11 @@ room.
 <h2>Trust Game Earnings</h2>
 <hr>
 <ul>
+{if (self.practiceRound)}
+<p>
+This was a practice round so the tokens you collected do not contribute to your earnings.
+</p>
+{endif}
 {clientData.trustGameLog: {trustGameLog|
 <li>Trust Game #{i}: {trustGameLog}</li>
 }}

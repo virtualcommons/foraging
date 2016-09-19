@@ -159,6 +159,11 @@ room.
 <li>Quiz earnings: {clientData.quizEarnings}</li>
 <li>Show up payment: {showUpPayment}</li>
 </ul>
+{if (self.practiceRound)}
+<p>
+This was a practice round so the tokens you collected do not contribute to your earnings.
+</p>
+{endif}
 {if (showExitInstructions && !clientData.trustGameLog.empty) }
 <h2>Trust Game Earnings</h2>
 <hr>

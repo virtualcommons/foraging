@@ -74,9 +74,14 @@ public class SubjectView extends GridView {
     // Set from the the show-resource-zones parameter
     private boolean showResourceZones;
 
+    // Colors for participants and sanctioning animations
     private Color selfParticipantColor;
-
     private Color otherParticipantColor;
+    private Color sanctionedBackgroundColor;
+    private Color sanctionerBackgroundColor;
+    private Color sanctionedParticipantColor;
+    private Color sanctionerParticipantColor;
+
 
     public SubjectView(Dimension screenSize, ClientDataModel dataModel) {
         super(screenSize);
@@ -111,6 +116,10 @@ public class SubjectView extends GridView {
         useAvatarImage = configuration.isAvatarImageEnabled();
         selfParticipantColor = configuration.getSelfParticipantColor();
         otherParticipantColor = configuration.getOtherParticipantColor();
+        sanctionedBackgroundColor = configuration.getSanctionedBackgroundColor();
+        sanctionerBackgroundColor = configuration.getSanctionerBackgroundColor();
+        sanctionedParticipantColor = configuration.getSanctionedParticipantColor();
+        sanctionerParticipantColor = configuration.getSanctionerParticipantColor();
 
         super.setup(configuration);
 
@@ -291,9 +300,25 @@ public class SubjectView extends GridView {
     private void drawParticipant(Graphics2D graphics2D, Identifier id, int x, int y) {
         if (!useAvatarImage) {
             Composite originalComposite = graphics2D.getComposite();
-            graphics2D.setColor(getParticipantColor(id));
+            float alpha = 0.9f;
+            if (dataModel.isBeingSanctioned(id)) {
+                graphics2D.setColor(sanctionedBackgroundColor);
+                graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+                graphics2D.fillRect(x, y, getCellWidth(), getCellHeight());
+                graphics2D.setColor(sanctionedParticipantColor);
+            }
+            else if (dataModel.isSanctioning(id)) {
+                graphics2D.setColor(sanctionerBackgroundColor);
+                graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+                graphics2D.fillRect(x, y, getCellWidth(), getCellHeight());
+                graphics2D.setColor(sanctionerParticipantColor);
+            }
+            else {
+                graphics2D.setColor(getParticipantColor(id));
+                alpha = 0.5f;
+            }
             Shape avatarCircle = new Ellipse2D.Double(x, y, dw, dh);
-            graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+            graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
             graphics2D.fill(avatarCircle);
             graphics2D.setComposite(originalComposite);
             return;
@@ -310,11 +335,7 @@ public class SubjectView extends GridView {
             graphics2D.fillRect(x, y, getCellWidth(), getCellHeight());
             image = dataModel.getClientZone(id) == 1 ? scaledSanctioningImageB : scaledSanctioningImage;
             graphics2D.drawImage(image, x, y, this);
-        }
-        // else if (id.equals(dataModel.getMonitorId())) {
-        // graphics2D.drawImage(scaledMonitorImage, x, y, this);
-        // }
-        else if (id.equals(dataModel.getId())) {
+        } else if (id.equals(dataModel.getId())) {
             if (dataModel.isExplicitCollectionMode()) {
                 image = dataModel.getClientZone(id) == 1 ? scaledSelfExplicitCollectionModeImageB : scaledSelfExplicitCollectionModeImage;
                 graphics2D.drawImage(image, x, y, this);
