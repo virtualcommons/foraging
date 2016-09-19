@@ -83,7 +83,7 @@ public class FacilitatorWindow extends JPanel {
 
     private ClipboardService clipboardService;
 
-    private Map<Strategy, Integer> imposedStrategies = new HashMap<Strategy, Integer>();
+    private Map<Strategy, Integer> imposedStrategies = new HashMap<>();
 
     public FacilitatorWindow(Dimension dimension, Facilitator facilitator) {
         this.facilitator = facilitator;
@@ -122,7 +122,7 @@ public class FacilitatorWindow extends JPanel {
         JMenu menu = new JMenu("Round");
         menu.setMnemonic(KeyEvent.VK_R);
 
-        showInstructionsMenuItem = new JMenuItem("Show Instructions");
+        showInstructionsMenuItem = new JMenuItem("Show instructions");
         showInstructionsMenuItem.setMnemonic(KeyEvent.VK_I);
         showInstructionsMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -153,15 +153,19 @@ public class FacilitatorWindow extends JPanel {
         });
         menu.add(stopRoundMenuItem);
 
-        showExitInstructionsMenuItem = createMenuItem(menu, "Show exit instructions", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendShowExitInstructionsRequest();
+        boolean hasTrustGame = false;
+        boolean hasDedicatedChatRound = false;
+        for (RoundConfiguration configuration: getFacilitator().getServerConfiguration().getAllParameters()) {
+            if (configuration.isTrustGameEnabled()) {
+                hasTrustGame = true;
             }
-        });
+            if (configuration.isChatEnabled() && ! configuration.isInRoundChatEnabled()) {
+                hasDedicatedChatRound = true;
+            }
+        }
 
         startChatMenuItem = new JMenuItem("Start chat");
-        startChatMenuItem.setEnabled(true);
+        startChatMenuItem.setEnabled(hasDedicatedChatRound);
         startChatMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 facilitator.sendBeginChatRoundRequest();
@@ -169,7 +173,8 @@ public class FacilitatorWindow extends JPanel {
         });
         menu.add(startChatMenuItem);
 
-        showTrustGameMenuItem = new JMenuItem("Show Trust Game");
+        showTrustGameMenuItem = new JMenuItem("Show trust game");
+        showTrustGameMenuItem.setEnabled(hasTrustGame);
         showTrustGameMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 facilitator.sendShowTrustGameRequest();
@@ -178,6 +183,14 @@ public class FacilitatorWindow extends JPanel {
         menu.add(showTrustGameMenuItem);
 
         menuBar.add(menu);
+
+        showExitInstructionsMenuItem = createMenuItem(menu, "Show exit instructions", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                facilitator.sendShowExitInstructionsRequest();
+            }
+        });
+
 
         // voting menu
         menu = new JMenu("Voting");
