@@ -12,8 +12,15 @@ vim:sts=2:sw=2:
         <artifact pattern='${local-m2-pattern}.[ext]'/>
       </filesystem>
       <ibiblio name='central' m2compatible='true'/>
-      <ibiblio name='commons.snapshots' m2compatible='true' root='http://dev.commons.asu.edu/archiva/repository/snapshots'/>
-      <ibiblio name='commons.internal' m2compatible='true' root='http://dev.commons.asu.edu/archiva/repository/internal'/>
+      <!--
+      <ibiblio name="commons.snapshots"
+        m2compatible="true"
+        usepoms="true"
+        pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
+        root="https://dev.commons.asu.edu/archiva/repository/snapshots"/>
+        -->
+      <ibiblio name='commons.snapshots' m2compatible='true' root='https://dev.commons.asu.edu/archiva/repository/snapshots'/>
+      <ibiblio name='commons.internal' m2compatible='true' root='https://dev.commons.asu.edu/archiva/repository/internal'/>
     </chain>
   </resolvers>
 </ivysettings>

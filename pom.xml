@@ -37,14 +37,14 @@ vim:sts=2:sw=2
     <repository>
       <id>commons.archiva.internal</id>
       <name>dev.commons Maven2 repository</name>
-      <url>http://dev.commons.asu.edu/archiva/repository/internal</url>
+      <url>https://dev.commons.asu.edu/archiva/repository/internal</url>
       <releases><enabled>true</enabled></releases>
       <snapshots><enabled>false</enabled></snapshots>
     </repository>
     <repository>
       <id>commons.archiva.snapshots</id>
       <name>dev.commons Maven2 snapshot repository</name>
-      <url>http://dev.commons.asu.edu/archiva/repository/snapshots</url>
+      <url>https://dev.commons.asu.edu/archiva/repository/snapshots</url>
       <releases><enabled>false</enabled></releases>
       <snapshots><enabled>true</enabled></snapshots>
     </repository>
