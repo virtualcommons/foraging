@@ -1,0 +1,18 @@
+version: "2"
+services:
+  experiment:
+    build: ./
+    volumes:
+      - ./:/code/
+    ports:
+      - "16001:16001"
+    working_dir: /code
+    entrypoint: "java -jar -server server.jar"
+    links:
+      - web
+  web:
+    image: nginx:1-alpine
+    volumes:
+      - ./src/main/webapp:/usr/share/nginx/html
+    ports:
+      - "8080:80"
