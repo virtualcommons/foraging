@@ -27,7 +27,7 @@ import edu.asu.commons.util.Utils;
  */
 class MovementStatisticsProcessor extends SaveFileProcessor.Base {
     private Map<Identifier, ClientMovementStatistics> clientStatisticsMap = new LinkedHashMap<Identifier, ClientMovementStatistics>();
-    private Map<GroupDataModel, Integer> resourceCountMap = new HashMap<GroupDataModel, Integer>();
+    private Map<GroupDataModel, Integer> resourceCountMap = new HashMap<>();
 
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
@@ -45,7 +45,7 @@ class MovementStatisticsProcessor extends SaveFileProcessor.Base {
                 Identifier id = movementEvent.getId();
                 GroupDataModel groupDataModel = serverDataModel.getGroup(id);
                 // only count movements when the resource count is > 0
-                if (resourceCountMap.get(groupDataModel) > 0) {
+                if (resourceCountMap.getOrDefault(groupDataModel, 0) > 0) {
                     clientStatisticsMap.get(id).move(movementEvent.getDirection());
                 }
                 else {
@@ -55,7 +55,7 @@ class MovementStatisticsProcessor extends SaveFileProcessor.Base {
             else if (event instanceof ResourcesAddedEvent) {
                 ResourcesAddedEvent resourcesAddedEvent = (ResourcesAddedEvent) event;
                 GroupDataModel group = resourcesAddedEvent.getGroup();
-                int resources = resourceCountMap.get(group);
+                int resources = resourceCountMap.getOrDefault(group, 0);
                 resources += resourcesAddedEvent.getResources().size();
                 resourceCountMap.put(group, resources);
             }
@@ -63,7 +63,7 @@ class MovementStatisticsProcessor extends SaveFileProcessor.Base {
                 TokenCollectedEvent tokenCollectedEvent = (TokenCollectedEvent) event;
                 Identifier id = tokenCollectedEvent.getId();
                 GroupDataModel groupDataModel = serverDataModel.getGroup(id);
-                int resources = resourceCountMap.get(groupDataModel);
+                int resources = resourceCountMap.getOrDefault(groupDataModel, 0);
                 resourceCountMap.put(groupDataModel, resources - 1);
             }
         }
