@@ -27,15 +27,17 @@ at [Arizona State University](http://www.asu.edu), [Indiana University](http://w
 `git clone https://github.com/virtualcommons/foraging.git` or [download and unpack the latest release](https://github.com/virtualcommons/foraging/releases)
 * customize `build.properties` from the `build.properties.example` file. At a minimum, make sure you set the
   `server.address` to the IP address or fully qualified hostname of the machine you are using to serve this application
-* add configuration files to `src/main/resources/configuration`, see the [configuration wiki](https://github.com/virtualcommons/foraging/wiki/Configuration) for more details.
+* add configuration files to `src/main/resources/configuration`, see the [wiki's Configuration page](https://github.com/virtualcommons/foraging/wiki/Configuration) for more details.
 
 #### use docker-compose
 
-* `docker-compose run --service-ports experiment` will build an image and start an experiment server listening on port
-  16001 and an nginx webserver listening on port 8080 to deliver the foraging client and facilitator applications via
-  Java WebStart at `http://<server.address>:8080/` for the client and `http://<server.address>:8080/facilitator.jnlp`
-  for the facilitator.
-* to clean up everything, run `docker-compose down`
+* `docker-compose run --service-ports experiment` will build an Docker image and start two containers: an experiment
+  server listening on port 16001 and an nginx webserver listening on port 8080 to deliver the foraging client and
+  facilitator applications via Java WebStart. The relevant URLs are `http://<server.address>:8080/` to start a WebStart client and
+  `http://<server.address>:8080/facilitator.jnlp` to start a WebStart facilitator.
+* *Back up your data:*  you are done running an experiment, make sure you back up the binary data saved in `experiment-data`. You can convert the binary data to a variety of plaintext files via `docker-compose run data` or customize the statistics you see by writing a custom `SaveFileProcessor` and adding it to `ForagingSaveFileConverter`. via
+`ant 
+* Run `docker-compose down` to clean up your docker images when you're done.
 
 #### or install everything locally
 
