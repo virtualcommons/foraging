@@ -35,8 +35,8 @@ at [Arizona State University](http://www.asu.edu), [Indiana University](http://w
   server listening on port 16001 and an nginx webserver listening on port 8080 to deliver the foraging client and
   facilitator applications via Java WebStart. The relevant URLs are `http://<server.address>:8080/` to start a WebStart client and
   `http://<server.address>:8080/facilitator.jnlp` to start a WebStart facilitator.
-* *Back up your data:*  you are done running an experiment, make sure you back up the binary data saved in `experiment-data`. You can convert the binary data to a variety of plaintext files via `docker-compose run data` or customize the statistics you see by writing a custom `SaveFileProcessor` and adding it to `ForagingSaveFileConverter`. via
-`ant 
+* *Back up your data:*  you are done running an experiment, make sure you back up the binary data saved in `experiment-data`. 
+* Convert binary data stored in `DATA_DIR` to a variety of plaintext files via `docker-compose run data` or customize the statistics you see by writing a custom `SaveFileProcessor` and adding it to the list in `ForagingSaveFileConverter`. Run data conversion via `docker-compose run data`. You can select the data directory with the `DATA_DIR` environment variable and convert the XML savefiles with the `XML` environment variable, e.g., `docker-compose run -e DATA_DIR=<data-directory> -eXML=xml data`.
 * Run `docker-compose down` to clean up your docker images when you're done.
 
 #### or install everything locally
