@@ -435,20 +435,17 @@ public class ClientData implements Serializable {
         }
         if (roundConfiguration.isPrivateProperty()) {
             setPosition(new Point(roundConfiguration.getResourceWidth() / 2, roundConfiguration.getResourceDepth() / 2));
-        } else if (roundConfiguration.is2dExperiment()) {
-            int clientsPerGroup = roundConfiguration.getClientsPerGroup();
-            double cellWidth = roundConfiguration.getResourceWidth() / (double) clientsPerGroup;
-            int x = (int) ((cellWidth / 2) + (cellWidth * (getAssignedNumber() - 1)));
-            int y = roundConfiguration.getResourceDepth() / 2;
-
-            // Position the client on the correct side of the border between
-            // zones.
+        } 
+        else if (roundConfiguration.is2dExperiment()) {
+            Point initialPosition = groupDataModel.getInitialPosition(assignedNumber);
+            System.err.println("Generating initial position: " + initialPosition + ", assigned: " + assignedNumber);
             if (roundConfiguration.areZonesAssigned()) {
-                if (zone == 0)
-                    y--;
+                // Position the client on the correct side of the border between zones.
+                if (zone == 0) {
+                    initialPosition.translate(0, -1);
+                }
             }
-
-            setPosition(new Point(x, y));
+            setPosition(initialPosition);
         } else {
             // 3d initialize position
             setPosition(generate3DPosition());

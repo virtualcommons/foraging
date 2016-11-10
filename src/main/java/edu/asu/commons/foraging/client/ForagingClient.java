@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -58,9 +59,7 @@ import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id$
- * 
- * Client for costly sanctioning experiments. Encompasses both 2D and 3D.
+ * Foraging experiment client, for 2D / 3D experiments (3D now defunct, need to refactor out)
  * 
  * @author <a href='mailto:mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  * @version $Revision$
@@ -86,6 +85,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
     private MessageQueue messageQueue;
 
     private JPanel clientPanel = new JPanel();
+    private Logger logger = Logger.getLogger(getClass().getName());
 
     public ForagingClient(ServerConfiguration configuration) {
         super(configuration);
@@ -101,7 +101,8 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
 
     @Override
     protected void postConnect() {
-        // FIXME: this is hacky.. using the client side socket as the "authoritative" id.
+        // FIXME: this is hacky, using client side socket id as the "authoritative" id. client side socket id helps
+        // disambiguate NATted clients but may cause other issues
         SocketIdentifier socketId = (SocketIdentifier) getId();
         transmit(new SocketIdentifierUpdateRequest(socketId, socketId.getStationNumber()));
         state = ClientState.WAITING;
@@ -185,8 +186,9 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         });
         addEventProcessor(new EventTypeProcessor<RoundStartedEvent>(RoundStartedEvent.class) {
             public void handle(RoundStartedEvent event) {
-                dataModel.initialize(event.getGroupDataModel());
                 setId(event.getId());
+                dataModel.initialize(event.getGroupDataModel());
+                logger.info("initializing data model to group datamodel: " + dataModel.getClientData().getPosition());
                 messageQueue.start();
             }
         });
@@ -196,9 +198,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
                 if (isRoundInProgress()) {
                     dataModel.setGroupDataModel(event.getGroupDataModel());
                     getGameWindow().endRound(event);
-                    if (dataModel.is2dExperiment()) {
-                        messageQueue.stop();
-                    }
+                    messageQueue.stop();
                     state = ClientState.WAITING;
                 }
             }

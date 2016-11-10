@@ -533,6 +533,21 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         return true;
     }
 
+    /**
+     * Returns a Point based on the assigned number (1..N) where N is the number of clients per group. The Point
+     * corresponds to an x,y location where y is the midpoint of the resource grid and the x values will be evenly
+     * distributed across the width of the board.
+     */
+    public Point getInitialPosition(int assignedNumber) {
+        RoundConfiguration roundConfiguration = getRoundConfiguration();
+        int clientsPerGroup = roundConfiguration.getClientsPerGroup();
+        double cellWidth = roundConfiguration.getResourceWidth() / (double) clientsPerGroup;
+        int x = (int) ((cellWidth / 2) + (cellWidth * (assignedNumber - 1)));
+        int y = roundConfiguration.getResourceDepth() / 2;
+        return new Point(x, y);
+    }
+
+
     public void collectToken(ClientData clientData) {
         Point position = clientData.getPoint();
         synchronized (resourceDistribution) {
@@ -891,10 +906,16 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         this.imposedStrategy = imposedStrategy;
     }
 
-    public void addBot(BotType botType, int botNumber) {
-        Bot bot = BotFactory.getInstance().create(botType, botNumber, this);
-        bot.initialize(serverDataModel.getRoundConfiguration());
-        bots.add(bot);
+    public void addBots(int botsPerGroup, BotType botType) {
+        int size = clients.size();
+        synchronized (bots) {
+            bots.clear();
+            for (int i = 0; i < botsPerGroup; i++) {
+                Bot bot = BotFactory.getInstance().create(botType, size + i + 1, this);
+                bot.initialize(serverDataModel.getRoundConfiguration());
+                bots.add(bot);
+            }
+        }
     }
 
     public int getNumberOfBots() {

@@ -150,7 +150,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public boolean shouldRandomizeGroup() {
         return (isPracticeRound() && isPrivateProperty())
-                || getBooleanProperty("randomize-group", false);
+            || getBooleanProperty("randomize-group", false);
     }
 
     /**
@@ -616,7 +616,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public boolean is2dExperiment() {
-        return getExperimentType().equals(ExperimentType.TWO_DIMENSIONAL);
+        return ExperimentType.TWO_DIMENSIONAL.equals(getExperimentType());
     }
 
     public boolean is3dExperiment() {

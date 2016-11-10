@@ -1080,16 +1080,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 return false;
             }
             RoundConfiguration currentRoundConfiguration = getCurrentRoundConfiguration();
-            RoundConfiguration previousRoundConfiguration = getConfiguration().getPreviousRoundConfiguration();
-            // we shuffle participants:
-            // 1. when randomize-groups is set for the next round
-            // 2. when we move from a private property round to a open access round
-            // 3. when the clients per group in the current round is different from the
-            // clients per group in the next round (FIXME: is this too broad or can #2 just be a special case of this?)
-            // 4. when the team sizes change
+            // we shuffle participants only when randomize-groups is set on the round and this is not the first of a
+            // repeating round
             return currentRoundConfiguration.shouldRandomizeGroup()
-                    || (previousRoundConfiguration.getClientsPerGroup() != currentRoundConfiguration.getClientsPerGroup())
-                    || (previousRoundConfiguration.getMaxTeamSize(0) != currentRoundConfiguration.getMaxTeamSize(0));
+                || (currentRoundConfiguration.isRepeatingRound() && getConfiguration().getCurrentRepeatedRoundIndex() == 0);
         }
 
         private void shuffleParticipants() {
@@ -1117,7 +1111,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             if (shouldShuffleParticipants()) {
                 getLogger().info("Shuffling participants");
                 shuffleParticipants();
-            } else {
+            } 
+            else {
                 getLogger().info("Didn't need to shuffle participants, initializing client positions.");
                 // shuffleParticipants automatically initializes the client positions
                 // if we don't shuffle, we need to manually re-initialize them.
@@ -1129,11 +1124,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 int botsPerGroup = roundConfiguration.getBotsPerGroup();
                 BotType botType = BotType.valueOf(roundConfiguration.getBotType());
                 for (GroupDataModel group : serverDataModel.getGroups()) {
-                    for (int i = 0; i < botsPerGroup; i++) {
-                        if (group.getNumberOfBots() < botsPerGroup) {
-                            group.addBot(botType, i + 1);
-                        }
-                    }
+                    group.addBots(botsPerGroup, botType);
                 }
             }
             // set up the resource dispenser, generates the initial resource distributions for the
@@ -1151,6 +1142,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             botGroupsEnabled = roundConfiguration.isBotGroupsEnabled();
             persister.store(new RoundStartedMarkerEvent());
             // send RoundStartedEvents to all connected clients
+            serverState = ServerState.ROUND_IN_PROGRESS;
             for (Map.Entry<Identifier, ClientData> entry : clients.entrySet()) {
                 Identifier id = entry.getKey();
                 ClientData data = entry.getValue();
@@ -1169,7 +1161,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             if (roundConfiguration.isBotGroupsEnabled()) {
                 botTick.start();
             }
-            serverState = ServerState.ROUND_IN_PROGRESS;
         }
     }
 

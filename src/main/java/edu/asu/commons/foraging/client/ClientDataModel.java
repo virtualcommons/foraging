@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -62,6 +63,10 @@ public class ClientDataModel extends ForagingDataModel {
     private Map<Identifier, Integer> clientZones;
 
     private Map<Point, Resource> resourceDistribution = new HashMap<>();
+
+    private Logger logger = Logger.getLogger(getClass().getName());
+
+    private boolean singlePlayer = false;
 
     public ClientDataModel(ForagingClient client) {
         super(client.getEventChannel());
@@ -132,9 +137,10 @@ public class ClientDataModel extends ForagingDataModel {
 
     public void initialize(GroupDataModel groupDataModel) {
         clear();
+        singlePlayer = getRoundConfiguration().isSinglePlayer();
         Map<Identifier, ClientData> clientDataMap = groupDataModel.getClientDataMap();
         Identifier[] ids = new Identifier[clientDataMap.size()];
-        clientZones = new HashMap<Identifier, Integer>();
+        clientZones = new HashMap<>();
         // ensure that the allClientIdentifiers natural ordering is by assigned number.
         for (Map.Entry<Identifier, ClientData> entry : clientDataMap.entrySet()) {
             Identifier id = entry.getKey();
@@ -145,6 +151,7 @@ public class ClientDataModel extends ForagingDataModel {
             clientZones.put(id, data.getZone());
         }
         allClientIdentifiers.addAll(Arrays.asList(ids));
+        clientData = groupDataModel.getClientData(getId());
         setGroupDataModel(groupDataModel);
     }
 
@@ -162,11 +169,11 @@ public class ClientDataModel extends ForagingDataModel {
         if (groupDataModel == null) {
             return;
         }
-        boolean singlePlayer = getRoundConfiguration().isSinglePlayer();
         synchronized (resourceDistribution) {
             resourceDistribution = groupDataModel.getResourceDistribution();
         }
         if (clientData == null || !singlePlayer) {
+            // only update clientData if we are not in single player mode
             clientData = groupDataModel.getClientData(getId());
         }
         if (singlePlayer) {

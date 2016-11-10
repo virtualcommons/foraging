@@ -42,9 +42,8 @@ import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id$
  * 
- * The ForagerServerGameState is the data model needed on the server side.
+ * Full server side data model.
  * 
  * 
  * @author Allen Lee, Deepali Bhagvat
@@ -346,7 +345,7 @@ public class ServerDataModel extends ForagingDataModel {
         }
     }
     /**
-     * Reinitializes this server data model in preparation for a replay by:
+     * Reinitializes this server data model in preparation for a replay:
      * <ol>
      * <li> Sets event channel to a no-op event channel.</li>
      * <li> resets all group resource distributions </li>

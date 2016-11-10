@@ -95,8 +95,8 @@ public interface Bot {
         public void act() {
             // first, check number of actions taken vs actions per second
             if (numberOfActionsTaken > actionsPerSecond) {
-                logger.warning(String.format("Number of actions taken %d exceeds allowable actions per second %d",
-                        numberOfActionsTaken, actionsPerSecond));
+                logger.info(String.format("Number of actions taken %d exceeds allowable actions per second %d",
+                            numberOfActionsTaken, actionsPerSecond));
                 return;
             }
             // next, check if we have a wait enforced on us
@@ -205,15 +205,8 @@ public interface Bot {
         }
 
         public void initialize(RoundConfiguration roundConfiguration) {
-            int clientsPerGroup = roundConfiguration.getClientsPerGroup();
-            int groupSize = clientsPerGroup + roundConfiguration.getBotsPerGroup();
-            int positionNumber = getBotNumber() + clientsPerGroup;
-            int resourceWidth = roundConfiguration.getResourceWidth();
-            int resourceHeight = roundConfiguration.getResourceDepth();
-            double cellWidth = resourceWidth / (double) groupSize;
-            int x = (int) ((cellWidth / 2) + (cellWidth * (positionNumber - 1)));
-            int y = resourceHeight / 2;
-            setCurrentPosition(new Point(x, y));
+            int actionsPerSecond = roundConfiguration.getRobotMovesPerSecond();
+            setCurrentPosition(model.getInitialPosition(getBotNumber()));
             logger.info("setting current bot position to " + getPosition());
             currentTokens = 0;
         }
