@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>BENN-FMRI Round 51-75 configuration</comment>
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+<entry key='clients-per-group'>2</entry>
+<entry key="resource-depth">9</entry>
+<entry key="resource-width">9</entry>
+<entry key='bot-type'>COOPERATIVE</entry>
+<entry key='regrowth-rate'>0.15</entry>
+<entry key='repeat'>5</entry>
+<entry key="instructions">
+<![CDATA[
+<h1>Instructions for Round {self.roundIndexLabel}</h1>
+<p>
+The length of each of the following {self.repeat} rounds is {self.duration} seconds. 
+</p>
+<hr>
+<p><b>If you have any questions please raise your hand.</b></p>
+]]>
+</entry>
+</properties>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>BENN-FMRI Practice Round Configuration</comment>
+<entry key="practice-round">true</entry>
+<entry key="resource-depth">6</entry>
+<entry key="resource-width">6</entry>
+<entry key="private-property">true</entry>
+<entry key='regrowth-rate'>0.05</entry>
+<entry key='instructions'>
+<![CDATA[
+<h2>Practice Round Instructions</h2>
+<hr>
+<p>
+You will now have {self.duration} seconds to practice with the experimental environment. The decisions you make in this
+round will <b>not affect your earnings</b>. At the beginning of the practice round {initialDistribution} of the cells
+are occupied with green tokens.  The environment is a {self.resourceWidth} x {self.resourceDepth} grid of cells.
+</p>
+<p>
+During this practice round, and <b>only during this practice round</b>, you will be able
+to reset the tokens displayed on the screen by pressing the <b>R</b> key.  When you
+press the <b>R</b> key you will reset the distribution of the tokens to once again randomly occupy
+{initialDistribution} of the cells with tokens.
+</p>
+<p><b>If you have any questions please raise your hand. Do you have any questions so far?</b></p>
+]]>
+</entry>
+</properties>
