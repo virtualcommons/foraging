@@ -6,7 +6,7 @@ public class AggressiveBot extends Bot.SimpleBot {
 
     public final static int ACTIONS_PER_SECOND = 10;
 
-    public final static double MOVEMENT_PROBABILITY = 0.8d;
+    public final static double MOVEMENT_PROBABILITY = 0.9d;
 
     public final static double HARVEST_PROBABILITY = 0.9d;
 

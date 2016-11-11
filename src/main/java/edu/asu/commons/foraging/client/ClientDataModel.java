@@ -343,7 +343,7 @@ public class ClientDataModel extends ForagingDataModel {
     public void moveClient(Direction direction) {
         synchronized (clientPositions) {
             Point newLocation = direction.apply(getCurrentPosition());
-            if (isValidPosition(newLocation)) {
+            if (isValidPosition(newLocation) && groupDataModel.isCellAvailable(newLocation)) {
                 clientData.setPosition(newLocation);
                 clientPositions.put(getId(), newLocation);
             }

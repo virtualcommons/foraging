@@ -325,7 +325,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public boolean shouldCheckOccupancy() {
         return (getMaximumOccupancyPerCell() < getClientsPerGroup())
-                || (isSinglePlayer() && getMaximumOccupancyPerCell() > 0);
+            || (isSinglePlayer() && getMaximumOccupancyPerCell() > 0);
     }
 
     public int getMaximumOccupancyPerCell() {

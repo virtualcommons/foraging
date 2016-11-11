@@ -23,6 +23,9 @@ public class BotFactory {
             case COOPERATIVE:
                 bot = new CooperativeBot();
                 break;
+            case NORMAL:
+                bot = new NormalBot();
+                break;
             case RANDOM:
             default:
                 bot = new RandomBot();
