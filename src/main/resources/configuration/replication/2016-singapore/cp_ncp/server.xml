@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>Communication | No Communication or Punishment</comment>
+    <entry key="hostname">@SERVER_ADDRESS@</entry>
+    <entry key="port">@PORT_NUMBER@</entry>
+    <entry key='show-up-payment'>10</entry>
+    <entry key="round0">round0.xml</entry>
+    <entry key="round1">round1.xml</entry>
+    <entry key="round2">round2.xml</entry>
+    <entry key="wait-for-participants">true</entry>
+    <entry key="number-of-rounds">3</entry>
+    <entry key="use-background-texture">false</entry>
+    <entry key='background-color'>BLACK</entry>
+    <entry key="use-token-image">true</entry>
+    <entry key='token-image-path'>images/green-diamond.png</entry>
+    <entry key="use-avatar-image">false</entry>
+    <entry key="facilitator-instructions">
+        <![CDATA[
+        <h3>Facilitator Instructions</h3>
+        <p>
+            Welcome to the facilitator interface.  This interface allows you to control
+            the experiment.  You may only modify configuration parameters <b>before</b>
+            you start the experiment by selecting the Configuration menu.  When all the
+            participants are ready to begin the experiment, you can start the experiment
+            by selecting Experiment -&gt; Start.  After a round has been completed you
+            will be able to view the statistics for all of the participants.  You can
+            begin the next round by selecting Round -&gt; Start.
+        </p>
+        ]]>
+    </entry>
+    <entry key="welcome-instructions">
+        <![CDATA[
+        <h1>Welcome</h1>
+        <hr>
+        <p>
+            Welcome to the experiment. The experiment will begin shortly after everyone has been
+            assigned a station.
+            <br><br>
+            Please <b>wait quietly</b> and <b>do not close this window, open any other applications, or communicate with any of the other participants</b>.
+        </p>
+        ]]>
+    </entry>
+<entry key="general-instructions">
+<![CDATA[
+<h1>General Instructions</h1>
+<hr>
+<h2>How to participate</h2>
+<hr>
+<p>
+You will appear on the screen as a yellow circle <img width='23' height='23' src="@CODEBASE_URL@/images/yellow-circle.png"></img>. 
+You can move by pressing the four arrow keys on your keyboard.  
+</p>
+<p>
+    You can move up, down, left, or right.  You have to press a key for each and every move of your yellow dot.  As you
+    move around you can collect tokens <img width='40' height='40' src="@CODEBASE_URL@/images/green-diamond.png"></img>
+    and earn two cents for each collected token.  To collect a token, move your avatar over a token and <b>press the
+    space bar</b>.  Simply moving your avatar over a token does NOT collect that token.
+</p>
+
+<h2>Tokens</h2>
+<hr>
+<p>
+The tokens that you collect have the potential to regenerate.  After you have
+collected a green token, a new token can re-appear on that empty cell. The rate at
+which new tokens appear depends on the number of adjacent cells with tokens.
+The more tokens in the eight cells that surround an empty cell, the faster a new
+token will appear on that empty cell.  In other words, <b>existing tokens can
+generate new tokens</b>.  To illustrate this, please refer to Image 1 and Image 2.
+The middle cell in Image 1 denoted with an X has a greater chance of regeneration
+than the middle cell in Image 2.  When all neighboring cells are empty, there is
+<b>no chance for regeneration</b>.
+</p>
+<table width="100%">
+<tr>
+<td align="center"><b>Image 1</b></td>
+<td align="center"><b>Image 2</b></td>
+</tr>
+<tr>
+<td align="center">
+    <img src="@CODEBASE_URL@/images/8neighbors.jpg" alt="image 1">
+</td>
+<td align="center">
+    <img src="@CODEBASE_URL@/images/5neighbors.jpg" alt="image 2">
+</td>
+</tr>
+</table>
+
+<h2>Best Strategy</h2>
+<hr>
+<p>
+The chance that a token will regenerate on an empty cell increases as there are
+more tokens surrounding it.  Therefore, you want to have as many tokens around an
+empty cell as possible.  However, you also need empty cells to benefit from this
+regrowth. The best arrangement of tokens that maximizes overall regrowth is the
+checkerboard diagram shown below.
+<br>
+<img src="@CODEBASE_URL@/images/foraging-checkerboard.png" alt="Checkerboard Resource">
+</p>
+
+<h2>Practice Round</h2>
+<hr>
+<p>
+We will soon begin a practice round, where you will have {duration} to practice with the experimental environment. The
+decisions you make in this round will NOT influence your earnings. 
+</p>
+]]>
+</entry>
+<entry key="chat-instructions">
+<![CDATA[
+<p>
+You can chat with the other participants in your group during this round.
+You may discuss any aspect of the experiment with the other participants in your group with two exceptions:
+<ol>
+    <li>You <b>may not promise side-payments after the experiment is completed or threaten anyone with any consequence after the experiment is finished</b>.</li>
+    <li>You <b>may not reveal your actual identity</b></li>
+</ol>
+<p>
+We are monitoring the chat traffic while you chat. If we detect any violation of the
+rules we will have to stop the experiment and remove the offending group from the
+room.
+</p>
+<p>
+    You will see other participants labeled from A to {self.lastChatHandle} in the chat
+    window.  You can send a chat message by typing into the textfield and pressing
+    the enter key.
+</p>
+]]>
+</entry>
+<entry key="same-as-previous-round-instructions">
+<![CDATA[
+<h3>Round Instructions</h3>
+<hr>
+<p>This round is the same as the previous round.</p>
+<p>The length of this round is {duration}.</p>
+<p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
+]]>
+</entry>
+<entry key='facilitator-debriefing'>
+<![CDATA[
+<h3>Round {self.roundIndexLabel} results</h3>
+<hr>
+<table border=1 cellspacing=3 cellpadding=3>
+<tr>
+<th>Participant</th><th>Current tokens</th><th>Current income</th><th>Quiz earnings</th><th>Trust game earnings</th><th>Total income</th>
+</tr>
+{clientDataList: {data | 
+<tr align="RIGHT"><td>{data.id}</td><td>{data.currentTokens}</td><td>{data.currentIncome}</td><td>{data.quizEarnings}</td><td>{data.trustGameEarnings}</td><td>{data.grandTotalIncome}</td></tr>
+}}
+</table>
+]]>
+</entry>
+<entry key='client-debriefing'>
+<![CDATA[
+<h1>{if (self.practiceRound)}Practice Round{else}Round {self.roundIndexLabel}{endif} Results</h1>
+<hr>
+<ul>
+<li>Tokens collected in this round: {clientData.currentTokens}</li>
+<li>Income from tokens collected: {clientData.currentIncome}</li>
+<li>Quiz earnings: {clientData.quizEarnings}</li>
+<li>Show up payment: {showUpPayment}</li>
+</ul>
+{if (self.practiceRound)}
+<p>
+This was a practice round so the tokens you collected do not contribute to your earnings.
+</p>
+{endif}
+{if (showExitInstructions && !clientData.trustGameLog.empty) }
+<h2>Trust Game Earnings</h2>
+<hr>
+<ul>
+{clientData.trustGameLog: {trustGameLog|
+<li>Trust Game #{i}: {trustGameLog}</li>
+}}
+</ul>
+Your total trust game earnings: <b>{clientData.trustGameEarnings}</b>.
+{endif}
+<h2>Total Income</h2>
+<hr>
+<p>
+Your <b>total income</b> is <b>{clientData.grandTotalIncome}</b>.
+</p>
+{if (showExitInstructions)}
+<h2>Exit Survey</h2>
+<hr>
+<p>
+This was the last round, but not the end of the experiment. We ask that you please carefully fill out a brief survey as we prepare your payments.
+</p>
+<h2>Payment</h2>
+<hr>
+<p>
+When payments are ready we will call you up one by one. Please wait until your
+computer number, <b>{clientData.id}</b>, is called to turn in your survey and
+receive payment.  Please answer the survey carefully and thank you for
+participating. 
+</p>
+<p>
+NOTE: Please <b>answer the survey completely (there may be a back side)</b>
+and <b>bring all your belongings with you</b> when you come up to
+receive your payment to help us speed up the payment process.
+</p>
+{endif}
+]]>
+</entry>
+<entry key='facilitator-payment-instructions'>
+    <![CDATA[
+    <h2>Experiment has ended</h3>
+    <p>
+        Each participant's final payments are listed in the table above. We recommend that you copy and paste it into a text editor for your records.
+    </p>
+    <h3>
+        Please remember to select "Round -> Show exit instructions" to show each participant their final debriefing. 
+    </h3>
+    ]]>
+</entry>
+</properties>

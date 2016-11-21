@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>No communication or punishment, 3 group rounds</comment>
+    <entry key="display-group-tokens">true</entry>
+    <entry key="clients-per-group">5</entry>
+    <entry key="duration">240</entry>
+    <entry key="resource-depth">29</entry>
+    <entry key="resource-width">29</entry>
+    <entry key='always-explicit'>true</entry>
+    <entry key='max-cell-occupancy'>1</entry>
+    <entry key="initial-distribution">.25</entry>
+    <entry key="regrowth-rate">0.01</entry>
+    <!-- before this round begins, we have a chat session -->
+    <entry key='repeat'>3</entry>
+    <entry key="instructions">
+        <![CDATA[
+        <h1>Instructions for Rounds 1-{self.repeat}</h1>
+        <hr>
+        <p>
+            The length of each of the following {self.repeat} rounds is {self.duration} seconds. As in the practice
+            round you can collect green tokens but there are two important differences. You will earn
+            <b>{dollarsPerToken}</b> for each token collected and you <b>cannot reset</b> the distribution of
+            green tokens. 
+        </p>
+        <p>
+            In this round the renewable resource will become five times bigger. You
+            will share this larger environment with other players in this room.
+            Each of you has been randomly assigned to one of several equal-sized
+            {self.clientsPerGroup}-person groups.  Each of the groups is collecting tokens from an identical, but
+            separate resource. 
+        </p>
+        <p>
+            Each of you has been assigned a number from 1 to {self.clientsPerGroup}.  The other members of your
+            group will appear on the screen as blue circles <img src="@CODEBASE_URL@/images/blue-circle.png"> with a
+            white number in the middle of the circle.  On the top right corner of the screen you can see how many tokens
+            each player has collected.
+        </p>
+        <h3>Anonymity</h3>
+        <hr>
+        <p>
+            Because group membership was randomly assigned by the computer, neither you nor
+            the experimenter will be able to identify which person in the room has been
+            assigned to a particular group or number within a group.  Your anonymity is
+            guaranteed.
+        </p>
+        <p>
+            If you have any questions please raise your hand.  <b>Do you have any questions so far?</b>
+        </p>
+        ]]>
+    </entry>
+</properties>

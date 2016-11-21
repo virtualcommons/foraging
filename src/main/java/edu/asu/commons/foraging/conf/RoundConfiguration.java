@@ -28,8 +28,6 @@ import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 
 /**
- * $Id: RoundConfiguration.java,v ec656450a643 2015/03/23 17:41:38 allen $
- * 
  * At some point this should be persistent database objects in a key-value store..?
  * 
  * Something like:
@@ -41,7 +39,6 @@ import edu.asu.commons.util.Duration;
  * 
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Rev: 534 $
  */
 public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerConfiguration, RoundConfiguration> {
 
@@ -396,8 +393,16 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return template.render();
     }
 
+    public boolean isLabDollarsEnabled() {
+        return getBooleanProperty("use-lab-dollars");
+    }
+
     public String toCurrencyString(double amount) {
-        return NumberFormat.getCurrencyInstance().format(amount);
+        if (isLabDollarsEnabled()) {
+            return String.format("%d lab dollars", amount);
+        }
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+        return currencyFormat.format(amount) + " " + currencyFormat.getCurrency().getCurrencyCode();
     }
 
     /**
