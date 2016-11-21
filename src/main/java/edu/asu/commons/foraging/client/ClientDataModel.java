@@ -27,10 +27,9 @@ import edu.asu.commons.util.Duration;
 
 /**
  * 
- * This class should only provide game state relevant to a particular client.
+ * Provides game state relevant to a particular client.
  * 
  * @author Allen Lee
- * @version $Revision$
  */
 
 public class ClientDataModel extends ForagingDataModel {
@@ -67,6 +66,10 @@ public class ClientDataModel extends ForagingDataModel {
     private Logger logger = Logger.getLogger(getClass().getName());
 
     private boolean singlePlayer = false;
+
+    private boolean shouldCheckOccupancy = false;
+
+    private int maximumOccupancyPerCell = 1;
 
     public ClientDataModel(ForagingClient client) {
         super(client.getEventChannel());
@@ -138,6 +141,8 @@ public class ClientDataModel extends ForagingDataModel {
     public void initialize(GroupDataModel groupDataModel) {
         clear();
         singlePlayer = getRoundConfiguration().isSinglePlayer();
+        shouldCheckOccupancy = getRoundConfiguration().shouldCheckOccupancy();
+        maximumOccupancyPerCell = getRoundConfiguration().getMaximumOccupancyPerCell();
         Map<Identifier, ClientData> clientDataMap = groupDataModel.getClientDataMap();
         Identifier[] ids = new Identifier[clientDataMap.size()];
         clientZones = new HashMap<>();
@@ -267,10 +272,6 @@ public class ClientDataModel extends ForagingDataModel {
         return clientTokens.get(id);
     }
 
-    // public Map<Identifier, ClientData> getClientDataMap() {
-    // return groupDataModel.getClientDataMap();
-    // }
-
     public synchronized boolean isBeingSanctioned(Identifier id) {
         return checkSanctionStatus(sanctioned, id);
     }
@@ -340,14 +341,33 @@ public class ClientDataModel extends ForagingDataModel {
         return clientZones.get(id);
     }
 
+    /**
+     * Only used in single player mode. 
+     */
     public void moveClient(Direction direction) {
         synchronized (clientPositions) {
             Point newLocation = direction.apply(getCurrentPosition());
-            if (isValidPosition(newLocation) && groupDataModel.isCellAvailable(newLocation)) {
+            if (isValidPosition(newLocation) && isCellAvailable(newLocation)) {
                 clientData.setPosition(newLocation);
                 clientPositions.put(getId(), newLocation);
             }
         }
     }
+
+    public boolean isCellAvailable(Point position) {
+        if (shouldCheckOccupancy) {
+            int currentOccupancy = 0;
+            for (Point otherPosition : getClientPositions().values()) {
+                if (position.equals(otherPosition)) {
+                    currentOccupancy++;
+                }
+                if (currentOccupancy >= maximumOccupancyPerCell) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
 }
