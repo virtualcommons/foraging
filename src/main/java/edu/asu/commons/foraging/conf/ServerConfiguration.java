@@ -256,4 +256,11 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
         return getIntProperty("max-cell-occupancy", 1);
     }
 
+    public double getRobotHarvestProbability() {
+        return getDoubleProperty("robot-harvest-probability", 0.6d);
+    }
+
+    public double getRobotMovementProbability() {
+        return getDoubleProperty("robot-movement-probability", 0.9d);
+    }
 }

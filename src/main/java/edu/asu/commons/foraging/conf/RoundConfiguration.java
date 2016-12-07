@@ -399,7 +399,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public String toCurrencyString(double amount) {
         if (isLabDollarsEnabled()) {
-            return String.format("%d lab dollars", amount);
+            return String.format("%s lab dollars", amount);
         }
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
         return currencyFormat.format(amount) + " " + currencyFormat.getCurrency().getCurrencyCode();
@@ -897,29 +897,27 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public String generateClientDebriefing(ClientData data, boolean showExitInstructions) {
         ST st = createStringTemplate(getClientDebriefing());
-        NumberFormat formatter = NumberFormat.getCurrencyInstance();
-        populateClientEarnings(data, getParentConfiguration(), formatter, showExitInstructions);
+        populateClientEarnings(data, getParentConfiguration(), isTrustGameEnabled());
         st.add("clientData", data);
         // FIXME: replace showExitInstructions within client debriefing with a ExitInstructions template?
         st.add("showExitInstructions", showExitInstructions);
-        st.add("showUpPayment", formatter.format(getParentConfiguration().getShowUpPayment()));
+        st.add("showUpPayment", toCurrencyString(getParentConfiguration().getShowUpPayment()));
         return st.render();
     }
 
-    private void populateClientEarnings(ClientData data, ServerConfiguration serverConfiguration, NumberFormat formatter, boolean includeTrustGame) {
-        data.setGrandTotalIncome(formatter.format(serverConfiguration.getTotalIncome(data, includeTrustGame)));
-        data.setCurrentIncome(formatter.format(tokensToDollars(data.getCurrentTokens())));
-        data.setQuizEarnings(formatter.format(serverConfiguration.getQuizEarnings(data)));
-        data.setTrustGameEarnings(formatter.format(data.getTrustGameIncome()));
+    private void populateClientEarnings(ClientData data, ServerConfiguration serverConfiguration, boolean includeTrustGame) {
+        data.setGrandTotalIncome(toCurrencyString(serverConfiguration.getTotalIncome(data, includeTrustGame)));
+        data.setCurrentIncome(toCurrencyString(tokensToDollars(data.getCurrentTokens())));
+        data.setQuizEarnings(toCurrencyString(serverConfiguration.getQuizEarnings(data)));
+        data.setTrustGameEarnings(toCurrencyString(data.getTrustGameIncome()));
     }
 
     public String generateFacilitatorDebriefing(ServerDataModel serverDataModel) {
         ST template = createStringTemplate(getFacilitatorDebriefingTemplate());
         template.add("lastRound", serverDataModel.isLastRound());
         ServerConfiguration serverConfiguration = getParentConfiguration();
-        NumberFormat formatter = NumberFormat.getCurrencyInstance();
         for (ClientData data : serverDataModel.getClientDataMap().values()) {
-            populateClientEarnings(data, serverConfiguration, formatter, true);
+            populateClientEarnings(data, serverConfiguration, true);
         }
         template.add("clientDataList", serverDataModel.getClientDataMap().values());
         return template.render();
@@ -1003,7 +1001,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      * making a move
      */
     public double getRobotHarvestProbability() {
-        return getDoubleProperty("robot-harvest-probability", 0.5d);
+        return getDoubleProperty("robot-harvest-probability", getParentConfiguration().getRobotHarvestProbability());
+    }
+
+    public double getRobotMovementProbability() {
+        return getDoubleProperty("robot-movement-probability", getParentConfiguration().getRobotMovementProbability());
     }
 
     public String getTokenImagePath() {

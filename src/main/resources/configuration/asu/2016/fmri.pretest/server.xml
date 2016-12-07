@@ -17,6 +17,7 @@
 <entry key="default-round-duration">40</entry>
 <entry key="use-background-texture">false</entry>
 <entry key='use-lab-dollars'>true</entry>
+<entry key='bot-type'>CUSTOM</entry>
 <entry key="use-token-image">true</entry>
 <entry key='token-image-path'>images/green-diamond.png</entry>
 <entry key="use-avatar-image">false</entry>
@@ -65,7 +66,7 @@ Please <b>wait quietly</b> and <b>do not close this window, open any other appli
 You will appear on the screen as a blue circle <img width='25' height='25' src="@CODEBASE_URL@/images/blue-circle.png"></img>. 
 You can move by pressing the four arrow keys on your keyboard to move up, down, left, or right.  You must press a key
 for each and every move. As you move around you can collect tokens 
-<img width='25' height='25' src="@CODEBASE_URL@/images/green-diamond.png"></img> and earn <b>{dollarsPerToken} lab dollars</b>
+<img width='25' height='25' src="@CODEBASE_URL@/images/green-diamond.png"></img> and earn <b>{dollarsPerToken}</b>
 for each collected token.  To collect a token, move your avatar over it and <b>press the space bar</b>.  Simply moving
 your avatar over a token does <b>not collect</b> that token.
 </p>

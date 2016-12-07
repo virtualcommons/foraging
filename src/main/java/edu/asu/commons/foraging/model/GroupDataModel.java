@@ -924,10 +924,23 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     public void addBots(int botsPerGroup, BotType botType) {
         int size = clients.size();
+        RoundConfiguration configuration = getRoundConfiguration();
+        double movementProbability = configuration.getRobotMovementProbability();
+        double harvestProbability = configuration.getRobotHarvestProbability();
+        int actionsPerSecond = configuration.getRobotMovesPerSecond();
         synchronized (bots) {
             bots.clear();
+
             for (int i = 0; i < botsPerGroup; i++) {
-                Bot bot = BotFactory.getInstance().create(botType, size + i + 1, this);
+                int botNumber = size + i + 1;
+                Bot bot = null;
+                switch (botType) {
+                    case CUSTOM:
+                        bot = BotFactory.getInstance().create(botNumber, this, actionsPerSecond, movementProbability, harvestProbability);
+                        break;
+                    default:
+                        bot = BotFactory.getInstance().create(botType, size + i + 1, this);
+                }
                 bot.initialize(serverDataModel.getRoundConfiguration());
                 bots.add(bot);
             }

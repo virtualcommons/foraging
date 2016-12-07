@@ -10,17 +10,20 @@ public class NormalBot extends Bot.SimpleBot {
 
     public final static double MOVEMENT_PROBABILITY = 0.9d;
 
+    private BotType botType = BotType.NORMAL;
+
     public NormalBot() {
         super(ACTIONS_PER_SECOND, MOVEMENT_PROBABILITY, HARVEST_PROBABILITY);
     }
 
     public NormalBot(int actionsPerSecond, double movementProbability, double harvestProbability) {
         super(actionsPerSecond, movementProbability, harvestProbability);
+        botType = BotType.CUSTOM;
     }
 
     @Override
     public BotType getBotType() {
-        return BotType.NORMAL;
+        return botType;
     }
 
 }

@@ -7,7 +7,7 @@
 <entry key='clients-per-group'>2</entry>
 <entry key="resource-depth">9</entry>
 <entry key="resource-width">9</entry>
-<entry key='bot-type'>AGGRESSIVE</entry>
+<entry key='robot-harvest-probability'>1.0</entry>
 <entry key='regrowth-rate'>0.15</entry>
 <entry key='repeat'>5</entry>
 <entry key="instructions">
