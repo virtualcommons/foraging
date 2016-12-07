@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.bot;
 
 public class CooperativeBot extends Bot.SimpleBot {
 

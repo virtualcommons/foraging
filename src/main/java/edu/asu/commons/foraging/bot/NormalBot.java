@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.bot;
 
 public class NormalBot extends Bot.SimpleBot {
 
@@ -12,6 +12,10 @@ public class NormalBot extends Bot.SimpleBot {
 
     public NormalBot() {
         super(ACTIONS_PER_SECOND, MOVEMENT_PROBABILITY, HARVEST_PROBABILITY);
+    }
+
+    public NormalBot(int actionsPerSecond, double movementProbability, double harvestProbability) {
+        super(actionsPerSecond, movementProbability, harvestProbability);
     }
 
     @Override

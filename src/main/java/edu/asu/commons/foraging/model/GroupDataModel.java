@@ -16,9 +16,10 @@ import java.util.stream.Collectors;
 
 import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.experiment.DataModel;
-import edu.asu.commons.foraging.client.Bot;
-import edu.asu.commons.foraging.client.BotFactory;
-import edu.asu.commons.foraging.client.BotType;
+import edu.asu.commons.foraging.bot.Bot;
+import edu.asu.commons.foraging.bot.BotFactory;
+import edu.asu.commons.foraging.bot.BotType;
+import edu.asu.commons.foraging.bot.BotIdentifier;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
@@ -473,6 +474,16 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         return false;
     }
 
+    public Bot getBot(BotIdentifier id) {
+        for (Bot bot: bots) {
+            if (bot.getId().equals(id)) {
+                return bot;
+            }
+        }
+        getLogger().severe("no bot found with id: " + id);
+        return bots.get(0);
+    }
+
     /**
      *
      * Moves the client corresponding to id in direction d.
@@ -482,6 +493,11 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
      * @return
      */
     public void moveClient(Identifier id, Direction direction) {
+        if (id instanceof BotIdentifier) {
+            Bot bot = getBot((BotIdentifier) id);
+            move(bot, direction);
+            return;
+        }
         ClientData clientData = clients.get(id);
         Point newPosition = direction.apply(clientData.getPoint());
         // System.err.println(String.format("Moving client %s in direction %s to position %s", id, direction, newPosition));
@@ -678,7 +694,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
      * Returns true if the resource is in the resource distribution and is not
      * already owned by a different resource owner.
      * 
-     * @param resource
+     * @param request a LockResourceRequest containing the local/remote resource
      * @return
      */
     public boolean lockResource(LockResourceRequest request) {
@@ -916,6 +932,10 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
                 bots.add(bot);
             }
         }
+    }
+
+    public Map<Identifier, Bot> getBotMap() {
+        return bots.stream().collect(Collectors.toMap(Bot::getId, b -> b));
     }
 
     public int getNumberOfBots() {

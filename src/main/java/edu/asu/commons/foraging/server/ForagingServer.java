@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.logging.Level;
 
 import edu.asu.commons.event.*;
@@ -24,7 +23,7 @@ import edu.asu.commons.experiment.AbstractExperiment;
 import edu.asu.commons.experiment.IPersister;
 import edu.asu.commons.experiment.Persister;
 import edu.asu.commons.experiment.StateMachine;
-import edu.asu.commons.foraging.client.BotType;
+import edu.asu.commons.foraging.bot.BotType;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.data.ForagingSaveFileConverter;

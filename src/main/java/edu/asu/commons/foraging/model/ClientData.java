@@ -19,14 +19,11 @@ import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 
 /**
- * 
- * $Id$
- * 
- * 
+ * Encapsulates all human client data (not bots).
+ *
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>, Deepali Bhagvat
- * @version $Revision$
  */
-public class ClientData implements Serializable {
+public class ClientData implements Serializable, Actor {
 
     private static final long serialVersionUID = 5281922601551921005L;
 

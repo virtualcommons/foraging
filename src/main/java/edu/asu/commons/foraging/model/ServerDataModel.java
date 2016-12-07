@@ -23,6 +23,8 @@ import edu.asu.commons.event.Event;
 import edu.asu.commons.event.EventChannel;
 import edu.asu.commons.event.EventTypeChannel;
 import edu.asu.commons.event.PersistableEvent;
+import edu.asu.commons.foraging.bot.Bot;
+import edu.asu.commons.foraging.bot.BotIdentifier;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.AddClientEvent;
 import edu.asu.commons.foraging.event.ExplicitCollectionModeRequest;
@@ -47,7 +49,6 @@ import edu.asu.commons.net.Identifier;
  * 
  * 
  * @author Allen Lee, Deepali Bhagvat
- * @version $Revision$
  */
 public class ServerDataModel extends ForagingDataModel {
 
@@ -71,7 +72,6 @@ public class ServerDataModel extends ForagingDataModel {
     public ServerDataModel(EventChannel channel) {
         super(channel);
     }
-    
 
     public boolean isDirty() {
 		return dirty;
@@ -191,10 +191,6 @@ public class ServerDataModel extends ForagingDataModel {
         channel.handle(new TokenMovedEvent(oldLocation, newLocation));
     }
 
-    public void moveResources(GroupDataModel group, List<Point> oldLocations, List<Point> newLocations) {
-
-    }
-
     public void cleanupRound() {
         for (GroupDataModel group: clientsToGroups.values()) {
             group.cleanupRound();
@@ -222,13 +218,30 @@ public class ServerDataModel extends ForagingDataModel {
     }
 
     public Map<Identifier, ClientData> getClientDataMap() {
-        Map<Identifier, ClientData> clientDataMap = new HashMap<Identifier, ClientData>();
+        Map<Identifier, ClientData> clientDataMap = new HashMap<>();
         for (Map.Entry<Identifier, GroupDataModel> entry : clientsToGroups.entrySet()) {
             Identifier id = entry.getKey();
             GroupDataModel group = entry.getValue();
             clientDataMap.put(id, group.getClientData(id));
         }
         return clientDataMap;
+    }
+
+    public Map<Identifier, Bot> getBotMap() {
+        Map<Identifier, Bot> botMap = new HashMap<>();
+        for (GroupDataModel group: getGroups()) {
+            botMap.putAll(group.getBotMap());
+        }
+        return botMap;
+    }
+
+    public Map<Identifier, Actor> getActorMap() {
+        Map<Identifier, Actor> actorMap = new HashMap<>();
+        for (GroupDataModel group: getGroups()) {
+            actorMap.putAll(group.getClientDataMap());
+            actorMap.putAll(group.getBotMap());
+        }
+        return actorMap;
     }
 
     public void moveClient(Identifier id, Direction d) {
@@ -264,6 +277,10 @@ public class ServerDataModel extends ForagingDataModel {
     public GroupDataModel getGroup(Identifier id) {
         GroupDataModel group = clientsToGroups.get(id);
         if (group == null) {
+            if (id instanceof BotIdentifier) {
+                // FIXME: assumes bots only run in single player groups of one
+                return clientsToGroups.values().iterator().next();
+            }
             logger.warning("No group available for id:" + id);
         }
         return group;

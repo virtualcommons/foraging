@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.bot;
 
 import edu.asu.commons.foraging.model.Direction;
 

@@ -62,7 +62,6 @@ import edu.asu.commons.util.Utils;
  * Foraging experiment client, for 2D / 3D experiments (3D now defunct, need to refactor out)
  * 
  * @author <a href='mailto:mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision$
  */
 
 public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfiguration> {

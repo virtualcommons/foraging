@@ -94,7 +94,7 @@
     Available targets:
       compile     - Compile all the source code and tests.
       clean       - Remove all compiled source and test classes and build artifacts.
-      purge       - Purges all configuration files and the sesef maven/ivy jars in addition to running a clean
+      purge       - Purges sesef maven/ivy jars in addition to running a clean
       demo        - runs a quickstart demo using configuration files from src/main/resources/configuration/demo and the sample build.properties
       docs        - Create JavaDoc documentation for all source code.
       test        - Run all JUnit in the test source tree.

@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.bot;
 
 import edu.asu.commons.foraging.model.GroupDataModel;
 
@@ -12,6 +12,13 @@ public class BotFactory {
 
     public final static BotFactory getInstance() {
         return INSTANCE;
+    }
+
+    public Bot create(int botNumber, GroupDataModel groupDataModel, int actionsPerSecond, double movementProbability, double harvestProbability) {
+        Bot bot = new NormalBot(actionsPerSecond, movementProbability, harvestProbability);
+        bot.setBotNumber(botNumber);
+        bot.setGroupDataModel(groupDataModel);
+        return bot;
     }
     
     public Bot create(BotType botType, int botNumber, GroupDataModel groupDataModel) {

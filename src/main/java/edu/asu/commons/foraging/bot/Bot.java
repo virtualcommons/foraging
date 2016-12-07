@@ -1,16 +1,17 @@
-package edu.asu.commons.foraging.client;
+package edu.asu.commons.foraging.bot;
 
 import java.awt.Point;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import edu.asu.commons.foraging.model.Actor;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.net.Identifier;
 
-public interface Bot {
+public interface Bot extends Actor {
 
     /**
      * The main entry point into a bot's behavior, invoked by the server every N milliseconds.
@@ -51,10 +52,6 @@ public interface Bot {
     public void setBotNumber(int botNumber);
 
     public void setGroupDataModel(GroupDataModel model);
-
-    public class BotIdentifier extends Identifier.Base<BotIdentifier> {
-        private static final long serialVersionUID = 1609142256924017761L;
-    }
 
     public abstract class SimpleBot implements Bot, Serializable {
 
@@ -226,6 +223,7 @@ public interface Bot {
         public void setGroupDataModel(GroupDataModel groupDataModel) {
             this.model = groupDataModel;
         }
+        public GroupDataModel getGroupDataModel() { return model; }
 
         public Point getTargetLocation() {
             return targetLocation;

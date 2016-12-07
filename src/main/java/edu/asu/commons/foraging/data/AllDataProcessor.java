@@ -9,6 +9,8 @@ import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
+import edu.asu.commons.foraging.bot.Bot;
+import edu.asu.commons.foraging.bot.BotIdentifier;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.EnforcementRankingRequest;
 import edu.asu.commons.foraging.event.HarvestFruitRequest;
@@ -21,22 +23,16 @@ import edu.asu.commons.foraging.event.ResourcesAddedEvent;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
-import edu.asu.commons.foraging.model.ClientData;
-import edu.asu.commons.foraging.model.GroupDataModel;
-import edu.asu.commons.foraging.model.Resource;
-import edu.asu.commons.foraging.model.ServerDataModel;
+import edu.asu.commons.foraging.model.*;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id$
- * 
  * Serializes all data in the save file into a CSV string format, ordered by time.
  * 
  * 
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
- * @version $Rev: 526 $
  */
 class AllDataProcessor extends SaveFileProcessor.Base {
 
@@ -50,6 +46,12 @@ class AllDataProcessor extends SaveFileProcessor.Base {
         processData(savedRoundData, writer);
     }
 
+    private void handleBotEvent(PersistableEvent event, Bot bot) {
+        if (event instanceof MovementEvent) {
+            MovementEvent movementEvent = (MovementEvent) event;
+        }
+    }
+
     private void processData(SavedRoundData savedRoundData, PrintWriter writer) {
     	RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
         SortedSet<PersistableEvent> actions = savedRoundData.getActions();
@@ -57,24 +59,24 @@ class AllDataProcessor extends SaveFileProcessor.Base {
         Map<Identifier, ClientMovementTokenCount> clientMovementTokenCounts = ClientMovementTokenCount.createMap(dataModel);
         boolean restrictedVisibility = roundConfiguration.isSubjectsFieldOfVisionEnabled();
         dataModel.reinitialize(roundConfiguration);
-        Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();
+        Map<Identifier, Actor> actorMap = dataModel.getActorMap();
         for (PersistableEvent event: actions) {
             if (event instanceof MovementEvent) {
                 MovementEvent movementEvent = (MovementEvent) event;
                 dataModel.apply(movementEvent);
-                ClientData clientData = clientDataMap.get(event.getId());
+                Actor actor = actorMap.get(event.getId());
                 ClientMovementTokenCount client = clientMovementTokenCounts.get(event.getId());
                 client.moves++;
-                GroupDataModel group = clientData.getGroupDataModel();
+                GroupDataModel group = actor.getGroupDataModel();
                 String line = String.format("%s, %s, %s, %s, %d, %d, %s, %s, %s, %s",
                         event.getCreationTime(),
                         savedRoundData.toSecondString(event),
                         savedRoundData.getElapsedTimeRelativeToMidnight(event),
-                        clientData.getId(),
+                        actor.getId(),
                         group.getGroupId(),
                         client.moves,
-                        clientData.getPosition().x,
-                        clientData.getPosition().y,
+                        actor.getPosition().x,
+                        actor.getPosition().y,
                         movementEvent.getDirection(),
                         "movement event"
                 );
@@ -82,16 +84,16 @@ class AllDataProcessor extends SaveFileProcessor.Base {
             }
             else if (event instanceof TokenCollectedEvent) {
                 TokenCollectedEvent tokenCollectedEvent = (TokenCollectedEvent) event;
-                ClientData clientData = clientDataMap.get(event.getId());
+                Actor actor = actorMap.get(event.getId());
                 ClientMovementTokenCount client = clientMovementTokenCounts.get(event.getId());
                 Point location = tokenCollectedEvent.getLocation();
                 client.tokens++;
-                GroupDataModel group = clientData.getGroupDataModel();
+                GroupDataModel group = actor.getGroupDataModel();
                 String line = String.format("%s, %s, %s, %s, %d, %d, %d, %d, %s", 
                         event.getCreationTime(),
                         savedRoundData.toSecondString(event),
                         savedRoundData.getElapsedTimeRelativeToMidnight(event),
-                        clientData.getId(),
+                        actor.getId(),
                         location.x,
                         location.y,
                         group.getGroupId(),
@@ -117,9 +119,9 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 String message = request.toString();
                 if (restrictedVisibility) {
                     int radius = roundConfiguration.getViewSubjectsRadius();
-                    ClientData clientData = clientDataMap.get(event.getId());
-                    GroupDataModel group = clientData.getGroupDataModel();
-                    Circle circle = new Circle(clientData.getPoint(), radius);
+                    Actor actor = actorMap.get(event.getId());
+                    GroupDataModel group = actor.getGroupDataModel();
+                    Circle circle = new Circle(actor.getPosition(), radius);
                     targetStringBuilder.append('[');
                     for (Map.Entry<Identifier, Point> entry: group.getClientPositions().entrySet()) {
                         Identifier id = entry.getKey();
