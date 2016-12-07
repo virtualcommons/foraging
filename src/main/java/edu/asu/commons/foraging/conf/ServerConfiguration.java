@@ -239,6 +239,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
     public int getBotsPerGroup() {
         return getIntProperty("bots-per-group", 1);
     }
+
+    public boolean isLabDollarsEnabled() {
+        return getBooleanProperty("use-lab-dollars");
+    }
     
     /**
      * Will need to revisit if we want multiple bot types coexisting in the same round.

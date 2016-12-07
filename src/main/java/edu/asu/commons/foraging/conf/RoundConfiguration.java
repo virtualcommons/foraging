@@ -394,7 +394,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public boolean isLabDollarsEnabled() {
-        return getBooleanProperty("use-lab-dollars");
+        return getBooleanProperty("use-lab-dollars", getParentConfiguration().isLabDollarsEnabled());
     }
 
     public String toCurrencyString(double amount) {

@@ -16,6 +16,7 @@
 <entry key="wait-for-participants">true</entry>
 <entry key="default-round-duration">40</entry>
 <entry key="use-background-texture">false</entry>
+<entry key='use-lab-dollars'>true</entry>
 <entry key="use-token-image">true</entry>
 <entry key='token-image-path'>images/green-diamond.png</entry>
 <entry key="use-avatar-image">false</entry>

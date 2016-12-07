@@ -278,8 +278,7 @@ public class ServerDataModel extends ForagingDataModel {
         GroupDataModel group = clientsToGroups.get(id);
         if (group == null) {
             if (id instanceof BotIdentifier) {
-                // FIXME: assumes bots only run in single player groups of one
-                return clientsToGroups.values().iterator().next();
+                return getBotMap().get(id).getGroupDataModel();
             }
             logger.warning("No group available for id:" + id);
         }

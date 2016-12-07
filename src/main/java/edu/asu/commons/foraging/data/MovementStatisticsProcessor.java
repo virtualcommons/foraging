@@ -26,15 +26,19 @@ import edu.asu.commons.util.Utils;
  * @version $Rev: 526 $
  */
 class MovementStatisticsProcessor extends SaveFileProcessor.Base {
-    private Map<Identifier, ClientMovementStatistics> clientStatisticsMap = new LinkedHashMap<Identifier, ClientMovementStatistics>();
+    private Map<Identifier, ClientMovementStatistics> clientStatisticsMap = new LinkedHashMap<>();
     private Map<GroupDataModel, Integer> resourceCountMap = new HashMap<>();
 
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
         ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
+        RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
         for (GroupDataModel group: serverDataModel.getGroups()) {
             for (Identifier id: group.getOrderedClientIdentifiers()) {
-                clientStatisticsMap.put(id, new ClientMovementStatistics(id, (RoundConfiguration) savedRoundData.getRoundParameters()));
+                clientStatisticsMap.put(id, new ClientMovementStatistics(id, roundConfiguration));
+            }
+            for (Identifier id: group.getBotMap().keySet()) {
+                clientStatisticsMap.put(id, new ClientMovementStatistics(id, roundConfiguration));
             }
             resourceCountMap.put(group, 0);
         }

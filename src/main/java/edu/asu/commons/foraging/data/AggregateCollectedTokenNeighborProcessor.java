@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
+import edu.asu.commons.foraging.bot.BotIdentifier;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.MovementEvent;
 import edu.asu.commons.foraging.event.ResourceAddedEvent;
@@ -65,15 +66,15 @@ public class AggregateCollectedTokenNeighborProcessor extends SaveFileProcessor.
         // populate the ordered identifiers, try directly from the participant tokens map that
         // is persisted in later versions of the experiment.
         ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
-        TreeSet<Identifier> orderedIdentifiers = new TreeSet<Identifier>(serverDataModel.getClientDataMap().keySet());
+        TreeSet<Identifier> orderedIdentifiers = new TreeSet<>(serverDataModel.getClientDataMap().keySet());
         // write out header for collected tokens statistics.  
         // second token header is the distribution for token harvests when other subjects are in the field of view.
         writer.println(
         		Utils.join(',', "Time", "Client ID", 
         				Utils.join(',', NEIGHBORING_TOKEN_HEADER), 
         				Utils.join(',', NEIGHBORING_TOKEN_HEADER)));
-        Map<Identifier, Integer[]> collectedTokenNeighborsWithOtherSubjectsInView = new LinkedHashMap<Identifier, Integer[]>();
-        Map<Identifier, Integer[]> collectedTokenNeighbors = new LinkedHashMap<Identifier, Integer[]>();
+        Map<Identifier, Integer[]> collectedTokenNeighborsWithOtherSubjectsInView = new LinkedHashMap<>();
+        Map<Identifier, Integer[]> collectedTokenNeighbors = new LinkedHashMap<>();
         for (Identifier id: orderedIdentifiers) {
         	Integer[] neighbors = new Integer[9];
         	Integer[] neighborsWithOtherSubjectsInView = new Integer[9];
@@ -87,6 +88,9 @@ public class AggregateCollectedTokenNeighborProcessor extends SaveFileProcessor.
             clientData.initializePosition();
         }
         for (PersistableEvent event: savedRoundData.getActions()) {
+        	if (event.getId() instanceof BotIdentifier) {
+        	    continue;
+            }
         	long elapsedTimeInSeconds = savedRoundData.getElapsedTimeInSeconds(event);
         	if (isIntervalElapsed(elapsedTimeInSeconds)) {
         	    writeAggregateStatistics(writer, collectedTokenNeighbors, collectedTokenNeighborsWithOtherSubjectsInView);

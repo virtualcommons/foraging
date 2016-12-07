@@ -1,23 +1,22 @@
 package edu.asu.commons.foraging.bot;
 
+import edu.asu.commons.foraging.conf.RoundConfiguration;
+import edu.asu.commons.foraging.model.Actor;
+import edu.asu.commons.foraging.model.Direction;
+import edu.asu.commons.foraging.model.GroupDataModel;
+import edu.asu.commons.net.Identifier;
+
 import java.awt.Point;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import edu.asu.commons.foraging.model.Actor;
-import edu.asu.commons.foraging.conf.RoundConfiguration;
-import edu.asu.commons.foraging.model.Direction;
-import edu.asu.commons.foraging.model.GroupDataModel;
-import edu.asu.commons.net.Identifier;
-
 public interface Bot extends Actor {
 
     /**
      * The main entry point into a bot's behavior, invoked by the server every N milliseconds.
-     * 
-     * @param model
-     *            the state of the world in which this bot is embedded
+     *
+     * FIXME: consider injecting the model / state of the world for the bot as a parameter
      */
     public void act();
 

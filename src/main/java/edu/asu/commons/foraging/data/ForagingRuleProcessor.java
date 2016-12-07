@@ -8,14 +8,15 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 
 import edu.asu.commons.event.PersistableEvent;
-import edu.asu.commons.experiment.SaveFileProcessor.Base;
+import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
+import edu.asu.commons.foraging.bot.BotIdentifier;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.net.Identifier;
 
-public class ForagingRuleProcessor extends Base {
+public class ForagingRuleProcessor extends SaveFileProcessor.Base {
 
     // rules are based on ForagingStrategy enum and ordered accordingly
     // rule 1: collect tokens for 10 seconds than wait 10 seconds
@@ -137,16 +138,15 @@ public class ForagingRuleProcessor extends Base {
         SortedSet<PersistableEvent> actions = savedRoundData.getActions();
         ServerDataModel dataModel = (ServerDataModel) savedRoundData.getDataModel();
         Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();
-        Map<ClientData, RuleData> dataMap = new TreeMap<ClientData, RuleData>(new Comparator<ClientData>() {
-            public int compare(ClientData a, ClientData b) {
-                return a.getId().getStationId().compareTo(b.getId().getStationId());
-            }
-        });
+        Map<ClientData, RuleData> dataMap = new TreeMap<>((a, b) -> a.getId().getStationId().compareTo(b.getId().getStationId()));
         for (ClientData data: clientDataMap.values()) {
             dataMap.put(data, new RuleData());
         }
         for (PersistableEvent event: actions) {
             if (event instanceof TokenCollectedEvent) {
+                if (event.getId() instanceof BotIdentifier) {
+                    continue;
+                }
                 TokenCollectedEvent tokenCollectedEvent = (TokenCollectedEvent) event;
                 ClientData clientData = clientDataMap.get(event.getId());
                 Point location = tokenCollectedEvent.getLocation();
@@ -167,7 +167,6 @@ public class ForagingRuleProcessor extends Base {
                     data.q3Tokens,
                     data.q4Tokens
                     );
-            System.err.println(line);
             writer.println(line);
         }
     }
