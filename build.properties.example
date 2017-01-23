@@ -25,7 +25,7 @@ web.dir=src/main/webapp
 # The build.xml that loads this properties file defaults to ${server.address} + "/foraging"
 # 
 # Default value for Maven jetty webserver
-codebase.url=http://${server.address}:8080/
+codebase.url=http://${server.address}:8080
 
 # The experiment server port used to communicate with each individual experiment client
 server.port=16001
