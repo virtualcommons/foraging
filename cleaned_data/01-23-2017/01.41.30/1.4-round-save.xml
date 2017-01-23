@@ -1,0 +1,2546 @@
+<object-stream>
+  <edu.asu.commons.foraging.conf.RoundConfiguration>
+    <properties>
+      <property name="instructions" value="&#xa;&#xa;&lt;h1&gt;Instructions for Round {self.roundIndexLabel}&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;    The length of each of the following {self.repeat} rounds is {self.duration} seconds. As in the practice round you&#xa;    can collect green tokens. However, this time you will earn &lt;b&gt;{dollarsPerToken}&lt;/b&gt; lab dollars for each token&#xa;    collected. You &lt;b&gt;cannot&lt;/b&gt; reset the distribution of green tokens. &#xa;&lt;/p&gt;&#xa;&lt;p&gt;&#xa;    On the top right corner of the screen you can see how many tokens you have collected. On the top left corner of the&#xa;    screen you can see the amount of time remaining in the round.&#xa;&lt;/p&gt;&#xa;&lt;p&gt;&lt;b&gt;If you have any questions please raise your hand.&lt;/b&gt;&lt;/p&gt;&#xa;&#xa;"/>
+      <property name="resource-width" value="9"/>
+      <property name="q10" value="F"/>
+      <property name="q9" value="F"/>
+      <property name="q8" value="T"/>
+      <property name="q7" value="F"/>
+      <property name="q6" value="Impossible"/>
+      <property name="q5" value="Possible"/>
+      <property name="regrowth-rate" value="0.05"/>
+      <property name="q4" value="T"/>
+      <property name="robot-harvest-probability" value="0.4"/>
+      <property name="q3" value="T"/>
+      <property name="q2" value="T"/>
+      <property name="q1" value="F"/>
+      <property name="repeat" value="5"/>
+      <property name="resource-depth" value="9"/>
+      <property name="quiz-results" value="&#xa;&#xa;    &lt;h2&gt;Quiz Results&lt;/h2&gt;&#xa;    &lt;hr&gt;&#xa;        &lt;p&gt;&#xa;            {if (allCorrect)}&#xa;            You have answered all the questions correctly and earned &lt;b&gt;{totalQuizEarnings}&lt;/b&gt; in lab dollars.&#xa;            {else}&#xa;            You answered {numberCorrect} out of {totalQuestions} questions correctly and earned &lt;b&gt;{totalQuizEarnings}&lt;/b&gt; in lab dollars.  Questions you&apos;ve answered&#xa;            incorrectly are highlighted in red.  Please see below for more details.&#xa;            {endif}&#xa;        &lt;/p&gt;&#xa;        &lt;br&gt;&lt;hr&gt;&#xa;&lt;form&gt;&#xa;&lt;span class=&apos;q1&apos;&gt;Q1. Tokens grow from the middle of the screen.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;{incorrect_q1}&#xa;        This statement is false. Tokens only regenerate when there are other tokens present in their immediately&#xa;        neighboring cells. They do not spontaneously generate from the middle of the screen.&#xa;    &lt;/b&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q2&apos;&gt;Q2. In order to collect a token you need to press the space bar while your avatar is on a cell with a token.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q2} &#xa;        This statement is true. You must press the space bar when your avatar is on a cell with a token to collect that token.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q3&apos;&gt;Q3. When you have collected all tokens on the screen, no new tokens will appear.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q3} &#xa;        This statement is true. Tokens can only regenerate if there are other tokens present in their immediately neighboring cells.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q4&apos;&gt;Q4. Your decisions of where to collect tokens affects the regeneration of tokens.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q4} &#xa;        This statement is true. The chance that a new token will appear in an empty cell is greatest when the eight cells surrounding that&#xa;        empty cell all have tokens. &#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q5&apos;&gt;Q5. Is the following sequence possible?&lt;/span&gt;&#xa;&lt;img src=&quot;http://localhost:8080//images/q5.png&quot; /&gt; &#xa;&lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q5} &#xa;        Yes, this sequence is possible. New tokens can regenerate on an empty cell when neighboring cells have existing tokens.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q6&apos;&gt;Q6. Is the following sequence possible?&lt;/span&gt;&lt;img src=&quot;http://localhost:8080//images/q6.png&quot; /&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q6} &#xa;        No, this sequence is not possible. New tokens cannot regenerate on an empty cell when all neighboring cells are also empty.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q7&apos;&gt;Q7. If each token is worth $0.02 and you collect 100 tokens in a round, you have earned 3 dollars in that round.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q7} &#xa;        This statement is false. You would have earned 100 * $0.02 = $2.00 in that round.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;            &lt;span class=&apos;q8&apos;&gt;Q8. The duration of a round is {self.duration} seconds.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q8} &#xa;        This statement is true. The round will last {self.duration} seconds.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q9&apos;&gt;Q9. All the cells are filled with green tokens at the start of the experiment.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q9} &#xa;        This statement is false. At the beginning of each round, 25% of the cells will be filled with green tokens.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q10&apos;&gt;Q10. The amount of tokens you can earn only depends on how fast you collect the tokens.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q10} &#xa;        This statement is false. The amount of tokens you can earn depends on how you manage your tokens, not how fast you collect them.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;/form&gt;&#xa;&#xa;"/>
+      <property name="quiz" value="true"/>
+      <property name="max-cell-occupancy" value="1"/>
+      <property name="clients-per-group" value="2"/>
+      <property name="always-explicit" value="true"/>
+      <property name="quiz-instructions" value="&#xa;&#xa;&lt;h1&gt;Changes to the Experimental Environment&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;    We will now make a change to the environment, namely the regeneration of tokens. New tokens can now reappear in&#xa;    empty cells. The rate at which new tokens appear depends on the number of adjacent cells with tokens. The more&#xa;    tokens in the eight cells that surround an empty cell, the faster a new token will appear on that empty cell. In&#xa;    other words, &lt;b&gt;existing tokens can generate new tokens&lt;/b&gt;. To illustrate this, please refer to Image 1 and Image&#xa;    2. The middle cell in Image 1 denoted with an X has a greater chance of regeneration than the middle cell in Image&#xa;    2.  When all neighboring cells are empty, there is &lt;b&gt;no chance for regeneration&lt;/b&gt;.&#xa;&lt;/p&gt;&#xa;&lt;table width=&quot;100%&quot;&gt;&#xa;&lt;tr&gt;&#xa;&lt;td align=&quot;center&quot;&gt;&lt;b&gt;Image 1&lt;/b&gt;&lt;/td&gt;&#xa;&lt;td align=&quot;center&quot;&gt;&lt;b&gt;Image 2&lt;/b&gt;&lt;/td&gt;&#xa;&lt;/tr&gt;&#xa;&lt;tr&gt;&#xa;&lt;td align=&quot;center&quot;&gt;&#xa;    &lt;img src=&quot;http://localhost:8080//images/8neighbors.jpg&quot; alt=&quot;image 1&quot;&gt;&#xa;&lt;/td&gt;&#xa;&lt;td align=&quot;center&quot;&gt;&#xa;    &lt;img src=&quot;http://localhost:8080//images/5neighbors.jpg&quot; alt=&quot;image 2&quot;&gt;&#xa;&lt;/td&gt;&#xa;&lt;/tr&gt;&#xa;&lt;/table&gt;&#xa;&lt;h2&gt;Best Strategy&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;    The chance that a token will regenerate on an empty cell increases as there are&#xa;    more tokens surrounding it.  The best arrangement of tokens that maximizes overall regrowth is the checkerboard&#xa;    diagram shown below.&#xa;&lt;br&gt;&#xa;&lt;img src=&quot;http://localhost:8080//images/foraging-checkerboard.png&quot; alt=&quot;Checkerboard Resource&quot;&gt;&#xa;&lt;/p&gt;&#xa;&#xa;&lt;h2&gt;Quiz&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;    Before we begin the actual round please answer the following 10 statements. You have five minutes to answer these&#xa;    questions and you will get {quizCorrectAnswerReward} lab dollars for each correct answer. When you are finished&#xa;    please click submit.&#xa;&lt;/p&gt;&#xa;&lt;br&gt;&#xa;&lt;form&gt;&#xa;&lt;span class=&apos;q1&apos;&gt;Q1. Tokens grow from the middle of the screen.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q1&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q1&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q2&apos;&gt;Q2. In order to collect a token you need to press the space bar while your avatar is on a cell with a token.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q2&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q2&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q3&apos;&gt;Q3. When you have collected all tokens on the screen, no new tokens will appear.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q3&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q3&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q4&apos;&gt;Q4. Your decisions of where to collect tokens affects the regeneration of tokens.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q4&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q4&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q5&apos;&gt;Q5. Is this sequence possible?&lt;/span&gt; &#xa;&lt;img src=&quot;http://localhost:8080//images/q5.png&quot; /&gt;&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q5&quot; value=&quot;Possible&quot;&gt;Possible&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q5&quot; value=&quot;Impossible&quot;&gt;Impossible&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q6&apos;&gt;Q6. Is this sequence possible?&lt;/span&gt;&lt;img src=&quot;http://localhost:8080//images/q6.png&quot; /&gt;&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q6&quot; value=&quot;Possible&quot;&gt;Possible&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q6&quot; value=&quot;Impossible&quot;&gt;Impossible&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q7&apos;&gt;Q7. If each token is worth 0.02 lab dollars and you collect 100 tokens in a round, you have earned 3 lab dollars in that round.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q7&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q7&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q8&apos;&gt;Q8. The duration of a round is {self.duration} seconds.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q8&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q8&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q9&apos;&gt;Q9. All the cells are filled with green tokens at the start of the experiment.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q9&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q9&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q10&apos;&gt;Q10. The amount of tokens you can earn only depends on how fast you collect the tokens.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q10&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q10&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&#xa;&lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;Submit&quot;&gt;&lt;br&gt;&#xa;&lt;/form&gt;&#xa;&#xa;"/>
+    </properties>
+    <cachedPropertyMap/>
+    <resource>conf/round1.xml</resource>
+    <parentConfiguration class="edu.asu.commons.foraging.conf.ServerConfiguration">
+      <properties>
+        <property name="facilitator-instructions" value="&#xa;&#xa;&lt;p&gt;&#xa;    This facilitator interface allows you to control the experiment.  In general you&#xa;    will be following a sequence similar to this:&#xa;    &lt;ol&gt;&#xa;        &lt;li&gt;Show instructions&lt;/li&gt;&#xa;        &lt;li&gt;Start round&lt;/li&gt;&#xa;        &lt;li&gt;After round is over&#xa;            &lt;ol&gt;&#xa;                &lt;li&gt;show trust game if necessary&lt;/li&gt;&#xa;                &lt;li&gt;start standalone chat round if necessary&lt;/li&gt;&#xa;            &lt;/ol&gt;&#xa;        &lt;/li&gt;&#xa;        &lt;li&gt;Goto 1.&lt;/li&gt;&#xa;    &lt;/ol&gt;&#xa;&lt;/p&gt;&#xa;&#xa;"/>
+        <property name="default-round-duration" value="40"/>
+        <property name="quiz-correct-answer-reward" value="0.10"/>
+        <property name="client-debriefing" value="&#xa;&#xa;&lt;h1&gt;{if (self.practiceRound)}Practice Round{else}Round {self.roundIndexLabel}{endif} Results&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;ul&gt;&#xa;&lt;li&gt;Tokens collected in this round: {clientData.currentTokens}&lt;/li&gt;&#xa;&lt;li&gt;Income from tokens collected: {clientData.currentIncome}&lt;/li&gt;&#xa;&lt;li&gt;Quiz earnings: {clientData.quizEarnings}&lt;/li&gt;&#xa;&lt;li&gt;Show up payment: {showUpPayment}&lt;/li&gt;&#xa;&lt;/ul&gt;&#xa;{if (showExitInstructions &amp;&amp; !clientData.trustGameLog.empty) }&#xa;&lt;h2&gt;Trust Game Earnings&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;ul&gt;&#xa;{clientData.trustGameLog: {trustGameLog|&#xa;&lt;li&gt;Trust Game #{i}: {trustGameLog}&lt;/li&gt;&#xa;}}&#xa;&lt;/ul&gt;&#xa;Your total trust game earnings: &lt;b&gt;{clientData.trustGameEarnings}&lt;/b&gt;.&#xa;{endif}&#xa;&lt;h2&gt;Total Income&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;Your &lt;b&gt;total income&lt;/b&gt; is &lt;b&gt;{clientData.grandTotalIncome}&lt;/b&gt;.&#xa;&lt;/p&gt;&#xa;{if (showExitInstructions)}&#xa;&lt;h2&gt;Exit Survey&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;This was the last round, but not the end of the experiment. We ask that you please carefully fill out a brief survey as we prepare your payments.&#xa;&lt;/p&gt;&#xa;&lt;h2&gt;Payment&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;When payments are ready we will call you up one by one. Please wait until your&#xa;computer number, &lt;b&gt;{clientData.id}&lt;/b&gt;, is called to turn in your survey and&#xa;receive payment.  Please answer the survey carefully and thank you for&#xa;participating. &#xa;&lt;/p&gt;&#xa;&lt;p&gt;&#xa;NOTE: Please &lt;b&gt;answer the survey completely (there may be a back side)&lt;/b&gt;&#xa;and &lt;b&gt;bring all your belongings with you&lt;/b&gt; when you come up to&#xa;receive your payment to help us speed up the payment process.&#xa;&lt;/p&gt;&#xa;{endif}&#xa;&#xa;"/>
+        <property name="wait-for-participants" value="true"/>
+        <property name="use-token-image" value="true"/>
+        <property name="bots-per-group" value="1"/>
+        <property name="use-avatar-image" value="false"/>
+        <property name="single-player" value="true"/>
+        <property name="port" value="16001"/>
+        <property name="bot-groups-enabled" value="true"/>
+        <property name="hostname" value="localhost"/>
+        <property name="use-background-texture" value="false"/>
+        <property name="bot-type" value="CUSTOM"/>
+        <property name="token-image-path" value="images/green-diamond.png"/>
+        <property name="trust-game-instructions" value="&#xa;&#xa;&lt;h1&gt;Instructions&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;    You will now participate in an exercise where you will be matched with a random&#xa;    person in your group. In this exercise there are two roles, Player 1 and Player 2.&#xa;    Your job is to design strategies for both Player 1 and Player 2 roles.  When you&#xa;    are randomly paired with another member of your group you may be selected as&#xa;    Player 1 &lt;b&gt;or&lt;/b&gt; Player 2.  The results of randomly pairing your strategies&#xa;    with the other group member&apos;s strategies will be shown to you at the &lt;b&gt;end of&#xa;    the experiment&lt;/b&gt;.&#xa;&lt;/p&gt;&#xa;&#xa;&lt;h2&gt;How to participate&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;ol&gt;&#xa;    &lt;li&gt;Player 1 will first receive an endowment of one dollar and has to decide &lt;b&gt;how much to keep&lt;/b&gt;.  The remaining amount is &lt;b&gt;sent to Player 2&lt;/b&gt;.&#xa;    &lt;li&gt;The amount Player 1 sends to Player 2 is tripled by the system and then&#xa;        given to Player 2.  Player 2 must then decide &lt;b&gt;how much to keep&lt;/b&gt; and &lt;b&gt;how much to send back to Player 1&lt;/b&gt;.&#xa;&lt;/ol&gt;&#xa;&lt;p&gt;&#xa;For example, if Player 1 sends 0 cents to Player 2, Player 1 earns 1 dollar and&#xa;Player 2 earns 0 cents. However, if Player 1 sends 1 dollar to Player 2, 3 dollars&#xa;would be sent to Player 2.  Player 2 then decides to return $1.75 back to Player 1.&#xa;In this case, Player 1 earns $1.75, and Player 2 earns $1.25.&#xa;&lt;/p&gt;&#xa;&lt;p&gt;&#xa;Please fill in the following form to design your strategies as Player 1 or Player 2.&#xa;&lt;br&gt;&#xa;&lt;b&gt;If you have any questions, please raise your hand.  Are there any questions?&lt;/b&gt;&#xa;&lt;/p&gt;&#xa;&#xa;"/>
+        <property name="facilitator-debriefing" value="&#xa;&#xa;&lt;h3&gt;Round {self.roundIndexLabel} results&lt;/h3&gt;&#xa;&lt;hr&gt;&#xa;&lt;table border=1 cellspacing=3 cellpadding=3&gt;&#xa;&lt;tr&gt;&#xa;&lt;th&gt;Participant&lt;/th&gt;&lt;th&gt;Current tokens&lt;/th&gt;&lt;th&gt;Current income&lt;/th&gt;&lt;th&gt;Quiz earnings&lt;/th&gt;&lt;th&gt;Trust game earnings&lt;/th&gt;&lt;th&gt;Total income&lt;/th&gt;&#xa;&lt;/tr&gt;&#xa;{clientDataList: {data | &#xa;&lt;tr align=&quot;RIGHT&quot;&gt;&lt;td&gt;{data.id}&lt;/td&gt;&lt;td&gt;{data.currentTokens}&lt;/td&gt;&lt;td&gt;{data.currentIncome}&lt;/td&gt;&lt;td&gt;{data.quizEarnings}&lt;/td&gt;&lt;td&gt;{data.trustGameEarnings}&lt;/td&gt;&lt;td&gt;{data.grandTotalIncome}&lt;/td&gt;&lt;/tr&gt;&#xa;}}&#xa;&lt;/table&gt;&#xa;&#xa;"/>
+        <property name="same-as-previous-round-instructions" value="&#xa;&#xa;&lt;h3&gt;Round {self.roundIndexLabel} Instructions&lt;/h3&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;Round {self.roundIndexLabel} is the same as the previous round.&lt;/p&gt;&#xa;&lt;p&gt;The length of this round is {self.duration} seconds.&lt;/p&gt;&#xa;&lt;p&gt;&lt;b&gt;Please raise your hand if you have any questions.&lt;/b&gt;&lt;/p&gt;&#xa;&#xa;"/>
+        <property name="chat-instructions" value="&#xa;&#xa;&lt;p&gt;&#xa;You can chat with the other participants in your group during this round.&#xa;You may discuss any aspect of the experiment with the other participants in your group with two exceptions:&#xa;&lt;ol&gt;&#xa;    &lt;li&gt;You &lt;b&gt;may not promise side-payments after the experiment is completed or threaten anyone with any consequence after the experiment is finished&lt;/b&gt;.&lt;/li&gt;&#xa;    &lt;li&gt;You &lt;b&gt;may not reveal your actual identity&lt;/b&gt;&lt;/li&gt;&#xa;&lt;/ol&gt;&#xa;&lt;p&gt;&#xa;We are monitoring the chat traffic while you chat. If we detect any violation of the&#xa;rules we will have to stop the experiment and remove the offending group from the&#xa;room.&#xa;&lt;/p&gt;&#xa;&lt;p&gt;&#xa;    You will see other participants labeled from A to {self.lastChatHandle} in the chat&#xa;    window.  You can send a chat message by typing into the textfield and pressing&#xa;    the enter key.&#xa;&lt;/p&gt;&#xa;&#xa;"/>
+        <property name="round3" value="round3.xml"/>
+        <property name="general-instructions" value="&#xa;&#xa;&lt;h1&gt;General Instructions&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;You will appear on the screen as a blue circle &lt;img width=&apos;25&apos; height=&apos;25&apos; src=&quot;http://localhost:8080//images/blue-circle.png&quot;&gt;&lt;/img&gt;. &#xa;You can move by pressing the four arrow keys on your keyboard to move up, down, left, or right.  You must press a key&#xa;for each and every move. As you move around you can collect tokens &#xa;&lt;img width=&apos;25&apos; height=&apos;25&apos; src=&quot;http://localhost:8080//images/green-diamond.png&quot;&gt;&lt;/img&gt; and earn &lt;b&gt;{dollarsPerToken}&lt;/b&gt;&#xa;for each collected token.  To collect a token, move your avatar over it and &lt;b&gt;press the space bar&lt;/b&gt;.  Simply moving&#xa;your avatar over a token does &lt;b&gt;not collect&lt;/b&gt; that token.&#xa;&lt;/p&gt;&#xa;&#xa;"/>
+        <property name="field-of-vision-instructions" value="&#xa;&#xa;Your vision is limited in this experiment.  The area that is visible to you will be&#xa;shaded.&#xa;&#xa;"/>
+        <property name="round2" value="round2.xml"/>
+        <property name="clients-per-group" value="2"/>
+        <property name="round1" value="round1.xml"/>
+        <property name="round0" value="round0.xml"/>
+        <property name="welcome-instructions" value="&#xa;&#xa;&lt;h1&gt;Welcome&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;Welcome to the experiment. The experiment will begin shortly.&#xa;&lt;br&gt;&lt;br&gt;&#xa;Please &lt;b&gt;wait quietly&lt;/b&gt; and &lt;b&gt;do not close this window, open any other applications, or communicate with any of the other participants&lt;/b&gt;.&#xa;&lt;/p&gt;&#xa;&#xa;"/>
+        <property name="use-lab-dollars" value="true"/>
+        <property name="number-of-rounds" value="4"/>
+      </properties>
+      <cachedPropertyMap/>
+      <currentRepeatedRoundIndex>4</currentRepeatedRoundIndex>
+      <currentRoundIndex>1</currentRoundIndex>
+      <allParameters>
+        <edu.asu.commons.foraging.conf.RoundConfiguration>
+          <properties>
+            <property name="instructions" value="&#xa;&#xa;&lt;h2&gt;Practice Round Instructions&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;You will now have {self.duration} seconds to practice with the experimental environment. The decisions you make in this&#xa;round will &lt;b&gt;not affect your earnings&lt;/b&gt;. At the beginning of the practice round {initialDistribution} of the cells&#xa;are occupied with green tokens.  The environment is a {self.resourceWidth} x {self.resourceDepth} grid of cells.&#xa;&lt;/p&gt;&#xa;&lt;p&gt;&#xa;During this practice round, and &lt;b&gt;only during this practice round&lt;/b&gt;, you will be able&#xa;to reset the tokens displayed on the screen by pressing the &lt;b&gt;R&lt;/b&gt; key.  When you&#xa;press the &lt;b&gt;R&lt;/b&gt; key you will reset the distribution of the tokens to once again randomly occupy&#xa;{initialDistribution} of the cells with tokens.&#xa;&lt;/p&gt;&#xa;&lt;p&gt;&lt;b&gt;If you have any questions please raise your hand. Do you have any questions so far?&lt;/b&gt;&lt;/p&gt;&#xa;&#xa;"/>
+            <property name="private-property" value="true"/>
+            <property name="resource-width" value="6"/>
+            <property name="resource-depth" value="6"/>
+            <property name="regrowth-rate" value="0.05"/>
+            <property name="practice-round" value="true"/>
+          </properties>
+          <cachedPropertyMap/>
+          <resource>conf/round0.xml</resource>
+          <parentConfiguration class="edu.asu.commons.foraging.conf.ServerConfiguration" reference="../../.."/>
+        </edu.asu.commons.foraging.conf.RoundConfiguration>
+        <edu.asu.commons.foraging.conf.RoundConfiguration reference="../../.."/>
+        <edu.asu.commons.foraging.conf.RoundConfiguration>
+          <properties>
+            <property name="robot-harvest-probability" value="0.7"/>
+            <property name="repeat" value="5"/>
+            <property name="clients-per-group" value="2"/>
+            <property name="resource-depth" value="9"/>
+            <property name="instructions" value="&#xa;&#xa;&lt;h1&gt;Instructions for Round {self.roundIndexLabel}&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;    The length of each of the following {self.repeat} rounds is {self.duration} seconds. As in the practice round you&#xa;    can collect green tokens. However, this time you will earn &lt;b&gt;{dollarsPerToken}&lt;/b&gt; lab dollars for each token&#xa;    collected. You &lt;b&gt;cannot&lt;/b&gt; reset the distribution of green tokens. &#xa;&lt;/p&gt;&#xa;&lt;p&gt;&#xa;    On the top right corner of the screen you can see how many tokens you have collected. On the top left corner of the&#xa;    screen you can see the amount of time remaining in the round.&#xa;&lt;/p&gt;&#xa;&lt;p&gt;&lt;b&gt;If you have any questions please raise your hand.&lt;/b&gt;&lt;/p&gt;&#xa;&#xa;"/>
+            <property name="max-cell-occupancy" value="1"/>
+            <property name="always-explicit" value="true"/>
+            <property name="regrowth-rate" value="0.1"/>
+            <property name="resource-width" value="9"/>
+          </properties>
+          <cachedPropertyMap/>
+          <resource>conf/round2.xml</resource>
+          <parentConfiguration class="edu.asu.commons.foraging.conf.ServerConfiguration" reference="../../.."/>
+        </edu.asu.commons.foraging.conf.RoundConfiguration>
+        <edu.asu.commons.foraging.conf.RoundConfiguration>
+          <properties>
+            <property name="robot-harvest-probability" value="1.0"/>
+            <property name="repeat" value="5"/>
+            <property name="clients-per-group" value="2"/>
+            <property name="resource-depth" value="9"/>
+            <property name="instructions" value="&#xa;&#xa;&lt;h1&gt;Instructions for Round {self.roundIndexLabel}&lt;/h1&gt;&#xa;&lt;p&gt;&#xa;The length of each of the following {self.repeat} rounds is {self.duration} seconds. &#xa;&lt;/p&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&lt;b&gt;If you have any questions please raise your hand.&lt;/b&gt;&lt;/p&gt;&#xa;&#xa;"/>
+            <property name="max-cell-occupancy" value="1"/>
+            <property name="always-explicit" value="true"/>
+            <property name="regrowth-rate" value="0.15"/>
+            <property name="resource-width" value="9"/>
+          </properties>
+          <cachedPropertyMap/>
+          <resource>conf/round3.xml</resource>
+          <parentConfiguration class="edu.asu.commons.foraging.conf.ServerConfiguration" reference="../../.."/>
+        </edu.asu.commons.foraging.conf.RoundConfiguration>
+      </allParameters>
+      <configurationDirectory>conf/</configurationDirectory>
+      <numberOfPracticeRounds>-1</numberOfPracticeRounds>
+    </parentConfiguration>
+  </edu.asu.commons.foraging.conf.RoundConfiguration>
+  <edu.asu.commons.foraging.model.ServerDataModel serialization="custom">
+    <edu.asu.commons.foraging.model.ForagingDataModel>
+      <default>
+        <roundConfiguration>
+          <properties>
+            <property name="instructions" value="&#xa;&#xa;&lt;h1&gt;Instructions for Round {self.roundIndexLabel}&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;    The length of each of the following {self.repeat} rounds is {self.duration} seconds. As in the practice round you&#xa;    can collect green tokens. However, this time you will earn &lt;b&gt;{dollarsPerToken}&lt;/b&gt; lab dollars for each token&#xa;    collected. You &lt;b&gt;cannot&lt;/b&gt; reset the distribution of green tokens. &#xa;&lt;/p&gt;&#xa;&lt;p&gt;&#xa;    On the top right corner of the screen you can see how many tokens you have collected. On the top left corner of the&#xa;    screen you can see the amount of time remaining in the round.&#xa;&lt;/p&gt;&#xa;&lt;p&gt;&lt;b&gt;If you have any questions please raise your hand.&lt;/b&gt;&lt;/p&gt;&#xa;&#xa;"/>
+            <property name="resource-width" value="9"/>
+            <property name="q10" value="F"/>
+            <property name="q9" value="F"/>
+            <property name="q8" value="T"/>
+            <property name="q7" value="F"/>
+            <property name="q6" value="Impossible"/>
+            <property name="q5" value="Possible"/>
+            <property name="regrowth-rate" value="0.05"/>
+            <property name="q4" value="T"/>
+            <property name="robot-harvest-probability" value="0.4"/>
+            <property name="q3" value="T"/>
+            <property name="q2" value="T"/>
+            <property name="q1" value="F"/>
+            <property name="repeat" value="5"/>
+            <property name="resource-depth" value="9"/>
+            <property name="quiz-results" value="&#xa;&#xa;    &lt;h2&gt;Quiz Results&lt;/h2&gt;&#xa;    &lt;hr&gt;&#xa;        &lt;p&gt;&#xa;            {if (allCorrect)}&#xa;            You have answered all the questions correctly and earned &lt;b&gt;{totalQuizEarnings}&lt;/b&gt; in lab dollars.&#xa;            {else}&#xa;            You answered {numberCorrect} out of {totalQuestions} questions correctly and earned &lt;b&gt;{totalQuizEarnings}&lt;/b&gt; in lab dollars.  Questions you&apos;ve answered&#xa;            incorrectly are highlighted in red.  Please see below for more details.&#xa;            {endif}&#xa;        &lt;/p&gt;&#xa;        &lt;br&gt;&lt;hr&gt;&#xa;&lt;form&gt;&#xa;&lt;span class=&apos;q1&apos;&gt;Q1. Tokens grow from the middle of the screen.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;{incorrect_q1}&#xa;        This statement is false. Tokens only regenerate when there are other tokens present in their immediately&#xa;        neighboring cells. They do not spontaneously generate from the middle of the screen.&#xa;    &lt;/b&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q2&apos;&gt;Q2. In order to collect a token you need to press the space bar while your avatar is on a cell with a token.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q2} &#xa;        This statement is true. You must press the space bar when your avatar is on a cell with a token to collect that token.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q3&apos;&gt;Q3. When you have collected all tokens on the screen, no new tokens will appear.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q3} &#xa;        This statement is true. Tokens can only regenerate if there are other tokens present in their immediately neighboring cells.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q4&apos;&gt;Q4. Your decisions of where to collect tokens affects the regeneration of tokens.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q4} &#xa;        This statement is true. The chance that a new token will appear in an empty cell is greatest when the eight cells surrounding that&#xa;        empty cell all have tokens. &#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q5&apos;&gt;Q5. Is the following sequence possible?&lt;/span&gt;&#xa;&lt;img src=&quot;http://localhost:8080//images/q5.png&quot; /&gt; &#xa;&lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q5} &#xa;        Yes, this sequence is possible. New tokens can regenerate on an empty cell when neighboring cells have existing tokens.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q6&apos;&gt;Q6. Is the following sequence possible?&lt;/span&gt;&lt;img src=&quot;http://localhost:8080//images/q6.png&quot; /&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q6} &#xa;        No, this sequence is not possible. New tokens cannot regenerate on an empty cell when all neighboring cells are also empty.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q7&apos;&gt;Q7. If each token is worth $0.02 and you collect 100 tokens in a round, you have earned 3 dollars in that round.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q7} &#xa;        This statement is false. You would have earned 100 * $0.02 = $2.00 in that round.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;            &lt;span class=&apos;q8&apos;&gt;Q8. The duration of a round is {self.duration} seconds.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q8} &#xa;        This statement is true. The round will last {self.duration} seconds.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q9&apos;&gt;Q9. All the cells are filled with green tokens at the start of the experiment.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q9} &#xa;        This statement is false. At the beginning of each round, 25% of the cells will be filled with green tokens.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q10&apos;&gt;Q10. The amount of tokens you can earn only depends on how fast you collect the tokens.&lt;/span&gt; &lt;br&gt;&#xa;    &lt;b&gt;&#xa;        {incorrect_q10} &#xa;        This statement is false. The amount of tokens you can earn depends on how you manage your tokens, not how fast you collect them.&#xa;    &lt;/b&gt;&#xa;    &lt;br&gt;&lt;br&gt;&#xa;&lt;/form&gt;&#xa;&#xa;"/>
+            <property name="quiz" value="true"/>
+            <property name="max-cell-occupancy" value="1"/>
+            <property name="clients-per-group" value="2"/>
+            <property name="always-explicit" value="true"/>
+            <property name="quiz-instructions" value="&#xa;&#xa;&lt;h1&gt;Changes to the Experimental Environment&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;    We will now make a change to the environment, namely the regeneration of tokens. New tokens can now reappear in&#xa;    empty cells. The rate at which new tokens appear depends on the number of adjacent cells with tokens. The more&#xa;    tokens in the eight cells that surround an empty cell, the faster a new token will appear on that empty cell. In&#xa;    other words, &lt;b&gt;existing tokens can generate new tokens&lt;/b&gt;. To illustrate this, please refer to Image 1 and Image&#xa;    2. The middle cell in Image 1 denoted with an X has a greater chance of regeneration than the middle cell in Image&#xa;    2.  When all neighboring cells are empty, there is &lt;b&gt;no chance for regeneration&lt;/b&gt;.&#xa;&lt;/p&gt;&#xa;&lt;table width=&quot;100%&quot;&gt;&#xa;&lt;tr&gt;&#xa;&lt;td align=&quot;center&quot;&gt;&lt;b&gt;Image 1&lt;/b&gt;&lt;/td&gt;&#xa;&lt;td align=&quot;center&quot;&gt;&lt;b&gt;Image 2&lt;/b&gt;&lt;/td&gt;&#xa;&lt;/tr&gt;&#xa;&lt;tr&gt;&#xa;&lt;td align=&quot;center&quot;&gt;&#xa;    &lt;img src=&quot;http://localhost:8080//images/8neighbors.jpg&quot; alt=&quot;image 1&quot;&gt;&#xa;&lt;/td&gt;&#xa;&lt;td align=&quot;center&quot;&gt;&#xa;    &lt;img src=&quot;http://localhost:8080//images/5neighbors.jpg&quot; alt=&quot;image 2&quot;&gt;&#xa;&lt;/td&gt;&#xa;&lt;/tr&gt;&#xa;&lt;/table&gt;&#xa;&lt;h2&gt;Best Strategy&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;    The chance that a token will regenerate on an empty cell increases as there are&#xa;    more tokens surrounding it.  The best arrangement of tokens that maximizes overall regrowth is the checkerboard&#xa;    diagram shown below.&#xa;&lt;br&gt;&#xa;&lt;img src=&quot;http://localhost:8080//images/foraging-checkerboard.png&quot; alt=&quot;Checkerboard Resource&quot;&gt;&#xa;&lt;/p&gt;&#xa;&#xa;&lt;h2&gt;Quiz&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;    Before we begin the actual round please answer the following 10 statements. You have five minutes to answer these&#xa;    questions and you will get {quizCorrectAnswerReward} lab dollars for each correct answer. When you are finished&#xa;    please click submit.&#xa;&lt;/p&gt;&#xa;&lt;br&gt;&#xa;&lt;form&gt;&#xa;&lt;span class=&apos;q1&apos;&gt;Q1. Tokens grow from the middle of the screen.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q1&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q1&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q2&apos;&gt;Q2. In order to collect a token you need to press the space bar while your avatar is on a cell with a token.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q2&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q2&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q3&apos;&gt;Q3. When you have collected all tokens on the screen, no new tokens will appear.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q3&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q3&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q4&apos;&gt;Q4. Your decisions of where to collect tokens affects the regeneration of tokens.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q4&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q4&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q5&apos;&gt;Q5. Is this sequence possible?&lt;/span&gt; &#xa;&lt;img src=&quot;http://localhost:8080//images/q5.png&quot; /&gt;&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q5&quot; value=&quot;Possible&quot;&gt;Possible&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q5&quot; value=&quot;Impossible&quot;&gt;Impossible&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q6&apos;&gt;Q6. Is this sequence possible?&lt;/span&gt;&lt;img src=&quot;http://localhost:8080//images/q6.png&quot; /&gt;&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q6&quot; value=&quot;Possible&quot;&gt;Possible&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q6&quot; value=&quot;Impossible&quot;&gt;Impossible&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q7&apos;&gt;Q7. If each token is worth 0.02 lab dollars and you collect 100 tokens in a round, you have earned 3 lab dollars in that round.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q7&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q7&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q8&apos;&gt;Q8. The duration of a round is {self.duration} seconds.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q8&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q8&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q9&apos;&gt;Q9. All the cells are filled with green tokens at the start of the experiment.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q9&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q9&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;span class=&apos;q10&apos;&gt;Q10. The amount of tokens you can earn only depends on how fast you collect the tokens.&lt;/span&gt; &lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q10&quot; value=&quot;T&quot;&gt;True&lt;br&gt;&#xa;&lt;input type=&quot;radio&quot; name=&quot;q10&quot; value=&quot;F&quot;&gt;False&lt;br&gt;&#xa;&#xa;&lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;Submit&quot;&gt;&lt;br&gt;&#xa;&lt;/form&gt;&#xa;&#xa;"/>
+          </properties>
+          <cachedPropertyMap/>
+          <resource>conf/round1.xml</resource>
+          <parentConfiguration class="edu.asu.commons.foraging.conf.ServerConfiguration">
+            <properties>
+              <property name="facilitator-instructions" value="&#xa;&#xa;&lt;p&gt;&#xa;    This facilitator interface allows you to control the experiment.  In general you&#xa;    will be following a sequence similar to this:&#xa;    &lt;ol&gt;&#xa;        &lt;li&gt;Show instructions&lt;/li&gt;&#xa;        &lt;li&gt;Start round&lt;/li&gt;&#xa;        &lt;li&gt;After round is over&#xa;            &lt;ol&gt;&#xa;                &lt;li&gt;show trust game if necessary&lt;/li&gt;&#xa;                &lt;li&gt;start standalone chat round if necessary&lt;/li&gt;&#xa;            &lt;/ol&gt;&#xa;        &lt;/li&gt;&#xa;        &lt;li&gt;Goto 1.&lt;/li&gt;&#xa;    &lt;/ol&gt;&#xa;&lt;/p&gt;&#xa;&#xa;"/>
+              <property name="default-round-duration" value="40"/>
+              <property name="quiz-correct-answer-reward" value="0.10"/>
+              <property name="client-debriefing" value="&#xa;&#xa;&lt;h1&gt;{if (self.practiceRound)}Practice Round{else}Round {self.roundIndexLabel}{endif} Results&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;ul&gt;&#xa;&lt;li&gt;Tokens collected in this round: {clientData.currentTokens}&lt;/li&gt;&#xa;&lt;li&gt;Income from tokens collected: {clientData.currentIncome}&lt;/li&gt;&#xa;&lt;li&gt;Quiz earnings: {clientData.quizEarnings}&lt;/li&gt;&#xa;&lt;li&gt;Show up payment: {showUpPayment}&lt;/li&gt;&#xa;&lt;/ul&gt;&#xa;{if (showExitInstructions &amp;&amp; !clientData.trustGameLog.empty) }&#xa;&lt;h2&gt;Trust Game Earnings&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;ul&gt;&#xa;{clientData.trustGameLog: {trustGameLog|&#xa;&lt;li&gt;Trust Game #{i}: {trustGameLog}&lt;/li&gt;&#xa;}}&#xa;&lt;/ul&gt;&#xa;Your total trust game earnings: &lt;b&gt;{clientData.trustGameEarnings}&lt;/b&gt;.&#xa;{endif}&#xa;&lt;h2&gt;Total Income&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;Your &lt;b&gt;total income&lt;/b&gt; is &lt;b&gt;{clientData.grandTotalIncome}&lt;/b&gt;.&#xa;&lt;/p&gt;&#xa;{if (showExitInstructions)}&#xa;&lt;h2&gt;Exit Survey&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;This was the last round, but not the end of the experiment. We ask that you please carefully fill out a brief survey as we prepare your payments.&#xa;&lt;/p&gt;&#xa;&lt;h2&gt;Payment&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;When payments are ready we will call you up one by one. Please wait until your&#xa;computer number, &lt;b&gt;{clientData.id}&lt;/b&gt;, is called to turn in your survey and&#xa;receive payment.  Please answer the survey carefully and thank you for&#xa;participating. &#xa;&lt;/p&gt;&#xa;&lt;p&gt;&#xa;NOTE: Please &lt;b&gt;answer the survey completely (there may be a back side)&lt;/b&gt;&#xa;and &lt;b&gt;bring all your belongings with you&lt;/b&gt; when you come up to&#xa;receive your payment to help us speed up the payment process.&#xa;&lt;/p&gt;&#xa;{endif}&#xa;&#xa;"/>
+              <property name="wait-for-participants" value="true"/>
+              <property name="use-token-image" value="true"/>
+              <property name="bots-per-group" value="1"/>
+              <property name="use-avatar-image" value="false"/>
+              <property name="single-player" value="true"/>
+              <property name="port" value="16001"/>
+              <property name="bot-groups-enabled" value="true"/>
+              <property name="hostname" value="localhost"/>
+              <property name="use-background-texture" value="false"/>
+              <property name="bot-type" value="CUSTOM"/>
+              <property name="token-image-path" value="images/green-diamond.png"/>
+              <property name="trust-game-instructions" value="&#xa;&#xa;&lt;h1&gt;Instructions&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;    You will now participate in an exercise where you will be matched with a random&#xa;    person in your group. In this exercise there are two roles, Player 1 and Player 2.&#xa;    Your job is to design strategies for both Player 1 and Player 2 roles.  When you&#xa;    are randomly paired with another member of your group you may be selected as&#xa;    Player 1 &lt;b&gt;or&lt;/b&gt; Player 2.  The results of randomly pairing your strategies&#xa;    with the other group member&apos;s strategies will be shown to you at the &lt;b&gt;end of&#xa;    the experiment&lt;/b&gt;.&#xa;&lt;/p&gt;&#xa;&#xa;&lt;h2&gt;How to participate&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;ol&gt;&#xa;    &lt;li&gt;Player 1 will first receive an endowment of one dollar and has to decide &lt;b&gt;how much to keep&lt;/b&gt;.  The remaining amount is &lt;b&gt;sent to Player 2&lt;/b&gt;.&#xa;    &lt;li&gt;The amount Player 1 sends to Player 2 is tripled by the system and then&#xa;        given to Player 2.  Player 2 must then decide &lt;b&gt;how much to keep&lt;/b&gt; and &lt;b&gt;how much to send back to Player 1&lt;/b&gt;.&#xa;&lt;/ol&gt;&#xa;&lt;p&gt;&#xa;For example, if Player 1 sends 0 cents to Player 2, Player 1 earns 1 dollar and&#xa;Player 2 earns 0 cents. However, if Player 1 sends 1 dollar to Player 2, 3 dollars&#xa;would be sent to Player 2.  Player 2 then decides to return $1.75 back to Player 1.&#xa;In this case, Player 1 earns $1.75, and Player 2 earns $1.25.&#xa;&lt;/p&gt;&#xa;&lt;p&gt;&#xa;Please fill in the following form to design your strategies as Player 1 or Player 2.&#xa;&lt;br&gt;&#xa;&lt;b&gt;If you have any questions, please raise your hand.  Are there any questions?&lt;/b&gt;&#xa;&lt;/p&gt;&#xa;&#xa;"/>
+              <property name="facilitator-debriefing" value="&#xa;&#xa;&lt;h3&gt;Round {self.roundIndexLabel} results&lt;/h3&gt;&#xa;&lt;hr&gt;&#xa;&lt;table border=1 cellspacing=3 cellpadding=3&gt;&#xa;&lt;tr&gt;&#xa;&lt;th&gt;Participant&lt;/th&gt;&lt;th&gt;Current tokens&lt;/th&gt;&lt;th&gt;Current income&lt;/th&gt;&lt;th&gt;Quiz earnings&lt;/th&gt;&lt;th&gt;Trust game earnings&lt;/th&gt;&lt;th&gt;Total income&lt;/th&gt;&#xa;&lt;/tr&gt;&#xa;{clientDataList: {data | &#xa;&lt;tr align=&quot;RIGHT&quot;&gt;&lt;td&gt;{data.id}&lt;/td&gt;&lt;td&gt;{data.currentTokens}&lt;/td&gt;&lt;td&gt;{data.currentIncome}&lt;/td&gt;&lt;td&gt;{data.quizEarnings}&lt;/td&gt;&lt;td&gt;{data.trustGameEarnings}&lt;/td&gt;&lt;td&gt;{data.grandTotalIncome}&lt;/td&gt;&lt;/tr&gt;&#xa;}}&#xa;&lt;/table&gt;&#xa;&#xa;"/>
+              <property name="same-as-previous-round-instructions" value="&#xa;&#xa;&lt;h3&gt;Round {self.roundIndexLabel} Instructions&lt;/h3&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;Round {self.roundIndexLabel} is the same as the previous round.&lt;/p&gt;&#xa;&lt;p&gt;The length of this round is {self.duration} seconds.&lt;/p&gt;&#xa;&lt;p&gt;&lt;b&gt;Please raise your hand if you have any questions.&lt;/b&gt;&lt;/p&gt;&#xa;&#xa;"/>
+              <property name="chat-instructions" value="&#xa;&#xa;&lt;p&gt;&#xa;You can chat with the other participants in your group during this round.&#xa;You may discuss any aspect of the experiment with the other participants in your group with two exceptions:&#xa;&lt;ol&gt;&#xa;    &lt;li&gt;You &lt;b&gt;may not promise side-payments after the experiment is completed or threaten anyone with any consequence after the experiment is finished&lt;/b&gt;.&lt;/li&gt;&#xa;    &lt;li&gt;You &lt;b&gt;may not reveal your actual identity&lt;/b&gt;&lt;/li&gt;&#xa;&lt;/ol&gt;&#xa;&lt;p&gt;&#xa;We are monitoring the chat traffic while you chat. If we detect any violation of the&#xa;rules we will have to stop the experiment and remove the offending group from the&#xa;room.&#xa;&lt;/p&gt;&#xa;&lt;p&gt;&#xa;    You will see other participants labeled from A to {self.lastChatHandle} in the chat&#xa;    window.  You can send a chat message by typing into the textfield and pressing&#xa;    the enter key.&#xa;&lt;/p&gt;&#xa;&#xa;"/>
+              <property name="round3" value="round3.xml"/>
+              <property name="general-instructions" value="&#xa;&#xa;&lt;h1&gt;General Instructions&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;You will appear on the screen as a blue circle &lt;img width=&apos;25&apos; height=&apos;25&apos; src=&quot;http://localhost:8080//images/blue-circle.png&quot;&gt;&lt;/img&gt;. &#xa;You can move by pressing the four arrow keys on your keyboard to move up, down, left, or right.  You must press a key&#xa;for each and every move. As you move around you can collect tokens &#xa;&lt;img width=&apos;25&apos; height=&apos;25&apos; src=&quot;http://localhost:8080//images/green-diamond.png&quot;&gt;&lt;/img&gt; and earn &lt;b&gt;{dollarsPerToken}&lt;/b&gt;&#xa;for each collected token.  To collect a token, move your avatar over it and &lt;b&gt;press the space bar&lt;/b&gt;.  Simply moving&#xa;your avatar over a token does &lt;b&gt;not collect&lt;/b&gt; that token.&#xa;&lt;/p&gt;&#xa;&#xa;"/>
+              <property name="field-of-vision-instructions" value="&#xa;&#xa;Your vision is limited in this experiment.  The area that is visible to you will be&#xa;shaded.&#xa;&#xa;"/>
+              <property name="round2" value="round2.xml"/>
+              <property name="clients-per-group" value="2"/>
+              <property name="round1" value="round1.xml"/>
+              <property name="round0" value="round0.xml"/>
+              <property name="welcome-instructions" value="&#xa;&#xa;&lt;h1&gt;Welcome&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;Welcome to the experiment. The experiment will begin shortly.&#xa;&lt;br&gt;&lt;br&gt;&#xa;Please &lt;b&gt;wait quietly&lt;/b&gt; and &lt;b&gt;do not close this window, open any other applications, or communicate with any of the other participants&lt;/b&gt;.&#xa;&lt;/p&gt;&#xa;&#xa;"/>
+              <property name="use-lab-dollars" value="true"/>
+              <property name="number-of-rounds" value="4"/>
+            </properties>
+            <cachedPropertyMap/>
+            <currentRepeatedRoundIndex>4</currentRepeatedRoundIndex>
+            <currentRoundIndex>1</currentRoundIndex>
+            <allParameters>
+              <edu.asu.commons.foraging.conf.RoundConfiguration>
+                <properties>
+                  <property name="instructions" value="&#xa;&#xa;&lt;h2&gt;Practice Round Instructions&lt;/h2&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;You will now have {self.duration} seconds to practice with the experimental environment. The decisions you make in this&#xa;round will &lt;b&gt;not affect your earnings&lt;/b&gt;. At the beginning of the practice round {initialDistribution} of the cells&#xa;are occupied with green tokens.  The environment is a {self.resourceWidth} x {self.resourceDepth} grid of cells.&#xa;&lt;/p&gt;&#xa;&lt;p&gt;&#xa;During this practice round, and &lt;b&gt;only during this practice round&lt;/b&gt;, you will be able&#xa;to reset the tokens displayed on the screen by pressing the &lt;b&gt;R&lt;/b&gt; key.  When you&#xa;press the &lt;b&gt;R&lt;/b&gt; key you will reset the distribution of the tokens to once again randomly occupy&#xa;{initialDistribution} of the cells with tokens.&#xa;&lt;/p&gt;&#xa;&lt;p&gt;&lt;b&gt;If you have any questions please raise your hand. Do you have any questions so far?&lt;/b&gt;&lt;/p&gt;&#xa;&#xa;"/>
+                  <property name="private-property" value="true"/>
+                  <property name="resource-width" value="6"/>
+                  <property name="resource-depth" value="6"/>
+                  <property name="regrowth-rate" value="0.05"/>
+                  <property name="practice-round" value="true"/>
+                </properties>
+                <cachedPropertyMap/>
+                <resource>conf/round0.xml</resource>
+                <parentConfiguration class="edu.asu.commons.foraging.conf.ServerConfiguration" reference="../../.."/>
+              </edu.asu.commons.foraging.conf.RoundConfiguration>
+              <edu.asu.commons.foraging.conf.RoundConfiguration reference="../../.."/>
+              <edu.asu.commons.foraging.conf.RoundConfiguration>
+                <properties>
+                  <property name="robot-harvest-probability" value="0.7"/>
+                  <property name="repeat" value="5"/>
+                  <property name="clients-per-group" value="2"/>
+                  <property name="resource-depth" value="9"/>
+                  <property name="instructions" value="&#xa;&#xa;&lt;h1&gt;Instructions for Round {self.roundIndexLabel}&lt;/h1&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&#xa;    The length of each of the following {self.repeat} rounds is {self.duration} seconds. As in the practice round you&#xa;    can collect green tokens. However, this time you will earn &lt;b&gt;{dollarsPerToken}&lt;/b&gt; lab dollars for each token&#xa;    collected. You &lt;b&gt;cannot&lt;/b&gt; reset the distribution of green tokens. &#xa;&lt;/p&gt;&#xa;&lt;p&gt;&#xa;    On the top right corner of the screen you can see how many tokens you have collected. On the top left corner of the&#xa;    screen you can see the amount of time remaining in the round.&#xa;&lt;/p&gt;&#xa;&lt;p&gt;&lt;b&gt;If you have any questions please raise your hand.&lt;/b&gt;&lt;/p&gt;&#xa;&#xa;"/>
+                  <property name="max-cell-occupancy" value="1"/>
+                  <property name="always-explicit" value="true"/>
+                  <property name="regrowth-rate" value="0.1"/>
+                  <property name="resource-width" value="9"/>
+                </properties>
+                <cachedPropertyMap/>
+                <resource>conf/round2.xml</resource>
+                <parentConfiguration class="edu.asu.commons.foraging.conf.ServerConfiguration" reference="../../.."/>
+              </edu.asu.commons.foraging.conf.RoundConfiguration>
+              <edu.asu.commons.foraging.conf.RoundConfiguration>
+                <properties>
+                  <property name="robot-harvest-probability" value="1.0"/>
+                  <property name="repeat" value="5"/>
+                  <property name="clients-per-group" value="2"/>
+                  <property name="resource-depth" value="9"/>
+                  <property name="instructions" value="&#xa;&#xa;&lt;h1&gt;Instructions for Round {self.roundIndexLabel}&lt;/h1&gt;&#xa;&lt;p&gt;&#xa;The length of each of the following {self.repeat} rounds is {self.duration} seconds. &#xa;&lt;/p&gt;&#xa;&lt;hr&gt;&#xa;&lt;p&gt;&lt;b&gt;If you have any questions please raise your hand.&lt;/b&gt;&lt;/p&gt;&#xa;&#xa;"/>
+                  <property name="max-cell-occupancy" value="1"/>
+                  <property name="always-explicit" value="true"/>
+                  <property name="regrowth-rate" value="0.15"/>
+                  <property name="resource-width" value="9"/>
+                </properties>
+                <cachedPropertyMap/>
+                <resource>conf/round3.xml</resource>
+                <parentConfiguration class="edu.asu.commons.foraging.conf.ServerConfiguration" reference="../../.."/>
+              </edu.asu.commons.foraging.conf.RoundConfiguration>
+            </allParameters>
+            <configurationDirectory>conf/</configurationDirectory>
+            <numberOfPracticeRounds>-1</numberOfPracticeRounds>
+          </parentConfiguration>
+        </roundConfiguration>
+      </default>
+    </edu.asu.commons.foraging.model.ForagingDataModel>
+    <edu.asu.commons.foraging.model.ServerDataModel>
+      <default>
+        <clientsToGroups>
+          <entry>
+            <edu.asu.commons.net.SocketIdentifier>
+              <id>14851609276781</id>
+              <hash>1</hash>
+              <chatHandle>A</chatHandle>
+              <localSocketAddress serialization="custom">
+                <java.net.InetSocketAddress>
+                  <default>
+                    <addr class="java.net.Inet4Address" resolves-to="java.net.InetAddress" serialization="custom">
+                      <java.net.InetAddress>
+                        <default>
+                          <hostName>localhost</hostName>
+                          <address>2130706433</address>
+                          <family>2</family>
+                        </default>
+                      </java.net.InetAddress>
+                    </addr>
+                    <port>16001</port>
+                  </default>
+                </java.net.InetSocketAddress>
+              </localSocketAddress>
+              <remoteSocketAddress serialization="custom">
+                <java.net.InetSocketAddress>
+                  <default>
+                    <addr class="java.net.Inet4Address" reference="../../../../localSocketAddress/java.net.InetSocketAddress/default/addr"/>
+                    <port>56390</port>
+                  </default>
+                </java.net.InetSocketAddress>
+              </remoteSocketAddress>
+              <stationed>true</stationed>
+              <stationNumber>1</stationNumber>
+            </edu.asu.commons.net.SocketIdentifier>
+            <edu.asu.commons.foraging.model.GroupDataModel>
+              <clients>
+                <entry>
+                  <edu.asu.commons.net.SocketIdentifier reference="../../../../edu.asu.commons.net.SocketIdentifier"/>
+                  <edu.asu.commons.foraging.model.ClientData>
+                    <id class="edu.asu.commons.net.SocketIdentifier" reference="../../../../../edu.asu.commons.net.SocketIdentifier"/>
+                    <groupDataModel reference="../../../.."/>
+                    <foragingRole>HARVEST</foragingRole>
+                    <totalTokens>73</totalTokens>
+                    <currentTokens>11</currentTokens>
+                    <tokensCollectedLastRound>0</tokensCollectedLastRound>
+                    <sanctionBonuses>0</sanctionBonuses>
+                    <sanctionPenalties>0</sanctionPenalties>
+                    <sanctionCosts>0</sanctionCosts>
+                    <assignedNumber>1</assignedNumber>
+                    <position>
+                      <x>5.0</x>
+                      <y>6.0</y>
+                      <z>0.0</z>
+                    </position>
+                    <explicitCollectionMode>true</explicitCollectionMode>
+                    <latestSanctions/>
+                    <subjectsFieldOfVisionEnabled>false</subjectsFieldOfVisionEnabled>
+                    <tokensFieldOfVisionEnabled>false</tokensFieldOfVisionEnabled>
+                    <viewSubjectsRadius>0.0</viewSubjectsRadius>
+                    <viewTokensRadius>0.0</viewTokensRadius>
+                    <taxReceived>false</taxReceived>
+                    <trustGamePlayerOneAmountToKeep>0.0</trustGamePlayerOneAmountToKeep>
+                    <trustGameLog/>
+                    <collectedTokenPositions>
+                      <java.awt.Point>
+                        <x>5</x>
+                        <y>3</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>5</x>
+                        <y>4</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>2</x>
+                        <y>4</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>1</x>
+                        <y>2</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>2</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>1</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>3</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>5</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>2</x>
+                        <y>1</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>3</x>
+                        <y>3</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>3</x>
+                        <y>7</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>7</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>6</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>1</x>
+                        <y>6</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>1</x>
+                        <y>8</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>5</x>
+                        <y>6</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>6</x>
+                        <y>6</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>6</x>
+                        <y>7</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>7</x>
+                        <y>8</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>7</x>
+                        <y>7</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>7</x>
+                        <y>6</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>7</x>
+                        <y>5</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>6</x>
+                        <y>5</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>6</x>
+                        <y>8</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>5</x>
+                        <y>8</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>4</x>
+                        <y>8</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>8</x>
+                        <y>8</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>8</x>
+                        <y>5</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>1</x>
+                        <y>3</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>3</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>2</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>2</x>
+                        <y>4</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>3</x>
+                        <y>3</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>6</x>
+                        <y>2</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>7</x>
+                        <y>2</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>8</x>
+                        <y>1</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>8</x>
+                        <y>0</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>7</x>
+                        <y>1</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>8</x>
+                        <y>2</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>4</x>
+                        <y>2</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>2</x>
+                        <y>0</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>1</x>
+                        <y>1</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>1</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>2</x>
+                        <y>3</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>2</x>
+                        <y>2</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>4</x>
+                        <y>3</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>4</x>
+                        <y>4</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>4</x>
+                        <y>1</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>3</x>
+                        <y>0</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>5</x>
+                        <y>0</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>8</x>
+                        <y>0</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>5</x>
+                        <y>3</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>1</x>
+                        <y>4</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>5</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>6</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>7</x>
+                        <y>7</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>1</x>
+                        <y>3</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>1</x>
+                        <y>2</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>1</x>
+                        <y>1</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>0</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>1</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>4</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>1</x>
+                        <y>4</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>1</x>
+                        <y>5</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>2</x>
+                        <y>5</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>3</x>
+                        <y>5</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>3</x>
+                        <y>6</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>2</x>
+                        <y>7</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>2</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>2</x>
+                        <y>0</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>3</x>
+                        <y>0</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>2</x>
+                        <y>2</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>2</x>
+                        <y>4</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>2</x>
+                        <y>7</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>4</x>
+                        <y>7</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>4</x>
+                        <y>8</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>5</x>
+                        <y>8</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>6</x>
+                        <y>7</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>0</x>
+                        <y>3</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>1</x>
+                        <y>0</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>6</x>
+                        <y>1</y>
+                      </java.awt.Point>
+                      <java.awt.Point>
+                        <x>8</x>
+                        <y>6</y>
+                      </java.awt.Point>
+                    </collectedTokenPositions>
+                    <totalIncome>1.4600000000000009</totalIncome>
+                    <trustGameIncome>0.0</trustGameIncome>
+                    <correctQuizAnswers>9</correctQuizAnswers>
+                    <zone>0</zone>
+                    <tokensCollectedDuringInterval>11</tokensCollectedDuringInterval>
+                  </edu.asu.commons.foraging.model.ClientData>
+                </entry>
+              </clients>
+              <resourceDistribution/>
+              <bots>
+                <edu.asu.commons.foraging.bot.NormalBot>
+                  <identifier class="edu.asu.commons.foraging.bot.BotIdentifier">
+                    <id>14851635368126</id>
+                    <hash>6</hash>
+                  </identifier>
+                  <currentPosition>
+                    <x>1</x>
+                    <y>5</y>
+                  </currentPosition>
+                  <currentTokens>11</currentTokens>
+                  <targetLocation>
+                    <x>1</x>
+                    <y>5</y>
+                  </targetLocation>
+                  <harvestProbability>0.4</harvestProbability>
+                  <movementProbability>0.9</movementProbability>
+                  <actionsPerSecond>10</actionsPerSecond>
+                  <botNumber>2</botNumber>
+                  <numberOfActionsTaken>4</numberOfActionsTaken>
+                  <model reference="../../.."/>
+                  <ticksToWait>0</ticksToWait>
+                  <botType>CUSTOM</botType>
+                </edu.asu.commons.foraging.bot.NormalBot>
+              </bots>
+              <groupId>1</groupId>
+              <receivedEnforcementRankings>0</receivedEnforcementRankings>
+              <receivedRegulationRankings>0</receivedRegulationRankings>
+              <receivedSanctionRankings>0</receivedSanctionRankings>
+              <activeEnforcementMechanism>NONE</activeEnforcementMechanism>
+              <activeSanctionMechanism>NONE</activeSanctionMechanism>
+              <submittedRegulations/>
+              <nextZone>0</nextZone>
+              <currentTeamSize>
+                <int>0</int>
+                <int>0</int>
+              </currentTeamSize>
+            </edu.asu.commons.foraging.model.GroupDataModel>
+          </entry>
+        </clientsToGroups>
+      </default>
+    </edu.asu.commons.foraging.model.ServerDataModel>
+  </edu.asu.commons.foraging.model.ServerDataModel>
+  <sorted-set>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1"/>
+      <creationTime>1485163536812</creationTime>
+      <creationTimeNanos>81006648076595</creationTimeNanos>
+      <ordinal>373</ordinal>
+      <resources>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>4</x>
+            <y>4</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>2</x>
+            <y>2</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>2</x>
+            <y>7</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>3</x>
+            <y>5</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>5</x>
+            <y>4</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>6</x>
+            <y>1</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>8</x>
+            <y>6</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>6</x>
+            <y>4</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>7</x>
+            <y>4</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>8</x>
+            <y>4</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>2</x>
+            <y>4</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>1</x>
+            <y>0</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>4</x>
+            <y>8</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>6</x>
+            <y>5</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>5</x>
+            <y>8</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>4</x>
+            <y>7</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>0</x>
+            <y>3</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>3</x>
+            <y>4</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>6</x>
+            <y>7</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>7</x>
+            <y>2</y>
+          </position>
+          <age>0</age>
+        </edu.asu.commons.foraging.model.Resource>
+      </resources>
+      <group>
+        <clients>
+          <entry>
+            <edu.asu.commons.net.SocketIdentifier>
+              <id>14851609276781</id>
+              <hash>1</hash>
+              <chatHandle>A</chatHandle>
+              <localSocketAddress serialization="custom">
+                <java.net.InetSocketAddress>
+                  <default>
+                    <addr class="java.net.Inet4Address" resolves-to="java.net.InetAddress" serialization="custom">
+                      <java.net.InetAddress>
+                        <default>
+                          <hostName>localhost</hostName>
+                          <address>2130706433</address>
+                          <family>2</family>
+                        </default>
+                      </java.net.InetAddress>
+                    </addr>
+                    <port>16001</port>
+                  </default>
+                </java.net.InetSocketAddress>
+              </localSocketAddress>
+              <remoteSocketAddress serialization="custom">
+                <java.net.InetSocketAddress>
+                  <default>
+                    <addr class="java.net.Inet4Address" reference="../../../../localSocketAddress/java.net.InetSocketAddress/default/addr"/>
+                    <port>56390</port>
+                  </default>
+                </java.net.InetSocketAddress>
+              </remoteSocketAddress>
+              <stationed>true</stationed>
+              <stationNumber>1</stationNumber>
+            </edu.asu.commons.net.SocketIdentifier>
+            <edu.asu.commons.foraging.model.ClientData>
+              <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.net.SocketIdentifier"/>
+              <groupDataModel reference="../../../.."/>
+              <foragingRole>HARVEST</foragingRole>
+              <totalTokens>73</totalTokens>
+              <currentTokens>11</currentTokens>
+              <tokensCollectedLastRound>0</tokensCollectedLastRound>
+              <sanctionBonuses>0</sanctionBonuses>
+              <sanctionPenalties>0</sanctionPenalties>
+              <sanctionCosts>0</sanctionCosts>
+              <assignedNumber>1</assignedNumber>
+              <position>
+                <x>5.0</x>
+                <y>6.0</y>
+                <z>0.0</z>
+              </position>
+              <explicitCollectionMode>true</explicitCollectionMode>
+              <latestSanctions/>
+              <subjectsFieldOfVisionEnabled>false</subjectsFieldOfVisionEnabled>
+              <tokensFieldOfVisionEnabled>false</tokensFieldOfVisionEnabled>
+              <viewSubjectsRadius>0.0</viewSubjectsRadius>
+              <viewTokensRadius>0.0</viewTokensRadius>
+              <taxReceived>false</taxReceived>
+              <trustGamePlayerOneAmountToKeep>0.0</trustGamePlayerOneAmountToKeep>
+              <trustGameLog/>
+              <collectedTokenPositions>
+                <java.awt.Point>
+                  <x>5</x>
+                  <y>3</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>5</x>
+                  <y>4</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>2</x>
+                  <y>4</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>1</x>
+                  <y>2</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>2</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>1</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>3</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>5</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>2</x>
+                  <y>1</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>3</x>
+                  <y>3</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>3</x>
+                  <y>7</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>7</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>6</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>1</x>
+                  <y>6</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>1</x>
+                  <y>8</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>5</x>
+                  <y>6</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>6</x>
+                  <y>6</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>6</x>
+                  <y>7</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>7</x>
+                  <y>8</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>7</x>
+                  <y>7</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>7</x>
+                  <y>6</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>7</x>
+                  <y>5</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>6</x>
+                  <y>5</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>6</x>
+                  <y>8</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>5</x>
+                  <y>8</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>4</x>
+                  <y>8</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>8</x>
+                  <y>8</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>8</x>
+                  <y>5</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>1</x>
+                  <y>3</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>3</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>2</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>2</x>
+                  <y>4</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>3</x>
+                  <y>3</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>6</x>
+                  <y>2</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>7</x>
+                  <y>2</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>8</x>
+                  <y>1</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>8</x>
+                  <y>0</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>7</x>
+                  <y>1</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>8</x>
+                  <y>2</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>4</x>
+                  <y>2</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>2</x>
+                  <y>0</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>1</x>
+                  <y>1</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>1</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>2</x>
+                  <y>3</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>2</x>
+                  <y>2</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>4</x>
+                  <y>3</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>4</x>
+                  <y>4</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>4</x>
+                  <y>1</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>3</x>
+                  <y>0</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>5</x>
+                  <y>0</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>8</x>
+                  <y>0</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>5</x>
+                  <y>3</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>1</x>
+                  <y>4</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>5</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>6</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>7</x>
+                  <y>7</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>1</x>
+                  <y>3</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>1</x>
+                  <y>2</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>1</x>
+                  <y>1</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>0</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>1</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>4</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>1</x>
+                  <y>4</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>1</x>
+                  <y>5</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>2</x>
+                  <y>5</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>3</x>
+                  <y>5</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>3</x>
+                  <y>6</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>2</x>
+                  <y>7</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>2</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>2</x>
+                  <y>0</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>3</x>
+                  <y>0</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>2</x>
+                  <y>2</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>2</x>
+                  <y>4</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>2</x>
+                  <y>7</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>4</x>
+                  <y>7</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>4</x>
+                  <y>8</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>5</x>
+                  <y>8</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>6</x>
+                  <y>7</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>0</x>
+                  <y>3</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>1</x>
+                  <y>0</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>6</x>
+                  <y>1</y>
+                </java.awt.Point>
+                <java.awt.Point>
+                  <x>8</x>
+                  <y>6</y>
+                </java.awt.Point>
+              </collectedTokenPositions>
+              <totalIncome>1.4600000000000009</totalIncome>
+              <trustGameIncome>0.0</trustGameIncome>
+              <correctQuizAnswers>9</correctQuizAnswers>
+              <zone>0</zone>
+              <tokensCollectedDuringInterval>11</tokensCollectedDuringInterval>
+            </edu.asu.commons.foraging.model.ClientData>
+          </entry>
+        </clients>
+        <resourceDistribution/>
+        <bots>
+          <edu.asu.commons.foraging.bot.NormalBot>
+            <identifier class="edu.asu.commons.foraging.bot.BotIdentifier">
+              <id>14851635368126</id>
+              <hash>6</hash>
+            </identifier>
+            <currentPosition>
+              <x>1</x>
+              <y>5</y>
+            </currentPosition>
+            <currentTokens>11</currentTokens>
+            <targetLocation>
+              <x>1</x>
+              <y>5</y>
+            </targetLocation>
+            <harvestProbability>0.4</harvestProbability>
+            <movementProbability>0.9</movementProbability>
+            <actionsPerSecond>10</actionsPerSecond>
+            <botNumber>2</botNumber>
+            <numberOfActionsTaken>4</numberOfActionsTaken>
+            <model reference="../../.."/>
+            <ticksToWait>0</ticksToWait>
+            <botType>CUSTOM</botType>
+          </edu.asu.commons.foraging.bot.NormalBot>
+        </bots>
+        <groupId>1</groupId>
+        <receivedEnforcementRankings>0</receivedEnforcementRankings>
+        <receivedRegulationRankings>0</receivedRegulationRankings>
+        <receivedSanctionRankings>0</receivedSanctionRankings>
+        <activeEnforcementMechanism>NONE</activeEnforcementMechanism>
+        <activeSanctionMechanism>NONE</activeSanctionMechanism>
+        <submittedRegulations/>
+        <nextZone>0</nextZone>
+        <currentTeamSize>
+          <int>0</int>
+          <int>0</int>
+        </currentTeamSize>
+      </group>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.event.RoundStartedMarkerEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163548973</creationTime>
+      <creationTimeNanos>81018808994551</creationTimeNanos>
+      <ordinal>374</ordinal>
+    </edu.asu.commons.event.RoundStartedMarkerEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163549142</creationTime>
+      <creationTimeNanos>81018977832769</creationTimeNanos>
+      <ordinal>375</ordinal>
+      <location>
+        <x>6</x>
+        <y>4</y>
+      </location>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163549297</creationTime>
+      <creationTimeNanos>81019132766966</creationTimeNanos>
+      <ordinal>376</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163549456</creationTime>
+      <creationTimeNanos>81019291528158</creationTimeNanos>
+      <ordinal>377</ordinal>
+      <location>
+        <x>5</x>
+        <y>4</y>
+      </location>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163549929</creationTime>
+      <creationTimeNanos>81019764054998</creationTimeNanos>
+      <ordinal>378</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163550005</creationTime>
+      <creationTimeNanos>81019840844368</creationTimeNanos>
+      <ordinal>379</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163550085</creationTime>
+      <creationTimeNanos>81019920859923</creationTimeNanos>
+      <ordinal>380</ordinal>
+      <location>
+        <x>4</x>
+        <y>4</y>
+      </location>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier">
+        <id>14851609276781</id>
+        <hash>1</hash>
+        <chatHandle>A</chatHandle>
+        <localSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" resolves-to="java.net.InetAddress" serialization="custom">
+                <java.net.InetAddress>
+                  <default>
+                    <hostName>localhost</hostName>
+                    <address>2130706433</address>
+                    <family>2</family>
+                  </default>
+                </java.net.InetAddress>
+              </addr>
+              <port>16001</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </localSocketAddress>
+        <remoteSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" reference="../../../../localSocketAddress/java.net.InetSocketAddress/default/addr"/>
+              <port>56390</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </remoteSocketAddress>
+        <stationed>true</stationed>
+        <stationNumber>1</stationNumber>
+      </id>
+      <creationTime>1485163550281</creationTime>
+      <creationTimeNanos>81020116759248</creationTimeNanos>
+      <ordinal>199</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163550407</creationTime>
+      <creationTimeNanos>81020242579960</creationTimeNanos>
+      <ordinal>381</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[3]/id"/>
+      <creationTime>1485163550449</creationTime>
+      <creationTimeNanos>81020284708250</creationTimeNanos>
+      <ordinal>200</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.net.SocketIdentifier"/>
+      <creationTime>1485163550646</creationTime>
+      <creationTimeNanos>81020481111543</creationTimeNanos>
+      <ordinal>382</ordinal>
+      <location reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.foraging.model.ClientData/collectedTokenPositions/java.awt.Point[72]"/>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[3]/id"/>
+      <creationTime>1485163550882</creationTime>
+      <creationTimeNanos>81020717323246</creationTimeNanos>
+      <ordinal>201</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163551042</creationTime>
+      <creationTimeNanos>81020877626560</creationTimeNanos>
+      <ordinal>383</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier">
+        <id>14851609276781</id>
+        <hash>1</hash>
+        <chatHandle>A</chatHandle>
+        <localSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" resolves-to="java.net.InetAddress" serialization="custom">
+                <java.net.InetAddress>
+                  <default>
+                    <hostName>localhost</hostName>
+                    <address>2130706433</address>
+                    <family>2</family>
+                  </default>
+                </java.net.InetAddress>
+              </addr>
+              <port>16001</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </localSocketAddress>
+        <remoteSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" reference="../../../../localSocketAddress/java.net.InetSocketAddress/default/addr"/>
+              <port>56390</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </remoteSocketAddress>
+        <stationed>true</stationed>
+        <stationNumber>1</stationNumber>
+      </id>
+      <creationTime>1485163551073</creationTime>
+      <creationTimeNanos>81020908684910</creationTimeNanos>
+      <ordinal>202</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.net.SocketIdentifier"/>
+      <creationTime>1485163551281</creationTime>
+      <creationTimeNanos>81021116470927</creationTimeNanos>
+      <ordinal>384</ordinal>
+      <location reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.foraging.model.ClientData/collectedTokenPositions/java.awt.Point[73]"/>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[7]/id"/>
+      <creationTime>1485163551361</creationTime>
+      <creationTimeNanos>81021196905832</creationTimeNanos>
+      <ordinal>203</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163551361</creationTime>
+      <creationTimeNanos>81021196058156</creationTimeNanos>
+      <ordinal>385</ordinal>
+      <location>
+        <x>3</x>
+        <y>4</y>
+      </location>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[7]/id"/>
+      <creationTime>1485163551561</creationTime>
+      <creationTimeNanos>81021396758310</creationTimeNanos>
+      <ordinal>204</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[7]/id"/>
+      <creationTime>1485163551753</creationTime>
+      <creationTimeNanos>81021588736779</creationTimeNanos>
+      <ordinal>205</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.net.SocketIdentifier"/>
+      <creationTime>1485163551922</creationTime>
+      <creationTimeNanos>81021757150839</creationTimeNanos>
+      <ordinal>386</ordinal>
+      <location reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.foraging.model.ClientData/collectedTokenPositions/java.awt.Point[74]"/>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier">
+        <id>14851609276781</id>
+        <hash>1</hash>
+        <chatHandle>A</chatHandle>
+        <localSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" resolves-to="java.net.InetAddress" serialization="custom">
+                <java.net.InetAddress>
+                  <default>
+                    <hostName>localhost</hostName>
+                    <address>2130706433</address>
+                    <family>2</family>
+                  </default>
+                </java.net.InetAddress>
+              </addr>
+              <port>16001</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </localSocketAddress>
+        <remoteSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" reference="../../../../localSocketAddress/java.net.InetSocketAddress/default/addr"/>
+              <port>56390</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </remoteSocketAddress>
+        <stationed>true</stationed>
+        <stationNumber>1</stationNumber>
+      </id>
+      <creationTime>1485163552041</creationTime>
+      <creationTimeNanos>81021876419807</creationTimeNanos>
+      <ordinal>206</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163552076</creationTime>
+      <creationTimeNanos>81021911252097</creationTimeNanos>
+      <ordinal>387</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[11]/id"/>
+      <creationTime>1485163552209</creationTime>
+      <creationTimeNanos>81022044418541</creationTimeNanos>
+      <ordinal>207</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163552310</creationTime>
+      <creationTimeNanos>81022145739709</creationTimeNanos>
+      <ordinal>388</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.net.SocketIdentifier"/>
+      <creationTime>1485163552471</creationTime>
+      <creationTimeNanos>81022306178297</creationTimeNanos>
+      <ordinal>389</ordinal>
+      <location reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.foraging.model.ClientData/collectedTokenPositions/java.awt.Point[75]"/>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[11]/id"/>
+      <creationTime>1485163552593</creationTime>
+      <creationTimeNanos>81022428694140</creationTimeNanos>
+      <ordinal>208</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163552630</creationTime>
+      <creationTimeNanos>81022465187052</creationTimeNanos>
+      <ordinal>390</ordinal>
+      <location>
+        <x>3</x>
+        <y>5</y>
+      </location>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.net.SocketIdentifier"/>
+      <creationTime>1485163552949</creationTime>
+      <creationTimeNanos>81022784742448</creationTimeNanos>
+      <ordinal>391</ordinal>
+      <location reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.foraging.model.ClientData/collectedTokenPositions/java.awt.Point[76]"/>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163552949</creationTime>
+      <creationTimeNanos>81022784825341</creationTimeNanos>
+      <ordinal>392</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163553107</creationTime>
+      <creationTimeNanos>81022941903409</creationTimeNanos>
+      <ordinal>393</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163553107</creationTime>
+      <creationTimeNanos>81022941949509</creationTimeNanos>
+      <ordinal>394</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier">
+        <id>14851609276781</id>
+        <hash>1</hash>
+        <chatHandle>A</chatHandle>
+        <localSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" resolves-to="java.net.InetAddress" serialization="custom">
+                <java.net.InetAddress>
+                  <default>
+                    <hostName>localhost</hostName>
+                    <address>2130706433</address>
+                    <family>2</family>
+                  </default>
+                </java.net.InetAddress>
+              </addr>
+              <port>16001</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </localSocketAddress>
+        <remoteSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" reference="../../../../localSocketAddress/java.net.InetSocketAddress/default/addr"/>
+              <port>56390</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </remoteSocketAddress>
+        <stationed>true</stationed>
+        <stationNumber>1</stationNumber>
+      </id>
+      <creationTime>1485163553202</creationTime>
+      <creationTimeNanos>81023037515032</creationTimeNanos>
+      <ordinal>209</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163553264</creationTime>
+      <creationTimeNanos>81023099263403</creationTimeNanos>
+      <ordinal>395</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.net.SocketIdentifier"/>
+      <creationTime>1485163553420</creationTime>
+      <creationTimeNanos>81023255727291</creationTimeNanos>
+      <ordinal>396</ordinal>
+      <location reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.foraging.model.ClientData/collectedTokenPositions/java.awt.Point[77]"/>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[17]/id"/>
+      <creationTime>1485163553561</creationTime>
+      <creationTimeNanos>81023396824600</creationTimeNanos>
+      <ordinal>210</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163553575</creationTime>
+      <creationTimeNanos>81023410816429</creationTimeNanos>
+      <ordinal>397</ordinal>
+      <location>
+        <x>6</x>
+        <y>5</y>
+      </location>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[17]/id"/>
+      <creationTime>1485163553842</creationTime>
+      <creationTimeNanos>81023676985981</creationTimeNanos>
+      <ordinal>211</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.net.SocketIdentifier"/>
+      <creationTime>1485163554050</creationTime>
+      <creationTimeNanos>81023884923857</creationTimeNanos>
+      <ordinal>398</ordinal>
+      <location reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.foraging.model.ClientData/collectedTokenPositions/java.awt.Point[78]"/>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163554128</creationTime>
+      <creationTimeNanos>81023963199747</creationTimeNanos>
+      <ordinal>399</ordinal>
+      <resources>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>7</x>
+            <y>3</y>
+          </position>
+          <age>1</age>
+        </edu.asu.commons.foraging.model.Resource>
+      </resources>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier">
+        <id>14851609276781</id>
+        <hash>1</hash>
+        <chatHandle>A</chatHandle>
+        <localSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" resolves-to="java.net.InetAddress" serialization="custom">
+                <java.net.InetAddress>
+                  <default>
+                    <hostName>localhost</hostName>
+                    <address>2130706433</address>
+                    <family>2</family>
+                  </default>
+                </java.net.InetAddress>
+              </addr>
+              <port>16001</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </localSocketAddress>
+        <remoteSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" reference="../../../../localSocketAddress/java.net.InetSocketAddress/default/addr"/>
+              <port>56390</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </remoteSocketAddress>
+        <stationed>true</stationed>
+        <stationNumber>1</stationNumber>
+      </id>
+      <creationTime>1485163554281</creationTime>
+      <creationTimeNanos>81024116617267</creationTimeNanos>
+      <ordinal>213</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163554361</creationTime>
+      <creationTimeNanos>81024196287546</creationTimeNanos>
+      <ordinal>400</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[21]/id"/>
+      <creationTime>1485163554425</creationTime>
+      <creationTimeNanos>81024260819585</creationTimeNanos>
+      <ordinal>214</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163554521</creationTime>
+      <creationTimeNanos>81024356386581</creationTimeNanos>
+      <ordinal>401</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[21]/id"/>
+      <creationTime>1485163554569</creationTime>
+      <creationTimeNanos>81024404715344</creationTimeNanos>
+      <ordinal>215</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[21]/id"/>
+      <creationTime>1485163554705</creationTime>
+      <creationTimeNanos>81024540702866</creationTimeNanos>
+      <ordinal>216</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[21]/id"/>
+      <creationTime>1485163554874</creationTime>
+      <creationTimeNanos>81024709010011</creationTimeNanos>
+      <ordinal>217</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[21]/id"/>
+      <creationTime>1485163555010</creationTime>
+      <creationTimeNanos>81024845161050</creationTimeNanos>
+      <ordinal>218</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163555162</creationTime>
+      <creationTimeNanos>81024997392873</creationTimeNanos>
+      <ordinal>402</ordinal>
+      <resources>
+        <edu.asu.commons.foraging.model.Resource>
+          <position>
+            <x>8</x>
+            <y>3</y>
+          </position>
+          <age>1</age>
+        </edu.asu.commons.foraging.model.Resource>
+      </resources>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163555162</creationTime>
+      <creationTimeNanos>81024997429906</creationTimeNanos>
+      <ordinal>403</ordinal>
+      <location>
+        <x>7</x>
+        <y>4</y>
+      </location>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier">
+        <id>14851609276781</id>
+        <hash>1</hash>
+        <chatHandle>A</chatHandle>
+        <localSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" resolves-to="java.net.InetAddress" serialization="custom">
+                <java.net.InetAddress>
+                  <default>
+                    <hostName>localhost</hostName>
+                    <address>2130706433</address>
+                    <family>2</family>
+                  </default>
+                </java.net.InetAddress>
+              </addr>
+              <port>16001</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </localSocketAddress>
+        <remoteSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" reference="../../../../localSocketAddress/java.net.InetSocketAddress/default/addr"/>
+              <port>56390</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </remoteSocketAddress>
+        <stationed>true</stationed>
+        <stationNumber>1</stationNumber>
+      </id>
+      <creationTime>1485163555185</creationTime>
+      <creationTimeNanos>81025020761534</creationTimeNanos>
+      <ordinal>219</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[29]/id"/>
+      <creationTime>1485163555394</creationTime>
+      <creationTimeNanos>81025228958885</creationTimeNanos>
+      <ordinal>221</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[29]/id"/>
+      <creationTime>1485163555841</creationTime>
+      <creationTimeNanos>81025676686914</creationTimeNanos>
+      <ordinal>222</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.net.SocketIdentifier"/>
+      <creationTime>1485163556113</creationTime>
+      <creationTimeNanos>81025948200669</creationTimeNanos>
+      <ordinal>404</ordinal>
+      <location reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.foraging.model.ClientData/collectedTokenPositions/java.awt.Point[79]"/>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163556113</creationTime>
+      <creationTimeNanos>81025948315405</creationTimeNanos>
+      <ordinal>405</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163556194</creationTime>
+      <creationTimeNanos>81026029581711</creationTimeNanos>
+      <ordinal>406</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier">
+        <id>14851609276781</id>
+        <hash>1</hash>
+        <chatHandle>A</chatHandle>
+        <localSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" resolves-to="java.net.InetAddress" serialization="custom">
+                <java.net.InetAddress>
+                  <default>
+                    <hostName>localhost</hostName>
+                    <address>2130706433</address>
+                    <family>2</family>
+                  </default>
+                </java.net.InetAddress>
+              </addr>
+              <port>16001</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </localSocketAddress>
+        <remoteSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" reference="../../../../localSocketAddress/java.net.InetSocketAddress/default/addr"/>
+              <port>56390</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </remoteSocketAddress>
+        <stationed>true</stationed>
+        <stationNumber>1</stationNumber>
+      </id>
+      <creationTime>1485163556242</creationTime>
+      <creationTimeNanos>81026076775671</creationTimeNanos>
+      <ordinal>223</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163556274</creationTime>
+      <creationTimeNanos>81026109498926</creationTimeNanos>
+      <ordinal>407</ordinal>
+      <location>
+        <x>8</x>
+        <y>4</y>
+      </location>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[33]/id"/>
+      <creationTime>1485163556442</creationTime>
+      <creationTimeNanos>81026277439768</creationTimeNanos>
+      <ordinal>224</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163556588</creationTime>
+      <creationTimeNanos>81026423435152</creationTimeNanos>
+      <ordinal>408</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[33]/id"/>
+      <creationTime>1485163556746</creationTime>
+      <creationTimeNanos>81026581262980</creationTimeNanos>
+      <ordinal>225</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[33]/id"/>
+      <creationTime>1485163556969</creationTime>
+      <creationTimeNanos>81026804723399</creationTimeNanos>
+      <ordinal>226</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163557066</creationTime>
+      <creationTimeNanos>81026900910521</creationTimeNanos>
+      <ordinal>409</ordinal>
+      <location>
+        <x>8</x>
+        <y>3</y>
+      </location>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.net.SocketIdentifier"/>
+      <creationTime>1485163557222</creationTime>
+      <creationTimeNanos>81027057386290</creationTimeNanos>
+      <ordinal>410</ordinal>
+      <location reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.foraging.model.ClientData/collectedTokenPositions/java.awt.Point[80]"/>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163557222</creationTime>
+      <creationTimeNanos>81027057490514</creationTimeNanos>
+      <ordinal>411</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier">
+        <id>14851609276781</id>
+        <hash>1</hash>
+        <chatHandle>A</chatHandle>
+        <localSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" resolves-to="java.net.InetAddress" serialization="custom">
+                <java.net.InetAddress>
+                  <default>
+                    <hostName>localhost</hostName>
+                    <address>2130706433</address>
+                    <family>2</family>
+                  </default>
+                </java.net.InetAddress>
+              </addr>
+              <port>16001</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </localSocketAddress>
+        <remoteSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" reference="../../../../localSocketAddress/java.net.InetSocketAddress/default/addr"/>
+              <port>56390</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </remoteSocketAddress>
+        <stationed>true</stationed>
+        <stationNumber>1</stationNumber>
+      </id>
+      <creationTime>1485163557450</creationTime>
+      <creationTimeNanos>81027284975220</creationTimeNanos>
+      <ordinal>228</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163557545</creationTime>
+      <creationTimeNanos>81027379741501</creationTimeNanos>
+      <ordinal>412</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[38]/id"/>
+      <creationTime>1485163557610</creationTime>
+      <creationTimeNanos>81027444726888</creationTimeNanos>
+      <ordinal>229</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[38]/id"/>
+      <creationTime>1485163557746</creationTime>
+      <creationTimeNanos>81027580970458</creationTimeNanos>
+      <ordinal>230</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[38]/id"/>
+      <creationTime>1485163557865</creationTime>
+      <creationTimeNanos>81027700528466</creationTimeNanos>
+      <ordinal>231</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163558024</creationTime>
+      <creationTimeNanos>81027858713440</creationTimeNanos>
+      <ordinal>413</ordinal>
+      <location>
+        <x>7</x>
+        <y>3</y>
+      </location>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[38]/id"/>
+      <creationTime>1485163558082</creationTime>
+      <creationTimeNanos>81027916991124</creationTimeNanos>
+      <ordinal>232</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163558263</creationTime>
+      <creationTimeNanos>81028098007680</creationTimeNanos>
+      <ordinal>414</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163558341</creationTime>
+      <creationTimeNanos>81028176149350</creationTimeNanos>
+      <ordinal>415</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163558499</creationTime>
+      <creationTimeNanos>81028334598315</creationTimeNanos>
+      <ordinal>416</ordinal>
+      <location>
+        <x>7</x>
+        <y>2</y>
+      </location>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.net.SocketIdentifier"/>
+      <creationTime>1485163558735</creationTime>
+      <creationTimeNanos>81028570285845</creationTimeNanos>
+      <ordinal>417</ordinal>
+      <location reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.foraging.model.ClientData/collectedTokenPositions/java.awt.Point[81]"/>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier">
+        <id>14851609276781</id>
+        <hash>1</hash>
+        <chatHandle>A</chatHandle>
+        <localSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" resolves-to="java.net.InetAddress" serialization="custom">
+                <java.net.InetAddress>
+                  <default>
+                    <hostName>localhost</hostName>
+                    <address>2130706433</address>
+                    <family>2</family>
+                  </default>
+                </java.net.InetAddress>
+              </addr>
+              <port>16001</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </localSocketAddress>
+        <remoteSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" reference="../../../../localSocketAddress/java.net.InetSocketAddress/default/addr"/>
+              <port>56390</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </remoteSocketAddress>
+        <stationed>true</stationed>
+        <stationNumber>1</stationNumber>
+      </id>
+      <creationTime>1485163558889</creationTime>
+      <creationTimeNanos>81028724582563</creationTimeNanos>
+      <ordinal>233</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[45]/id"/>
+      <creationTime>1485163559089</creationTime>
+      <creationTimeNanos>81028924623383</creationTimeNanos>
+      <ordinal>234</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier">
+        <id>14851609276781</id>
+        <hash>1</hash>
+        <chatHandle>A</chatHandle>
+        <localSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" resolves-to="java.net.InetAddress" serialization="custom">
+                <java.net.InetAddress>
+                  <default>
+                    <hostName>localhost</hostName>
+                    <address>2130706433</address>
+                    <family>2</family>
+                  </default>
+                </java.net.InetAddress>
+              </addr>
+              <port>16001</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </localSocketAddress>
+        <remoteSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" reference="../../../../localSocketAddress/java.net.InetSocketAddress/default/addr"/>
+              <port>56390</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </remoteSocketAddress>
+        <stationed>true</stationed>
+        <stationNumber>1</stationNumber>
+      </id>
+      <creationTime>1485163559227</creationTime>
+      <creationTimeNanos>81029061855720</creationTimeNanos>
+      <ordinal>235</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163559293</creationTime>
+      <creationTimeNanos>81029128203314</creationTimeNanos>
+      <ordinal>418</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163559293</creationTime>
+      <creationTimeNanos>81029128314039</creationTimeNanos>
+      <ordinal>419</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[47]/id"/>
+      <creationTime>1485163559361</creationTime>
+      <creationTimeNanos>81029196402363</creationTimeNanos>
+      <ordinal>236</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163559451</creationTime>
+      <creationTimeNanos>81029285796550</creationTimeNanos>
+      <ordinal>420</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[47]/id"/>
+      <creationTime>1485163559514</creationTime>
+      <creationTimeNanos>81029348869783</creationTimeNanos>
+      <ordinal>237</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163559607</creationTime>
+      <creationTimeNanos>81029441637545</creationTimeNanos>
+      <ordinal>421</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[47]/id"/>
+      <creationTime>1485163559691</creationTime>
+      <creationTimeNanos>81029526515383</creationTimeNanos>
+      <ordinal>238</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[47]/id"/>
+      <creationTime>1485163559850</creationTime>
+      <creationTimeNanos>81029685208254</creationTimeNanos>
+      <ordinal>239</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163559927</creationTime>
+      <creationTimeNanos>81029761955920</creationTimeNanos>
+      <ordinal>422</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.TokenCollectedEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.net.SocketIdentifier"/>
+      <creationTime>1485163560163</creationTime>
+      <creationTimeNanos>81029998189171</creationTimeNanos>
+      <ordinal>423</ordinal>
+      <location reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/clients/entry/edu.asu.commons.foraging.model.ClientData/collectedTokenPositions/java.awt.Point[82]"/>
+    </edu.asu.commons.foraging.event.TokenCollectedEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163560325</creationTime>
+      <creationTimeNanos>81030160424375</creationTimeNanos>
+      <ordinal>424</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier">
+        <id>14851609276781</id>
+        <hash>1</hash>
+        <chatHandle>A</chatHandle>
+        <localSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" resolves-to="java.net.InetAddress" serialization="custom">
+                <java.net.InetAddress>
+                  <default>
+                    <hostName>localhost</hostName>
+                    <address>2130706433</address>
+                    <family>2</family>
+                  </default>
+                </java.net.InetAddress>
+              </addr>
+              <port>16001</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </localSocketAddress>
+        <remoteSocketAddress serialization="custom">
+          <java.net.InetSocketAddress>
+            <default>
+              <addr class="java.net.Inet4Address" reference="../../../../localSocketAddress/java.net.InetSocketAddress/default/addr"/>
+              <port>56390</port>
+            </default>
+          </java.net.InetSocketAddress>
+        </remoteSocketAddress>
+        <stationed>true</stationed>
+        <stationNumber>1</stationNumber>
+      </id>
+      <creationTime>1485163560651</creationTime>
+      <creationTimeNanos>81030485833113</creationTimeNanos>
+      <ordinal>240</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[56]/id"/>
+      <creationTime>1485163560842</creationTime>
+      <creationTimeNanos>81030676718340</creationTimeNanos>
+      <ordinal>241</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.net.SocketIdentifier" reference="../../edu.asu.commons.foraging.event.MovementEvent[56]/id"/>
+      <creationTime>1485163561066</creationTime>
+      <creationTimeNanos>81030900699355</creationTimeNanos>
+      <ordinal>242</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163561203</creationTime>
+      <creationTimeNanos>81031037922817</creationTimeNanos>
+      <ordinal>425</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163561362</creationTime>
+      <creationTimeNanos>81031197001093</creationTimeNanos>
+      <ordinal>426</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163561995</creationTime>
+      <creationTimeNanos>81031830398502</creationTimeNanos>
+      <ordinal>427</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163562154</creationTime>
+      <creationTimeNanos>81031988680942</creationTimeNanos>
+      <ordinal>428</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163562386</creationTime>
+      <creationTimeNanos>81032221215106</creationTimeNanos>
+      <ordinal>429</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163562626</creationTime>
+      <creationTimeNanos>81032461338809</creationTimeNanos>
+      <ordinal>430</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163562782</creationTime>
+      <creationTimeNanos>81032616992468</creationTimeNanos>
+      <ordinal>431</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163562937</creationTime>
+      <creationTimeNanos>81032772426467</creationTimeNanos>
+      <ordinal>432</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163563415</creationTime>
+      <creationTimeNanos>81033249813893</creationTimeNanos>
+      <ordinal>433</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163563415</creationTime>
+      <creationTimeNanos>81033249870970</creationTimeNanos>
+      <ordinal>434</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163563575</creationTime>
+      <creationTimeNanos>81033409513305</creationTimeNanos>
+      <ordinal>435</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163563732</creationTime>
+      <creationTimeNanos>81033567168945</creationTimeNanos>
+      <ordinal>436</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163563888</creationTime>
+      <creationTimeNanos>81033723348309</creationTimeNanos>
+      <ordinal>437</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163564046</creationTime>
+      <creationTimeNanos>81033880467234</creationTimeNanos>
+      <ordinal>438</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163564364</creationTime>
+      <creationTimeNanos>81034198615089</creationTimeNanos>
+      <ordinal>439</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163564443</creationTime>
+      <creationTimeNanos>81034278310384</creationTimeNanos>
+      <ordinal>440</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163564522</creationTime>
+      <creationTimeNanos>81034356450964</creationTimeNanos>
+      <ordinal>441</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163564676</creationTime>
+      <creationTimeNanos>81034511272469</creationTimeNanos>
+      <ordinal>442</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163565472</creationTime>
+      <creationTimeNanos>81035306620437</creationTimeNanos>
+      <ordinal>443</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163565634</creationTime>
+      <creationTimeNanos>81035468511365</creationTimeNanos>
+      <ordinal>444</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163565789</creationTime>
+      <creationTimeNanos>81035623684938</creationTimeNanos>
+      <ordinal>445</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163565949</creationTime>
+      <creationTimeNanos>81035783577785</creationTimeNanos>
+      <ordinal>446</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163566262</creationTime>
+      <creationTimeNanos>81036096954021</creationTimeNanos>
+      <ordinal>447</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163566500</creationTime>
+      <creationTimeNanos>81036334502583</creationTimeNanos>
+      <ordinal>448</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163566578</creationTime>
+      <creationTimeNanos>81036413307008</creationTimeNanos>
+      <ordinal>449</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163567060</creationTime>
+      <creationTimeNanos>81036894763295</creationTimeNanos>
+      <ordinal>450</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163567535</creationTime>
+      <creationTimeNanos>81037369554213</creationTimeNanos>
+      <ordinal>451</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163568007</creationTime>
+      <creationTimeNanos>81037841593758</creationTimeNanos>
+      <ordinal>452</ordinal>
+      <direction>RIGHT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163568164</creationTime>
+      <creationTimeNanos>81037999212333</creationTimeNanos>
+      <ordinal>453</ordinal>
+      <direction>UP</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.ResourcesAddedEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163568557</creationTime>
+      <creationTimeNanos>81038391826229</creationTimeNanos>
+      <ordinal>454</ordinal>
+      <resources/>
+      <group reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group"/>
+    </edu.asu.commons.foraging.event.ResourcesAddedEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163568954</creationTime>
+      <creationTimeNanos>81038788499517</creationTimeNanos>
+      <ordinal>455</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163569111</creationTime>
+      <creationTimeNanos>81038946072273</creationTimeNanos>
+      <ordinal>456</ordinal>
+      <direction>LEFT</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.foraging.event.MovementEvent>
+      <id class="edu.asu.commons.foraging.bot.BotIdentifier" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/group/bots/edu.asu.commons.foraging.bot.NormalBot/identifier"/>
+      <creationTime>1485163569267</creationTime>
+      <creationTimeNanos>81039102129034</creationTimeNanos>
+      <ordinal>457</ordinal>
+      <direction>DOWN</direction>
+    </edu.asu.commons.foraging.event.MovementEvent>
+    <edu.asu.commons.event.RoundEndedMarkerEvent>
+      <id class="edu.asu.commons.net.Identifier$1" reference="../../edu.asu.commons.foraging.event.ResourcesAddedEvent/id"/>
+      <creationTime>1485163569430</creationTime>
+      <creationTimeNanos>81039264871330</creationTimeNanos>
+      <ordinal>458</ordinal>
+    </edu.asu.commons.event.RoundEndedMarkerEvent>
+  </sorted-set>
+  <sorted-set/>
+</object-stream>

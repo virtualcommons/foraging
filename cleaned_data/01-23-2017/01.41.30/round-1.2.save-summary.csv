@@ -1,0 +1,31 @@
+Participant, Group, Total Cumulative Tokens, Sanction costs, Sanction penalties
+Station 1 (uid: 1), #1, Group #1, 47, 0, 0
+Group Group #1, 0, 47
+=========================================
+Time, Participant, Token Collected?, Chat
+0.164, BotIdentifier uid: 14851634667664, token collected
+0.638, BotIdentifier uid: 14851634667664, token collected
+1.739, BotIdentifier uid: 14851634667664, token collected
+2.053, Station 1 (uid: 1), token collected
+2.457, Station 1 (uid: 1), token collected
+2.534, BotIdentifier uid: 14851634667664, token collected
+3.556, Station 1 (uid: 1), token collected
+3.632, BotIdentifier uid: 14851634667664, token collected
+4.032, Station 1 (uid: 1), token collected
+4.669, Station 1 (uid: 1), token collected
+4.909, BotIdentifier uid: 14851634667664, token collected
+5.387, Station 1 (uid: 1), token collected
+6.019, Station 1 (uid: 1), token collected
+6.019, BotIdentifier uid: 14851634667664, token collected
+6.566, Station 1 (uid: 1), token collected
+7.120, BotIdentifier uid: 14851634667664, token collected
+7.746, BotIdentifier uid: 14851634667664, token collected
+7.982, Station 1 (uid: 1), token collected
+8.224, BotIdentifier uid: 14851634667664, token collected
+9.091, Station 1 (uid: 1), token collected
+9.330, BotIdentifier uid: 14851634667664, token collected
+9.892, Station 1 (uid: 1), token collected
+10.214, Station 1 (uid: 1), token collected
+10.295, BotIdentifier uid: 14851634667664, token collected
+11.410, BotIdentifier uid: 14851634667664, token collected
+11.727, Station 1 (uid: 1), token collected

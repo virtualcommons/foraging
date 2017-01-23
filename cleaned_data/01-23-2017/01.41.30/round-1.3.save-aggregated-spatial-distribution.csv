@@ -1,0 +1,12 @@
+Time, Identifier, Group, # tokens, row stdev, column stdev
+5, Station 1 (uid: 1), Group #1, 6, 0.6666666666666667, 1.2472191289246473
+Group #1 weighted spatial metric: 1.913885795591314
+Time, Identifier, Group, # tokens, row stdev, column stdev
+10, Station 1 (uid: 1), Group #1, 13, 0.9162456945817025, 0.9162456945817024
+Group #1 weighted spatial metric: 1.8324913891634047
+Time, Identifier, Group, # tokens, row stdev, column stdev
+15, Station 1 (uid: 1), Group #1, 15, 0.6285393610547091, 0.41573970964154905
+Group #1 weighted spatial metric: 1.0442790706962581
+Time, Identifier, Group, # tokens, row stdev, column stdev
+15, Station 1 (uid: 1), Group #1, 15, 0.0, 0.0
+Group #1 weighted spatial metric: 0.0

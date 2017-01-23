@@ -1,0 +1,14 @@
+Participant, Group, Total Cumulative Tokens, Sanction costs, Sanction penalties
+Station 1 (uid: 1), #1, Group #0, 0, 0, 0
+Group Group #0, 0, 0
+=========================================
+Time, Participant, Token Collected?, Chat
+2.569, Station 1 (uid: 1), token collected
+3.127, Station 1 (uid: 1), token collected
+3.765, Station 1 (uid: 1), token collected
+4.876, Station 1 (uid: 1), token collected
+5.349, Station 1 (uid: 1), token collected
+5.823, Station 1 (uid: 1), token collected
+6.927, Station 1 (uid: 1), token collected
+7.478, Station 1 (uid: 1), token collected
+8.590, Station 1 (uid: 1), token collected

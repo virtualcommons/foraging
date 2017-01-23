@@ -1,0 +1,136 @@
+1485163656807, -3.294, 34056807, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, [java.awt.Point[x=8,y=2], java.awt.Point[x=2,y=2], java.awt.Point[x=0,y=2], java.awt.Point[x=8,y=7], java.awt.Point[x=3,y=5], java.awt.Point[x=7,y=3], java.awt.Point[x=2,y=7], java.awt.Point[x=3,y=0], java.awt.Point[x=3,y=7], java.awt.Point[x=7,y=4], java.awt.Point[x=8,y=4], java.awt.Point[x=1,y=8], java.awt.Point[x=1,y=0], java.awt.Point[x=6,y=5], java.awt.Point[x=7,y=6], java.awt.Point[x=4,y=7], java.awt.Point[x=5,y=2], java.awt.Point[x=6,y=2], java.awt.Point[x=7,y=7], java.awt.Point[x=8,y=3]]
+1485163660101, 0.000, class edu.asu.commons.event.RoundStartedMarkerEvent - id: system identifier, created on 1485163660101
+1485163660266, 0.165, 34060266, BotIdentifier uid: 14851636568079, 2, 1, 4, 5, right, movement event
+1485163660422, 0.321, 34060422, BotIdentifier uid: 14851636568079, 7, 4, 2, 1, token collected event
+1485163660732, 0.631, 34060732, BotIdentifier uid: 14851636568079, 2, 2, 4, 4, up, movement event
+1485163660886, 0.785, 34060886, BotIdentifier uid: 14851636568079, 7, 3, 2, 2, token collected event
+1485163661124, 1.023, 34061124, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, [java.awt.Point[x=3,y=6]]
+1485163661526, 1.425, 34061526, BotIdentifier uid: 14851636568079, 2, 3, 5, 4, right, movement event
+1485163661682, 1.581, 34061682, BotIdentifier uid: 14851636568079, 8, 3, 2, 3, token collected event
+1485163661932, 1.831, 34061932, Station 1 (uid: 1), 2, 1, 2, 3, up, movement event
+1485163662163, 2.062, 34062163, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, []
+1485163662163, 2.062, 34062163, BotIdentifier uid: 14851636568079, 2, 4, 5, 3, up, movement event
+1485163662321, 2.220, 34062321, BotIdentifier uid: 14851636568079, 8, 2, 2, 4, token collected event
+1485163662347, 2.246, 34062347, Station 1 (uid: 1), 2, 2, 2, 2, up, movement event
+1485163662632, 2.531, 34062632, Station 1 (uid: 1), 2, 2, 2, 1, token collected event
+1485163662915, 2.814, 34062915, Station 1 (uid: 1), 2, 3, 2, 1, up, movement event
+1485163662955, 2.854, 34062955, BotIdentifier uid: 14851636568079, 2, 5, 5, 4, down, movement event
+1485163663107, 3.006, 34063107, Station 1 (uid: 1), 2, 4, 2, 0, up, movement event
+1485163663109, 3.008, 34063109, BotIdentifier uid: 14851636568079, 2, 6, 5, 5, down, movement event
+1485163663187, 3.086, 34063187, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, [java.awt.Point[x=6,y=1], java.awt.Point[x=8,y=5]]
+1485163663265, 3.164, 34063265, BotIdentifier uid: 14851636568079, 8, 4, 2, 5, token collected event
+1485163663467, 3.366, 34063467, Station 1 (uid: 1), 2, 5, 1, 0, left, movement event
+1485163663740, 3.639, 34063740, Station 1 (uid: 1), 1, 0, 2, 2, token collected event
+1485163663740, 3.639, 34063740, BotIdentifier uid: 14851636568079, 2, 7, 5, 6, down, movement event
+1485163663859, 3.758, 34063859, Station 1 (uid: 1), 2, 6, 1, 1, down, movement event
+1485163663899, 3.798, 34063899, BotIdentifier uid: 14851636568079, 8, 5, 2, 6, token collected event
+1485163664068, 3.967, 34064068, Station 1 (uid: 1), 2, 7, 1, 2, down, movement event
+1485163664216, 4.115, 34064216, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, [java.awt.Point[x=5,y=7], java.awt.Point[x=8,y=8], java.awt.Point[x=3,y=8], java.awt.Point[x=4,y=5]]
+1485163664291, 4.190, 34064291, Station 1 (uid: 1), 2, 8, 0, 2, left, movement event
+1485163664371, 4.270, 34064371, BotIdentifier uid: 14851636568079, 2, 8, 4, 6, left, movement event
+1485163664450, 4.349, 34064450, Station 1 (uid: 1), 0, 2, 2, 3, token collected event
+1485163664529, 4.428, 34064529, BotIdentifier uid: 14851636568079, 2, 9, 4, 7, down, movement event
+1485163664595, 4.494, 34064595, Station 1 (uid: 1), 2, 9, 0, 3, down, movement event
+1485163664687, 4.586, 34064687, BotIdentifier uid: 14851636568079, 7, 6, 2, 7, token collected event
+1485163664787, 4.686, 34064787, Station 1 (uid: 1), 2, 10, 0, 4, down, movement event
+1485163664955, 4.854, 34064955, Station 1 (uid: 1), 2, 11, 0, 5, down, movement event
+1485163665107, 5.006, 34065107, Station 1 (uid: 1), 2, 12, 0, 6, down, movement event
+1485163665164, 5.063, 34065164, BotIdentifier uid: 14851636568079, 2, 10, 4, 8, down, movement event
+1485163665244, 5.143, 34065244, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, [java.awt.Point[x=7,y=1]]
+1485163665283, 5.182, 34065283, Station 1 (uid: 1), 2, 13, 0, 7, down, movement event
+1485163665428, 5.327, 34065428, Station 1 (uid: 1), 2, 14, 0, 8, down, movement event
+1485163665479, 5.378, 34065479, BotIdentifier uid: 14851636568079, 7, 7, 2, 8, token collected event
+1485163665779, 5.678, 34065779, Station 1 (uid: 1), 2, 15, 1, 8, right, movement event
+1485163666032, 5.931, 34066032, Station 1 (uid: 1), 1, 8, 2, 4, token collected event
+1485163666117, 6.016, 34066117, Station 1 (uid: 1), 2, 16, 2, 8, right, movement event
+1485163666272, 6.171, 34066272, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, [java.awt.Point[x=4,y=6]]
+1485163666272, 6.171, 34066272, BotIdentifier uid: 14851636568079, 2, 11, 5, 8, right, movement event
+1485163666307, 6.206, 34066307, Station 1 (uid: 1), 2, 17, 3, 8, right, movement event
+1485163666427, 6.326, 34066427, BotIdentifier uid: 14851636568079, 8, 7, 2, 9, token collected event
+1485163666584, 6.483, 34066584, Station 1 (uid: 1), 3, 8, 2, 5, token collected event
+1485163666731, 6.630, 34066731, Station 1 (uid: 1), 2, 18, 3, 7, up, movement event
+1485163666939, 6.838, 34066939, Station 1 (uid: 1), 2, 19, 3, 6, up, movement event
+1485163667218, 7.117, 34067218, BotIdentifier uid: 14851636568079, 2, 12, 5, 8, down, movement event
+1485163667299, 7.198, 34067299, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, [java.awt.Point[x=1,y=6], java.awt.Point[x=7,y=4]]
+1485163667380, 7.279, 34067380, Station 1 (uid: 1), 3, 6, 2, 6, token collected event
+1485163667380, 7.279, 34067380, BotIdentifier uid: 14851636568079, 8, 8, 2, 10, token collected event
+1485163667515, 7.414, 34067515, Station 1 (uid: 1), 2, 20, 3, 5, up, movement event
+1485163667851, 7.750, 34067851, BotIdentifier uid: 14851636568079, 2, 13, 4, 8, left, movement event
+1485163667932, 7.831, 34067932, Station 1 (uid: 1), 3, 5, 2, 7, token collected event
+1485163668013, 7.912, 34068013, BotIdentifier uid: 14851636568079, 2, 14, 3, 8, left, movement event
+1485163668093, 7.992, 34068093, Station 1 (uid: 1), 2, 21, 4, 5, right, movement event
+1485163668168, 8.067, 34068168, BotIdentifier uid: 14851636568079, 2, 15, 2, 8, left, movement event
+1485163668327, 8.226, 34068327, Station 1 (uid: 1), 4, 5, 2, 8, token collected event
+1485163668327, 8.226, 34068327, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, [java.awt.Point[x=4,y=2]]
+1485163668485, 8.384, 34068485, BotIdentifier uid: 14851636568079, 2, 16, 2, 7, up, movement event
+1485163668523, 8.422, 34068523, Station 1 (uid: 1), 2, 22, 4, 4, up, movement event
+1485163668648, 8.547, 34068648, BotIdentifier uid: 14851636568079, 5, 7, 2, 11, token collected event
+1485163668732, 8.631, 34068732, Station 1 (uid: 1), 2, 23, 4, 3, up, movement event
+1485163668915, 8.814, 34068915, Station 1 (uid: 1), 2, 24, 4, 2, up, movement event
+1485163669125, 9.024, 34069125, BotIdentifier uid: 14851636568079, 2, 17, 1, 7, left, movement event
+1485163669202, 9.101, 34069202, Station 1 (uid: 1), 4, 2, 2, 9, token collected event
+1485163669281, 9.180, 34069281, BotIdentifier uid: 14851636568079, 4, 7, 2, 12, token collected event
+1485163669339, 9.238, 34069339, Station 1 (uid: 1), 2, 25, 5, 2, right, movement event
+1485163669360, 9.259, 34069360, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, [java.awt.Point[x=3,y=8]]
+1485163669600, 9.499, 34069600, Station 1 (uid: 1), 5, 2, 2, 10, token collected event
+1485163669600, 9.499, 34069600, BotIdentifier uid: 14851636568079, 2, 18, 1, 6, up, movement event
+1485163669755, 9.654, 34069755, Station 1 (uid: 1), 2, 26, 5, 1, up, movement event
+1485163669914, 9.813, 34069914, BotIdentifier uid: 14851636568079, 4, 6, 2, 13, token collected event
+1485163670084, 9.983, 34070084, Station 1 (uid: 1), 2, 27, 6, 1, right, movement event
+1485163670307, 10.206, 34070307, Station 1 (uid: 1), 6, 1, 2, 11, token collected event
+1485163670386, 10.285, 34070386, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, []
+1485163670386, 10.285, 34070386, BotIdentifier uid: 14851636568079, 2, 19, 0, 6, left, movement event
+1485163670532, 10.431, 34070532, Station 1 (uid: 1), 2, 28, 6, 2, down, movement event
+1485163670703, 10.602, 34070703, BotIdentifier uid: 14851636568079, 2, 20, 0, 7, down, movement event
+1485163670784, 10.683, 34070784, Station 1 (uid: 1), 6, 2, 2, 12, token collected event
+1485163670865, 10.764, 34070865, BotIdentifier uid: 14851636568079, 3, 7, 2, 14, token collected event
+1485163670923, 10.822, 34070923, Station 1 (uid: 1), 2, 29, 6, 3, down, movement event
+1485163671131, 11.030, 34071131, Station 1 (uid: 1), 2, 30, 6, 4, down, movement event
+1485163671300, 11.199, 34071300, Station 1 (uid: 1), 2, 31, 6, 5, down, movement event
+1485163671415, 11.314, 34071415, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, [java.awt.Point[x=2,y=8]]
+1485163671500, 11.399, 34071500, Station 1 (uid: 1), 6, 5, 2, 13, token collected event
+1485163671500, 11.399, 34071500, BotIdentifier uid: 14851636568079, 2, 21, 0, 7, left, movement event
+1485163671580, 11.479, 34071580, Station 1 (uid: 1), 2, 32, 7, 5, right, movement event
+1485163671658, 11.557, 34071658, BotIdentifier uid: 14851636568079, 2, 7, 2, 15, token collected event
+1485163671884, 11.783, 34071884, Station 1 (uid: 1), 2, 33, 7, 4, up, movement event
+1485163672129, 12.028, 34072129, Station 1 (uid: 1), 7, 4, 2, 14, token collected event
+1485163672299, 12.198, 34072299, Station 1 (uid: 1), 2, 34, 7, 3, up, movement event
+1485163672441, 12.340, 34072441, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, []
+1485163672491, 12.390, 34072491, Station 1 (uid: 1), 2, 35, 7, 2, up, movement event
+1485163672668, 12.567, 34072668, Station 1 (uid: 1), 2, 36, 7, 1, up, movement event
+1485163672760, 12.659, 34072760, BotIdentifier uid: 14851636568079, 2, 22, 0, 8, down, movement event
+1485163672916, 12.815, 34072916, Station 1 (uid: 1), 7, 1, 2, 15, token collected event
+1485163673011, 12.910, 34073011, Station 1 (uid: 1), 2, 37, 6, 1, left, movement event
+1485163673078, 12.977, 34073078, BotIdentifier uid: 14851636568079, 2, 8, 2, 16, token collected event
+1485163673220, 13.119, 34073220, Station 1 (uid: 1), 2, 38, 5, 1, left, movement event
+1485163673355, 13.254, 34073355, Station 1 (uid: 1), 2, 39, 5, 0, up, movement event
+1485163673476, 13.375, 34073476, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, []
+1485163673554, 13.453, 34073554, BotIdentifier uid: 14851636568079, 2, 23, 1, 8, right, movement event
+1485163673564, 13.463, 34073564, Station 1 (uid: 1), 2, 40, 4, 0, left, movement event
+1485163673716, 13.615, 34073716, BotIdentifier uid: 14851636568079, 3, 8, 2, 17, token collected event
+1485163673748, 13.647, 34073748, Station 1 (uid: 1), 2, 41, 3, 0, left, movement event
+1485163673954, 13.853, 34073954, Station 1 (uid: 1), 3, 0, 2, 16, token collected event
+1485163674033, 13.932, 34074033, BotIdentifier uid: 14851636568079, 2, 24, 0, 8, left, movement event
+1485163674132, 14.031, 34074132, Station 1 (uid: 1), 2, 42, 3, 1, down, movement event
+1485163674196, 14.095, 34074196, BotIdentifier uid: 14851636568079, 2, 25, 0, 8, left, movement event
+1485163674316, 14.215, 34074316, Station 1 (uid: 1), 2, 43, 3, 2, down, movement event
+1485163674351, 14.250, 34074351, BotIdentifier uid: 14851636568079, 2, 26, 0, 7, up, movement event
+1485163674468, 14.367, 34074468, Station 1 (uid: 1), 2, 44, 3, 3, down, movement event
+1485163674513, 14.412, 34074513, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, []
+1485163674513, 14.412, 34074513, BotIdentifier uid: 14851636568079, 2, 27, 0, 6, up, movement event
+1485163674620, 14.519, 34074620, Station 1 (uid: 1), 2, 45, 3, 4, down, movement event
+1485163674671, 14.570, 34074671, BotIdentifier uid: 14851636568079, 1, 6, 2, 18, token collected event
+1485163674844, 14.743, 34074844, Station 1 (uid: 1), 2, 46, 3, 5, down, movement event
+1485163675068, 14.967, 34075068, Station 1 (uid: 1), 2, 47, 3, 6, down, movement event
+1485163675460, 15.359, 34075460, BotIdentifier uid: 14851636568079, 2, 28, 0, 6, left, movement event
+1485163675539, 15.438, 34075539, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, []
+1485163675620, 15.519, 34075620, BotIdentifier uid: 14851636568079, 2, 29, 0, 7, down, movement event
+1485163676245, 16.144, 34076245, BotIdentifier uid: 14851636568079, 2, 30, 0, 6, up, movement event
+1485163676399, 16.298, 34076399, BotIdentifier uid: 14851636568079, 2, 31, 0, 5, up, movement event
+1485163676557, 16.456, 34076557, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, []
+1485163676872, 16.771, 34076872, BotIdentifier uid: 14851636568079, 2, 32, 1, 5, right, movement event
+1485163677031, 16.930, 34077031, BotIdentifier uid: 14851636568079, 2, 33, 2, 5, right, movement event
+1485163677187, 17.086, 34077187, BotIdentifier uid: 14851636568079, 2, 34, 3, 5, right, movement event
+1485163677581, 17.480, 34077581, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, []
+1485163678600, 18.499, 34078600, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #2, []
+1485163678692, 18.591, class edu.asu.commons.event.RoundEndedMarkerEvent - id: system identifier, created on 1485163678692
