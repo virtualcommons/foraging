@@ -56,6 +56,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     private static final double DEFAULT_TOKEN_BIRTH_PROBABILITY = 0.01d;
 
     private List<Strategy> selectedRules;
+    private transient NumberFormat currencyFormat;
 
     public double getTrustGamePayoffIncrement() {
         return getDoubleProperty("trust-game-payoff", 0.25d);
@@ -401,8 +402,17 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         if (isLabDollarsEnabled()) {
             return String.format("%s lab dollars", amount);
         }
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+        NumberFormat currencyFormat = getCurrencyFormat();
         return currencyFormat.format(amount) + " " + currencyFormat.getCurrency().getCurrencyCode();
+    }
+
+    public NumberFormat getCurrencyFormat() {
+        if (currencyFormat == null) {
+            currencyFormat = NumberFormat.getCurrencyInstance();
+            currencyFormat.setMaximumFractionDigits(2);
+            currencyFormat.setMinimumFractionDigits(2);
+        }
+        return currencyFormat;
     }
 
     /**
