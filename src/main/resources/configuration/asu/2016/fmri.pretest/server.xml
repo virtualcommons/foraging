@@ -63,13 +63,28 @@ Please <b>wait quietly</b> and <b>do not close this window, open any other appli
 <h1>General Instructions</h1>
 <hr>
 <p>
-You will appear on the screen as a blue circle <img width='25' height='25' src="@CODEBASE_URL@/images/blue-circle.png"></img>. 
-You can move by pressing the four arrow keys on your keyboard to move up, down, left, or right.  You must press a key
-for each and every move. As you move around you can collect tokens 
-<img width='25' height='25' src="@CODEBASE_URL@/images/green-diamond.png"></img> and earn <b>{dollarsPerToken}</b>
-for each collected token.  To collect a token, move your avatar over it and <b>press the space bar</b>.  Simply moving
-your avatar over a token does <b>not collect</b> that token.
+You will appear on the screen as a yellow circle <img width='25' height='25' src="@CODEBASE_URL@/images/yellow-circle.png"></img>. 
+You can move by pressing either the four arrow keys or W, S, A, D, or I, K, J, L on your keyboard to move up,
+down, left, or right respectively.  You must press a key for each and every move. As you move around you can collect tokens 
+<img width='25' height='25' src="@CODEBASE_URL@/images/green-diamond.png"></img> and earn <b>{dollarsPerToken}</b> for
+each collected token.  To collect a token, move your avatar over it and <b>press the space bar</b>.  Simply moving your
+avatar over a token does <b>not collect</b> that token.
 </p>
+<table border=1 cellspacing=3 cellpadding=3>
+<tr><th>Direction</th><th>Key</th></tr>
+<tr>
+    <td>UP</td><td>W, I, or the up arrow</td>
+</tr>
+<tr>
+    <td>DOWN</td><td>S, K, or the down arrow</td>
+</tr>
+<tr>
+    <td>LEFT</td><td>A, J, or the left arrow</td>
+</tr>
+<tr>
+    <td>RIGHT</td><td>D, L, or the right arrow</td>
+</tr>
+</table>
 ]]>
 </entry>
 <entry key='trust-game-instructions'>
