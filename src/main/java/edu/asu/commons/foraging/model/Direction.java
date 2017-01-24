@@ -98,18 +98,29 @@ public enum Direction {
         
     }
 
+    /**
+     * Currently supports WASD and IJKL and keyboard arrow keys for up, left, down, right, respectively.
+     * @param keyCode
+     * @return appropriate Direction for the given keyCode
+     */
     public static Direction valueOf(final int keyCode) {
-        // FIXME: there must be some clever way to map / mask array indexes so we can do
-        // return DIRECTIONS[fx(keyCode)];
         switch (keyCode) {
-            case KeyEvent.VK_LEFT:
-                return Direction.LEFT;
-            case KeyEvent.VK_RIGHT:
-                return Direction.RIGHT;
             case KeyEvent.VK_UP:
+            case KeyEvent.VK_W:
+            case KeyEvent.VK_I:
                 return Direction.UP;
+            case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_A:
+            case KeyEvent.VK_J:
+                return Direction.LEFT;
             case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_S:
+            case KeyEvent.VK_K:
                 return Direction.DOWN;
+            case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_D:
+            case KeyEvent.VK_L:
+                return Direction.RIGHT;
             default:
                 return null;
         }
