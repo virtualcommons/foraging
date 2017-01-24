@@ -1,6 +1,6 @@
 package edu.asu.commons.foraging.bot;
 
-public class NormalBot extends Bot.SimpleBot {
+public class CustomBot extends Bot.SimpleBot {
 
     private static final long serialVersionUID = 4732276788271013068L;
 
@@ -10,13 +10,13 @@ public class NormalBot extends Bot.SimpleBot {
 
     public final static double MOVEMENT_PROBABILITY = 0.9d;
 
-    private BotType botType = BotType.NORMAL;
+    private BotType botType = BotType.CUSTOM;
 
-    public NormalBot() {
+    public CustomBot() {
         super(ACTIONS_PER_SECOND, MOVEMENT_PROBABILITY, HARVEST_PROBABILITY);
     }
 
-    public NormalBot(int actionsPerSecond, double movementProbability, double harvestProbability) {
+    public CustomBot(int actionsPerSecond, double movementProbability, double harvestProbability) {
         super(actionsPerSecond, movementProbability, harvestProbability);
         botType = BotType.CUSTOM;
     }

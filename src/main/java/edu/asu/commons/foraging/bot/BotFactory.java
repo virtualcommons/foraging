@@ -15,7 +15,7 @@ public class BotFactory {
     }
 
     public Bot create(int botNumber, GroupDataModel groupDataModel, int actionsPerSecond, double movementProbability, double harvestProbability) {
-        Bot bot = new NormalBot(actionsPerSecond, movementProbability, harvestProbability);
+        Bot bot = new CustomBot(actionsPerSecond, movementProbability, harvestProbability);
         bot.setBotNumber(botNumber);
         bot.setGroupDataModel(groupDataModel);
         return bot;
@@ -24,14 +24,15 @@ public class BotFactory {
     public Bot create(BotType botType, int botNumber, GroupDataModel groupDataModel) {
         Bot bot = null;
         switch (botType) {
+            case NORMAL:
+            case CUSTOM:
+                bot = new CustomBot();
+                break;
             case AGGRESSIVE:
                 bot = new AggressiveBot();
                 break;
             case COOPERATIVE:
                 bot = new CooperativeBot();
-                break;
-            case NORMAL:
-                bot = new NormalBot();
                 break;
             case RANDOM:
             default:
