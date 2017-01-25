@@ -108,7 +108,7 @@ public interface Bot extends Actor {
          * 3. if the bot is currently on top of a resource, consider whether to harvest it. If harvested, induce delay.
          * If not harvested, pick a new random location to visit
          * 4. if the bot is not currently on top of a resource, select the closest token and move towards it
-         * 5. if movement was unsuccessful due to blockage, pick a new random location to visit.          
+         * 5. if movement was unsuccessful due to blockage, pick a new random location to visit.
          */
         public void act() {
             // first, check number of actions taken vs actions per second
@@ -200,7 +200,7 @@ public interface Bot extends Actor {
             Set<Point> resourcePositions = model.getResourcePositions();
             int randomIndex = random.nextInt(resourcePositions.size());
             for (Point point: resourcePositions) {
-                if (--randomIndex == 0) {
+                if (randomIndex-- == 0) {
                     return point;
                 }
             }
