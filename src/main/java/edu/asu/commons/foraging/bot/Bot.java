@@ -9,6 +9,7 @@ import edu.asu.commons.net.Identifier;
 import java.awt.Point;
 import java.io.Serializable;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public interface Bot extends Actor {
@@ -52,12 +53,23 @@ public interface Bot extends Actor {
 
     public void setGroupDataModel(GroupDataModel model);
 
+    /**
+     * Provides simple default bot state and behavior.
+     *
+     * 1. bots have "energy" (number of actions per second),
+     * 2. bots expend one unit of energy to harvest a token or move
+     * 3. bots have probabilities (floating point number between 0 and 1) that must be exceeded before they will move
+     * or harvest a token if they are currently on top of a token.
+     * 4. randomized behavior if harvest probability fails or movement is unsuccessful (due to player blockage).
+     */
     public abstract class SimpleBot implements Bot, Serializable {
 
         private static final long serialVersionUID = 2437093153712520070L;
         public final static int DEFAULT_ACTIONS_PER_SECOND = 8;
         public final static double DEFAULT_MOVEMENT_PROBABILITY = 0.9d;
         public final static double DEFAULT_HARVEST_PROBABILITY = 0.9d;
+
+        public final static int DEFAULT_MAX_TICKS_TO_WAIT = 3;
 
         private final Identifier identifier = new BotIdentifier();
 
@@ -88,6 +100,16 @@ public interface Bot extends Actor {
             this.harvestProbability = harvestProbability;
         }
 
+        /**
+         * Simple algorithm for bot behavior:
+         *
+         * 1. if energy has been expended, return
+         * 2. if induced delay (ticksToWait) has been set, decrement and return
+         * 3. if the bot is currently on top of a resource, consider whether to harvest it. If harvested, induce delay.
+         * If not harvested, pick a new random location to visit
+         * 4. if the bot is not currently on top of a resource, select the closest token and move towards it
+         * 5. if movement was unsuccessful due to blockage, pick a new random location to visit.
+         */
         public void act() {
             // first, check number of actions taken vs actions per second
             if (numberOfActionsTaken > actionsPerSecond) {
@@ -106,6 +128,11 @@ public interface Bot extends Actor {
                 if (random.nextDouble() <= getHarvestProbability()) {
                     model.collectToken(this);
                 }
+                else {
+                    // failed our harvest probability check, now for something completely different..
+                    setTicksToWait(random.nextInt(DEFAULT_MAX_TICKS_TO_WAIT));
+                    this.targetLocation = getRandomTokenLocation();
+                }
             }
             // or figure out our next move and roll the dice to see if we can go.
             else {
@@ -114,8 +141,13 @@ public interface Bot extends Actor {
                     // FIXME: need a more sophisticated pathfinding algorithm if we want to enable 
                     // max cell occupancy and blockage so the bot can move around a player if they are directly
                     // in their way
-                    model.move(this, nextMove);
+                    boolean successfulMove = model.move(this, nextMove);
+                    if (!successfulMove) {
+                        setTicksToWait(random.nextInt(2));
+                        this.targetLocation = getRandomTokenLocation();
+                    }
                 }
+                setTicksToWait(1);
             }
             numberOfActionsTaken++;
         }
@@ -148,16 +180,31 @@ public interface Bot extends Actor {
             targetLocation = getNearestToken();
             if (targetLocation == null) {
                 // pick a random location on the board
-                int x = random.nextInt(model.getRoundConfiguration().getResourceWidth());
-                int y = random.nextInt(model.getRoundConfiguration().getResourceDepth());
-                targetLocation = new Point(x, y);
+                targetLocation = getRandomLocation();
             }
         }
 
         protected void reachedTargetLocation() {
             this.targetLocation = null;
             // FIXME: parameterize this?
-            this.ticksToWait = random.nextInt(5);
+            this.ticksToWait = random.nextInt(DEFAULT_MAX_TICKS_TO_WAIT);
+        }
+
+        protected Point getRandomLocation() {
+            int x = random.nextInt(model.getRoundConfiguration().getResourceWidth());
+            int y = random.nextInt(model.getRoundConfiguration().getResourceDepth());
+            return new Point(x, y);
+        }
+
+        protected Point getRandomTokenLocation() {
+            Set<Point> resourcePositions = model.getResourcePositions();
+            int randomIndex = random.nextInt(resourcePositions.size());
+            for (Point point: resourcePositions) {
+                if (randomIndex-- == 0) {
+                    return point;
+                }
+            }
+            return getRandomLocation();
         }
 
         protected Point getNearestToken() {
@@ -165,7 +212,6 @@ public interface Bot extends Actor {
             Point nearestToken = null;
             double nearestTokenDistance = Double.MAX_VALUE;
             // naive implementation, scans all positions
-            // Could instead scan in a concentric ring around the current location and stop at the first hit.
             for (Point resourcePosition : model.getResourcePositions()) {
                 double distance = currentLocation.distanceSq(resourcePosition);
                 if (distance < nearestTokenDistance) {
