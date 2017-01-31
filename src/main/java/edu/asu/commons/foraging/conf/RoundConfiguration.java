@@ -321,9 +321,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getBooleanProperty("sanction-allowed-" + zoneA + "-" + zoneB, true);
     }
 
-    public boolean shouldCheckOccupancy() {
-        return (getMaximumOccupancyPerCell() < getClientsPerGroup())
-            || (isSinglePlayer() && getMaximumOccupancyPerCell() > 0);
+    public boolean isOccupancyEnabled() {
+        return getBooleanProperty("occupancy-enabled", getParentConfiguration().isOccupancyEnabled());
     }
 
     public int getMaximumOccupancyPerCell() {

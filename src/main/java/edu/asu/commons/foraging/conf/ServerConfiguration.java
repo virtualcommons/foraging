@@ -256,6 +256,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
         return getIntProperty("max-cell-occupancy", 1);
     }
 
+    public boolean isOccupancyEnabled() {
+        return getBooleanProperty("occupancy-enabled", true);
+    }
+
     public double getRobotHarvestProbability() {
         return getDoubleProperty("robot-harvest-probability", 0.6d);
     }

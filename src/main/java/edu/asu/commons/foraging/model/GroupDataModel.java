@@ -36,7 +36,6 @@ import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id$
  * 
  * Represents a collection of Clients and associates them with a token distribution. In the
  * case of a shared resource model where all clients share the same world space, there will
@@ -518,7 +517,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     public boolean isCellAvailable(Point position) {
         RoundConfiguration currentRoundConfiguration = getRoundConfiguration();
-        if (currentRoundConfiguration.shouldCheckOccupancy()) {
+        if (currentRoundConfiguration.isOccupancyEnabled()) {
             int maximumOccupancyPerCell = currentRoundConfiguration.getMaximumOccupancyPerCell();
             int currentOccupancy = 0;
             for (Point otherPosition : getClientPositions().values()) {

@@ -11,6 +11,7 @@
 <entry key="round3">round3.xml</entry>
 <entry key='quiz-correct-answer-reward'>0.10</entry>
 <entry key='clients-per-group'>2</entry>
+<entry key='occupancy-enabled'>false</entry>
 <entry key='bot-groups-enabled'>true</entry>
 <entry key='bots-per-group'>1</entry>
 <entry key="wait-for-participants">true</entry>

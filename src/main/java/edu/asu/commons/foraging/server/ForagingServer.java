@@ -197,6 +197,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private ResourceDispenser resourceDispenser;
         private ServerState serverState;
         private final Duration secondTick = Duration.create(1000L);
+        // bots tick every 100 ms
         private final Duration botTick = Duration.create(100L);
         private volatile boolean groupsInitialized;
 
@@ -952,10 +953,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
         private void processSinglePlayerRound() {
             // generate resources every second
-            // resources added
             secondTick.onTick((duration) -> {
                 resourceDispenser.generateResources();
-                if (duration.isModulo(10)) {
+                // for a second duration, isModulo(N) will return true every N seconds
+                if (duration.isModulo(4)) {
                     clients.forEach((id, data) -> { 
                         transmit(new SynchronizeClientEvent(data, currentRoundDuration.getTimeLeft()));
                         synchronizedClients.add(id);
@@ -964,7 +965,8 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             // activate bots
             botTick.onTick((duration) -> {
-                // only activate bots every 100 ms or so, otherwise they frontload all their actions.
+                // botTick duration runs every 100ms, so duration.isModulo(10) will return true every 1s to reset
+                // bot actions every second.
                 serverDataModel.getGroups().forEach((group) -> group.activateBots(duration.isModulo(10))); 
             });
             // update client with bot positions and updated resource totals
@@ -990,7 +992,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                 group.clearDiffLists();
             }
             // post-process cleanup of transient data structures on ClientData
-
         }
 
         private void processRound() {
@@ -1012,7 +1013,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             if (botGroupsEnabled) {
                 botTick.onTick((duration) -> {
                     for (GroupDataModel group : serverDataModel.getGroups()) {
-                        // only activate bots every 100 ms or so, otherwise they frontload all their actions.
+                        // only activate bots every 100 ms, otherwise they frontload all their actions.
                         // and clear all bot action taken counters every 1 s
                         boolean resetBotActions = duration.isModulo(10);
                         group.activateBots(resetBotActions);

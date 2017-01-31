@@ -141,7 +141,7 @@ public class ClientDataModel extends ForagingDataModel {
     public void initialize(GroupDataModel groupDataModel) {
         clear();
         singlePlayer = getRoundConfiguration().isSinglePlayer();
-        shouldCheckOccupancy = getRoundConfiguration().shouldCheckOccupancy();
+        shouldCheckOccupancy = getRoundConfiguration().isOccupancyEnabled();
         maximumOccupancyPerCell = getRoundConfiguration().getMaximumOccupancyPerCell();
         Map<Identifier, ClientData> clientDataMap = groupDataModel.getClientDataMap();
         Identifier[] ids = new Identifier[clientDataMap.size()];
@@ -342,7 +342,7 @@ public class ClientDataModel extends ForagingDataModel {
     }
 
     /**
-     * Only used in single player mode. 
+     * Only used in single player mode.
      */
     public void moveClient(Direction direction) {
         synchronized (clientPositions) {
@@ -357,6 +357,7 @@ public class ClientDataModel extends ForagingDataModel {
     public boolean isCellAvailable(Point position) {
         if (shouldCheckOccupancy) {
             int currentOccupancy = 0;
+            // FIXME: duplicated in GroupDataModel.isCellAvailable
             for (Point otherPosition : getClientPositions().values()) {
                 if (position.equals(otherPosition)) {
                     currentOccupancy++;
