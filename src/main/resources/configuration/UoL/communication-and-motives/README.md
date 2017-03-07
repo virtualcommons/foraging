@@ -10,11 +10,13 @@
 
 ###  Phase 1 (Baseline) 
 - 3 Rounds of CPR dilemma, no treatments
+
 ### Survey 1
 
 ### Phase 2 (Intervention) 3 rounds with communication
 - 5 minutes of dedicated communication prior to each round
 - Communication allowed in-round as well
+
 ### Survey 2
 
 ### Phase 3 (Extinction) 3 rounds without communication
