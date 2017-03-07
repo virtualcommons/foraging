@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Communication and Motives of Self-Governance Phase 2 Configuration</comment>
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+<entry key='clients-per-group'>5</entry>
+<entry key="resource-depth">29</entry>
+<entry key="resource-width">29</entry>
+<entry key='regrowth-rate'>0.05</entry>
+<entry key='chat-enabled'>true</entry>
+<entry key='chat-duration'>300</entry>
+<entry key='in-round-chat-enabled'>true</entry>
+<entry key='repeat'>3</entry>
+<entry key='external-survey-enabled'>true</entry>
+<entry key='survey-url'>
+    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_3jHrnndEZSM9cqM&SURVEY_ID={surveyId}]]>
+</entry>
+<entry key="instructions">
+<![CDATA[
+<h1>Phase 2</h1>
+<h2>Instructions for Round {self.roundIndexLabel}</h1>
+<hr>
+<p>
+    The length of each of the following {self.repeat} rounds is {self.duration} seconds. As in the practice round you
+    can collect green tokens. However, this time you will earn <b>{dollarsPerToken}</b> lab dollars for each token
+    collected. You <b>cannot</b> reset the distribution of green tokens. 
+</p>
+<p>
+    On the top right corner of the screen you can see how many tokens you have collected. On the top left corner of the
+    screen you can see the amount of time remaining in the round.
+</p>
+<p><b>If you have any questions please raise your hand.</b></p>
+]]>
+</entry>
+</properties>

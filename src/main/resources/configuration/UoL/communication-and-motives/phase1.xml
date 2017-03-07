@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Communication and Motives of Self-Governance Phase 1 Configuration</comment>
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+<entry key='clients-per-group'>5</entry>
+<entry key="resource-depth">29</entry>
+<entry key="resource-width">29</entry>
+<entry key='regrowth-rate'>0.05</entry>
+<entry key='repeat'>3</entry>
+<entry key="quiz">true</entry>
+<entry key="q1">T</entry>
+<entry key="q2">T</entry>
+<entry key="q3">T</entry>
+<entry key="q4">T</entry>
+<entry key="q5">Possible</entry>
+<entry key="q6">Impossible</entry>
+<entry key="q7">F</entry>
+<entry key="q8">T</entry>
+<entry key="q9">F</entry>
+<entry key="q10">F</entry>
+<entry key="instructions">
+<![CDATA[
+<h1>Round {self.roundIndexLabel} Instructions</h1>
+<hr>
+<p>
+    The length of each of the following {self.repeat} rounds is {self.duration} seconds. As in the practice round you
+    can collect green tokens. However, this time you will earn <b>{dollarsPerToken}</b> lab dollars for each token
+    collected. You <b>cannot</b> reset the distribution of green tokens. 
+</p>
+<h3>Groups</h3>
+<hr>
+<p>
+In this round the renewable resource will become five times bigger.  You will share
+this larger environment with four other random players in this room.  Each
+participant in the room has been randomly assigned to one of several equal-sized
+{self.clientsPerGroup} person groups and everyone in your group has been randomly
+assigned a number from 1 to {self.clientsPerGroup}.  You will stay in the same group for
+the entire experiment, and each person's number from 1 to {self.clientsPerGroup} will
+remain the same throughout the experiment. The other members of your group will
+appear on the screen as blue dots <img src="@CODEBASE_URL@/images/gem-other.gif">
+with a white number embedded in the dot.
+</p>
+<p>
+    In each round of the token task, you can see how many tokens each player has
+    collected at the top right corner of the screen.  On the top left corner of the
+    screen you will see the remaining time in the round.
+</p>
+<h3>Anonymity</h3>
+<hr>
+<p>
+    Because group membership was randomly assigned by the computer, neither you nor
+    the experimenter will be able to identify which person in the room has been
+    assigned to a particular group or number within a group.  Your anonymity is
+    guaranteed.
+</p>
+<h3>Tokens</h3>
+<hr>
+    <p>
+        Each group has its own set of token resources.
+    </p>
+<p><b>Do you have any questions so far?</b>  If you have any questions at this time, raise your hand and someone will come over to your station and answer it.</p>
+]]>
+
+</entry>
+<entry key="quiz-instructions">
+<![CDATA[
+<h2>Quiz</h2>
+<hr>
+<p>
+    Before we begin the actual round please answer the following questions. You will receive {quizCorrectAnswerReward}
+    lab dollars for each correct answer. When you are finished, please click submit.
+</p>
+<br>
+<form>
+<span class='q1'>Q1. Once you have collected all the tokens on the screen, no new tokens will appear.</span> <br>
+<input type="radio" name="q1" value="T">Correct<br>
+<input type="radio" name="q1" value="F">Incorrect<br>
+<br><br>
+<span class='q2'>Q2. Tokens regenerate faster (new tokens appear faster) when empty spots are surrounded by more tokens.</span> <br>
+<input type="radio" name="q2" value="T">Correct<br>
+<input type="radio" name="q2" value="F">Incorrect<br>
+<br><br>
+<span class='q3'>Q3. When you have collected all tokens on the screen, no new tokens will appear.</span> <br>
+<input type="radio" name="q3" value="T">True<br>
+<input type="radio" name="q3" value="F">False<br>
+<br><br>
+<span class='q4'>Q4. Your decisions of where to collect tokens affects the regeneration of tokens.</span> <br>
+<input type="radio" name="q4" value="T">True<br>
+<input type="radio" name="q4" value="F">False<br>
+<br><br>
+<span class='q5'>Q5. Is this sequence possible?</span> 
+<img src="@CODEBASE_URL@/images/q5.png" /><br>
+<input type="radio" name="q5" value="Possible">Possible<br>
+<input type="radio" name="q5" value="Impossible">Impossible<br>
+<br><br>
+<span class='q6'>Q6. Is this sequence possible?</span><img src="@CODEBASE_URL@/images/q6.png" /><br>
+<input type="radio" name="q6" value="Possible">Possible<br>
+<input type="radio" name="q6" value="Impossible">Impossible<br>
+<br><br>
+<span class='q7'>Q7. If each token is worth 0.02 lab dollars and you collect 100 tokens in a round, you have earned 3 lab dollars in that round.</span> <br>
+<input type="radio" name="q7" value="T">True<br>
+<input type="radio" name="q7" value="F">False<br>
+<br><br>
+<span class='q8'>Q8. The duration of a round is {self.duration} seconds.</span> <br>
+<input type="radio" name="q8" value="T">True<br>
+<input type="radio" name="q8" value="F">False<br>
+<br><br>
+<span class='q9'>Q9. All the cells are filled with green tokens at the start of the experiment.</span> <br>
+<input type="radio" name="q9" value="T">True<br>
+<input type="radio" name="q9" value="F">False<br>
+<br><br>
+<span class='q10'>Q10. The amount of tokens you can earn only depends on how fast you collect the tokens.</span> <br>
+<input type="radio" name="q10" value="T">True<br>
+<input type="radio" name="q10" value="F">False<br>
+
+<input type="submit" name="submit" value="Submit"><br>
+</form>
+]]>
+</entry>
+<entry key='quiz-results'>
+<![CDATA[
+    <h2>Quiz Results</h2>
+    <hr>
+        <p>
+            {if (allCorrect)}
+            You have answered all the questions correctly and earned <b>{totalQuizEarnings}</b> in lab dollars.
+            {else}
+            You answered {numberCorrect} out of {totalQuestions} questions correctly and earned <b>{totalQuizEarnings}</b> in lab dollars.  Questions you've answered
+            incorrectly are highlighted in red.  Please see below for more details.
+            {endif}
+        </p>
+        <br><hr>
+<form>
+<span class='q1'>Q1. Tokens grow from the middle of the screen.</span> <br>
+    <b>{incorrect_q1}
+        This statement is false. Tokens only regenerate when there are other tokens present in their immediately
+        neighboring cells. They do not spontaneously generate from the middle of the screen.
+    </b>
+<br><br>
+<span class='q2'>Q2. In order to collect a token you need to press the space bar while your avatar is on a cell with a token.</span> <br>
+    <b>
+        {incorrect_q2} 
+        This statement is true. You must press the space bar when your avatar is on a cell with a token to collect that token.
+    </b>
+    <br><br>
+<span class='q3'>Q3. When you have collected all tokens on the screen, no new tokens will appear.</span> <br>
+    <b>
+        {incorrect_q3} 
+        This statement is true. Tokens can only regenerate if there are other tokens present in their immediately neighboring cells.
+    </b>
+    <br><br>
+<span class='q4'>Q4. Your decisions of where to collect tokens affects the regeneration of tokens.</span> <br>
+    <b>
+        {incorrect_q4} 
+        This statement is true. The chance that a new token will appear in an empty cell is greatest when the eight cells surrounding that
+        empty cell all have tokens. 
+    </b>
+    <br><br>
+<span class='q5'>Q5. Is the following sequence possible?</span>
+<img src="@CODEBASE_URL@/images/q5.png" /> 
+<br>
+    <b>
+        {incorrect_q5} 
+        Yes, this sequence is possible. New tokens can regenerate on an empty cell when neighboring cells have existing tokens.
+    </b>
+    <br><br>
+<span class='q6'>Q6. Is the following sequence possible?</span><img src="@CODEBASE_URL@/images/q6.png" /> <br>
+    <b>
+        {incorrect_q6} 
+        No, this sequence is not possible. New tokens cannot regenerate on an empty cell when all neighboring cells are also empty.
+    </b>
+    <br><br>
+<span class='q7'>Q7. If each token is worth $0.02 and you collect 100 tokens in a round, you have earned 3 dollars in that round.</span> <br>
+    <b>
+        {incorrect_q7} 
+        This statement is false. You would have earned 100 * $0.02 = $2.00 in that round.
+    </b>
+    <br><br>
+            <span class='q8'>Q8. The duration of a round is {self.duration} seconds.</span> <br>
+    <b>
+        {incorrect_q8} 
+        This statement is true. The round will last {self.duration} seconds.
+    </b>
+    <br><br>
+<span class='q9'>Q9. All the cells are filled with green tokens at the start of the experiment.</span> <br>
+    <b>
+        {incorrect_q9} 
+        This statement is false. At the beginning of each round, 25% of the cells will be filled with green tokens.
+    </b>
+    <br><br>
+<span class='q10'>Q10. The amount of tokens you can earn only depends on how fast you collect the tokens.</span> <br>
+    <b>
+        {incorrect_q10} 
+        This statement is false. The amount of tokens you can earn depends on how you manage your tokens, not how fast you collect them.
+    </b>
+    <br><br>
+</form>
+]]>
+</entry>
+
+</properties>
