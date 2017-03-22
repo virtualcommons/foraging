@@ -4,10 +4,10 @@
 <comment>Communication and Motives of Self-Governance Phase 2 Configuration</comment>
 <entry key='always-explicit'>true</entry>
 <entry key='max-cell-occupancy'>1</entry>
-<entry key='clients-per-group'>5</entry>
-<entry key="resource-depth">29</entry>
-<entry key="resource-width">29</entry>
-<entry key='regrowth-rate'>0.05</entry>
+<entry key='clients-per-group'>4</entry>
+<entry key="resource-depth">26</entry>
+<entry key="resource-width">26</entry>
+<entry key='regrowth-rate'>0.01</entry>
 <entry key='chat-enabled'>true</entry>
 <entry key='chat-duration'>300</entry>
 <entry key='in-round-chat-enabled'>true</entry>

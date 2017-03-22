@@ -13,7 +13,7 @@
 <entry key='clients-per-group'>2</entry>
 <entry key='occupancy-enabled'>false</entry>
 <entry key="wait-for-participants">true</entry>
-<entry key="default-round-duration">40</entry>
+<entry key="default-round-duration">240</entry>
 <entry key="use-background-texture">false</entry>
 <entry key='use-lab-dollars'>true</entry>
 <entry key="use-token-image">true</entry>
@@ -58,14 +58,25 @@ Please <b>wait quietly</b> and <b>do not close this window, open any other appli
 <entry key="general-instructions">
 <![CDATA[
 <h1>General Instructions</h1>
+<h2>Your Earnings</h2>
 <hr>
 <p>
-You will appear on the screen as a yellow circle <img width='25' height='25' src="@CODEBASE_URL@/images/yellow-circle.png"></img>. 
-You can move by pressing either the four arrow keys or W, S, A, D, or I, K, J, L on your keyboard to move up,
-down, left, or right respectively.  You must press a key for each and every move. As you move around you can collect tokens 
-<img width='25' height='25' src="@CODEBASE_URL@/images/green-diamond.png"></img> and earn <b>{dollarsPerToken}</b> for
-each collected token.  To collect a token, move your avatar over it and <b>press the space bar</b>.  Simply moving your
-avatar over a token does <b>not collect</b> that token.
+    You have already earned {showUpPayment} by showing up at this experiment.  You can
+earn more, up to a maximum of about $15-$50, by participating in this experiment
+which will take about an hour to an hour and a half. The amount of money you earn
+depends on your decisions, as well as the decisions of your group members during the nine rounds of the experiment.</p>
+<h2>The Token Task</h2>
+<hr>
+<p>
+    Today's experiment is on the computer.  In the experiment, you can collect green
+    diamond shaped tokens <img src="@CODEBASE_URL@/images/green-diamond.png"></img>, and
+    you will earn <b>{dollarsPerToken}</b> for each token you collect. 
+    
+    When the token task begins, you will appear on the screen as a yellow circle <img width='25' height='25'
+        src="@CODEBASE_URL@/images/yellow-circle.png"></img>. You can move by pressing either the four arrow keys or W,
+    S, A, D, or I, K, J, L on your keyboard to move up, down, left, or right respectively.  You must press a key for
+    each and every move. To collect a token, move your avatar over it and <b>press the space bar</b>.  Simply moving
+    your avatar over a token does <b>not collect</b> that token.
 </p>
 <table border=1 cellspacing=3 cellpadding=3>
 <tr><th>Direction</th><th>Key</th></tr>
@@ -82,6 +93,41 @@ avatar over a token does <b>not collect</b> that token.
     <td>RIGHT</td><td>D, L, or the right arrow</td>
 </tr>
 </table>
+ 
+    
+<h2>Tokens</h2>
+<hr>
+<p>
+The tokens that you collect have the potential to regenerate.  After you have
+collected a green token, a new token can re-appear on that empty cell. The rate at
+which new tokens appear is dependent on the number of adjacent cells that still have
+tokens. The more tokens there are in the eight cells around an empty cell, the faster
+a new token will appear on that empty cell.  
+</p>
+<p>
+Tokens generate new tokens.  Thus, the middle cell, which is denoted with X in Image 1 will be regenerated at a faster rate than the middle cell in Image 2.  
+When all neighboring cells are empty, <b>there is no renewal</b>.
+</p>
+<table width="100%">
+<tr>
+<td align="center"><b>Image 1</b></td>
+<td align="center"><b>Image 2</b></td>
+</tr>
+<tr>
+<td align="center">
+    <img src="@CODEBASE_URL@/images/8neighbors.jpg" alt="image 1"></img>
+</td>
+<td align="center">
+    <img src="@CODEBASE_URL@/images/5neighbors.jpg" alt="image 2"></img>
+</td>
+</tr>
+</table>
+<p>
+    If you have any questions at this time, please raise your hand and someone will
+    come over to your station and answer it.  If you have no questions, continue to
+    the quiz below.
+</p>
+
 ]]>
 </entry>
 <entry key='trust-game-instructions'>

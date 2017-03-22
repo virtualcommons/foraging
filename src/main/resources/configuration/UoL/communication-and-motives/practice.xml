@@ -6,7 +6,7 @@
 <entry key="resource-depth">13</entry>
 <entry key="resource-width">13</entry>
 <entry key="private-property">true</entry>
-<entry key='regrowth-rate'>0.05</entry>
+<entry key='regrowth-rate'>0.01</entry>
 <entry key='instructions'>
 <![CDATA[
 <h2>Practice Round Instructions</h2>
