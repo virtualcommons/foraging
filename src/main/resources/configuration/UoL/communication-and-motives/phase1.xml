@@ -12,14 +12,9 @@
 <entry key="quiz">true</entry>
 <entry key="q1">T</entry>
 <entry key="q2">T</entry>
-<entry key="q3">T</entry>
-<entry key="q4">T</entry>
-<entry key="q5">Possible</entry>
-<entry key="q6">Impossible</entry>
-<entry key="q7">F</entry>
-<entry key="q8">T</entry>
-<entry key="q9">F</entry>
-<entry key="q10">F</entry>
+<entry key="q3">B</entry>
+<entry key="q4">B</entry>
+<entry key="q5">F</entry>
 <entry key="instructions">
 <![CDATA[
 <h1>Round {self.roundIndexLabel} Instructions</h1>
@@ -82,39 +77,22 @@ with a white number embedded in the dot.
 <input type="radio" name="q2" value="T">Correct<br>
 <input type="radio" name="q2" value="F">Incorrect<br>
 <br><br>
-<span class='q3'>Q3. When you have collected all tokens on the screen, no new tokens will appear.</span> <br>
-<input type="radio" name="q3" value="T">True<br>
-<input type="radio" name="q3" value="F">False<br>
+<span class='q3'>Q3. Which of the following sequences is not possible, A, B, or C?</span> <br>
+<img src="@CODEBASE_URL@/images/possible-sequences-abc.png" /><br>
+<input type="radio" name="q3" value="A">A<br>
+<input type="radio" name="q3" value="B">B<br>
+<input type="radio" name="q3" value="C">C<br>
 <br><br>
-<span class='q4'>Q4. Your decisions of where to collect tokens affects the regeneration of tokens.</span> <br>
-<input type="radio" name="q4" value="T">True<br>
-<input type="radio" name="q4" value="F">False<br>
+<span class='q4'>Q4. Each token you collect is worth? (select the correct value)</span> <br>
+<input type="radio" name="q4" value="A">$.01<br>
+<input type="radio" name="q4" value="B">$.02<br>
+<input type="radio" name="q4" value="C">$.03<br>
+<input type="radio" name="q4" value="D">$.04<br>
+<input type="radio" name="q4" value="E">$.05<br>
 <br><br>
-<span class='q5'>Q5. Is this sequence possible?</span> 
-<img src="@CODEBASE_URL@/images/q5.png" /><br>
-<input type="radio" name="q5" value="Possible">Possible<br>
-<input type="radio" name="q5" value="Impossible">Impossible<br>
-<br><br>
-<span class='q6'>Q6. Is this sequence possible?</span><img src="@CODEBASE_URL@/images/q6.png" /><br>
-<input type="radio" name="q6" value="Possible">Possible<br>
-<input type="radio" name="q6" value="Impossible">Impossible<br>
-<br><br>
-<span class='q7'>Q7. If each token is worth 0.02 lab dollars and you collect 100 tokens in a round, you have earned 3 lab dollars in that round.</span> <br>
-<input type="radio" name="q7" value="T">True<br>
-<input type="radio" name="q7" value="F">False<br>
-<br><br>
-<span class='q8'>Q8. The duration of a round is {self.duration} seconds.</span> <br>
-<input type="radio" name="q8" value="T">True<br>
-<input type="radio" name="q8" value="F">False<br>
-<br><br>
-<span class='q9'>Q9. All the cells are filled with green tokens at the start of the experiment.</span> <br>
-<input type="radio" name="q9" value="T">True<br>
-<input type="radio" name="q9" value="F">False<br>
-<br><br>
-<span class='q10'>Q10. The amount of tokens you can earn only depends on how fast you collect the tokens.</span> <br>
-<input type="radio" name="q10" value="T">True<br>
-<input type="radio" name="q10" value="F">False<br>
-
+<span class='q5'>Q5. The amount of money you can earn today only depends on the decisions you make?</span> 
+<input type="radio" name="q5" value="T">Correct<br>
+<input type="radio" name="q5" value="F">Incorrect<br>
 <input type="submit" name="submit" value="Submit"><br>
 </form>
 ]]>
@@ -133,71 +111,42 @@ with a white number embedded in the dot.
         </p>
         <br><hr>
 <form>
-<span class='q1'>Q1. Tokens grow from the middle of the screen.</span> <br>
+<span class='q1'>Q1. Once you have collected all the tokens on the screen, no new tokens will appear.</span> <br>
     <b>{incorrect_q1}
-        This statement is false. Tokens only regenerate when there are other tokens present in their immediately
-        neighboring cells. They do not spontaneously generate from the middle of the screen.
+        New tokens only appear if there is at least one token on the screen.
     </b>
 <br><br>
-<span class='q2'>Q2. In order to collect a token you need to press the space bar while your avatar is on a cell with a token.</span> <br>
+<span class='q2'>Q2. Tokens regenerate faster (new tokens appear faster) when empty spots are surrounded by more tokens.</span> <br>
     <b>
         {incorrect_q2} 
-        This statement is true. You must press the space bar when your avatar is on a cell with a token to collect that token.
+        This is correct. Tokens regenerate faster when empty spots are surrounded by more tokens.
     </b>
     <br><br>
-<span class='q3'>Q3. When you have collected all tokens on the screen, no new tokens will appear.</span> <br>
+<span class='q3'>Q3. Which of the following sequences is not possible, A, B, or C?</span> <br>
+    <img src="@CODEBASE_URL@/images/possible-sequences-abc.png" /><br>
     <b>
         {incorrect_q3} 
-        This statement is true. Tokens can only regenerate if there are other tokens present in their immediately neighboring cells.
+        Sequence B is not possible, new tokens will not appear once they are all gone.
     </b>
     <br><br>
-<span class='q4'>Q4. Your decisions of where to collect tokens affects the regeneration of tokens.</span> <br>
+<span class='q4'>Q4. Each token you collect is worth? (select the correct value).</span> <br>
     <b>
         {incorrect_q4} 
-        This statement is true. The chance that a new token will appear in an empty cell is greatest when the eight cells surrounding that
-        empty cell all have tokens. 
+        Each token you collect will be worth $0.02. For example, if you collect 10 tokens you will earn $0.20 (twenty
+        cents). If you collect 50 tokens you will earn $1.00 (one dollar), and if you collect 100 tokens or more, you
+        would earn $2.00 or more.
     </b>
     <br><br>
-<span class='q5'>Q5. Is the following sequence possible?</span>
-<img src="@CODEBASE_URL@/images/q5.png" /> 
+<span class='q5'>Q5. The amount of money you can earn today only depends on the decisions you make?</span>
 <br>
     <b>
         {incorrect_q5} 
-        Yes, this sequence is possible. New tokens can regenerate on an empty cell when neighboring cells have existing tokens.
-    </b>
-    <br><br>
-<span class='q6'>Q6. Is the following sequence possible?</span><img src="@CODEBASE_URL@/images/q6.png" /> <br>
-    <b>
-        {incorrect_q6} 
-        No, this sequence is not possible. New tokens cannot regenerate on an empty cell when all neighboring cells are also empty.
-    </b>
-    <br><br>
-<span class='q7'>Q7. If each token is worth $0.02 and you collect 100 tokens in a round, you have earned 3 dollars in that round.</span> <br>
-    <b>
-        {incorrect_q7} 
-        This statement is false. You would have earned 100 * $0.02 = $2.00 in that round.
-    </b>
-    <br><br>
-            <span class='q8'>Q8. The duration of a round is {self.duration} seconds.</span> <br>
-    <b>
-        {incorrect_q8} 
-        This statement is true. The round will last {self.duration} seconds.
-    </b>
-    <br><br>
-<span class='q9'>Q9. All the cells are filled with green tokens at the start of the experiment.</span> <br>
-    <b>
-        {incorrect_q9} 
-        This statement is false. At the beginning of each round, 25% of the cells will be filled with green tokens.
-    </b>
-    <br><br>
-<span class='q10'>Q10. The amount of tokens you can earn only depends on how fast you collect the tokens.</span> <br>
-    <b>
-        {incorrect_q10} 
-        This statement is false. The amount of tokens you can earn depends on how you manage your tokens, not how fast you collect them.
+        This is incorrect. The amount of money you earn today will depend on the decisions you make and the decisions
+        that the other people in your group make. Each person’s decisions to collect tokens affects the number of tokens
+        (money) available for the other people in group.
     </b>
     <br><br>
 </form>
 ]]>
 </entry>
-
 </properties>
