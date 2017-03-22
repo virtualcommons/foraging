@@ -64,8 +64,9 @@ with a white number embedded in the dot.
 <h2>Quiz</h2>
 <hr>
 <p>
-    Before we begin the actual round please answer the following questions. You will receive {quizCorrectAnswerReward}
-    lab dollars for each correct answer. When you are finished, please click submit.
+    Before we begin the actual round please answer the following questions to make sure you understand the instructions.
+    You will receive {quizCorrectAnswerReward} lab dollars for each correct answer. When you are finished, please click
+    submit.
 </p>
 <br>
 <form>

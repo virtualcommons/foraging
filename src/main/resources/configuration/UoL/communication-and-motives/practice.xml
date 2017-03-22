@@ -12,25 +12,12 @@
 <h2>Practice Round Instructions</h2>
 <hr>
 <p>
-You will now have {self.duration} seconds to practice with the experimental environment. The decisions you make in this
-round will <b>not affect your earnings</b>. At the beginning of the practice round {initialDistribution} of the cells
-are occupied with green tokens.  The environment is a {self.resourceWidth} x {self.resourceDepth} grid of cells.
+    During the practice round, you will have {self.duration} seconds to practice with the experimental environment. The
+    decisions you make in this round will NOT influence your earnings.  At the beginning of the practice round
+    {initialDistribution} of the cells are occupied with green tokens.  The environment is a {self.resourceWidth} x
+    {self.resourceDepth} grid
+    of cells.
 </p>
-<h2>Tokens Regenerate</h2>
-<table width="100%">
-<tr>
-<td align="center"><b>Image 1</b></td>
-<td align="center"><b>Image 2</b></td>
-</tr>
-<tr>
-<td align="center">
-    <img src="@CODEBASE_URL@/images/8neighbors.jpg" alt="image 1">
-</td>
-<td align="center">
-    <img src="@CODEBASE_URL@/images/5neighbors.jpg" alt="image 2">
-</td>
-</tr>
-</table>
 <h2>Best Strategy</h2>
 <hr>
 <p>
@@ -41,12 +28,11 @@ are occupied with green tokens.  The environment is a {self.resourceWidth} x {se
 <img src="@CODEBASE_URL@/images/foraging-checkerboard.png" alt="Checkerboard Resource">
 </p>
 <p>
-During this practice round, and <b>only during this practice round</b>, you will be able
-to reset the tokens displayed on the screen by pressing the <b>R</b> key.  When you
-press the <b>R</b> key you will reset the distribution of the tokens to once again randomly occupy
-{initialDistribution} of the cells with tokens.
+    During this practice round, and <b>only during</b> this practice round, you are able to reset the tokens displayed
+    on the screen.  When you push the <b>R</b> key you will reset the distribution of the tokens to randomly occupying
+    {initialDistribution} of the cells with green tokens.
 </p>
-<p><b>If you have any questions please raise your hand. Do you have any questions so far?</b></p>
+<p><b>Do you have any questions?</b> If you have any questions at this time please raise your hand and someone will come over to your station and answer it.</p>
 ]]>
 </entry>
 </properties>
