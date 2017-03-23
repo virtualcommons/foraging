@@ -24,7 +24,7 @@
     this time you will earn <b>{dollarsPerToken}</b> for each token collected. You <b>cannot</b> reset the
     distribution of green tokens. 
 </p>
-<h3>Groups</h3>
+<h2>Groups</h2>
 <hr>
 <p>
 In this round the renewable resource will become four times bigger.  You will share
@@ -42,7 +42,7 @@ with a white number embedded in the dot.
     collected at the top right corner of the screen.  On the top left corner of the
     screen you will see the remaining time in the round.
 </p>
-<h3>Anonymity</h3>
+<h2>Anonymity</h2>
 <hr>
 <p>
     Because group membership was randomly assigned by the computer, neither you nor
@@ -50,7 +50,7 @@ with a white number embedded in the dot.
     assigned to a particular group or number within a group.  Your anonymity is
     guaranteed.
 </p>
-<h3>Tokens</h3>
+<h2>Tokens</h2>
 <hr>
     <p>
         Each group has its own set of token resources.
@@ -61,7 +61,7 @@ with a white number embedded in the dot.
 </entry>
 <entry key="quiz-instructions">
 <![CDATA[
-<h2>Quiz</h2>
+<h1>Quiz</h1>
 <hr>
 <p>
     Before we begin the actual round please answer the following questions to make sure you understand the instructions.
@@ -100,7 +100,7 @@ with a white number embedded in the dot.
 </entry>
 <entry key='quiz-results'>
 <![CDATA[
-    <h2>Quiz Results</h2>
+    <h1>Quiz Results</h1>
     <hr>
         <p>
             {if (allCorrect)}

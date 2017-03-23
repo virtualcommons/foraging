@@ -401,8 +401,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         if (isLabDollarsEnabled()) {
             return String.format("%s lab dollars", amount);
         }
-        NumberFormat currencyFormat = getCurrencyFormat();
-        return currencyFormat.format(amount) + " " + currencyFormat.getCurrency().getCurrencyCode();
+        return getCurrencyFormat().format(amount);
     }
 
     public NumberFormat getCurrencyFormat() {

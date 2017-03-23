@@ -15,9 +15,9 @@
 </entry>
 <entry key="instructions">
 <![CDATA[
-<h1>Instructions for Round {self.roundIndexLabel}</h1>
+<h1>Group Chat No Longer Available</h1>
 <p>
-    This round is the same as the previous rounds with one important change. You are no longer able to communicate with the members of your group.
+    You are no longer able to communicate with the members of your group.
     The length of this round is {self.duration} seconds.
 </p>
 <hr>

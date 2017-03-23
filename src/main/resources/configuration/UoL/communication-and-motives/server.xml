@@ -15,7 +15,7 @@
 <entry key="wait-for-participants">true</entry>
 <entry key="default-round-duration">240</entry>
 <entry key="use-background-texture">false</entry>
-<entry key='use-lab-dollars'>true</entry>
+<entry key='use-lab-dollars'>false</entry>
 <entry key="use-token-image">true</entry>
 <entry key='token-image-path'>images/green-diamond.png</entry>
 <entry key="use-avatar-image">false</entry>
@@ -188,7 +188,7 @@ room.
 </entry>
 <entry key="same-as-previous-round-instructions">
 <![CDATA[
-<h3>Round {self.roundIndexLabel} Instructions</h3>
+<h1>Round {self.roundIndexLabel} Instructions</h1>
 <hr>
 <p>Round {self.roundIndexLabel} is the same as the previous round.</p>
 <p>The length of this round is {self.duration} seconds.</p>

@@ -745,19 +745,11 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     if (iter.hasNext()) {
                         playerTwo = iter.next();
                     }
-                    // FIXME: upon second thought, this isn't strictly necessary as the list is already
-                    // being shuffled and the random strategy needed to complete the pairings
-                    // doesn't need to be doubly randomized
-                    // else {
-                    // clumsy, see if we can express this differently
-                    // why doesn't listIterator offer a currentIndex() method as well?
-                    // playerTwo = clientList.get(random.nextInt(iter.previousIndex() + 1));
-                    // }
-                    getLogger().info("TRUST GAME: about to pair " + playerOne + " with " + playerTwo);
+                    String trustGamePair = String.format("TRUST GAME PAIR: [%s, %s]", playerOne, playerTwo);
+                    getLogger().info(trustGamePair);
                     TrustGameResult trustGameLog = serverDataModel.calculateTrustGame(playerOne, playerTwo);
                     allTrustGameResults.add(trustGameLog);
-                    sendFacilitatorMessage(String.format("Pairing %s with %s for trust game resulted in:\n%s", playerOne, playerTwo,
-                            trustGameLog));
+                    sendFacilitatorMessage(String.format("%s: %s", trustGamePair, trustGameLog));
                 }
             }
             // show the exit instructions and update debriefing for all clients if this is the last round.
