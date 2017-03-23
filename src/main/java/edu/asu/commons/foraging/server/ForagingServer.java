@@ -701,7 +701,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             addEventProcessor(new EventTypeProcessor<BeginChatRoundRequest>(BeginChatRoundRequest.class) {
                 public void handle(BeginChatRoundRequest request) {
                     RoundConfiguration currentRoundConfiguration = getCurrentRoundConfiguration();
-                    if (currentRoundConfiguration.isChatEnabled() && ! currentRoundConfiguration.isInRoundChatEnabled()) {
+                    if (currentRoundConfiguration.isChatEnabled()) {
                         // start a dedicated chat round.
                         sendFacilitatorMessage("Sending begin chat round request to all participants");
                         for (Map.Entry<Identifier, ClientData> entry : clients.entrySet()) {

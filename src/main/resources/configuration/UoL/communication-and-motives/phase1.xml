@@ -20,15 +20,15 @@
 <h1>Round {self.roundIndexLabel} Instructions</h1>
 <hr>
 <p>
-    The length of each of the following {self.repeat} rounds is {self.duration} seconds. As in the practice round you
-    can collect green tokens. However, this time you will earn <b>{dollarsPerToken}</b> lab dollars for each token
-    collected. You <b>cannot</b> reset the distribution of green tokens. 
+    The length of this round is {self.duration} seconds. As in the practice round you can collect green tokens. However,
+    this time you will earn <b>{dollarsPerToken}</b> for each token collected. You <b>cannot</b> reset the
+    distribution of green tokens. 
 </p>
 <h3>Groups</h3>
 <hr>
 <p>
-In this round the renewable resource will become five times bigger.  You will share
-this larger environment with four other random players in this room.  Each
+In this round the renewable resource will become four times bigger.  You will share
+this larger environment with three other random players in this room.  Each
 participant in the room has been randomly assigned to one of several equal-sized
 {self.clientsPerGroup} person groups and everyone in your group has been randomly
 assigned a number from 1 to {self.clientsPerGroup}.  You will stay in the same group for
@@ -91,7 +91,7 @@ with a white number embedded in the dot.
 <input type="radio" name="q4" value="D">$.04<br>
 <input type="radio" name="q4" value="E">$.05<br>
 <br><br>
-<span class='q5'>Q5. The amount of money you can earn today only depends on the decisions you make?</span> 
+<span class='q5'>Q5. The amount of money you can earn today only depends on the decisions you make?</span> <br>
 <input type="radio" name="q5" value="T">Correct<br>
 <input type="radio" name="q5" value="F">Incorrect<br>
 <input type="submit" name="submit" value="Submit"><br>

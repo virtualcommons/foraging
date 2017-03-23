@@ -69,7 +69,7 @@ depends on your decisions, as well as the decisions of your group members during
 <hr>
 <p>
     Today's experiment is on the computer.  In the experiment, you can collect green
-    diamond shaped tokens <img src="@CODEBASE_URL@/images/green-diamond.png"></img>, and
+    diamond shaped tokens <img width='25' height='25' src="@CODEBASE_URL@/images/green-diamond.png"></img>, and
     you will earn <b>{dollarsPerToken}</b> for each token you collect. 
     
     When the token task begins, you will appear on the screen as a yellow circle <img width='25' height='25'
