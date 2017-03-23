@@ -310,7 +310,12 @@
       <fileset dir='${conf.dir}' includes='*.xml' />
     </delete>
   </target>
-
+  <target name='deploy-uol' depends='compile,clean-configuration'>
+    <antcall target='copy-configuration'>
+      <param name='treatment.dir' value='UoL/communication-and-motives'/>
+    </antcall>
+    <antcall target='deploy' />
+  </target>
   <!-- delete ivy and maven caches to force reload a new sesef snapshot -->
   <target name="purge" depends="clean">
     <echo message="Removing ${user.home}/.ant/cache"/>
