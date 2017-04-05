@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>BENN-FMRI Round 26-50 configuration</comment>
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+<entry key='clients-per-group'>2</entry>
+<entry key="resource-depth">7</entry>
+<entry key="resource-width">7</entry>
+<entry key='robot-harvest-probability'>1</entry>
+<entry key='robot-movement-probability'>0.7</entry>
+<entry key='robot-moves-per-second'>10</entry>
+<entry key='regrowth-rate'>0.1</entry>
+<entry key='repeat'>2</entry>
+<entry key="instructions">
+<![CDATA[
+<h1>Instructions for Round {self.roundIndexLabel}</h1>
+<hr>
+<p>
+ the growth rate is {regrowth-rate}.  The grid size is
+ {resource-width} by {resource-depth}</p>
+]]>
+</entry>
+</properties>
