@@ -29,20 +29,20 @@ at [Arizona State University](http://www.asu.edu), [Indiana University](http://w
   `server.address` to the IP address or fully qualified hostname of the machine you are using to serve this application
 * add configuration files to `src/main/resources/configuration`, see the [wiki's Configuration page](https://github.com/virtualcommons/foraging/wiki/Configuration) for more details.
 
-#### use docker-compose
+### Run via docker-compose
 
-* `docker-compose run --service-ports experiment` will build an Docker image and start two containers: an experiment
+* Install [Docker](https://docs.docker.com/engine/installation/) and [docker compose](https://docs.docker.com/compose/install/)
+* run `docker-compose up` to build the foraging Docker image and start an experiment
   server listening on port 16001 and an nginx webserver listening on port 8080 to deliver the foraging client and
-  facilitator applications via Java WebStart. The relevant URLs are `http://<server.address>:8080/` to start a WebStart client and
-  `http://<server.address>:8080/facilitator.jnlp` to start a WebStart facilitator.
-* *Back up your data:*  you are done running an experiment, make sure you back up the binary data saved in `experiment-data`. 
-* Convert binary data stored in `DATA_DIR` to a variety of plaintext files via `docker-compose run data` or customize the statistics you see by writing a custom `SaveFileProcessor` and adding it to the list in `ForagingSaveFileConverter`. Run data conversion via `docker-compose run data`. You can select the data directory with the `DATA_DIR` environment variable and convert the XML savefiles with the `XML` environment variable, e.g., `docker-compose run -e DATA_DIR=<data-directory> -eXML=xml data`.
-* Run `docker-compose down` to clean up your docker images when you're done.
+  facilitator applications via Java WebStart. The relevant URLs are `http://<server.address>:8080/` to start a WebStart client and `http://<server.address>:8080/facilitator.jnlp` to start a WebStart facilitator where `<server.address>` is as defined in your `build.properties` file.
+* *Back up your data:* when you are done running an experiment make sure you back up the binary data saved in `docker/data`. 
+* Convert binary data stored in `DATA_DIR` to a variety of plaintext files via `docker-compose run data` or customize the statistics you see by writing a custom `SaveFileProcessor` and adding it to the list in `ForagingSaveFileConverter`.You can select the data directory with the `DATA_DIR` environment variable and convert the XML savefiles with the `XML` environment variable, e.g., `docker-compose run -e DATA_DIR=<data-directory> -eXML=xml data`.
+* Run `docker-compose down` or `docker system prune` to clean up your docker images when you're done.
 
-#### or install everything locally
+### Install all dependencies manually
 
 * [install and setup Java, Ant, and Maven](https://github.com/virtualcommons/sesef/wiki/Home)
-* From the command-line (e.g., Windows PowerShell or Command Prompt, Mac OSX Terminal.app, or any Linux terminal)
+* Run a demo from the command-line (e.g., Windows PowerShell or Command Prompt, Mac OSX Terminal.app, or any Linux terminal)
 ```
 % ant prepare-demo
 % ant demo % this will start a server, a facilitator, and 5 clients in the demo treatment
