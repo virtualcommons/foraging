@@ -1,7 +1,8 @@
-FROM comses/ant:latest
+FROM comses/ant:1.10
 
-COPY . /code
-WORKDIR /code
+LABEL maintainer="Allen Lee <allen.lee@asu.edu>, Center for Behavior, Institutions and the Environment <cbie.asu.edu>"
+
+USER root
+COPY src /code/src
+COPY build.properties *.xml /code/
 RUN ant deploy
-
-CMD ["/usr/bin/java", "-jar", "-server", "server.jar"]

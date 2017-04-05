@@ -6,7 +6,8 @@ services:
     ports:
       - "16001:16001"
     volumes:
-      - data:/code/experiment-data
+      - ./docker/data:/code/experiment-data
+      - ./docker/services/run.sh:/etc/service/foraging/run
     links:
       - web
   web:

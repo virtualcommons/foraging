@@ -1165,7 +1165,11 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
     public static void main(String[] args) {
         ForagingServer server = new ForagingServer();
         server.start();
-        server.repl();
+        if (args.length > 0) {
+            if (args[0].equals("-i") || args[0].equals("--interactive")) {
+                server.repl();
+            }
+        }
     }
 
     @Override

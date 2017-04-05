@@ -1,0 +1,7 @@
+Dockerfile
+docker-compose.yml
+*data*
+target
+lib
+*.class
+*.jar

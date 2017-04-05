@@ -2,6 +2,7 @@ src/main/resources/configuration/*.*
 src/main/webapp/facilitator.jnlp
 src/main/webapp/client.jnlp
 src/main/webapp/images/*
+docker/data
 .idea
 *.iml
 *~
