@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>BENN-Biopac Round 21-40 configuration</comment>
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+<entry key='clients-per-group'>2</entry>
+<entry key="resource-depth">8</entry>
+<entry key="resource-width">8</entry>
+<entry key='robot-harvest-probability'>1</entry>
+<entry key='robot-movement-probability'>0.7</entry>
+<entry key='robot-moves-per-second'>10</entry>
+<entry key='regrowth-rate'>0.10</entry>
+<entry key='repeat'>2</entry>
+<entry key="instructions">
+<![CDATA[
+<h1>Instructions for Stage {self.roundIndexLabel}</h1>
+<p>
+The length of each of the following {self.repeat} rounds in this stage
+is {self.duration} seconds. 
+</p>
+<hr>
+<p><b>If you have any questions please raise your hand.</b></p>
+]]>
+</entry>
+</properties>
