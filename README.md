@@ -1,11 +1,11 @@
-### foraging
+# foraging
 
 The foraging experiment is a common pool resource experiment where participants are placed in randomized groups and
 interact with a spatially explicit renewable resource. It is built on the
 [Social Ecological Systems Experiment Framework](http://github.com/virtualcommons/sesef) and has been used to conduct research studies
 at [Arizona State University](http://www.asu.edu), [Indiana University](http://www.iu.edu), and the [University of Alaska-Anchorage](http://www.uaa.alaska.edu).
 
-### features
+## features
 
 * Participants move and interact with a resource in a real-time 2-D grid environment. 
 * Pluggable resource growth dynamics. The default is a parameterized density-dependent growth function but there
@@ -21,17 +21,20 @@ at [Arizona State University](http://www.asu.edu), [Indiana University](http://w
   ordered stream that can be converted to a variety of CSV statistics files and into QuickTime movies. Custom data
   analysis can be done by extending the SaveFileConverter class and analyzing the OrderedSet of user actions.
 
-### how to run the software
+## Download, configure, and deploy the software
 
-* [clone the foraging codebase with git](https://github.com/virtualcommons/foraging) via 
-`git clone https://github.com/virtualcommons/foraging.git` or [download and unpack the latest release](https://github.com/virtualcommons/foraging/releases)
+First, you'll need to [clone this git repository](https://help.github.com/articles/cloning-a-repository/) via the command-line or a git GUI client, e.g., `% git clone https://github.com/virtualcommons/foraging.git` (recommended) or you can [download and unpack the latest stable release](https://github.com/virtualcommons/foraging/releases)
+
+### Configure the software
+Next, you'll need to configure the software. At a minimum, you'll need to customize the `build.properties` file and add a set of configuration files representing an experiment treatment to `src/main/resources/configuration`. This step is clumsy and could use a lot of improvement.
+
 * customize `build.properties` from the `build.properties.example` file. At a minimum, make sure you set the
   `server.address` to the IP address or fully qualified hostname of the machine you are using to serve this application
 * add configuration files to `src/main/resources/configuration`, see the [wiki's Configuration page](https://github.com/virtualcommons/foraging/wiki/Configuration) for more details.
 
 ### Run via docker-compose
+If you install [Docker](https://docs.docker.com/engine/installation/) and [docker compose](https://docs.docker.com/compose/install/) you won't need to manually install Java, Ant, and start a webserver to serve the JNLP files, jar files, and static image assets in addition to the experiment server responsible for the experiment logic and generating data files in `./docker/data`.
 
-* Install [Docker](https://docs.docker.com/engine/installation/) and [docker compose](https://docs.docker.com/compose/install/)
 * run `docker-compose up` to build the foraging Docker image and start an experiment
   server listening on port 16001 and an nginx webserver listening on port 8080 to deliver the foraging client and
   facilitator applications via Java WebStart. The relevant URLs are `http://<server.address>:8080/` to start a WebStart client and `http://<server.address>:8080/facilitator.jnlp` to start a WebStart facilitator where `<server.address>` is as defined in your `build.properties` file.
@@ -41,22 +44,27 @@ at [Arizona State University](http://www.asu.edu), [Indiana University](http://w
 
 ### Install all dependencies manually
 
+You can also install the dependencies directly onto your system (e.g., `yum`, `apt-get`, or `pacman` on your favorite Linux distro) and 
+
 * [install and setup Java, Ant, and Maven](https://github.com/virtualcommons/sesef/wiki/Home)
-* Run a demo from the command-line (e.g., Windows PowerShell or Command Prompt, Mac OSX Terminal.app, or any Linux terminal)
+
+### Run a demo
+You can run a demo from the command-line (e.g., Windows PowerShell or Command Prompt, Mac OSX Terminal.app, or any Linux terminal) after Ant and Java have been installed via
+
 ```
 % ant prepare-demo
 % ant demo % this will start a server, a facilitator, and 5 clients in the demo treatment
 ```
 For more detailed instructions, please see the [installation instructions on our wiki](https://github.com/virtualcommons/foraging/wiki/Installation).
 
-### publications
+## publications
 
 Data generated from the foraging framework has been published in 
 [Lab Experiments for the Study of Social-Ecological Systems](http://www.sciencemag.org/cgi/content/abstract/328/5978/613). 
 Archives of the [configuration files used](https://github.com/virtualcommons/foraging/tree/master/src/main/resources/configuration/replication/2010/janssen-et-al) and the
 [experiment data](https://osf.io/mdhb7) are also available.
 
-### status
+## status
 [![Build Status](https://travis-ci.org/virtualcommons/foraging.svg?branch=master)](https://travis-ci.org/virtualcommons/foraging)
 
 If you'd like to add new features or find any bugs, please [let us know](http://vcweb.asu.edu/contact).
