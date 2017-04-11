@@ -35,9 +35,11 @@ Next, you'll need to configure the software. At a minimum, you'll need to custom
 ### Run via docker-compose
 If you install [Docker](https://docs.docker.com/engine/installation/) and [docker compose](https://docs.docker.com/compose/install/) you won't need to manually install Java, Ant, and start a webserver to serve the JNLP files, jar files, and static image assets in addition to the experiment server responsible for the experiment logic and generating data files in `./docker/data`.
 
+_NOTE_: The docker build currently binds to port 80 instead of port 8080 - if you want to change this, modify the port mapping in docker-compose.yml for the nginx web service.
+
 * run `docker-compose up` to build the foraging Docker image and start an experiment
   server listening on port 16001 and an nginx webserver listening on port 8080 to deliver the foraging client and
-  facilitator applications via Java WebStart. The relevant URLs are `http://<server.address>:8080/` to start a WebStart client and `http://<server.address>:8080/facilitator.jnlp` to start a WebStart facilitator where `<server.address>` is as defined in your `build.properties` file.
+  facilitator applications via Java WebStart. The relevant URLs are `http://<server.address>` to start a WebStart client and `http://<server.address>/facilitator.jnlp` to start a WebStart facilitator where `<server.address>` is as defined in your `build.properties` file.
 * *Back up your data:* when you are done running an experiment make sure you back up the binary data saved in `docker/data`. 
 * Convert binary data stored in `DATA_DIR` to a variety of plaintext files via `docker-compose run data` or customize the statistics you see by writing a custom `SaveFileProcessor` and adding it to the list in `ForagingSaveFileConverter`.You can select the data directory with the `DATA_DIR` environment variable and convert the XML savefiles with the `XML` environment variable, e.g., `docker-compose run -e DATA_DIR=<data-directory> -eXML=xml data`.
 * Run `docker-compose down` or `docker system prune` to clean up your docker images when you're done.
