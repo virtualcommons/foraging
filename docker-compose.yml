@@ -7,14 +7,17 @@ services:
       - "16001:16001"
     volumes:
       - ./docker/data:/code/experiment-data
-      - ./docker/services/run.sh:/etc/service/foraging/run
+      - ./docker/shared/html:/usr/share/nginx/html
+      - ./docker/shared/build:/code/target
+      - ./docker/shared/lib:/code/lib
+        # FIXME: cram the current filesystem's ./src/main/resources/configuration into the container.. this is super
+        # hacky but should work for the interim.
+      - ./src/main/resources/configuration:/code/src/main/resources/configuration
     links:
       - web
   web:
     image: nginx:1-alpine
     volumes:
-      - ./src/main/webapp:/usr/share/nginx/html
+      - ./docker/shared/html:/usr/share/nginx/html
     ports:
-      - "8080:80"
-volumes:
-  data:
+      - "80:80"

@@ -1,0 +1,37 @@
+# This configuration properties file template is designed to be used with Docker and docker-compose which expects
+# generated artifacts to be placed in the /usr/share/nginx/html volume shared across the Experiment container and the
+# Webserver container.
+#
+# Any configuration properties set here will override the defaults provided in
+# the build.xml file.  
+# 
+# NOTE: You MUST modify the server.address property to reflect your actual hostname
+# Set to the IP address or domain name of the experiment server.
+#  
+# NOTE: Due to restrictions by from Java security model, this must be the same as the IP address/domain name of the
+# webserver you are deploying the software on.
+# FIXME: make sure to set this to 
+server.address=localhost
+
+# Filesystem path to experiment's client and facilitator JNLP and jar files, must be accessible & mounted by the webserver
+#
+# NOTE: for windows, use double backslashes as a path separator
+# web.dir=C:\\WebServer\\foraging
+#
+# default value for the filesystem slice mounted by the Docker nginx:1-alpine image
+web.dir=/usr/share/nginx/html
+
+# The URL that maps to the path above.  If you don't mind using "foraging" as
+# part of the URL you can just set the server.address and leave this property
+# blank. 
+#
+# The build.xml that loads this properties file defaults to ${server.address} + "/foraging"
+# 
+# Default value for Maven jetty webserver
+codebase.url=http://${server.address}:80
+
+# The experiment server port used to communicate with each individual experiment client
+server.port=16001
+
+# SESEF framework version: https://github.com/virtualcommons/sesef 
+sesef.version=0.8-SNAPSHOT
