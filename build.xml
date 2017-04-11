@@ -134,13 +134,6 @@
       </path>
     </signjar>
   </target>
-  <!-- specialized target for 2016 fmri configuration deployment -->
-  <target name='fmri' depends='clean-configuration'>
-    <antcall target='copy-configuration'>
-      <param name='treatment.dir' value='asu/2016/fmri' />
-    </antcall>
-    <antcall target='deploy' />
-  </target>
   <!-- deploys the client + facilitator + sesef jarfiles to the appropriate
      webapps directory. -->
   <target name="deploy-to" depends="build-all, sign-jars, sign-dependencies">
@@ -310,12 +303,6 @@
       <fileset dir='${conf.dir}' includes='*.xml' />
     </delete>
   </target>
-  <target name='deploy-uol' depends='compile,clean-configuration'>
-    <antcall target='copy-configuration'>
-      <param name='treatment.dir' value='UoL/communication-and-motives'/>
-    </antcall>
-    <antcall target='deploy' />
-  </target>
   <!-- delete ivy and maven caches to force reload a new sesef snapshot -->
   <target name="purge" depends="clean">
     <echo message="Removing ${user.home}/.ant/cache"/>
@@ -438,14 +425,25 @@
       <arg value='${xml.enabled}'/>
     </java>
   </target>
-  <!-- Run Test on GUI -->
-  <target name="guitest" depends="compile-tests">
-    <java fork="yes" classname="junit.swingui.TestRunner" taskname="JUnit" failonerror="true" dir="${basedir}">
-      <jvmarg value="-Djunit.test.path=${test.build.dir}"/>
-      <sysproperty key="basedir" value="${basedir}"/>
-      <classpath>
-        <path refid="project.classpath"/>
-      </classpath>
-    </java>
+  <!-- Custom Deployment Targets -->
+  <target name='deploy-uol' depends='compile,clean-configuration'>
+    <antcall target='copy-configuration'>
+      <param name='treatment.dir' value='UoL/communication-and-motives'/>
+    </antcall>
+    <antcall target='deploy' />
+  </target>
+  <target name='deploy-fmri-a' depends='compile,clean-configuration'>
+    <!-- specialized target for fmri aggressive bot deployment -->
+    <antcall target='copy-configuration'>
+      <param name='treatment.dir' value='asu/2017/fmri/a' />
+    </antcall>
+    <antcall target='deploy' />
+  </target>
+  <target name='deploy-fmri-n' depends='compile,clean-configuration'>
+    <!-- specialized target for fmri nice bot deployment -->
+    <antcall target='copy-configuration'>
+      <param name='treatment.dir' value='asu/2017/fmri/n' />
+    </antcall>
+    <antcall target='deploy' />
   </target>
 </project>
