@@ -399,7 +399,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public String toCurrencyString(double amount) {
         if (isLabDollarsEnabled()) {
-            return String.format("%.2f SEK", amount);
+            return String.format("%.2f lab dollars", amount);
         }
         return getCurrencyFormat().format(amount);
     }

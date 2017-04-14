@@ -29,11 +29,11 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
 
     private static final long serialVersionUID = -1737412253553943902L;
 
-    private static final double DEFAULT_SHOW_UP_PAYMENT = 50.0d;
-    private static final double DEFAULT_QUIZ_CORRECT_ANSWER_REWARD = 5d;
+    private static final double DEFAULT_SHOW_UP_PAYMENT = 5.0d;
+    private static final double DEFAULT_QUIZ_CORRECT_ANSWER_REWARD = 0.50d;
     private static final String SAME_ROUND_AS_PREVIOUS_INSTRUCTIONS = "<h3>Round {self.roundNumber} Instructions</h3><hr><p>Round {self.roundNumber} is the same as the previous round.</p><p>The length of this round is {duration}.</p><p>If you have any questions please raise your hand.  <b>Do you have any questions so far?</b></p>";
     private static final String DEFAULT_LOG_FILE_DESTINATION = "foraging-server.log";
-    private static final double DEFAULT_DOLLARS_PER_TOKEN = 0.1d;
+    private static final double DEFAULT_DOLLARS_PER_TOKEN = .02d;
     private static final int DEFAULT_CLIENTS_PER_GROUP = 5;
 
     public ServerConfiguration() {
