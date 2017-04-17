@@ -9,7 +9,7 @@
 <entry key="round1">round1n.xml</entry>
 <entry key="round2">round2n.xml</entry>
 <entry key="round3">round3n.xml</entry>
-<entry key='quiz-correct-answer-reward'>0.10</entry>
+<entry key='quiz-correct-answer-reward'>5</entry>
 <entry key='clients-per-group'>2</entry>
 <entry key='bot-groups-enabled'>true</entry>
 <entry key='bots-per-group'>1</entry>
@@ -55,7 +55,7 @@ shaded.
 <p>
 Welcome to the experiment. The experiment will begin shortly.
 <br><br>
-Please <b>wait quietly</b> and <b>do not close this window, open any other applications, or communicate with any of the other participants</b>.
+Please <b>wait quietly</b> and <b>do not close this window or open any other applications</b>.
 </p>
 ]]>
 </entry>
@@ -127,15 +127,18 @@ Please fill in the following form to design your strategies as Player 1 or Playe
 <![CDATA[
 <p>
 You can chat with the other participants in your group during this round.
-You may discuss any aspect of the experiment with the other participants in your group with two exceptions:
-<ol>
-    <li>You <b>may not promise side-payments after the experiment is completed or threaten anyone with any consequence after the experiment is finished</b>.</li>
+You may discuss any aspect of the experiment with the other
+participants in your group with two exceptions: 
+<ol> 
+    <li>You <b>may not promise side-payments after the experiment is
+    completed or threaten anyone with any consequence after the
+    experiment is finished</b>.</li> 
     <li>You <b>may not reveal your actual identity</b></li>
 </ol>
 <p>
 We are monitoring the chat traffic while you chat. If we detect any violation of the
-rules we will have to stop the experiment and remove the offending group from the
-room.
+rules we will have to stop the experiment and remove the offending
+group from the room.   
 </p>
 <p>
     You will see other participants labeled from A to {self.lastChatHandle} in the chat
@@ -150,7 +153,6 @@ room.
 <hr>
 <p>Round {self.roundIndexLabel} is the same as the previous round.</p>
 <p>The length of this round is {self.duration} seconds.</p>
-<p><b>Please raise your hand if you have any questions.</b></p>
 ]]>
 </entry>
 <entry key='facilitator-debriefing'>

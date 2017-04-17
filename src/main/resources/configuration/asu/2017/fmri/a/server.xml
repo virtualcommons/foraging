@@ -9,7 +9,7 @@
 <entry key="round1">round1a.xml</entry>
 <entry key="round2">round2a.xml</entry>
 <entry key="round3">round3a.xml</entry>
-<entry key='quiz-correct-answer-reward'>0.10</entry>
+<entry key='quiz-correct-answer-reward'>5</entry>
 <entry key='clients-per-group'>2</entry>
 <entry key='bot-groups-enabled'>true</entry>
 <entry key='bots-per-group'>1</entry>
@@ -55,7 +55,7 @@ shaded.
 <p>
 Welcome to the experiment. The experiment will begin shortly.
 <br><br>
-Please <b>wait quietly</b> and <b>do not close this window, open any other applications, or communicate with any of the other participants</b>.
+Please <b>wait quietly</b> and <b>do not close this window or open any other applications</b>.
 </p>
 ]]>
 </entry>
@@ -153,7 +153,6 @@ group from the room.
 <hr>
 <p>Round {self.roundIndexLabel} is the same as the previous round.</p>
 <p>The length of this round is {self.duration} seconds.</p>
-<p><b>Please raise your hand if you have any questions.</b></p>
 ]]>
 </entry>
 <entry key='facilitator-debriefing'>

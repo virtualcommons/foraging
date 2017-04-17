@@ -16,11 +16,13 @@
 <![CDATA[
 <h1>Instructions for Stage {self.roundIndexLabel}</h1>
 <p>
-The length of each of the following {self.repeat} rounds in this stage
+Stage {self.roundIndexLabel} consists of  {self.repeat} rounds.  As in
+the previous stage, you will collect green tokens and you will earn
+<b>{dollarsPerToken}</b> for each token collected. The
+length of each of the following {self.repeat} rounds in this stage 
 is {self.duration} seconds.  
 </p>
 <hr>
-<p><b>If you have any questions please raise your hand.</b></p>
 ]]>
 </entry>
 </properties>

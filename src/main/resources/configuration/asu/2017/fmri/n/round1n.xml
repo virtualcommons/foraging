@@ -14,22 +14,26 @@
 <entry key='repeat'>2</entry>
 <entry key="instructions">
 <![CDATA[
+<hr>	   
 <h1>Instructions for Stage {self.roundIndexLabel}</h1>
 <hr>
 <p>
-    The length of each of the following {self.repeat} rounds in this
+    Stage {self.roundIndexLabel} consists of {self.repeat} rounds. The
+    length of each of the following {self.repeat} rounds in this 
     stage is {self.duration} seconds. As in the practice round you
     can collect green tokens. However, this time you will earn
-    <b>{dollarsPerToken}</b> lab dollars for each token 
-    collected. You <b>cannot</b> reset the distribution of green  
-    tokens.   
+    <b>{dollarsPerToken}</b>  for each token collected. You
+    <b>cannot</b> reset the distribution of green tokens.   
+</p>
+<p>
+    Also, there will be <b> another player collecting tokens </b> in the
+    same grid as you.  
 </p>
 <p>
     On the top right corner of the screen you can see how many tokens
     you have collected. On the top left corner of the 
     screen you can see the amount of time remaining in the round.
 </p>
-<p><b>If you have any questions please raise your hand.</b></p>
 ]]>
 </entry>
 <entry key="quiz">true</entry>
@@ -82,8 +86,8 @@
 <h2>Quiz</h2>
 <hr>
 <p>
-    Before we begin the actual round please answer the following 10 statements. You have five minutes to answer these
-    questions and you will get {quizCorrectAnswerReward} lab dollars for each correct answer. When you are finished
+    Before we begin the actual round please answer the following 10 questions. You have five minutes to answer these
+    questions and you will get {quizCorrectAnswerReward}  for each correct answer. When you are finished
     please click submit.
 </p>
 <br>
@@ -113,7 +117,7 @@
 <input type="radio" name="q6" value="Possible">Possible<br>
 <input type="radio" name="q6" value="Impossible">Impossible<br>
 <br><br>
-<span class='q7'>Q7. If each token is worth 0.02 lab dollars and you collect 100 tokens in a round, you have earned 3 lab dollars in that round.</span> <br>
+<span class='q7'>Q7. If each token is worth 0.1 SEK and you collect 20 tokens in a round, you have earned 3 SEK in that round.</span> <br>
 <input type="radio" name="q7" value="T">True<br>
 <input type="radio" name="q7" value="F">False<br>
 <br><br>
@@ -139,9 +143,9 @@
     <hr>
         <p>
             {if (allCorrect)}
-            You have answered all the questions correctly and earned <b>{totalQuizEarnings}</b> in lab dollars.
+            You have answered all the questions correctly and earned <b>{totalQuizEarnings}</b>.
             {else}
-            You answered {numberCorrect} out of {totalQuestions} questions correctly and earned <b>{totalQuizEarnings}</b> in lab dollars.  Questions you've answered
+            You answered {numberCorrect} out of {totalQuestions} questions correctly and earned <b>{totalQuizEarnings}</b>.  Questions you've answered
             incorrectly are highlighted in red.  Please see below for more details.
             {endif}
         </p>
@@ -186,10 +190,11 @@
         No, this sequence is not possible. New tokens cannot regenerate on an empty cell when all neighboring cells are also empty.
     </b>
     <br><br>
-<span class='q7'>Q7. If each token is worth $0.02 and you collect 100 tokens in a round, you have earned 3 dollars in that round.</span> <br>
+<span class='q7'>Q7. If each token is worth 0.1 SEK and you collect 20 tokens in a round, you have earned 3 SEK in that round.</span> <br>
     <b>
         {incorrect_q7} 
-        This statement is false. You would have earned 100 * $0.02 = $2.00 in that round.
+        This statement is false. You would have earned 20 * 0.1 =
+	2.00 SEK in that round.
     </b>
     <br><br>
             <span class='q8'>Q8. The duration of a round is {self.duration} seconds.</span> <br>
