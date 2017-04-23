@@ -1,0 +1,48 @@
+Participant, Group, Total Cumulative Tokens, Sanction costs, Sanction penalties
+Station 1 (uid: 1), #1, Group #3, 198, 0, 0
+Group Group #3, 0, 198
+=========================================
+Time, Participant, Token Collected?, Chat
+0.325, BotIdentifier uid: 148516379672313, token collected
+1.437, BotIdentifier uid: 148516379672313, token collected
+1.986, Station 1 (uid: 1), token collected
+2.217, BotIdentifier uid: 148516379672313, token collected
+2.848, BotIdentifier uid: 148516379672313, token collected
+3.323, BotIdentifier uid: 148516379672313, token collected
+3.794, Station 1 (uid: 1), token collected
+4.115, BotIdentifier uid: 148516379672313, token collected
+4.277, Station 1 (uid: 1), token collected
+4.594, Station 1 (uid: 1), token collected
+5.232, Station 1 (uid: 1), token collected
+5.232, BotIdentifier uid: 148516379672313, token collected
+6.016, BotIdentifier uid: 148516379672313, token collected
+6.490, BotIdentifier uid: 148516379672313, token collected
+6.646, Station 1 (uid: 1), token collected
+7.120, Station 1 (uid: 1), token collected
+7.281, BotIdentifier uid: 148516379672313, token collected
+8.395, Station 1 (uid: 1), token collected
+8.553, BotIdentifier uid: 148516379672313, token collected
+8.951, Station 1 (uid: 1), token collected
+9.348, BotIdentifier uid: 148516379672313, token collected
+9.590, Station 1 (uid: 1), token collected
+10.218, Station 1 (uid: 1), token collected
+10.454, BotIdentifier uid: 148516379672313, token collected
+11.016, Station 1 (uid: 1), token collected
+11.258, BotIdentifier uid: 148516379672313, token collected
+11.499, Station 1 (uid: 1), token collected
+11.976, Station 1 (uid: 1), token collected
+12.209, BotIdentifier uid: 148516379672313, token collected
+12.525, Station 1 (uid: 1), token collected
+12.686, BotIdentifier uid: 148516379672313, token collected
+13.234, Station 1 (uid: 1), token collected
+13.792, BotIdentifier uid: 148516379672313, token collected
+13.870, Station 1 (uid: 1), token collected
+14.892, BotIdentifier uid: 148516379672313, token collected
+15.925, Station 1 (uid: 1), token collected
+16.324, BotIdentifier uid: 148516379672313, token collected
+16.485, Station 1 (uid: 1), token collected
+16.882, Station 1 (uid: 1), token collected
+16.962, BotIdentifier uid: 148516379672313, token collected
+17.281, Station 1 (uid: 1), token collected
+17.672, Station 1 (uid: 1), token collected
+17.748, BotIdentifier uid: 148516379672313, token collected

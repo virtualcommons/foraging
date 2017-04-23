@@ -1,0 +1,47 @@
+1485162137360, -0.004, AddClientEvent: Client [Station 1 (uid: 1), #1] located at position [(3.0, 3.0, 0.0)] in group [Group #0]
+1485162137363, -0.001, 32537363, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #0, [java.awt.Point[x=0,y=1], java.awt.Point[x=2,y=1], java.awt.Point[x=0,y=2], java.awt.Point[x=2,y=4], java.awt.Point[x=1,y=2], java.awt.Point[x=5,y=4], java.awt.Point[x=0,y=3], java.awt.Point[x=5,y=3], java.awt.Point[x=0,y=5]]
+1485162137364, 0.000, class edu.asu.commons.event.RoundStartedMarkerEvent - id: system identifier, created on 1485162137364
+1485162138427, 1.063, 32538427, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #0, []
+1485162139461, 2.097, 32539461, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #0, []
+1485162139542, 2.178, 32539542, Station 1 (uid: 1), 0, 1, 4, 3, right, movement event
+1485162139933, 2.569, 32539933, Station 1 (uid: 1), 5, 3, 0, 1, token collected event
+1485162140238, 2.874, 32540238, Station 1 (uid: 1), 0, 2, 4, 4, down, movement event
+1485162140491, 3.127, 32540491, Station 1 (uid: 1), 5, 4, 0, 2, token collected event
+1485162140491, 3.127, 32540491, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #0, []
+1485162140637, 3.273, 32540637, Station 1 (uid: 1), 0, 3, 3, 4, left, movement event
+1485162140821, 3.457, 32540821, Station 1 (uid: 1), 0, 4, 2, 4, left, movement event
+1485162140957, 3.593, 32540957, Station 1 (uid: 1), 0, 5, 1, 4, left, movement event
+1485162141129, 3.765, 32541129, Station 1 (uid: 1), 2, 4, 0, 3, token collected event
+1485162141269, 3.905, 32541269, Station 1 (uid: 1), 0, 6, 1, 3, up, movement event
+1485162141454, 4.090, 32541454, Station 1 (uid: 1), 0, 7, 1, 2, up, movement event
+1485162141524, 4.160, 32541524, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #0, []
+1485162141661, 4.297, 32541661, Station 1 (uid: 1), 0, 8, 0, 2, left, movement event
+1485162142240, 4.876, 32542240, Station 1 (uid: 1), 1, 2, 0, 4, token collected event
+1485162142525, 5.161, 32542525, Station 1 (uid: 1), 0, 9, 0, 2, left, movement event
+1485162142558, 5.194, 32542558, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #0, []
+1485162142713, 5.349, 32542713, Station 1 (uid: 1), 0, 2, 0, 5, token collected event
+1485162142878, 5.514, 32542878, Station 1 (uid: 1), 0, 10, 0, 1, up, movement event
+1485162143187, 5.823, 32543187, Station 1 (uid: 1), 0, 1, 0, 6, token collected event
+1485162143485, 6.121, 32543485, Station 1 (uid: 1), 0, 11, 0, 2, down, movement event
+1485162143583, 6.219, 32543583, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #0, []
+1485162143629, 6.265, 32543629, Station 1 (uid: 1), 0, 12, 0, 3, down, movement event
+1485162143773, 6.409, 32543773, Station 1 (uid: 1), 0, 13, 0, 4, down, movement event
+1485162144125, 6.761, 32544125, Station 1 (uid: 1), 0, 14, 0, 3, up, movement event
+1485162144291, 6.927, 32544291, Station 1 (uid: 1), 0, 3, 0, 7, token collected event
+1485162144445, 7.081, 32544445, Station 1 (uid: 1), 0, 15, 0, 4, down, movement event
+1485162144609, 7.245, 32544609, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #0, []
+1485162144645, 7.281, 32544645, Station 1 (uid: 1), 0, 16, 0, 5, down, movement event
+1485162144842, 7.478, 32544842, Station 1 (uid: 1), 0, 5, 0, 8, token collected event
+1485162144909, 7.545, 32544909, Station 1 (uid: 1), 0, 17, 0, 4, up, movement event
+1485162145085, 7.721, 32545085, Station 1 (uid: 1), 0, 18, 0, 3, up, movement event
+1485162145238, 7.874, 32545238, Station 1 (uid: 1), 0, 19, 0, 2, up, movement event
+1485162145389, 8.025, 32545389, Station 1 (uid: 1), 0, 20, 0, 1, up, movement event
+1485162145613, 8.249, 32545613, Station 1 (uid: 1), 0, 21, 1, 1, right, movement event
+1485162145633, 8.269, 32545633, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #0, []
+1485162145789, 8.425, 32545789, Station 1 (uid: 1), 0, 22, 2, 1, right, movement event
+1485162145954, 8.590, 32545954, Station 1 (uid: 1), 2, 1, 0, 9, token collected event
+1485162146667, 9.303, 32546667, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #0, []
+1485162147700, 10.336, 32547700, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #0, []
+1485162148726, 11.362, 32548726, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #0, []
+1485162149745, 12.381, 32549745, class edu.asu.commons.foraging.event.ResourcesAddedEvent, Group #0, []
+1485162150310, 12.946, class edu.asu.commons.event.RoundEndedMarkerEvent - id: system identifier, created on 1485162150310
