@@ -8,7 +8,7 @@
        then define defaults for all the properties.
        NOTE: property definitions in the build.properties file take precedence.
     -->
-  <property file="build.properties"/>
+  <property file='build.properties'>
   <!-- auto-install ivy if needed -->
   <property name='ivy.install.version' value='2.4.0'/>
   <condition property="ivy.home" value="${env.IVY_HOME}">
@@ -434,15 +434,21 @@
   </target>
   <target name='deploy-fmri-a' depends='compile,clean-configuration'>
     <!-- specialized target for fmri aggressive bot deployment -->
+    <input message="Select localized version"
+      validargs="sv-SE,es-CO"
+      addproperty="localized.version" />
     <antcall target='copy-configuration'>
-      <param name='treatment.dir' value='asu/2017/fmri/a' />
+      <param name='treatment.dir' value='asu/2017/fmri/a_${localized.version}' />
     </antcall>
     <antcall target='deploy' />
   </target>
   <target name='deploy-fmri-n' depends='compile,clean-configuration'>
+    <input message="Select localized version"
+      validargs="sv-SE,es-CO"
+      addproperty="localized.version" />
     <!-- specialized target for fmri nice bot deployment -->
     <antcall target='copy-configuration'>
-      <param name='treatment.dir' value='asu/2017/fmri/n' />
+      <param name='treatment.dir' value='asu/2017/fmri/n_${localized.version}' />
     </antcall>
     <antcall target='deploy' />
   </target>
