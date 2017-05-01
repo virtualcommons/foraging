@@ -11,7 +11,7 @@
 <entry key='robot-movement-probability'>0.7</entry>
 <entry key='robot-moves-per-second'>10</entry>
 <entry key='regrowth-rate'>0.05</entry>
-<entry key='repeat'>2</entry>
+<entry key='repeat'>20</entry>
 <entry key="instructions">
 <![CDATA[
 <hr>	   
