@@ -1,8 +1,15 @@
 version: "3"
 services:
+  data:
+    image: virtualcommons/foraging:latest
+    command: ant convert
+    volumes:
+      - ./docker/data:/code/experiment-data
+      - ./docker/shared/build:/code/target
+      - ./docker/shared/lib:/code/lib
   experiment:
     build: ./
-    image: virtualcommons/foraging
+    image: virtualcommons/foraging:latest
     ports:
       - "16001:16001"
     volumes:
