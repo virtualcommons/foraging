@@ -882,7 +882,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         template.add("totalQuestions", totalQuestions);
         template.add("totalQuizEarnings", toCurrencyString(getQuizCorrectAnswerReward() * numberCorrect));
         for (String incorrectQuestionNumber : incorrectQuestionNumbers) {
-            template.add("incorrect_" + incorrectQuestionNumber, String.format("Your answer, %s, was incorrect.", actualAnswers.get(incorrectQuestionNumber)));
+            template.add(String.format("%s_feedback", incorrectQuestionNumber),
+                    String.format("<span class='feedback'>Your response, %s, was not correct. </span>",
+                            actualAnswers.get(incorrectQuestionNumber)));
+            template.add(String.format("%s_feedback_css", incorrectQuestionNumber), "incorrect-answer");
         }
         return template.render();
     }

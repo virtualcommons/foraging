@@ -226,8 +226,8 @@ public class GameWindow2D implements GameWindow {
             public void actionPerformed(ActionEvent e) {
                 HtmlEditorPane.FormActionEvent formEvent = (HtmlEditorPane.FormActionEvent) e;
                 Properties actualAnswers = formEvent.getData();
-                List<String> incorrectQuestionNumbers = new ArrayList<String>();
-                List<String> correctAnswers = new ArrayList<String>();
+                List<String> incorrectQuestionNumbers = new ArrayList<>();
+                List<String> correctAnswers = new ArrayList<>();
 
                 // iterate through expected answers
                 Map<String, String> quizAnswers = configuration.getQuizAnswers();
@@ -236,7 +236,7 @@ public class GameWindow2D implements GameWindow {
                     String expectedAnswer = entry.getValue();
                     String actualAnswer = actualAnswers.getProperty(questionNumber);
                     if (actualAnswer == null) {
-                        JOptionPane.showMessageDialog(getPanel(), "Please enter a quiz answer for question " + questionNumber.toUpperCase() + ".");
+                        JOptionPane.showMessageDialog(getPanel(), "Please enter a response for question " + questionNumber.toUpperCase() + ".");
                         return;
                     }
                     if (expectedAnswer.equals(actualAnswer)) {
@@ -247,8 +247,6 @@ public class GameWindow2D implements GameWindow {
                     }
                 }
                 client.transmit(new QuizResponseEvent(client.getId(), actualAnswers, incorrectQuestionNumbers));
-                setQuestionColors(correctAnswers, "blue");
-                setQuestionColors(incorrectQuestionNumbers, "red");
                 // RoundConfiguration now builds the appropriate quiz results page.
                 StringBuilder builder = new StringBuilder(configuration.getQuizResults(incorrectQuestionNumbers, actualAnswers));
                 configuration.buildInstructions(builder);
@@ -798,7 +796,6 @@ public class GameWindow2D implements GameWindow {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (roundConfiguration.isQuizEnabled()) {
-                    instructionsEditorPane.setActionListener(null);
                     instructionsEditorPane.setActionListener(createQuizListener(roundConfiguration));
                 }
                 setInstructions(instructionsBuilder.toString());
