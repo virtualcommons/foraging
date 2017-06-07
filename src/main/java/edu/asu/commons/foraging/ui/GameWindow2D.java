@@ -223,33 +223,40 @@ public class GameWindow2D implements GameWindow {
 
     private ActionListener createQuizListener(final RoundConfiguration configuration) {
         return new ActionListener() {
+            private boolean submitted = false;
             public void actionPerformed(ActionEvent e) {
                 HtmlEditorPane.FormActionEvent formEvent = (HtmlEditorPane.FormActionEvent) e;
-                Properties actualAnswers = formEvent.getData();
-                List<String> incorrectQuestionNumbers = new ArrayList<>();
-                List<String> correctAnswers = new ArrayList<>();
+                StringBuilder builder = new StringBuilder();
+                if (! submitted) {
+                    Properties actualAnswers = formEvent.getData();
+                    List<String> incorrectQuestionNumbers = new ArrayList<>();
+                    List<String> correctAnswers = new ArrayList<>();
 
-                // iterate through expected answers
-                Map<String, String> quizAnswers = configuration.getQuizAnswers();
-                for (Map.Entry<String, String> entry : quizAnswers.entrySet()) {
-                    String questionNumber = entry.getKey();
-                    String expectedAnswer = entry.getValue();
-                    String actualAnswer = actualAnswers.getProperty(questionNumber);
-                    if (actualAnswer == null) {
-                        JOptionPane.showMessageDialog(getPanel(), "Please enter a response for question " + questionNumber.toUpperCase() + ".");
-                        return;
+                    // iterate through expected answers
+                    Map<String, String> quizAnswers = configuration.getQuizAnswers();
+                    for (Map.Entry<String, String> entry : quizAnswers.entrySet()) {
+                        String questionNumber = entry.getKey();
+                        String expectedAnswer = entry.getValue();
+                        String actualAnswer = actualAnswers.getProperty(questionNumber);
+                        if (actualAnswer == null) {
+                            JOptionPane.showMessageDialog(getPanel(), "Please enter a response for question " + questionNumber.toUpperCase() + ".");
+                            return;
+                        }
+                        if (expectedAnswer.equals(actualAnswer)) {
+                            correctAnswers.add(questionNumber);
+                        } else {
+                            // flag the incorrect response
+                            incorrectQuestionNumbers.add(questionNumber);
+                        }
                     }
-                    if (expectedAnswer.equals(actualAnswer)) {
-                        correctAnswers.add(questionNumber);
-                    } else {
-                        // flag the incorrect response
-                        incorrectQuestionNumbers.add(questionNumber);
-                    }
+                    submitted = true;
+                    client.transmit(new QuizResponseEvent(client.getId(), actualAnswers, incorrectQuestionNumbers));
+                    builder.append(configuration.getQuizResults(incorrectQuestionNumbers, actualAnswers));
                 }
-                client.transmit(new QuizResponseEvent(client.getId(), actualAnswers, incorrectQuestionNumbers));
+                else {
+                    configuration.buildInstructions(builder);
+                }
                 // RoundConfiguration now builds the appropriate quiz results page.
-                StringBuilder builder = new StringBuilder(configuration.getQuizResults(incorrectQuestionNumbers, actualAnswers));
-                configuration.buildInstructions(builder);
                 setInstructions(builder.toString());
             }
         };
