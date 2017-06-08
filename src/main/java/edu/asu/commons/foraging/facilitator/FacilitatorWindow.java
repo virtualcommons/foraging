@@ -34,8 +34,6 @@ import edu.asu.commons.ui.HtmlSelection;
 import edu.asu.commons.ui.UserInterfaceUtils;
 
 /**
- * $Id$
- * 
  * The primary facilitator interface panel.
  * 
  * @author Allen Lee
@@ -159,7 +157,7 @@ public class FacilitatorWindow extends JPanel {
             if (configuration.isTrustGameEnabled()) {
                 hasTrustGame = true;
             }
-            if (configuration.isChatEnabled() && ! configuration.isInRoundChatEnabled()) {
+            if (configuration.isChatEnabled()) {
                 hasDedicatedChatRound = true;
             }
         }
