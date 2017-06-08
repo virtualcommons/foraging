@@ -191,15 +191,6 @@ public class GameWindow2D implements GameWindow {
 
     }
 
-    private void setQuestionColors(List<String> questionNumbers, String color) {
-        HTMLEditorKit editorKit = (HTMLEditorKit) instructionsEditorPane.getEditorKit();
-        StyleSheet styleSheet = editorKit.getStyleSheet();
-        for (String questionNumber : questionNumbers) {
-            String styleString = String.format(".%s { color: %s; }", questionNumber, color);
-            styleSheet.addRule(styleString);
-        }
-    }
-
     private ActionListener createClientReadyListener(final String confirmationMessage) {
         return new ActionListener() {
             @Override
@@ -223,7 +214,10 @@ public class GameWindow2D implements GameWindow {
 
     private ActionListener createQuizListener(final RoundConfiguration configuration) {
         return new ActionListener() {
+
             private boolean submitted = false;
+
+            @Override
             public void actionPerformed(ActionEvent e) {
                 HtmlEditorPane.FormActionEvent formEvent = (HtmlEditorPane.FormActionEvent) e;
                 StringBuilder builder = new StringBuilder();

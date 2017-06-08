@@ -791,7 +791,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     private String getPatchyResourceInstructions() {
-        return getProperty("patch-resource-instructiosn",
+        return getProperty("patch-resource-instructions",
                 "<p>The resource is not uniformly distributed.  There are patches of high growth and low growth.</p>");
     }
 
@@ -838,7 +838,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String generateVotingResults(List<Strategy> selectedRules, Map<Strategy, Integer> nominations) {
-        List<ForagingStrategyNomination> sortedNominations = new ArrayList<ForagingStrategyNomination>();
+        List<ForagingStrategyNomination> sortedNominations = new ArrayList<>();
         for (Map.Entry<Strategy, Integer> entry : new TreeMap<Strategy, Integer>(nominations).entrySet()) {
             Strategy strategy = entry.getKey();
             sortedNominations.add(new ForagingStrategyNomination(strategy, entry.getValue(), strategy.equals(selectedRules.get(0))));
@@ -881,11 +881,17 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         template.add("numberCorrect", numberCorrect);
         template.add("totalQuestions", totalQuestions);
         template.add("totalQuizEarnings", toCurrencyString(getQuizCorrectAnswerReward() * numberCorrect));
-        for (String incorrectQuestionNumber : incorrectQuestionNumbers) {
-            template.add(String.format("%s_feedback", incorrectQuestionNumber),
-                    String.format("<span class='feedback'>Your response, %s, was not correct. </span>",
-                            actualAnswers.get(incorrectQuestionNumber)));
-            template.add(String.format("%s_feedback_css", incorrectQuestionNumber), "incorrect-answer");
+        for (Object key: actualAnswers.keySet()) {
+            String questionNumber = key.toString();
+            if (questionNumber.startsWith("q")) {
+                // skip the submit button and any other non "qN" inputs
+                String feedback = "Correct. ";
+                if (incorrectQuestionNumbers.contains(questionNumber)) {
+                    feedback = "Not correct. ";
+                    template.add(String.format("%s_feedback_css", questionNumber), "incorrect-answer");
+                }
+                template.add(String.format("%s_feedback", questionNumber), feedback);
+            }
         }
         return template.render();
     }
