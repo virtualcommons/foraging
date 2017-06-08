@@ -363,15 +363,17 @@ public class FacilitatorWindow extends JPanel {
             instructionsBuilder.append(facilitator.getServerConfiguration().getFinalRoundFacilitatorInstructions());
         }
         else {
+// FIXME: this doesn't work with repeating rounds. Perhaps the server needs to pass in upcoming RoundConfiguration
             RoundConfiguration upcomingRound = roundConfiguration.nextRound();
+            System.err.println("Upcoming round: " + upcomingRound.getRoundIndexLabel());
             boolean showInstructionsNext = true;
             if (upcomingRound.isTrustGameEnabled()) {
                 showTrustGameMenuItem.setEnabled(true);
                 addMessage("TRUST GAME: Run a trust game next.  Click on the Round menu and select Show Trust Game<");
                 showInstructionsNext = false;
             }
+            startChatMenuItem.setEnabled(true);
             if (upcomingRound.isChatRoundEnabled()) {
-                startChatMenuItem.setEnabled(true);
                 addMessage("COMMUNICATION ROUND: There is a communication round configured to run at the end of this round.  Click on the Round menu and select Start Chat Round");
                 showInstructionsNext = false;
             }

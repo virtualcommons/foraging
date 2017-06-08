@@ -83,12 +83,9 @@ import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id$
- * 
- * Main experiment server class for costly sanctioning 2D experiment.
+ * Main experiment server class for foraging / costly sanctioning 2D experiment.
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision$
  */
 public class ForagingServer extends AbstractExperiment<ServerConfiguration, RoundConfiguration> {
 
