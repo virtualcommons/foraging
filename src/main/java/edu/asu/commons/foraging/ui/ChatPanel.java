@@ -30,16 +30,14 @@ import edu.asu.commons.ui.UserInterfaceUtils;
 import edu.asu.commons.util.Duration;
 
 /**
- * $Id$
- * 
  * Chat panel used to communicate with other players.
  * 
- * @author alllee
- * @version $Revision$
+ * @author Allen Lee
  */
 @SuppressWarnings("serial")
 public class ChatPanel extends JPanel {
 
+    private boolean isInRoundChat = false;
     private ForagingClient client;
 
     private JScrollPane messageScrollPane;
@@ -57,15 +55,16 @@ public class ChatPanel extends JPanel {
     
     public ChatPanel(ForagingClient client, boolean isInRoundChat) {
         this.client = client;
+        this.isInRoundChat = isInRoundChat;
         client.getEventChannel().add(this, new EventTypeProcessor<ChatEvent>(ChatEvent.class) {
             public void handle(final ChatEvent chatEvent) {
                 displayMessage(chatEvent.getSource(), chatEvent.toString());
             }
         });
-        initGuiComponents(isInRoundChat);   
+        initGuiComponents();
     }
     
-    private void initGuiComponents(boolean isInRoundChat) {
+    private void initGuiComponents() {
         setLayout(new BorderLayout(3, 3));
         setName("Chat panel");
         if (! isInRoundChat) {
@@ -133,12 +132,14 @@ public class ChatPanel extends JPanel {
         private static final long serialVersionUID = -4846486696999203769L;
 
         private Identifier targetIdentifier = Identifier.ALL;
+        private JLabel chatLabel;
         private JTextField chatField;
         private int timeRemaining;
         private JLabel timeRemainingLabel = new JLabel("");
 
         public TextEntryPanel(ForagingClient client) {
             setLayout(new BorderLayout(3, 3));
+            chatLabel = new JLabel("Chat: ");
             chatField = new JTextField();
             chatField.addKeyListener(new KeyAdapter() {
                 public void keyPressed(KeyEvent event) {
@@ -153,6 +154,7 @@ public class ChatPanel extends JPanel {
             headerPanel.add(headerLabel);
             headerPanel.add(timeRemainingLabel);
             add(headerPanel, BorderLayout.NORTH);
+            add(chatLabel, BorderLayout.WEST);
             add(chatField, BorderLayout.CENTER);
         }
 
@@ -175,7 +177,7 @@ public class ChatPanel extends JPanel {
                 client.transmit(request);
             }
             // special case for in round chat
-            if (configuration.isInRoundChatEnabled()) {
+            if (isInRoundChat) {
                 client.getGameWindow().requestFocusInWindow();
             }
             else {
