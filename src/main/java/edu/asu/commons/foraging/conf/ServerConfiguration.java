@@ -267,4 +267,8 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
     public double getRobotMovementProbability() {
         return getDoubleProperty("robot-movement-probability", 0.9d);
     }
+
+    public boolean areChatHandlesNumeric() {
+        return getBooleanProperty("chat-handles-numeric", false);
+    }
 }

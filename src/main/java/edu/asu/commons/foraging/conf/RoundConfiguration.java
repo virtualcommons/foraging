@@ -556,7 +556,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      * Returns true if chat handles should be numeric rather than letters.
      */
     public boolean areChatHandlesNumeric() {
-        return getBooleanProperty("chat-handles-numeric", false);
+        return getBooleanProperty("chat-handles-numeric", getParentConfiguration().areChatHandlesNumeric());
     }
 
     /**
