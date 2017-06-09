@@ -47,7 +47,6 @@ public class ChatPanel extends JPanel {
 
     private TextEntryPanel textEntryPanel;
 
-    private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
     private boolean isInRoundChat;
 
@@ -118,9 +117,9 @@ public class ChatPanel extends JPanel {
 
     public void initialize(DataModel<ServerConfiguration, RoundConfiguration> dataModel) {
         // close out any existing scheduled executor
-        executor.shutdown();
         participants = dataModel.getAllClientIdentifiers();
         Duration chatDuration = Duration.create(dataModel.getRoundConfiguration().getChatDuration()).start();
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(() -> {
             if (chatDuration.hasExpired()) {
                 executor.shutdown();

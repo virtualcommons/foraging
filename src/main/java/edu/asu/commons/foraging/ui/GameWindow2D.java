@@ -364,8 +364,8 @@ public class GameWindow2D implements GameWindow {
         informationLabel = new JLabel("Tokens collected: 0     ");
         informationLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
         // latencyLabel = new JLabel("Latency: 0");
-        informationLabel.setBackground(Color.YELLOW);
-        informationLabel.setForeground(UserInterfaceUtils.LIGHT_BLUE_GRAY);
+        informationLabel.setBackground(UserInterfaceUtils.OFF_WHITE);
+        informationLabel.setForeground(UserInterfaceUtils.DARK_BLUE);
 
         labelPanel = new JPanel();
         labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.LINE_AXIS));
