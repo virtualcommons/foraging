@@ -37,7 +37,6 @@ import edu.asu.commons.util.Duration;
 @SuppressWarnings("serial")
 public class ChatPanel extends JPanel {
 
-    private boolean isInRoundChat = false;
     private ForagingClient client;
 
     private JScrollPane messageScrollPane;
@@ -47,7 +46,11 @@ public class ChatPanel extends JPanel {
     private List<Identifier> participants;
 
     private TextEntryPanel textEntryPanel;
-    
+
+    private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
+    private boolean isInRoundChat;
+
     public ChatPanel(ForagingClient client) {
         this(client, false);
     }
@@ -79,7 +82,7 @@ public class ChatPanel extends JPanel {
         messagesEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
         messageScrollPane = new JScrollPane(messagesEditorPane);
 
-        textEntryPanel = new TextEntryPanel(client);
+        textEntryPanel = new TextEntryPanel(client, isInRoundChat);
         add(textEntryPanel, BorderLayout.NORTH);
         add(messageScrollPane, BorderLayout.CENTER);
     }
@@ -114,8 +117,9 @@ public class ChatPanel extends JPanel {
     }
 
     public void initialize(DataModel<ServerConfiguration, RoundConfiguration> dataModel) {
+        // close out any existing scheduled executor
+        executor.shutdown();
         participants = dataModel.getAllClientIdentifiers();
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         Duration chatDuration = Duration.create(dataModel.getRoundConfiguration().getChatDuration()).start();
         executor.scheduleAtFixedRate(() -> {
             if (chatDuration.hasExpired()) {
@@ -126,7 +130,7 @@ public class ChatPanel extends JPanel {
             }
         }, 0, 1, TimeUnit.SECONDS);
     }
-    
+
     private class TextEntryPanel extends JPanel {
 
         private static final long serialVersionUID = -4846486696999203769L;
@@ -137,7 +141,7 @@ public class ChatPanel extends JPanel {
         private int timeRemaining;
         private JLabel timeRemainingLabel = new JLabel("");
 
-        public TextEntryPanel(ForagingClient client) {
+        public TextEntryPanel(ForagingClient client, boolean isInRoundChat) {
             setLayout(new BorderLayout(3, 3));
             chatLabel = new JLabel("Chat: ");
             chatField = new JTextField();
@@ -148,12 +152,14 @@ public class ChatPanel extends JPanel {
                     }
                 }
             });
-            JPanel headerPanel = new JPanel();
-            JLabel headerLabel = new JLabel("Time remaining: ");
-            headerLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
-            headerPanel.add(headerLabel);
-            headerPanel.add(timeRemainingLabel);
-            add(headerPanel, BorderLayout.NORTH);
+            if (! isInRoundChat) {
+                JPanel headerPanel = new JPanel();
+                JLabel headerLabel = new JLabel("Time remaining: ");
+                headerLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
+                headerPanel.add(headerLabel);
+                headerPanel.add(timeRemainingLabel);
+                add(headerPanel, BorderLayout.NORTH);
+            }
             add(chatLabel, BorderLayout.WEST);
             add(chatField, BorderLayout.CENTER);
         }

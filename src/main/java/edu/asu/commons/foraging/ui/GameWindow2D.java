@@ -353,8 +353,8 @@ public class GameWindow2D implements GameWindow {
 
         // FIXME: use a more flexible LayoutManager so that in-round chat isn't squeezed all the way on the right
         // side of the screen.
-        gamePanel = new JPanel(new BorderLayout());
-        gamePanel.setBackground(Color.WHITE);
+        gamePanel = new JPanel(new BorderLayout(6, 6));
+        gamePanel.setBackground(UserInterfaceUtils.OFF_WHITE);
         gamePanel.setName(GAME_PANEL_NAME);
         gamePanel.add(subjectView, BorderLayout.CENTER);
         // add labels to game panel
@@ -365,11 +365,11 @@ public class GameWindow2D implements GameWindow {
         informationLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
         // latencyLabel = new JLabel("Latency: 0");
         informationLabel.setBackground(Color.YELLOW);
-        informationLabel.setForeground(Color.BLUE);
+        informationLabel.setForeground(UserInterfaceUtils.LIGHT_BLUE_GRAY);
 
         labelPanel = new JPanel();
         labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.LINE_AXIS));
-        labelPanel.setBackground(Color.WHITE);
+        labelPanel.setBackground(UserInterfaceUtils.OFF_WHITE);
         labelPanel.add(timeLeftLabel);
         labelPanel.add(Box.createHorizontalGlue());
         labelPanel.add(informationLabel);
@@ -383,7 +383,7 @@ public class GameWindow2D implements GameWindow {
         messageTextPane = new JTextPane();
         messageTextPane.setEditable(false);
         messageTextPane.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
-        messageTextPane.setBackground(Color.WHITE);
+        messageTextPane.setBackground(UserInterfaceUtils.OFF_WHITE);
         addStyles(messageTextPane.getStyledDocument());
         messageScrollPane = new JScrollPane(messageTextPane);
         Dimension scrollPaneSize = new Dimension(getPanel().getPreferredSize().width, 60);
@@ -575,6 +575,7 @@ public class GameWindow2D implements GameWindow {
     // }
 
     public synchronized void startRound() {
+        // shut down chat panel if it's still working
         final RoundConfiguration configuration = dataModel.getRoundConfiguration();
         if (timer != null) {
             timer.stop();
