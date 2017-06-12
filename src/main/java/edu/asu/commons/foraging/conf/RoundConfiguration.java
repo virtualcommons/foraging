@@ -1,5 +1,18 @@
 package edu.asu.commons.foraging.conf;
 
+import edu.asu.commons.conf.ExperimentRoundParameters;
+import edu.asu.commons.foraging.graphics.Point3D;
+import edu.asu.commons.foraging.model.ClientData;
+import edu.asu.commons.foraging.model.EnforcementMechanism;
+import edu.asu.commons.foraging.model.ResourceDispenser;
+import edu.asu.commons.foraging.model.ServerDataModel;
+import edu.asu.commons.foraging.rules.Strategy;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
+import edu.asu.commons.foraging.rules.iu.ForagingStrategyNomination;
+import edu.asu.commons.net.Identifier;
+import edu.asu.commons.util.Duration;
+import org.stringtemplate.v4.ST;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.text.NumberFormat;
@@ -12,20 +25,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
-
-import org.stringtemplate.v4.ST;
-
-import edu.asu.commons.conf.ExperimentRoundParameters;
-import edu.asu.commons.foraging.graphics.Point3D;
-import edu.asu.commons.foraging.model.ClientData;
-import edu.asu.commons.foraging.model.EnforcementMechanism;
-import edu.asu.commons.foraging.model.ResourceDispenser;
-import edu.asu.commons.foraging.model.ServerDataModel;
-import edu.asu.commons.foraging.rules.Strategy;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategyNomination;
-import edu.asu.commons.net.Identifier;
-import edu.asu.commons.util.Duration;
 
 /**
  * At some point this should be persistent database objects in a key-value store..?
@@ -352,7 +351,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         // FIXME: consider lifting these to RoundConfiguration and use 
         // self.durationInMinutes or self.dollarsPerTokenCurrencyString 
         // to reference them
-        template.add("duration", getDurationInMinutes());
         template.add("dollarsPerToken", toCurrencyString(getDollarsPerToken()));
         template.add("initialDistribution", NumberFormat.getPercentInstance().format(getInitialDistribution()));
         return template.render();
@@ -642,7 +640,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public String getGeneralInstructions() {
         ST template = createStringTemplate(getParentConfiguration().getGeneralInstructions());
-        template.add("showUpPayment", getParentConfiguration().getShowUpPayment());
+        template.add("showUpPayment", toCurrencyString(getParentConfiguration().getShowUpPayment()));
         return template.render();
     }
 
@@ -821,8 +819,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getSurveyUrl(Identifier id) {
-        ST template = createStringTemplate(getProperty("survey-url", "https://qtrial.qualtrics.com/SE/?SID=SV_38lReBOv0Wk7wgY"));
-        template.add("surveyId", id.getSurveyId());
+        ST template = createStringTemplate(getProperty("survey-url"));
+        template.add("participant_id", id.getUUID());
         return template.render();
     }
 

@@ -1,14 +1,5 @@
 package edu.asu.commons.foraging.model;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.TimeUnit;
-
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.RoundConfiguration.SanctionAction;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
@@ -17,6 +8,16 @@ import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
+
+import java.awt.Color;
+import java.awt.Point;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Encapsulates all human client data (not bots).
@@ -28,6 +29,7 @@ public class ClientData implements Serializable, Actor {
     private static final long serialVersionUID = 5281922601551921005L;
 
     private final Identifier id;
+
     private GroupDataModel groupDataModel;
 
     private RegulationData regulationData;
@@ -683,5 +685,9 @@ public class ClientData implements Serializable, Actor {
 
     public void setZone(int zone) {
         this.zone = zone;
+    }
+
+    public UUID getUUID() {
+        return getId().getUUID();
     }
 }
