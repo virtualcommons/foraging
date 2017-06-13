@@ -39,7 +39,7 @@ Round {self.roundNumber} is about to begin.
 
 <entry key='external-survey-enabled'>true</entry>
 <entry key='survey-url'>
-    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_3jHrnndEZSM9cqM&SURVEY_ID={surveyId}]]>
+    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_3jHrnndEZSM9cqM&pid={participant_id}]]>
 </entry>
 
 </properties>

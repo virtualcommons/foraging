@@ -12,10 +12,8 @@ import edu.asu.commons.foraging.model.ClientData;
 
 public class RoundConfigurationTest {
     
-    private final static String SURVEY_ID = "boogaloo-252";
     private RoundConfiguration roundConfiguration;
-    
-    
+
     @Before
     public void setUp() {
         ServerConfiguration serverConfiguration = new ServerConfiguration("configuration/iu/2011/vote-punish");
@@ -31,17 +29,14 @@ public class RoundConfigurationTest {
 
         Identifier id = new Identifier.Mock() {
             private static final long serialVersionUID = 1231310402707042800L;
-            public String getSurveyId() {
-                return SURVEY_ID;
-            }
         };
         String interpolatedInstructions = roundConfiguration.getSurveyInstructions(id);
         System.err.println("interpolated instructions:" + interpolatedInstructions);
         assertFalse(interpolatedInstructions.contains("{"));
         assertFalse(interpolatedInstructions.contains("}"));
-        assertTrue(interpolatedInstructions.contains(SURVEY_ID));
+        assertTrue("instructions should contain unique participant id",
+                interpolatedInstructions.contains(id.getUUID().toString()));
         assertTrue(interpolatedInstructions.contains("http"));
-        
     }
 
     @Test
