@@ -252,6 +252,7 @@ public class GameWindow2D implements GameWindow {
                 }
                 // RoundConfiguration now builds the appropriate quiz results page.
                 setInstructions(builder.toString());
+                instructionsEditorPane.setCaretPosition(0);
             }
         };
     }
@@ -344,7 +345,7 @@ public class GameWindow2D implements GameWindow {
         subjectView = new SubjectView(subjectViewSize, dataModel);
 
         // add instructions panel card
-        instructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
+        instructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane(false, 26);
         instructionsScrollPane = new JScrollPane(instructionsEditorPane);
         instructionsScrollPane.setDoubleBuffered(true);
         instructionsScrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);

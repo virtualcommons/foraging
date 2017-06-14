@@ -2,6 +2,7 @@ package edu.asu.commons.foraging.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -9,11 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
@@ -47,7 +44,6 @@ public class ChatPanel extends JPanel {
 
     private TextEntryPanel textEntryPanel;
 
-
     private boolean isInRoundChat;
 
     public ChatPanel(ForagingClient client) {
@@ -69,21 +65,24 @@ public class ChatPanel extends JPanel {
     private void initGuiComponents() {
         setLayout(new BorderLayout(3, 3));
         setName("Chat panel");
-        if (! isInRoundChat) {
-            JEditorPane instructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
-            JScrollPane instructionsScrollPane = new JScrollPane(instructionsEditorPane);
-            RoundConfiguration roundConfiguration = client.getCurrentRoundConfiguration();
-
-            instructionsEditorPane.setText(roundConfiguration.getChatInstructions());
-            instructionsScrollPane.setPreferredSize(new Dimension(300, 300));
-            add(instructionsScrollPane, BorderLayout.WEST);
-        }
+        textEntryPanel = new TextEntryPanel(client, isInRoundChat);
         messagesEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
         messageScrollPane = new JScrollPane(messagesEditorPane);
-
-        textEntryPanel = new TextEntryPanel(client, isInRoundChat);
         add(textEntryPanel, BorderLayout.NORTH);
-        add(messageScrollPane, BorderLayout.CENTER);
+        if (isInRoundChat) {
+            add(messageScrollPane, BorderLayout.CENTER);
+        }
+        else {
+            // not in round chat, include chat instructions on the side
+            JEditorPane instructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
+            JPanel gridPanel = new JPanel(new GridLayout(1, 2, 5, 5));
+            JScrollPane instructionsScrollPane = new JScrollPane(instructionsEditorPane);
+            RoundConfiguration roundConfiguration = client.getCurrentRoundConfiguration();
+            instructionsEditorPane.setText(roundConfiguration.getChatInstructions());
+            gridPanel.add(instructionsScrollPane);
+            gridPanel.add(messageScrollPane);
+            add(gridPanel, BorderLayout.CENTER);
+        }
     }
 
     public void setTextFieldFocus() {
@@ -105,7 +104,7 @@ public class ChatPanel extends JPanel {
     private void displayMessage(Identifier identifier, String message) {
         try {
             Document document = messagesEditorPane.getDocument();
-            String source = String.format("%s : ", identifier.getChatHandle());
+            String source = String.format("%s :  ", identifier.getChatHandle());
             document.insertString(0, source, null);
             document.insertString(source.length(), String.format("%s\n", message), null);
             messagesEditorPane.setCaretPosition(0);
@@ -141,8 +140,10 @@ public class ChatPanel extends JPanel {
         private JLabel timeRemainingLabel = new JLabel("");
 
         public TextEntryPanel(ForagingClient client, boolean isInRoundChat) {
-            setLayout(new BorderLayout(3, 3));
-            chatLabel = new JLabel("Chat: ");
+            setLayout(new BorderLayout(5, 5));
+            JPanel gridPanel = new JPanel(new GridLayout(1, 2, 2, 5));
+            chatLabel = new JLabel("Chat: ", SwingConstants.RIGHT);
+            chatLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
             chatField = new JTextField();
             chatField.addKeyListener(new KeyAdapter() {
                 public void keyPressed(KeyEvent event) {
@@ -155,12 +156,14 @@ public class ChatPanel extends JPanel {
                 JPanel headerPanel = new JPanel();
                 JLabel headerLabel = new JLabel("Time remaining: ");
                 headerLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
+                timeRemainingLabel.setFont(UserInterfaceUtils.DEFAULT_PLAIN_FONT);
                 headerPanel.add(headerLabel);
                 headerPanel.add(timeRemainingLabel);
                 add(headerPanel, BorderLayout.NORTH);
             }
-            add(chatLabel, BorderLayout.WEST);
-            add(chatField, BorderLayout.CENTER);
+            gridPanel.add(chatLabel);
+            gridPanel.add(chatField);
+            add(gridPanel, BorderLayout.CENTER);
         }
 
         private void updateTimeRemaining(int timeRemaining) {
