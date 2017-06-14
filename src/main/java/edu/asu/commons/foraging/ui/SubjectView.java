@@ -235,7 +235,7 @@ public class SubjectView extends GridView {
         graphics2D.setFont(font);
         FontMetrics fontMetrics = graphics2D.getFontMetrics(font);
         int characterHeight = fontMetrics.getAscent();
-        int verticalCharacterSpacing = (int) ((dh - characterHeight) * 0.5d);
+        int verticalCharacterSpacing = (int) ((dh - characterHeight) * 0.25d);
         Point currentPosition = dataModel.getCurrentPosition();
         if (subjectFieldOfVisionEnabled) {
             // paint a transparent circle centered on the current position of the subject.
@@ -274,7 +274,7 @@ public class SubjectView extends GridView {
                     // Calculate x and y so that the text is center aligned
                     int characterWidth = fontMetrics.stringWidth(subjectNumber);
                     int x = (int) (scaledX + ((dw - characterWidth) * 0.5d));
-                    int y = (int) (scaledY + characterHeight - verticalCharacterSpacing);
+                    int y = (scaledY + characterHeight - verticalCharacterSpacing);
                     graphics2D.drawString(subjectNumber, x, y);
                 }
             }
