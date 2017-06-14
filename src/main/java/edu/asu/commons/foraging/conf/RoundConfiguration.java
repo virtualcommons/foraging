@@ -61,7 +61,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getDoubleProperty("trust-game-payoff", 0.25d);
     }
 
-
     public enum SanctionType {
         REAL_TIME, POST_ROUND, NONE;
         public static SanctionType find(String name) {
@@ -748,7 +747,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public StringBuilder buildInstructions(StringBuilder instructionsBuilder) {
-        return addAllSpecialInstructions(instructionsBuilder.append(getInstructions()));
+        instructionsBuilder.append(getInstructions());
+        if (isSpecialInstructionsEnabled()) {
+            return addAllSpecialInstructions(instructionsBuilder);
+        }
+        return instructionsBuilder;
     }
 
     public StringBuilder addAllSpecialInstructions(StringBuilder instructionsBuilder) {
@@ -757,12 +760,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         if (isFieldOfVisionEnabled()) {
             addSpecialInstructions(builder, getFieldOfVisionInstructions());
         }
-        if (isInRoundChatEnabled()) {
-            addSpecialInstructions(builder, getInRoundChatInstructions());
-        } else if (isChatEnabled()) {
-            addSpecialInstructions(builder,
-                    "Before the beginning of this round you will be able to chat with the other members of your group for " + getChatDuration() + " seconds.");
-        }
+//        if (isInRoundChatEnabled()) {
+//            addSpecialInstructions(builder, getInRoundChatInstructions());
+//        } else if (isChatEnabled()) {
+//            addSpecialInstructions(
+//                    builder,
+//                    "Before the beginning of this round you will be able to chat with the other members of your group for "
+//                            + getChatDuration() + " seconds.");
+//        }
         if (isCensoredChat()) {
             addSpecialInstructions(builder, getCensoredChatInstructions());
         }
@@ -1073,6 +1078,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public Color getSanctionedParticipantColor() {
         String color = getProperty("sanctioned-participant-color", "RED");
         return Color.getColor(color, Color.RED);
+    }
+
+    public boolean isSpecialInstructionsEnabled() {
+        return getBooleanProperty("special-instructions-enabled",
+                getParentConfiguration().isSpecialInstructionsEnabled());
     }
 
 }

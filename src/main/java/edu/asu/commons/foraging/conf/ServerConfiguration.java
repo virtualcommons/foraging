@@ -271,4 +271,8 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
     public boolean areChatHandlesNumeric() {
         return getBooleanProperty("chat-handles-numeric", false);
     }
+
+    public boolean isSpecialInstructionsEnabled() {
+        return getBooleanProperty("special-instructions-enabled", false);
+    }
 }
