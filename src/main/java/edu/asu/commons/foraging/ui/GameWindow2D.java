@@ -68,12 +68,9 @@ import edu.asu.commons.ui.UserInterfaceUtils;
 import edu.asu.commons.util.Duration;
 
 /**
- * $Id$
- * 
- * Primary client-side view for foraging experiment that can be used by standalone Java applications or Applets.
+ * Primary client-side Swing view for foraging experiment.
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision$
  */
 public class GameWindow2D implements GameWindow {
     private final static String INSTRUCTIONS_PANEL_NAME = "instructions screen panel";
@@ -576,13 +573,11 @@ public class GameWindow2D implements GameWindow {
     // }
 
     public synchronized void startRound() {
-        // shut down chat panel if it's still working
         final RoundConfiguration configuration = dataModel.getRoundConfiguration();
         if (timer != null) {
             timer.stop();
             timer = null;
         }
-        // currentExperimentConfiguration = configuration;
         Runnable runnable = new Runnable() {
             public void run() {
                 subjectView.setup(configuration);
@@ -593,13 +588,10 @@ public class GameWindow2D implements GameWindow {
                 // has begun.
                 update(configuration.getRoundDuration().getTimeLeft());
                 if (configuration.isInRoundChatEnabled()) {
-                    // FIXME: use separate chat panel for in round chat
-                    System.err.println("in round chat was enabled");
                     ChatPanel chatPanel = getInRoundChatPanel();
                     chatPanel.initialize(dataModel);
                     Dimension chatPanelSize = new Dimension(inRoundChatPanelWidth, getPanel().getSize().height);
                     chatPanel.setPreferredSize(chatPanelSize);
-                    // FIXME: switch to different layout manager
                     gamePanel.add(chatPanel, BorderLayout.EAST);
                 }
                 showPanel(GAME_PANEL_NAME);
@@ -899,8 +891,9 @@ public class GameWindow2D implements GameWindow {
         Runnable runnable = new Runnable() {
             public void run() {
                 if (inRoundChatPanel != null) {
-                    getPanel().remove(inRoundChatPanel);
-                    // inRoundChatPanel = null;
+                    gamePanel.remove(inRoundChatPanel);
+                    gamePanel.revalidate();
+                    gamePanel.repaint();
                 }
                 RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
                 if (roundConfiguration.isPostRoundSanctioningEnabled()) {
