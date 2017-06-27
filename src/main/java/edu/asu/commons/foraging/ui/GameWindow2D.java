@@ -267,15 +267,14 @@ public class GameWindow2D implements GameWindow {
         if (timer == null) {
             final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
             final Duration duration = Duration.create(roundConfiguration.getChatDuration());
-            timer = new Timer(1000, new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    if (duration.hasExpired()) {
-                        timeLeftLabel.setText("Chat is now disabled.");
-                        timer.stop();
-                        timer = null;
-                    } else {
-                        timeLeftLabel.setText(String.format("Chat will end in %d seconds.", duration.getTimeLeft() / 1000L));
-                    }
+            timer = new Timer(1000, actionEvent -> {
+                if (duration.hasExpired()) {
+                    timeLeftLabel.setText("Chat is now disabled.");
+                    timer.stop();
+                    timer = null;
+                }
+                else {
+                    timeLeftLabel.setText(String.format("Chat will end in %d seconds.", duration.getTimeLeft() / 1000L));
                 }
             });
             timer.start();
@@ -609,7 +608,7 @@ public class GameWindow2D implements GameWindow {
     }
 
     /**
-     * Start the SwingWorker thread that generates random player input
+      Start the SwingWorker thread that generates random player input
      */
     public void startRobotWorker(final RoundConfiguration configuration) {
 
@@ -920,14 +919,12 @@ public class GameWindow2D implements GameWindow {
     }
 
     public void initializeChatPanel() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                // FIXME: figure out how to reconcile this w/ in round chat.
-                ChatPanel chatPanel = getChatPanel();
-                chatPanel.initialize(dataModel);
-                showPanel(CHAT_PANEL_NAME);
-                startChatTimer();
-            }
+        SwingUtilities.invokeLater(() -> {
+            // FIXME: reduce duplicated code in dedicated round chat and in-round chat.
+            ChatPanel chatPanel = getChatPanel();
+            chatPanel.initialize(dataModel);
+            showPanel(CHAT_PANEL_NAME);
+            startChatTimer();
         });
     }
 
