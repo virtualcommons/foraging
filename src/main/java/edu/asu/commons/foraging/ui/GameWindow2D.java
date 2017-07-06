@@ -69,7 +69,7 @@ import edu.asu.commons.util.Duration;
 
 /**
  * Primary client-side Swing view for foraging experiment.
- * 
+ *
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  */
 public class GameWindow2D implements GameWindow {
@@ -218,7 +218,7 @@ public class GameWindow2D implements GameWindow {
             public void actionPerformed(ActionEvent e) {
                 HtmlEditorPane.FormActionEvent formEvent = (HtmlEditorPane.FormActionEvent) e;
                 StringBuilder builder = new StringBuilder();
-                if (! submitted) {
+                if (!submitted) {
                     Properties actualAnswers = formEvent.getData();
                     List<String> incorrectQuestionNumbers = new ArrayList<>();
                     List<String> correctAnswers = new ArrayList<>();
@@ -243,8 +243,7 @@ public class GameWindow2D implements GameWindow {
                     submitted = true;
                     client.transmit(new QuizResponseEvent(client.getId(), actualAnswers, incorrectQuestionNumbers));
                     builder.append(configuration.getQuizResults(incorrectQuestionNumbers, actualAnswers));
-                }
-                else {
+                } else {
                     configuration.buildInstructions(builder);
                 }
                 // RoundConfiguration now builds the appropriate quiz results page.
@@ -256,7 +255,7 @@ public class GameWindow2D implements GameWindow {
 
     /**
      * Invoked when a subject collected token(s) at the given positions.
-     * 
+     *
      * @param positions
      */
     public void collectTokens(Point... positions) {
@@ -272,8 +271,7 @@ public class GameWindow2D implements GameWindow {
                     timeLeftLabel.setText("Chat is now disabled.");
                     timer.stop();
                     timer = null;
-                }
-                else {
+                } else {
                     timeLeftLabel.setText(String.format("Chat will end in %d seconds.", duration.getTimeLeft() / 1000L));
                 }
             });
@@ -541,8 +539,7 @@ public class GameWindow2D implements GameWindow {
                     event = new MovementEvent(client.getId(), direction);
                     subjectView.repaint();
 //                    SwingUtilities.invokeLater(() -> subjectView.repaint());
-                }
-                else {
+                } else {
                     event = new ClientMovementRequest(client.getId(), direction);
                 }
                 if (keyReleased) {
@@ -608,7 +605,7 @@ public class GameWindow2D implements GameWindow {
     }
 
     /**
-      Start the SwingWorker thread that generates random player input
+     * Start the SwingWorker thread that generates random player input
      */
     public void startRobotWorker(final RoundConfiguration configuration) {
 
@@ -782,10 +779,15 @@ public class GameWindow2D implements GameWindow {
         showInstructionsPanel();
     }
 
-    public void showInstructions() {
+    public void showInstructions(boolean summarized) {
         final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
         instructionsBuilder.delete(0, instructionsBuilder.length());
-        roundConfiguration.buildAllInstructions(instructionsBuilder);
+        if (summarized) {
+            roundConfiguration.buildSummarizedInstructions(instructionsBuilder);
+        }
+        else {
+            roundConfiguration.buildAllInstructions(instructionsBuilder);
+        }
         // and add the quiz instructions if the quiz is enabled.
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {

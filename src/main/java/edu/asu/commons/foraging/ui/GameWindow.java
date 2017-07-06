@@ -5,12 +5,10 @@ import javax.swing.JPanel;
 import edu.asu.commons.foraging.event.EndRoundEvent;
 
 /**
- * $Id$
- * 
- * Marker interface for both 2d and 3d game windows.
+ *
+ * Marker interface for 2d and 3d game windows.
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision$
  */
 public interface GameWindow {
 
@@ -19,7 +17,7 @@ public interface GameWindow {
     public void init();
     public void dispose();
     public void update(long millisecondsLeft);
-    public void showInstructions();
+    public void showInstructions(boolean summarized);
     public void showTrustGame();
     public JPanel getPanel();
     public void requestFocusInWindow();

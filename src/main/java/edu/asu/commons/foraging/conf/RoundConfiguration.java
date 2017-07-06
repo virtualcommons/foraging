@@ -57,9 +57,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     private List<Strategy> selectedRules;
     private transient NumberFormat currencyFormat;
 
-    public double getTrustGamePayoffIncrement() {
-        return getDoubleProperty("trust-game-payoff", 0.25d);
-    }
 
     public enum SanctionType {
         REAL_TIME, POST_ROUND, NONE;
@@ -742,6 +739,14 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         }
     }
 
+    public double getTrustGamePayoffIncrement() {
+        return getDoubleProperty("trust-game-payoff", 0.25d);
+    }
+
+    public StringBuilder buildSummarizedInstructions(StringBuilder instructionsBuilder) {
+        return instructionsBuilder.append(getSummarizedInstructions());
+    }
+
     public StringBuilder buildInstructions() {
         return buildInstructions(new StringBuilder());
     }
@@ -752,6 +757,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
             return addAllSpecialInstructions(instructionsBuilder);
         }
         return instructionsBuilder;
+    }
+
+    public String getSummarizedInstructions() {
+        // FIXME: could autosummarize general getInstructions() if needed
+        return getProperty("summarized-instructions");
     }
 
     public StringBuilder addAllSpecialInstructions(StringBuilder instructionsBuilder) {

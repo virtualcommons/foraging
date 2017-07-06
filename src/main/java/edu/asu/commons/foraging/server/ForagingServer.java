@@ -712,7 +712,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         executor.schedule(() -> {
                             for (Identifier id : clients.keySet()) {
                                 // FIXME: https://github.com/virtualcommons/foraging/issues/34
-                                transmit(new ShowInstructionsRequest(id));
+                                transmit(new ShowInstructionsRequest(id, true));
                             }
                             sendFacilitatorMessage("SYSTEM NOTICE: Dedicated chat round ended, ready to start the next round (Round -> Start)");
                             executor.shutdown();

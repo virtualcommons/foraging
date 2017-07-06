@@ -18,44 +18,43 @@ import edu.asu.commons.foraging.visualization.GameView3d;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id$
- * 
  * TODO: fix chat panel layout, scrolling messages cause the chat panel to overwhelm the game window.
- * 
+ *
  * @author <a href='Allen.Lee@asu.edu'>Allen Lee</a>, Deepali Bhagvat
- * @version $Revision$
  */
-
+@Deprecated
 public class GameWindow3D implements GameWindow {
-    
+
     private ForagingClient client;
     private ClientDataModel dataModel;
-    
+
     private JPanel panel;
     // the current center component within the JPanel, either the instructionsView or the gameView
     private Component currentCenterComponent;
 
     private InstructionsView instructionsView;
-//    private GLCapabilityPanel glCapabilityPanel;
+    //    private GLCapabilityPanel glCapabilityPanel;
     //private ForestryView forestryView;
     private GameView3d gameView;
-    
+
     private JLabel timeLeftLabel;
     private JLabel incomeLabel;
     private JLabel resourcesHarvestedLabel;
-    
+
     private JPanel gameInformationPanel;
-    
+
     private EmbeddedChatPanel chatPanel;
 
     @Override
     public void showTrustGame() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    public static enum VideoCardSupport{SHADER_SUPPORT, VBO_SUPPORT, VERTEX_ARRAY_SUPPORT};
-	public static VideoCardSupport featureSupported;
-    
+
+    public static enum VideoCardSupport {SHADER_SUPPORT, VBO_SUPPORT, VERTEX_ARRAY_SUPPORT}
+
+    ;
+    public static VideoCardSupport featureSupported;
+
     public GameWindow3D(ForagingClient client) {
         this.client = client;
         this.dataModel = client.getDataModel();
@@ -63,7 +62,7 @@ public class GameWindow3D implements GameWindow {
         instructionsView = new InstructionsView();
         currentCenterComponent = instructionsView.getMainPanel(); //getInstructionsScrollPane();
         panel.add(currentCenterComponent, BorderLayout.CENTER);
-        
+
 //        glCapabilityPanel = new GLCapabilityPanel();
 //        panel.add(glCapabilityPanel, BorderLayout.NORTH);
 //        SwingUtilities.invokeLater(new Runnable() {
@@ -72,7 +71,7 @@ public class GameWindow3D implements GameWindow {
 //            	glCapabilityPanel.requestFocus();
 //            }
 //        });
-        
+
 //        forestryView = new ForestryView();
 //        panel.add(forestryView, BorderLayout.NORTH);
 //        SwingUtilities.invokeLater(new Runnable() {
@@ -81,7 +80,7 @@ public class GameWindow3D implements GameWindow {
 //        		forestryView.requestFocus();
 //        	}
 //        });
-        
+
         // set up information panel
         gameInformationPanel = new JPanel();
         gameInformationPanel.setLayout(new BoxLayout(gameInformationPanel, BoxLayout.X_AXIS));
@@ -91,10 +90,10 @@ public class GameWindow3D implements GameWindow {
         resourcesHarvestedLabel = new JLabel("Trees harvested: ");
         gameInformationPanel.add(resourcesHarvestedLabel);
         gameInformationPanel.add(Box.createHorizontalGlue());
-        incomeLabel = new JLabel("Income: " );
+        incomeLabel = new JLabel("Income: ");
         gameInformationPanel.add(incomeLabel);
     }
-    
+
     public void dispose() {
         getChatPanel().stop();
         gameInformationPanel.setVisible(false);
@@ -104,37 +103,37 @@ public class GameWindow3D implements GameWindow {
     public JPanel getPanel() {
         return panel;
     }
-    
+
     public void startRound() {
         initializeChatPanel();
         panel.add(chatPanel, BorderLayout.SOUTH);
         gameView = GameView3d.createView(client);
         gameView.setDataModel(getDataModel());
         gameView.initialize();
-        instructionsView.removeAgentDesignPanel();	//Remove if still present
+        instructionsView.removeAgentDesignPanel();    //Remove if still present
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 addCenterComponent(gameView);
                 panel.add(gameInformationPanel, BorderLayout.NORTH);
-                gameView.update(); 
+                gameView.update();
                 gameView.requestFocus();
             }
         });
-        
+
     }
-    
+
     private void initializeChatPanel() {
         getChatPanel().initialize();
     }
-    
+
     public void switchToInstructionsWindow() {
         // dispose of game view
         panel.remove(gameInformationPanel);
         panel.remove(chatPanel);
         addCenterComponent(instructionsView.getMainPanel()); //getInstructionsScrollPane()
     }
-    
+
     private void addCenterComponent(Component newCenterComponent) {
         if (currentCenterComponent.equals(newCenterComponent)) return;
         if (currentCenterComponent != null) {
@@ -146,22 +145,23 @@ public class GameWindow3D implements GameWindow {
         newCenterComponent.setVisible(true);
         panel.validate();
     }
-    
+
     public void setInstructions(final String instructions) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                instructionsView.setInstructions(instructions);        
+                instructionsView.setInstructions(instructions);
             }
-        });        
+        });
     }
-    
+
     public void endRound(final EndRoundEvent event) {
         dataModel.setGroupDataModel(event.getGroupDataModel());
         instructionsView.debrief(dataModel, event.isLastRound());
         switchToInstructionsWindow();
     }
-    
+
     private boolean displayAgentDesigner = true;
+
     // FIXME: place SetConfigurationEvent initialization here.
     public void init() {
         // FIXME: initialize 3d game window
@@ -173,14 +173,14 @@ public class GameWindow3D implements GameWindow {
             instructionsView.setInstructions(configuration.getWelcomeInstructions());
             displayAgentDesigner = false;
         }
-        
+
     }
-    
-    public void showInstructions() {
+
+    public void showInstructions(boolean summarized) {
         // FIXME: add quiz listeners (in InstructionsView?)
         instructionsView.setInstructions(dataModel.getRoundConfiguration().getInstructions());
     }
-    
+
     public void updateInstructions(final String instructions) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -188,15 +188,15 @@ public class GameWindow3D implements GameWindow {
             }
         });
     }
-    
+
     public void displayAgentDesigner(String visualizationType) {
-    	instructionsView.addAgentDesignPanel(visualizationType, client);
+        instructionsView.addAgentDesignPanel(visualizationType, client);
     }
-    
+
     public void removeAgentDesigner() {
-    	instructionsView.removeAgentDesignPanel();
+        instructionsView.removeAgentDesignPanel();
     }
-    
+
     public EmbeddedChatPanel getChatPanel() {
         if (chatPanel == null) {
             chatPanel = new EmbeddedChatPanel(client);
@@ -228,19 +228,18 @@ public class GameWindow3D implements GameWindow {
         if (event.isLockOwner()) {
             //Lock successful - highlight this resource
             gameView.highlightResource(event.getResource());
-        }   
-        else {
-        	//Lock unsuccessful - flash the resource
+        } else {
+            //Lock unsuccessful - flash the resource
             gameView.flashResource(event.getResource());
         }
     }
-    
+
     public GameView3d getGameView() {
-    	return gameView;
+        return gameView;
     }
-    
+
     public String getChatHandle(Identifier id) {
-    	return chatPanel.getChatHandle(id);
+        return chatPanel.getChatHandle(id);
     }
 
     @Override

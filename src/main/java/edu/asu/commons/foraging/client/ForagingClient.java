@@ -147,7 +147,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
 
         addEventProcessor(new EventTypeProcessor<ShowInstructionsRequest>(ShowInstructionsRequest.class) {
             public void handle(ShowInstructionsRequest request) {
-                getGameWindow().showInstructions();
+                getGameWindow().showInstructions(request.isSummarized());
             }
         });
         addEventProcessor(new EventTypeProcessor<ShowTrustGameRequest>(ShowTrustGameRequest.class) {
