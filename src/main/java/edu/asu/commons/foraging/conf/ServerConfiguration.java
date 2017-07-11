@@ -126,6 +126,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
                 "<h3>The experiment has ended and participant payments are listed above.  We recommend that you copy and paste it into a text editor for your records.</h3>");
     }
 
+    public String getSummarizedInstructions() {
+        return getProperty("summarized-instructions");
+    }
+
     public String getSurveyInstructions() {
         return getProperty("survey-instructions");
     }

@@ -744,7 +744,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public StringBuilder buildSummarizedInstructions(StringBuilder instructionsBuilder) {
-        return instructionsBuilder.append(getSummarizedInstructions());
+        ST st = createStringTemplate(getSummarizedInstructions());
+        return instructionsBuilder.append(st.render());
     }
 
     public StringBuilder buildInstructions() {
@@ -759,9 +760,13 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return instructionsBuilder;
     }
 
+    /**
+     * Returns the String template for summarized instructions
+     * @return
+     */
     public String getSummarizedInstructions() {
         // FIXME: could autosummarize general getInstructions() if needed
-        return createStringTemplate(getProperty("summarized-instructions")).render();
+        return getProperty("summarized-instructions", getParentConfiguration().getSummarizedInstructions());
     }
 
     public StringBuilder addAllSpecialInstructions(StringBuilder instructionsBuilder) {
