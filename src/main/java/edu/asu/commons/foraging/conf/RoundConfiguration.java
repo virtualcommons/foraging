@@ -761,7 +761,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public String getSummarizedInstructions() {
         // FIXME: could autosummarize general getInstructions() if needed
-        return getProperty("summarized-instructions");
+        return createStringTemplate(getProperty("summarized-instructions")).render();
     }
 
     public StringBuilder addAllSpecialInstructions(StringBuilder instructionsBuilder) {
