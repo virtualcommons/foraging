@@ -141,7 +141,6 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
                         gameWindow.init();
                     }
                 });
-
             }
         });
 

@@ -43,7 +43,6 @@ import edu.asu.commons.net.Identifier;
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  * @author Deepali Bhagvat
- * @version $Revision$
  */
 
 public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<ServerConfiguration, RoundConfiguration> {

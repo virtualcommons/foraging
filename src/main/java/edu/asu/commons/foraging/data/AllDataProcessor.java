@@ -60,6 +60,8 @@ class AllDataProcessor extends SaveFileProcessor.Base {
         boolean restrictedVisibility = roundConfiguration.isSubjectsFieldOfVisionEnabled();
         dataModel.reinitialize(roundConfiguration);
         Map<Identifier, Actor> actorMap = dataModel.getActorMap();
+        // no way to write a consistent header since all data will have different column lengths. Should rearrange the
+        // data though so we can see the type earlier, not all the way at the end.
         for (PersistableEvent event: actions) {
             if (event instanceof MovementEvent) {
                 MovementEvent movementEvent = (MovementEvent) event;
