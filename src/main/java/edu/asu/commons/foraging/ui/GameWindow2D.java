@@ -244,6 +244,7 @@ public class GameWindow2D implements GameWindow {
                     client.transmit(new QuizResponseEvent(client.getId(), actualAnswers, incorrectQuestionNumbers));
                     builder.append(configuration.getQuizResults(incorrectQuestionNumbers, actualAnswers));
                 } else {
+                    client.transmit(new ClientReadyEvent(client.getId(), "Reviewed quiz responses."));
                     configuration.buildInstructions(builder);
                 }
                 // RoundConfiguration now builds the appropriate quiz results page.

@@ -284,7 +284,6 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<ClientReadyEvent>(ClientReadyEvent.class) {
                 private int readyClients = 0;
-
                 @Override
                 public void handle(ClientReadyEvent event) {
                     readyClients++;
@@ -305,7 +304,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     clientData.addCorrectQuizAnswers(event.getNumberOfCorrectAnswers());
                     if (numberOfSubmittedQuizzes >= clients.size()) {
                         // we're done, notify the quizSignal
-                        sendFacilitatorMessage("Received all quizzes, ready to start round.");
+                        sendFacilitatorMessage("Received all quizzes.");
                         Utils.notify(quizSignal);
                     }
                 }
