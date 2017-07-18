@@ -5,7 +5,7 @@ vim:sts=2:sw=2:
 <ivy-module version="2.0">
   <info organisation="edu.asu.commons" module="foraging"/>
   <dependencies>
-    <dependency org="edu.asu.commons" name="sesef" rev="0.9-SNAPSHOT" changing="true"/>
+    <dependency org="edu.asu.commons" name="sesef" rev="0.9.1" changing="true"/>
     <dependency org="net.java.dev.jogl" name="jogl" rev="1.1.1-rc6"/>
     <dependency org="javax.media" name="jmf" rev="2.1.1e"/>
     <dependency org='junit' name='junit' rev='4.12'/>
