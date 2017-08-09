@@ -23,9 +23,9 @@
 <entry key='token-image-path'>images/green-diamond.png</entry>
 <entry key="use-avatar-image">false</entry>
 <entry key='single-player'>true</entry>
-<entry key="show-up-payment">50</entry>
-<entry key="quiz-correct-answer-reward">5</entry>
-<entry key="dollars-per-token">0.1</entry>
+<entry key="show-up-payment">12500</entry>
+<entry key="quiz-correct-answer-reward">1250</entry>
+<entry key="dollars-per-token">50</entry>
 <entry key="facilitator-instructions">
 <![CDATA[
 <p>
