@@ -154,7 +154,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             System.out.print("Please enter the save directory path: ");
             try {
                 String path = reader.readLine();
-                boolean converted = ForagingSaveFileConverter.convert(path, false);
+                boolean converted = new ForagingSaveFileConverter().convert(path);
                 if (!converted) {
                     System.out.println("Unable to convert from path: " + path);
                 }

@@ -1,32 +1,24 @@
 package edu.asu.commons.foraging.data;
 
-import java.awt.Point;
-import java.io.PrintWriter;
-import java.util.Map;
-import java.util.SortedSet;
-
 import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
 import edu.asu.commons.foraging.bot.Bot;
-import edu.asu.commons.foraging.bot.BotIdentifier;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
-import edu.asu.commons.foraging.event.EnforcementRankingRequest;
-import edu.asu.commons.foraging.event.HarvestFruitRequest;
-import edu.asu.commons.foraging.event.HarvestResourceRequest;
-import edu.asu.commons.foraging.event.MovementEvent;
-import edu.asu.commons.foraging.event.QuizResponseEvent;
-import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
-import edu.asu.commons.foraging.event.SanctionAppliedEvent;
-import edu.asu.commons.foraging.event.ResourcesAddedEvent;
-import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
-import edu.asu.commons.foraging.event.RuleVoteRequest;
-import edu.asu.commons.foraging.event.TokenCollectedEvent;
-import edu.asu.commons.foraging.model.*;
+import edu.asu.commons.foraging.event.*;
+import edu.asu.commons.foraging.model.Actor;
+import edu.asu.commons.foraging.model.GroupDataModel;
+import edu.asu.commons.foraging.model.Resource;
+import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Utils;
+
+import java.awt.*;
+import java.io.PrintWriter;
+import java.util.Map;
+import java.util.SortedSet;
 
 /**
  * Serializes all data in the save file into a CSV string format, ordered by time.
