@@ -13,19 +13,21 @@ import edu.asu.commons.experiment.Persister;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.net.Identifier;
+import org.apache.commons.cli.*;
 
 /**
- * <p>
- * Save file processors used to convert binary data files from the foraging experiment.
+ * Invokes various SaveFileProcessorS to convert the foraging binary or XML data files.
+ *
  *
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Rev: 526 $
  */
 public class ForagingSaveFileConverter {
     
     static final int DEFAULT_AGGREGATE_TIME_INTERVAL = 5;
 
-    public static boolean convert(String saveDataDirectory, boolean useXml) {
+    public static boolean convert(String saveDataDirectory, CommandLine commandLine) {
+        boolean useXml = commandLine.hasOption("xml");
+        boolean hasBots = commandLine.hasOption("bots");
         File allSaveFilesDirectory = new File(saveDataDirectory);
         if (allSaveFilesDirectory.exists() && allSaveFilesDirectory.isDirectory()) {
             List<SaveFileProcessor> processors = new ArrayList<>();
@@ -41,6 +43,9 @@ public class ForagingSaveFileConverter {
                     new ForagingRuleProcessor(),
                     new AggregateCollectedTokenNeighborProcessor()
             ));
+            if (hasBots) {
+                processors.add(new BotDataProcessor());
+            }
             Persister.processSaveFiles(allSaveFilesDirectory, processors, useXml);
             return true;
         }
@@ -48,19 +53,23 @@ public class ForagingSaveFileConverter {
     }
 
     public static void main(String[] args) {
-        if (args.length == 0) {
-            System.err.println("Usage: java " + ForagingSaveFileConverter.class + " <save-data-directory> <xml>");
-            System.exit(0);
-        }
-        boolean useXml = false;
-        if (args.length == 2) {
-            useXml = "xml".equals(args[1]);
-        }
-        if (convert(args[0], useXml)) {
-        	System.err.println("Successfully converted files in " + args[0]);
-        }
-        else {
-        	System.err.println(args[0] + " doesn't appear to be a valid save file directory.");
+        Options options = new Options();
+        options.addOption("x", "xml", false, "convert XStream XML files instead of serialized .save files");
+        options.addOption("b", "bots", false, "generate single player bot statistics");
+        options.addOption("h", "help", false, "Usage instructions");
+        CommandLineParser parser = new DefaultParser();
+        HelpFormatter formatter = new HelpFormatter();
+        try {
+            CommandLine cmd = parser.parse(options, args);
+            if (convert(args[0], cmd)) {
+                System.err.println("Successfully converted files in " + args[0]);
+            }
+            else {
+                System.err.println(args[0] + " doesn't appear to be a valid save file directory.");
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            formatter.printHelp("ant convert -Dsavefile.dir=<savefile.dir> -D<options>", options);
         }
     }
 
