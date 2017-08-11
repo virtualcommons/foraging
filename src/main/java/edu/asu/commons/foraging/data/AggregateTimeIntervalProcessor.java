@@ -48,21 +48,21 @@ public class AggregateTimeIntervalProcessor extends SaveFileProcessor.Base {
             clientData.initializePosition();
         }
         RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
-        TreeSet<Identifier> orderedIdentifiers = new TreeSet<Identifier>(serverDataModel.getClientDataMap().keySet());
+        TreeSet<Identifier> orderedIdentifiers = new TreeSet<>(serverDataModel.getClientDataMap().keySet());
         List<GroupDataModel> groups = serverDataModel.getOrderedGroups();
         
-        List<String> movementHeader = new ArrayList<String>();
-        List<String> collectedTokensHeader = new ArrayList<String>();
+        List<String> movementHeader = new ArrayList<>();
+        List<String> collectedTokensHeader = new ArrayList<>();
         for (Identifier id: orderedIdentifiers) {
             movementHeader.add(id + " moves");
             collectedTokensHeader.add(id + " tokens collected");
         }
 
         // headers for average probability of a token for each group
-        List<String> tokenProbabilityGroupNumberHeader = new ArrayList<String>();
+        List<String> tokenProbabilityGroupNumberHeader = new ArrayList<>();
         // headers for tokens left in each group
-        List<String> tokensLeftGroupNumberHeader = new ArrayList<String>();
-        List<String> distanceHeader = new ArrayList<String>();
+        List<String> tokensLeftGroupNumberHeader = new ArrayList<>();
+        List<String> distanceHeader = new ArrayList<>();
 
         for (GroupDataModel group: groups) {
             String groupNumber = group.toString(); 
