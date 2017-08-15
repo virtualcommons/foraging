@@ -188,7 +188,7 @@ public class RoundConfigurationDialog {
 
 	public JCheckBox getDisplayGroupTokens() {
 		if (displayGroupTokens == null) {
-			displayGroupTokens = new JCheckBox("Display Group Tokens", roundConfiguration.shouldDisplayGroupTokens());
+			displayGroupTokens = new JCheckBox("Display Group Tokens", roundConfiguration.isGroupTokenDisplayEnabled());
 			displayGroupTokens.setEnabled(!readOnly);
 		}
 		return displayGroupTokens;

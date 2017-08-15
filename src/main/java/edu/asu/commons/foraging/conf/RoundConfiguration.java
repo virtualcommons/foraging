@@ -352,8 +352,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return template.render();
     }
 
-    public boolean shouldDisplayGroupTokens() {
-        return getBooleanProperty("display-group-tokens");
+    public boolean isGroupTokenDisplayEnabled() {
+        return getBooleanProperty("display-group-tokens", getParentConfiguration().isGroupTokenDisplayEnabled());
     }
 
     /**

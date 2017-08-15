@@ -42,8 +42,6 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
 
 import edu.asu.commons.event.ClientReadyEvent;
 import edu.asu.commons.event.Event;
@@ -281,7 +279,7 @@ public class GameWindow2D implements GameWindow {
     }
 
     private String getInformationLabelText() {
-        if (dataModel.getRoundConfiguration().shouldDisplayGroupTokens()) {
+        if (dataModel.getRoundConfiguration().isGroupTokenDisplayEnabled()) {
             StringBuilder builder = new StringBuilder("Tokens collected:");
             // XXX: use this method so that we get the proper ordering of client ids/assigned numbers..
             // Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();

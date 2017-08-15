@@ -279,4 +279,8 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
     public boolean isSpecialInstructionsEnabled() {
         return getBooleanProperty("special-instructions-enabled", false);
     }
+
+    public boolean isGroupTokenDisplayEnabled() {
+        return getBooleanProperty("display-group-tokens");
+    }
 }
