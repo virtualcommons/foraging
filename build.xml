@@ -3,7 +3,7 @@
      vim:sts=2:sw=2:
      Version: $Revision$
  -->
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="foraging" default="build-all" basedir=".">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:if="ant:if" name="foraging" default="build-all" basedir=".">
   <!-- Load all properties from the build.properties file,
        then define defaults for all the properties.
        NOTE: property definitions in the build.properties file take precedence.
@@ -422,13 +422,18 @@
   <condition property='savefile.dir' value='${env.DATA_DIR}' else='experiment-data'>
     <isset property='env.DATA_DIR' />
   </condition>
-  <condition property='xml.enabled' value='${env.XML}' else=''>
-    <isset property='env.XML' />
+  <condition property='xml.enabled' value='${env.xml}' else=''>
+    <isset property='env.xml' />
+  </condition>
+  <condition property='bots.enabled' value='${env.bots}' else=''>
+    <isset property='env.bots' />
   </condition>
   <target name="convert" depends="compile">
     <java classname="${savefile.converter.class}" classpathref="project.classpath" fork="yes">
       <arg value="${savefile.dir}"/>
-      <arg value='${xml.enabled}'/>
+      <!-- if xml.enabled, add -xml, if bots enabled add -bot -->
+      <arg value='-xml' if:set='xml.enabled'/>
+      <arg value='-bots' if:set='bots.enabled' />
     </java>
   </target>
   <!-- Custom Deployment Targets -->
