@@ -432,7 +432,7 @@
     <java classname="${savefile.converter.class}" classpathref="project.classpath" fork="yes">
       <arg value="${savefile.dir}"/>
       <!-- if xml.enabled, add -xml, if bots enabled add -bot -->
-      <arg value='-xml' if:set='xml.enabled'/>
+      <!-- <arg value='-xml' if:set='xml.enabled'/> -->
       <arg value='-bots' if:set='bots.enabled' />
     </java>
   </target>
