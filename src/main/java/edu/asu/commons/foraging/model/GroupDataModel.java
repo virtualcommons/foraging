@@ -928,7 +928,6 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         int actionsPerSecond = configuration.getRobotMovesPerSecond();
         synchronized (bots) {
             bots.clear();
-
             for (int i = 0; i < botsPerGroup; i++) {
                 int botNumber = size + i + 1;
                 Bot bot = null;

@@ -10,8 +10,9 @@ import java.awt.Point;
  */
 public interface Actor {
 
-    public Identifier getId();
-    public Point getPosition();
-    public GroupDataModel getGroupDataModel();
+    Identifier getId();
+    Point getPosition();
+    GroupDataModel getGroupDataModel();
+    void addToken(Point location);
 
 }

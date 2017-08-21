@@ -7,6 +7,9 @@ import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.net.Identifier;
 
 import java.awt.Point;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.Set;
@@ -86,9 +89,9 @@ public interface Bot extends Actor {
         private GroupDataModel model;
         private int ticksToWait;
 
-        private final transient Random random = new Random();
+        private transient Random random = new Random();
 
-        protected final transient Logger logger = Logger.getLogger(getClass().getName());
+        protected transient Logger logger = Logger.getLogger(getClass().getName());
 
         public SimpleBot() {
             this(DEFAULT_ACTIONS_PER_SECOND, DEFAULT_MOVEMENT_PROBABILITY, DEFAULT_HARVEST_PROBABILITY);
@@ -251,6 +254,12 @@ public interface Bot extends Actor {
             setCurrentPosition(model.getInitialPosition(getBotNumber()));
             logger.info("setting current bot position to " + getPosition());
             currentTokens = 0;
+        }
+
+        private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+            ois.defaultReadObject();
+            logger = Logger.getLogger(getClass().getName());
+            random = new Random();
         }
 
         public int getBotNumber() {

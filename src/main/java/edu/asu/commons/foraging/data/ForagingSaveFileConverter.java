@@ -65,6 +65,7 @@ public class ForagingSaveFileConverter {
                     new AggregateCollectedTokenNeighborProcessor()
             ));
             if (hasBots) {
+                processors.clear();
                 processors.add(new BotDataProcessor());
             }
             Persister.processSaveFiles(allSaveFilesDirectory, processors, useXml);

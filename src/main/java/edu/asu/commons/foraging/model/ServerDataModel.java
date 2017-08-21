@@ -124,6 +124,9 @@ public class ServerDataModel extends ForagingDataModel {
         }
         else if (event instanceof TokenCollectedEvent) {
             TokenCollectedEvent tokenCollectedEvent = (TokenCollectedEvent) event;
+            Identifier id = event.getId();
+            Actor actor = getActorMap().get(id);
+            actor.addToken(tokenCollectedEvent.getLocation());
             getGroup(event.getId()).removeResource(tokenCollectedEvent.getLocation());
             setDirty(true);
         }
