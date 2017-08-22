@@ -101,6 +101,6 @@ public class BotDataProcessor extends SaveFileProcessor.Base {
 
     @Override
     public String getOutputFileExtension() {
-        return "-bot-data.txt";
+        return "-bot-data.csv";
     }
 }

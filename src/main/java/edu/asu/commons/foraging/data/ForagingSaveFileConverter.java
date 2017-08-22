@@ -52,21 +52,30 @@ public class ForagingSaveFileConverter {
         File allSaveFilesDirectory = new File(saveDataDirectory);
         if (allSaveFilesDirectory.exists() && allSaveFilesDirectory.isDirectory()) {
             List<SaveFileProcessor> processors = new ArrayList<>();
-            processors.addAll(Arrays.asList(
-                    new AllDataProcessor(),
-                    new ResourceOverTimeProcessor(),
-                    new AggregateTimeIntervalProcessor(), 
-                    new SummaryProcessor(),
-                    new AggregateTokenSpatialDistributionProcessor(),
-                    new CollectedTokenSpatialDistributionProcessor(),  
-                    new MovementStatisticsProcessor(),
-//                    new MovieCreatorProcessor(),
-                    new ForagingRuleProcessor(),
-                    new AggregateCollectedTokenNeighborProcessor()
-            ));
             if (hasBots) {
-                processors.clear();
-                processors.add(new BotDataProcessor());
+                processors.addAll(
+                        Arrays.asList(
+                            new SummaryProcessor(),
+                            new AllDataProcessor(),
+                            new BotDataProcessor()
+                            )
+                        );
+            }
+            else {
+                processors.addAll(
+                        Arrays.asList(
+                            new AllDataProcessor(),
+                            new ResourceOverTimeProcessor(),
+                            new AggregateTimeIntervalProcessor(), 
+                            new SummaryProcessor(),
+                            new AggregateTokenSpatialDistributionProcessor(),
+                            new CollectedTokenSpatialDistributionProcessor(),  
+                            new MovementStatisticsProcessor(),
+                            // new MovieCreatorProcessor(),
+                            new ForagingRuleProcessor(),
+                            new AggregateCollectedTokenNeighborProcessor()
+                            )
+                        );
             }
             Persister.processSaveFiles(allSaveFilesDirectory, processors, useXml);
             return true;
