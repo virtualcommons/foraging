@@ -38,12 +38,6 @@ class AllDataProcessor extends SaveFileProcessor.Base {
         processData(savedRoundData, writer);
     }
 
-    private void handleBotEvent(PersistableEvent event, Bot bot) {
-        if (event instanceof MovementEvent) {
-            MovementEvent movementEvent = (MovementEvent) event;
-        }
-    }
-
     private void processData(SavedRoundData savedRoundData, PrintWriter writer) {
     	RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
         SortedSet<PersistableEvent> actions = savedRoundData.getActions();
