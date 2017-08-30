@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Invokes various SaveFileProcessorS to convert the foraging binary or XML data files.
@@ -16,6 +17,8 @@ import java.util.List;
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  */
 public class ForagingSaveFileConverter {
+
+    private final static Logger logger = Logger.getLogger(ForagingSaveFileConverter.class.getName());
     
     static final int DEFAULT_AGGREGATE_TIME_INTERVAL = 5;
 
@@ -53,6 +56,7 @@ public class ForagingSaveFileConverter {
         if (allSaveFilesDirectory.exists() && allSaveFilesDirectory.isDirectory()) {
             List<SaveFileProcessor> processors = new ArrayList<>();
             if (hasBots) {
+                logger.info("Processing bot data.");
                 processors.addAll(
                         Arrays.asList(
                             new SummaryProcessor(),
@@ -62,6 +66,7 @@ public class ForagingSaveFileConverter {
                         );
             }
             else {
+                logger.info("Processing all data");
                 processors.addAll(
                         Arrays.asList(
                             new AllDataProcessor(),
@@ -77,6 +82,7 @@ public class ForagingSaveFileConverter {
                             )
                         );
             }
+            logger.info("Processors: " + processors);
             Persister.processSaveFiles(allSaveFilesDirectory, processors, useXml);
             return true;
         }
@@ -85,8 +91,8 @@ public class ForagingSaveFileConverter {
 
     public static void main(String[] args) {
         ForagingSaveFileConverter converter = new ForagingSaveFileConverter();
-
         CommandLine cmd = converter.parse(args);
+        logger.info("Command line options: " + Arrays.asList(cmd.getOptions()));
         if (converter.convert(args[0], cmd)) {
             System.err.println("Successfully converted files in " + args[0]);
         }

@@ -3,7 +3,7 @@
      vim:sts=2:sw=2:
      Version: $Revision$
  -->
-<project xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:if="ant:if" name="foraging" default="build-all" basedir=".">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:if="ant:if" xmlns:unless="ant:unless" name="foraging" default="build-all" basedir=".">
   <!-- Load all properties from the build.properties file,
        then define defaults for all the properties.
        NOTE: property definitions in the build.properties file take precedence.
@@ -20,6 +20,7 @@
   <condition property="ivy.home" value="${env.IVY_HOME}">
 	<isset property="env.IVY_HOME" />
   </condition>
+  <property name='data.dir' value='experiment-data' />
   <property name="ivy.home" value="${user.home}/.ant" />
   <property name="ivy.jar.dir" value="${ivy.home}/lib" />
   <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
@@ -106,7 +107,7 @@
       test        - Run all JUnit in the test source tree.
       build-all   - builds the client, server, and facilitator jars.
       deploy      - invokes build-all and then copies the client and facilitator jars to ${web.dir}
-      convert     - invokes the ForagingSaveFileConverter to process the savefiles in the experiment-data directory or as specified by -D DATA_DIR=foo
+      convert     - invokes the ForagingSaveFileConverter to process the savefiles in the experiment-data directory or as specified by -Ddata.dir=foo
     </echo>
   </target>
   <target name="build-all" depends="facilitator-jar, client-jar, server-jar, compile"/>
@@ -417,23 +418,23 @@
     </junit>
   </target>
   <property name="savefile.converter.class" value="edu.asu.commons.foraging.data.ForagingSaveFileConverter"/>
-  <!-- default savefile directory is the experiment-data directory -->
-  <property environment='env'/>
-  <condition property='savefile.dir' value='${env.DATA_DIR}' else='experiment-data'>
-    <isset property='env.DATA_DIR' />
+  <!-- default data.dir is the experiment-data directory -->
+  <condition property='xml.enabled' value='${xml}'>
+    <isset property='xml' />
   </condition>
-  <condition property='xml.enabled' value='${env.xml}' else=''>
-    <isset property='env.xml' />
-  </condition>
-  <condition property='bots.enabled' value='${env.bots}' else=''>
-    <isset property='env.bots' />
+  <condition property='bots.enabled' value='${bots}'>
+    <isset property='bots' />
   </condition>
   <target name="convert" depends="compile">
     <java classname="${savefile.converter.class}" classpathref="project.classpath" fork="yes">
-      <arg value="${savefile.dir}"/>
-      <!-- if xml.enabled, add -xml, if bots enabled add -bot -->
-      <!-- <arg value='-xml' if:set='xml.enabled'/> -->
-      <arg value='-bots' if:set='bots.enabled' />
+      <arg value="${data.dir}"/>
+      <arg value='--xml' if:set='xml.enabled'/>
+      <arg value='--bots' if:set='bots.enabled' />
+      <!-- 
+           -Dxml sets xml.enabled and consequently adds -xml to the command line arguments to the
+           ForagingSaveFileConverter
+           Similarly -Dbots sets bots enabled and adds -bot 
+           -->
     </java>
   </target>
   <!-- Custom Deployment Targets -->
