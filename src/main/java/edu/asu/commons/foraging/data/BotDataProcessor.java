@@ -25,7 +25,7 @@ public class BotDataProcessor extends SaveFileProcessor.Base {
     private Logger logger = Logger.getLogger(getClass().getName());
 
     public BotDataProcessor() {
-        setSecondsPerInterval(1);
+        super(500);
     }
 
     @Override
@@ -35,20 +35,19 @@ public class BotDataProcessor extends SaveFileProcessor.Base {
         ServerDataModel dataModel = (ServerDataModel) savedRoundData.getDataModel();
         dataModel.reinitialize(roundConfiguration);
         // generate summarized statistics
-        // Time (100-200ms resolution), Subject Number, X, Y, Number of tokens collected, Distance to bot, current velocity
+        // Time (500ms resolution), Subject Number, X, Y, Number of tokens collected, Distance to bot, number of moves
         // see https://github.com/virtualcommons/foraging/issues/19
         writer.println(
-                Utils.join(',', "Time", "Subject ID", "X", "Y", "Tokens collected", "Velocity",
-                        "Distance to bot", "Bot X", "Bot Y", "Bot Tokens", "Bot velocity")
+                Utils.join(',', "Time", "Subject ID", "X", "Y", "Tokens collected", "Player moves",
+                        "Distance to bot", "Bot X", "Bot Y", "Bot Tokens", "Bot moves")
         );
         Map<Identifier, Actor> actorMap = dataModel.getActorMap();
         Map<Identifier, ClientMovementTokenCount> clientMovement = ClientMovementTokenCount.createMap(dataModel);
-        double distanceToBot = 0.0d;
         int actionsTaken = 0;
         int botActionsTaken = 0;
         assert actorMap.size() == 2;
         ClientData client = null;
-        Bot bot = null;
+        Bot bot = Bot.NULL;
         for (Actor actor: actorMap.values()) {
             if (actor instanceof Bot) {
                 bot = (Bot) actor;
@@ -58,18 +57,17 @@ public class BotDataProcessor extends SaveFileProcessor.Base {
                 client = (ClientData) actor;
             }
         }
-        logger.info("XXX: bot map: " + actorMap);
         for (PersistableEvent event: savedRoundData.getActions()) {
-            long secondsElapsed = savedRoundData.getElapsedTimeInSeconds(event);
+            long millisecondsElapsed = savedRoundData.getElapsedTime(event);
             logger.info("Inspecting event: " + event);
-            if (isIntervalElapsed(secondsElapsed)) {
+            if (isIntervalElapsed(millisecondsElapsed)) {
                 // write out aggregated stats
                 Point clientPosition = client.getPosition();
                 Point botPosition = bot.getPosition();
-                distanceToBot = clientPosition.distanceSq(botPosition);
+                double distanceToBot = clientPosition.distance(botPosition);
                 writer.println(
                         Utils.join(',',
-                                secondsElapsed,
+                                getIntervalEnd(),
                                 client.getId().getStationId(),
                                 clientPosition.x,
                                 clientPosition.y,
@@ -86,14 +84,12 @@ public class BotDataProcessor extends SaveFileProcessor.Base {
                 botActionsTaken = 0;
             }
             Identifier id = event.getId();
-            if (event instanceof TokenCollectedEvent) {
-
-            }
-            if (id instanceof BotIdentifier) {
-                botActionsTaken++;
-            }
-            else if (id instanceof SocketIdentifier) {
-                actionsTaken++;
+            if (event instanceof MovementEvent) {
+                if (id instanceof BotIdentifier) {
+                    botActionsTaken++;
+                } else if (id instanceof SocketIdentifier) {
+                    actionsTaken++;
+                }
             }
             dataModel.apply(event);
         }

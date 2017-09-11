@@ -22,39 +22,129 @@ public interface Bot extends Actor {
      *
      * FIXME: consider injecting the model / state of the world for the bot as a parameter
      */
-    public void act();
+    void act();
 
-    public BotType getBotType();
+    BotType getBotType();
 
-    public Identifier getId();
+    Identifier getId();
 
-    public Point getPosition();
+    Point getPosition();
 
-    public int getCurrentTokens();
+    int getCurrentTokens();
 
-    public void addToken(Point location);
+    void addToken(Point location);
 
-    public void setCurrentPosition(Point location);
+    void setCurrentPosition(Point location);
 
-    public int getActionsPerSecond();
+    int getActionsPerSecond();
 
-    public void resetActionsTakenPerSecond();
+    void resetActionsTakenPerSecond();
 
-    public double getMovementProbability();
+    double getMovementProbability();
 
-    public Direction getNextMove();
+    Direction getNextMove();
 
-    public void initialize(RoundConfiguration configuration);
+    void initialize(RoundConfiguration configuration);
 
-    public int getTicksToWait();
+    int getTicksToWait();
 
-    public void setTicksToWait(int ticksToWait);
+    void setTicksToWait(int ticksToWait);
 
-    public int getBotNumber();
+    int getBotNumber();
 
-    public void setBotNumber(int botNumber);
+    void setBotNumber(int botNumber);
 
-    public void setGroupDataModel(GroupDataModel model);
+    void setGroupDataModel(GroupDataModel model);
+
+    public final static Bot NULL = new Bot() {
+
+        @Override
+        public void act() {
+        }
+
+        @Override
+        public BotType getBotType() {
+            return null;
+        }
+
+        @Override
+        public Identifier getId() {
+            return Identifier.NULL;
+        }
+
+        @Override
+        public Point getPosition() {
+            return new Point(-1, -1);
+        }
+
+        @Override
+        public GroupDataModel getGroupDataModel() {
+            return null;
+        }
+
+        @Override
+        public int getCurrentTokens() {
+            return 0;
+        }
+
+        @Override
+        public void addToken(Point location) {
+        }
+
+        @Override
+        public void setCurrentPosition(Point location) {
+        }
+
+        @Override
+        public int getActionsPerSecond() {
+            return 0;
+        }
+
+        @Override
+        public void resetActionsTakenPerSecond() {
+
+        }
+
+        @Override
+        public double getMovementProbability() {
+            return 0;
+        }
+
+        @Override
+        public Direction getNextMove() {
+            return Direction.NONE;
+        }
+
+        @Override
+        public void initialize(RoundConfiguration configuration) {
+
+        }
+
+        @Override
+        public int getTicksToWait() {
+            return 0;
+        }
+
+        @Override
+        public void setTicksToWait(int ticksToWait) {
+
+        }
+
+        @Override
+        public int getBotNumber() {
+            return -1;
+        }
+
+        @Override
+        public void setBotNumber(int botNumber) {
+
+        }
+
+        @Override
+        public void setGroupDataModel(GroupDataModel model) {
+
+        }
+    };
 
     /**
      * Provides simple default bot state and behavior.
@@ -65,7 +155,7 @@ public interface Bot extends Actor {
      * or harvest a token if they are currently on top of a token.
      * 4. randomized behavior if harvest probability fails or movement is unsuccessful (due to player blockage).
      */
-    public abstract class SimpleBot implements Bot, Serializable {
+    abstract class SimpleBot implements Bot, Serializable {
 
         private static final long serialVersionUID = 2437093153712520070L;
         public final static int DEFAULT_ACTIONS_PER_SECOND = 8;
