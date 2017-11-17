@@ -3,6 +3,7 @@
 <properties>
 <comment>Foraging XML experiment round configuration</comment>
 <entry key="display-group-tokens">true</entry>
+<entry key='randomize-group'>true</entry>
 <entry key="clients-per-group">5</entry>
 <entry key="duration">240</entry>
 <entry key="resource-depth">29</entry>

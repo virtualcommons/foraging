@@ -11,6 +11,10 @@
 <entry key="round4">round4.xml</entry>
 <entry key="round5">round5.xml</entry>
 <entry key="round6">round6.xml</entry>
+<entry key="use-background-texture">false</entry>
+<entry key="use-token-image">true</entry>
+<entry key='token-image-path'>images/green-diamond.png</entry>
+<entry key="use-avatar-image">false</entry>
 <entry key="wait-for-participants">true</entry>
 <entry key="number-of-rounds">7</entry>
 <entry key="facilitator-instructions">
