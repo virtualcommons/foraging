@@ -24,11 +24,8 @@ import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id$
- * 
- * 
+ * Provides summary information for a given given round.
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
- * @version $Rev: 526 $
  */
 class SummaryProcessor extends SaveFileProcessor.Base {
     @Override
@@ -65,9 +62,9 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                         data.getTotalTokens(), data.getSanctionCosts(), data.getSanctionPenalties()));
                 totalTokensHarvested += data.getTotalTokens();
             }
-            writer.println(String.format("Group %s, %s, %s", group.getGroupId(), group.getResourceDistributionSize(), totalTokensHarvested));
+            writer.println(String.format("%s, %s, %s", groupId, group.getResourceDistributionSize(), totalTokensHarvested));
         }
-        Map<GroupDataModel, SortedSet<ChatRequest>> chatRequestMap = new HashMap<GroupDataModel, SortedSet<ChatRequest>>();
+        Map<GroupDataModel, SortedSet<ChatRequest>> chatRequestMap = new HashMap<>();
         SortedSet<ChatRequest> allChatRequests = savedRoundData.getChatRequests();
         if (! allChatRequests.isEmpty()) {
             ChatRequest first = allChatRequests.first();
@@ -77,7 +74,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                     chatRequestMap.get(group).add(request);
                 }
                 else {
-                    TreeSet<ChatRequest> chatRequests = new TreeSet<ChatRequest>();
+                    TreeSet<ChatRequest> chatRequests = new TreeSet<>();
                     chatRequests.add(request);
                     chatRequestMap.put(group, chatRequests);
                 }
@@ -94,8 +91,8 @@ class SummaryProcessor extends SaveFileProcessor.Base {
         }
         writer.println("=========================================");
         writer.println("Time, Participant, Token Collected?, Chat");
-        Map<Identifier, RuleVoteRequest> ruleVoteRequests = new HashMap<Identifier, RuleVoteRequest>();
-        ArrayList<RuleSelectedUpdateEvent> ruleSelectedEvents = new ArrayList<RuleSelectedUpdateEvent>();
+        Map<Identifier, RuleVoteRequest> ruleVoteRequests = new HashMap<>();
+        ArrayList<RuleSelectedUpdateEvent> ruleSelectedEvents = new ArrayList<>();
         for (PersistableEvent action: savedRoundData.getActions()) {
             if (action instanceof ChatRequest) {
                 writer.println(String.format("%s, %s, %s, %s", 
@@ -118,12 +115,9 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                 writer.println(event.toString());
             }
             for (GroupDataModel group: groups) {
-                ArrayList<ClientData> clientDataList = new ArrayList<ClientData>(group.getClientDataMap().values());
-                Collections.sort(clientDataList, new Comparator<ClientData>() {
-                    @Override
-                    public int compare(ClientData a, ClientData b) {
-                        return Integer.valueOf(a.getAssignedNumber()).compareTo(b.getAssignedNumber());
-                    }
+                ArrayList<ClientData> clientDataList = new ArrayList<>(group.getClientDataMap().values());
+                Collections.sort(clientDataList, (a, b) -> {
+                    return Integer.valueOf(a.getAssignedNumber()).compareTo(b.getAssignedNumber());
                 });
                 
                 writer.println("=== Voting results for " + group.toString() + "===");

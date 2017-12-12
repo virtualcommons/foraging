@@ -6,7 +6,7 @@ import edu.asu.commons.experiment.SavedRoundData;
 import edu.asu.commons.foraging.bot.Bot;
 import edu.asu.commons.foraging.bot.BotIdentifier;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
-import edu.asu.commons.foraging.event.*;
+import edu.asu.commons.foraging.event.MovementEvent;
 import edu.asu.commons.foraging.model.Actor;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.ServerDataModel;
@@ -17,52 +17,30 @@ import edu.asu.commons.util.Utils;
 
 import java.awt.Point;
 import java.io.PrintWriter;
-import java.util.Collection;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.logging.Logger;
 
-public class BotDataProcessor extends SaveFileProcessor.Base {
+public class BotSummaryDataProcessor extends BotDataProcessor {
 
     private Logger logger = Logger.getLogger(getClass().getName());
 
-    public BotDataProcessor() {
-        this(500);
+    public BotSummaryDataProcessor() {
+        super(500);
     }
-
-    public BotDataProcessor(int millisPerInterval) {
-        super(millisPerInterval);
-    }
-
-    public Pair<Bot, ClientData> getBotAndClient(Collection<Actor> actors, RoundConfiguration roundConfiguration) {
-        Bot bot = null;
-        ClientData client = null;
-        for (Actor actor: actors) {
-            if (actor instanceof Bot) {
-                bot = (Bot) actor;
-                bot.initialize(roundConfiguration);
-            }
-            else if (actor instanceof ClientData) {
-                client = (ClientData) actor;
-            }
-        }
-        return new Pair<>(bot, client);
-    }
-
-
 
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
        	RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
         SortedSet<PersistableEvent> actions = savedRoundData.getActions();
         ServerDataModel dataModel = (ServerDataModel) savedRoundData.getDataModel();
-        dataModel.reinitialize(roundConfiguration);
         // generate summarized statistics
-        // Time (500ms resolution), Subject Number, X, Y, Number of tokens collected, Distance to bot, number of moves
-        // see https://github.com/virtualcommons/foraging/issues/19
         writer.println(
-                Utils.join(',', "Time", "Elapsed Time Midnight", "Subject ID", "X", "Y", "Tokens collected", "Player moves",
-                        "Distance to bot", "Bot X", "Bot Y", "Bot Tokens", "Bot moves")
+                Utils.join(',', "Time", "Elapsed Time Midnight",
+                        "Subject ID", "Subject Total Moves", "Subject Total Tokens",
+                        "Bot Total Tokens", "Bot Total Moves",
+                        "Time of collapsed resource"
+                )
         );
         Map<Identifier, Actor> actorMap = dataModel.getActorMap();
         Map<Identifier, ClientMovementTokenCount> clientMovement = ClientMovementTokenCount.createMap(dataModel);
@@ -74,7 +52,6 @@ public class BotDataProcessor extends SaveFileProcessor.Base {
         ClientData client = pair.getSecond();
         for (PersistableEvent event: savedRoundData.getActions()) {
             long millisecondsElapsed = savedRoundData.getElapsedTime(event);
-            logger.info("Inspecting event: " + event);
             if (isIntervalElapsed(millisecondsElapsed)) {
                 // write out aggregated stats
                 Point clientPosition = client.getPosition();
@@ -113,6 +90,6 @@ public class BotDataProcessor extends SaveFileProcessor.Base {
 
     @Override
     public String getOutputFileExtension() {
-        return "-bot-data.csv";
+        return "-summary-bot-data.csv";
     }
 }

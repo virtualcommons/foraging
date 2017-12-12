@@ -64,7 +64,7 @@ vim:sts=2:sw=2
     <dependency>
       <groupId>edu.asu.commons</groupId>
       <artifactId>sesef</artifactId>
-      <version>0.9.2</version>
+      <version>0.9.4</version>
       <exclusions>
         <exclusion>
           <groupId>org.eclipse.jetty</groupId>

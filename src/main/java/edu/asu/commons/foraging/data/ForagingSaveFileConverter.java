@@ -13,13 +13,12 @@ import java.util.logging.Logger;
 /**
  * Invokes various SaveFileProcessorS to convert the foraging binary or XML data files.
  *
- *
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  */
 public class ForagingSaveFileConverter {
 
     private final static Logger logger = Logger.getLogger(ForagingSaveFileConverter.class.getName());
-    
+
     static final int DEFAULT_AGGREGATE_TIME_INTERVAL = 5;
 
     private Options options = new Options();
@@ -42,7 +41,7 @@ public class ForagingSaveFileConverter {
     }
 
     public void printHelp() {
-        formatter.printHelp("ant convert -Dsavefile.dir=<savefile.dir> -D<options>", options);
+        formatter.printHelp("ant convert -Ddata.dir=<savefile.dir> -D<options>", options);
     }
 
     public boolean convert(String saveDataDirectory) {
@@ -59,28 +58,28 @@ public class ForagingSaveFileConverter {
                 logger.info("Processing bot data.");
                 processors.addAll(
                         Arrays.asList(
-                            new SummaryProcessor(),
-                            new AllDataProcessor(),
-                            new BotDataProcessor()
-                            )
-                        );
-            }
-            else {
+                                new SummaryProcessor(),
+                                new AllDataProcessor(),
+                                new BotDataProcessor(),
+                                new BotSummaryDataProcessor()
+                        )
+                );
+            } else {
                 logger.info("Processing all data");
                 processors.addAll(
                         Arrays.asList(
-                            new AllDataProcessor(),
-                            new ResourceOverTimeProcessor(),
-                            new AggregateTimeIntervalProcessor(), 
-                            new SummaryProcessor(),
-                            new AggregateTokenSpatialDistributionProcessor(),
-                            new CollectedTokenSpatialDistributionProcessor(),  
-                            new MovementStatisticsProcessor(),
-                            // new MovieCreatorProcessor(),
-                            new ForagingRuleProcessor(),
-                            new AggregateCollectedTokenNeighborProcessor()
-                            )
-                        );
+                                new AllDataProcessor(),
+                                new ResourceOverTimeProcessor(),
+                                new AggregateTimeIntervalProcessor(),
+                                new SummaryProcessor(),
+                                new AggregateTokenSpatialDistributionProcessor(),
+                                new CollectedTokenSpatialDistributionProcessor(),
+                                new MovementStatisticsProcessor(),
+                                // new MovieCreatorProcessor(),
+                                new ForagingRuleProcessor(),
+                                new AggregateCollectedTokenNeighborProcessor()
+                        )
+                );
             }
             logger.info("Processors: " + processors);
             Persister.processSaveFiles(allSaveFilesDirectory, processors, useXml);
@@ -95,8 +94,7 @@ public class ForagingSaveFileConverter {
         logger.info("Command line options: " + Arrays.asList(cmd.getOptions()));
         if (converter.convert(args[0], cmd)) {
             System.err.println("Successfully converted files in " + args[0]);
-        }
-        else {
+        } else {
             System.err.println(args[0] + " doesn't appear to be a valid save file directory.");
         }
     }
