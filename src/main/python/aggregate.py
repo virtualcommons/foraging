@@ -6,6 +6,7 @@ import logging
 import os
 import pathlib
 import re
+import subprocess
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname) -8s %(message)s',
                     filename='foraging-aggregator.log', filemode='w')
@@ -69,6 +70,11 @@ def main():
                             datarow = [treatment_id, combined_date_time, round_number, repeated_round_index] + next(savefile_csv)
                             logger.debug("datarow: %s", datarow)
                             aggregated_csv.writerow(datarow)
+    # at the end of all this let's sort by the timestamp
+    sorted_aggregated_csv = pathlib.Path(data_dir, 'sorted.{0}'.format(AGGREGATED_CSV_FILENAME))
+    subprocess.run(['sort', '-n', '-k5', '-t', ',', aggregated_csv_path.name],
+                   cwd=aggregated_csv_path.parent,
+                   stdout=sorted_aggregated_csv.open('w'))
 
 
 if __name__ == "__main__":
