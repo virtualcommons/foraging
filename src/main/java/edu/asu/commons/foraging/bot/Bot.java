@@ -41,6 +41,7 @@ public interface Bot extends Actor {
     void resetActionsTakenPerSecond();
 
     double getMovementProbability();
+    double getHarvestProbability();
 
     Direction getNextMove();
 
@@ -107,6 +108,11 @@ public interface Bot extends Actor {
 
         @Override
         public double getMovementProbability() {
+            return 0;
+        }
+
+        @Override
+        public double getHarvestProbability() {
             return 0;
         }
 
@@ -340,7 +346,7 @@ public interface Bot extends Actor {
         }
 
         public void initialize(RoundConfiguration roundConfiguration) {
-            int actionsPerSecond = roundConfiguration.getRobotMovesPerSecond();
+            setActionsPerSecond(roundConfiguration.getRobotMovesPerSecond());
             setCurrentPosition(model.getInitialPosition(getBotNumber()));
             logger.info("setting current bot position to " + getPosition());
             currentTokens = 0;

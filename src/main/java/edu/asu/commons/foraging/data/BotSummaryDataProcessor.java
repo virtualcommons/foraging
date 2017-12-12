@@ -41,11 +41,12 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         writer.println(
                 Utils.join(',', "Start Time",
                         "Subject ID", "Subject total moves", "Subject total tokens",
-                        "Bot total moves", "Bot total tokens", "Bot type",
+                        "Bot total moves", "Bot total tokens", "Bot harvest probability", "Bot movement probability",
+                        "Bot actions per second",
                         "Tokens left", "Time to collapsed resource",
                         "Average distance to bot (500ms intervals)",
-                        "All distances (list)",
-                        "Growth rate"
+                        "Growth rate",
+                        "All participant-bot distances (taken at 500ms intervals)"
                 )
         );
         Map<Identifier, Actor> actorMap = dataModel.getActorMap();
@@ -69,7 +70,6 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         for (PersistableEvent event: savedRoundData.getActions()) {
             long millisecondsElapsed = savedRoundData.getElapsedTime(event);
             if (isIntervalElapsed(millisecondsElapsed)) {
-                // write out aggregated stats
                 Point clientPosition = client.getPosition();
                 Point botPosition = bot.getPosition();
                 botDistances.add(clientPosition.distance(botPosition));
@@ -95,11 +95,11 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         writer.println(Utils.join(',',
                 startTimeRelativeToMidnight,
                 client.getId().getStationId(), clientMovesTaken, totalClientTokens,
-                botMovesTaken, botTokens, bot.getBotType().name(),
+                botMovesTaken, botTokens, bot.getMovementProbability(), bot.getHarvestProbability(), bot.getActionsPerSecond(),
                 tokensLeft, timeToCollapsedResource,
                 averageDistanceToBot,
-                botDistances.toString(),
-                roundConfiguration.getRegrowthRate()
+                roundConfiguration.getRegrowthRate(),
+                botDistances.toString()
                 )
         );
     }
