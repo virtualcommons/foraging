@@ -30,7 +30,7 @@ public class BotDataProcessor extends SaveFileProcessor.Base {
         this(500);
     }
 
-    public BotDataProcessor(int millisPerInterval) {
+    public BotDataProcessor(long millisPerInterval) {
         super(millisPerInterval);
     }
 
@@ -49,28 +49,29 @@ public class BotDataProcessor extends SaveFileProcessor.Base {
         return new Pair<>(bot, client);
     }
 
-
-
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
        	RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
         SortedSet<PersistableEvent> actions = savedRoundData.getActions();
         ServerDataModel dataModel = (ServerDataModel) savedRoundData.getDataModel();
+        long elapsedTimeRelativeToMidnightOffset = savedRoundData.getElapsedTimeRelativeToMidnight(actions.first());
         dataModel.reinitialize(roundConfiguration);
         // generate summarized statistics
-        // Time (500ms resolution), Subject Number, X, Y, Number of tokens collected, Distance to bot, number of moves
-        // see https://github.com/virtualcommons/foraging/issues/19
         writer.println(
                 Utils.join(',', "Time", "Elapsed Time Midnight", "Subject ID", "X", "Y", "Tokens collected", "Player moves",
                         "Distance to bot", "Bot X", "Bot Y", "Bot Tokens", "Bot moves")
         );
         Map<Identifier, Actor> actorMap = dataModel.getActorMap();
-        Map<Identifier, ClientMovementTokenCount> clientMovement = ClientMovementTokenCount.createMap(dataModel);
         int actionsTaken = 0;
         int botActionsTaken = 0;
         assert actorMap.size() == 2;
         Pair<Bot, ClientData> pair = getBotAndClient(actorMap.values(), roundConfiguration);
         Bot bot = pair.getFirst();
+        if (bot == null) {
+            assert roundConfiguration.isPracticeRound();
+            bot = Bot.NULL;
+        }
+
         ClientData client = pair.getSecond();
         for (PersistableEvent event: savedRoundData.getActions()) {
             long millisecondsElapsed = savedRoundData.getElapsedTime(event);
@@ -83,7 +84,7 @@ public class BotDataProcessor extends SaveFileProcessor.Base {
                 writer.println(
                         Utils.join(',',
                                 getIntervalEnd(),
-                                savedRoundData.getElapsedTimeRelativeToMidnight(getIntervalEnd()),
+                                elapsedTimeRelativeToMidnightOffset + getIntervalEnd(),
                                 client.getId().getStationId(),
                                 clientPosition.x,
                                 clientPosition.y,

@@ -44,6 +44,7 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
                         "Bot total moves", "Bot total tokens", "Bot type",
                         "Tokens left", "Time to collapsed resource",
                         "Average distance to bot (500ms intervals)",
+                        "All distances (list)",
                         "Growth rate"
                 )
         );
@@ -58,9 +59,11 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         int totalClientTokens = client.getTotalTokens();
         GroupDataModel group = dataModel.getGroup(client.getId());
         int tokensLeft = group.getResourceDistributionSize();
-        int timeToCollapsedResource = Integer.MAX_VALUE;
+        int timeToCollapsedResource = -1;
         List<Double> botDistances = new ArrayList<>();
         dataModel.reinitialize(roundConfiguration);
+        logger.info("Current client position: " + client.getPosition());
+        logger.info("Current bot position: " + bot.getPosition());
         PersistableEvent firstEvent = savedRoundData.getActions().first();
         long startTimeRelativeToMidnight = savedRoundData.getElapsedTimeRelativeToMidnight(firstEvent.getCreationTime());
         for (PersistableEvent event: savedRoundData.getActions()) {
@@ -80,9 +83,12 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
                 }
             }
             dataModel.apply(event);
-            if (group.isResourceDistributionEmpty()) {
+            if (group.isResourceDistributionEmpty() && timeToCollapsedResource == -1) {
                 timeToCollapsedResource = (int) savedRoundData.getElapsedTime(event);
             }
+        }
+        if (timeToCollapsedResource == -1) {
+            timeToCollapsedResource = Integer.MAX_VALUE;
         }
         // double averageDistanceToBot = botDistances.stream().mapToDouble(i->i).average().orElse(0);
         double averageDistanceToBot = botDistances.stream().collect(Collectors.averagingDouble(d->d));
@@ -92,6 +98,7 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
                 botMovesTaken, botTokens, bot.getBotType().name(),
                 tokensLeft, timeToCollapsedResource,
                 averageDistanceToBot,
+                botDistances.toString(),
                 roundConfiguration.getRegrowthRate()
                 )
         );
