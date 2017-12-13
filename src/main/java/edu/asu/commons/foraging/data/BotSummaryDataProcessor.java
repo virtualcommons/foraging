@@ -124,7 +124,7 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         writer.println(Utils.join(',',
                 firstEvent.getCreationTime(),
                 startTimeRelativeToMidnight,
-                client.getId().getStationId(), clientMovesPreCollapse, totalClientMoves, client.getCurrentTokens(), totalClientTokens,
+                client.getId().getUUID(), clientMovesPreCollapse, totalClientMoves, client.getCurrentTokens(), totalClientTokens,
                 botMovesPreCollapse, totalBotMoves, bot.getCurrentTokens(), bot.getHarvestProbability(), bot.getMovementProbability(), bot.getActionsPerSecond(),
                 tokensLeft, timeToCollapsedResource,
                 averageDistanceToBotPreCollapse,

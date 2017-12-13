@@ -75,7 +75,6 @@ public class BotDataProcessor extends SaveFileProcessor.Base {
         ClientData client = pair.getSecond();
         for (PersistableEvent event: savedRoundData.getActions()) {
             long millisecondsElapsed = savedRoundData.getElapsedTime(event);
-            logger.info("Inspecting event: " + event);
             if (isIntervalElapsed(millisecondsElapsed)) {
                 // write out aggregated stats
                 Point clientPosition = client.getPosition();
