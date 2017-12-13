@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 SUMMARY_BOT_DATA_GLOB = '*-summary-bot-data.csv'
 
 AGGREGATED_CSV_FILENAME = "aggregated.csv"
-AGGREGATED_CSV_HEADER = ['Treatment ID', 'Date', 'Round number', 'Repeated round index']
+AGGREGATED_CSV_HEADER = ['Treatment ID', 'Date', 'Stage', 'Round']
 
 __author__ = "Allen Lee"
 __version__ = "0.0.1"
