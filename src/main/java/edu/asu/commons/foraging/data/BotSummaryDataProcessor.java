@@ -6,6 +6,7 @@ import edu.asu.commons.foraging.bot.Bot;
 import edu.asu.commons.foraging.bot.BotIdentifier;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.MovementEvent;
+import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.model.Actor;
 import edu.asu.commons.foraging.model.ClientData;
 import edu.asu.commons.foraging.model.GroupDataModel;
@@ -39,7 +40,7 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         ServerDataModel dataModel = (ServerDataModel) savedRoundData.getDataModel();
         // generate summarized statistics
         writer.println(
-                Utils.join(',', "Start Time",
+                Utils.join(',', "Epoch Start Time", "Midnight Relative Start Time",
                         "Subject ID", "Subject total moves", "Subject total tokens",
                         "Bot total moves", "Bot total tokens", "Bot harvest probability", "Bot movement probability",
                         "Bot actions per second",
@@ -56,7 +57,6 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         Pair<Bot, ClientData> pair = getBotAndClient(actorMap.values(), roundConfiguration);
         Bot bot = pair.getFirst();
         ClientData client = pair.getSecond();
-        int botTokens = bot.getCurrentTokens();
         int totalClientTokens = client.getTotalTokens();
         GroupDataModel group = dataModel.getGroup(client.getId());
         int tokensLeft = group.getResourceDistributionSize();
@@ -83,7 +83,15 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
                 }
             }
             dataModel.apply(event);
-            if (group.isResourceDistributionEmpty() && timeToCollapsedResource == -1) {
+            // only start checking for resource collapse after the client has made at least one move since it
+            // starts off at 0
+            if (clientMovesTaken > 0
+                    && tokensLeft == 0
+                    && group.isResourceDistributionEmpty()
+                    && timeToCollapsedResource == -1)
+            {
+                logger.info("resource distribution collapsed via event " + event);
+                assert event instanceof TokenCollectedEvent;
                 timeToCollapsedResource = (int) savedRoundData.getElapsedTime(event);
             }
         }
@@ -93,9 +101,10 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         // double averageDistanceToBot = botDistances.stream().mapToDouble(i->i).average().orElse(0);
         double averageDistanceToBot = botDistances.stream().collect(Collectors.averagingDouble(d->d));
         writer.println(Utils.join(',',
+                firstEvent.getCreationTime(),
                 startTimeRelativeToMidnight,
                 client.getId().getStationId(), clientMovesTaken, totalClientTokens,
-                botMovesTaken, botTokens, bot.getMovementProbability(), bot.getHarvestProbability(), bot.getActionsPerSecond(),
+                botMovesTaken, bot.getCurrentTokens(), bot.getHarvestProbability(), bot.getMovementProbability(), bot.getActionsPerSecond(),
                 tokensLeft, timeToCollapsedResource,
                 averageDistanceToBot,
                 roundConfiguration.getRegrowthRate(),
