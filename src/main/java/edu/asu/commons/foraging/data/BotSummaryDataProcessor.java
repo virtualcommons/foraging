@@ -1,6 +1,7 @@
 package edu.asu.commons.foraging.data;
 
 import edu.asu.commons.event.PersistableEvent;
+import edu.asu.commons.event.RoundStartedMarkerEvent;
 import edu.asu.commons.experiment.SavedRoundData;
 import edu.asu.commons.foraging.bot.Bot;
 import edu.asu.commons.foraging.bot.BotIdentifier;
@@ -41,7 +42,7 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         // generate summarized statistics
         writer.println(
                 Utils.join(',', "Epoch Start Time", "Midnight Relative Start Time",
-                        "Subject ID", "Subject total moves", "Subject total tokens",
+                        "Subject ID", "Subject total moves", "Subject current tokens", "Subject total tokens",
                         "Bot total moves", "Bot total tokens", "Bot harvest probability", "Bot movement probability",
                         "Bot actions per second",
                         "Tokens left", "Time to collapsed resource",
@@ -60,13 +61,14 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         int totalClientTokens = client.getTotalTokens();
         GroupDataModel group = dataModel.getGroup(client.getId());
         int tokensLeft = group.getResourceDistributionSize();
-        int timeToCollapsedResource = -1;
+        long timeToCollapsedResource = -1;
         List<Double> botDistances = new ArrayList<>();
         dataModel.reinitialize(roundConfiguration);
         logger.info("Current client position: " + client.getPosition());
         logger.info("Current bot position: " + bot.getPosition());
         PersistableEvent firstEvent = savedRoundData.getActions().first();
         long startTimeRelativeToMidnight = savedRoundData.getElapsedTimeRelativeToMidnight(firstEvent.getCreationTime());
+        boolean roundStarted = false;
         for (PersistableEvent event: savedRoundData.getActions()) {
             long millisecondsElapsed = savedRoundData.getElapsedTime(event);
             if (isIntervalElapsed(millisecondsElapsed)) {
@@ -82,17 +84,27 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
                     clientMovesTaken++;
                 }
             }
+            else if (event instanceof RoundStartedMarkerEvent) {
+                roundStarted = true;
+            }
+
             dataModel.apply(event);
             // only start checking for resource collapse after the client has made at least one move since it
             // starts off at 0
-            if (clientMovesTaken > 0
-                    && tokensLeft == 0
+            if (roundStarted && tokensLeft == 0
                     && group.isResourceDistributionEmpty()
                     && timeToCollapsedResource == -1)
             {
                 logger.info("resource distribution collapsed via event " + event);
                 assert event instanceof TokenCollectedEvent;
-                timeToCollapsedResource = (int) savedRoundData.getElapsedTime(event);
+                timeToCollapsedResource = savedRoundData.getElapsedTime(event);
+                if (timeToCollapsedResource <= 0) {
+                    logger.warning(String.format("Negative time to collapsed resource: %d - %d = %d",
+                            event.getCreationTime(), savedRoundData.getRoundStartTime(), timeToCollapsedResource)
+                    );
+                    logger.warning("Degenerate round data at " + getOutputFileName());
+                }
+
             }
         }
         if (timeToCollapsedResource == -1) {
@@ -103,7 +115,7 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         writer.println(Utils.join(',',
                 firstEvent.getCreationTime(),
                 startTimeRelativeToMidnight,
-                client.getId().getStationId(), clientMovesTaken, totalClientTokens,
+                client.getId().getStationId(), clientMovesTaken, client.getCurrentTokens(), totalClientTokens,
                 botMovesTaken, bot.getCurrentTokens(), bot.getHarvestProbability(), bot.getMovementProbability(), bot.getActionsPerSecond(),
                 tokensLeft, timeToCollapsedResource,
                 averageDistanceToBot,
