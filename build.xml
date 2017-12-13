@@ -427,6 +427,7 @@
   </condition>
   <target name="convert" depends="compile">
     <java classname="${savefile.converter.class}" classpathref="project.classpath" fork="yes">
+      <jvmarg value="-ea"/>
       <arg value="${data.dir}"/>
       <arg value='--xml' if:set='xml.enabled'/>
       <arg value='--bots' if:set='bots.enabled' />
