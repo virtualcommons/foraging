@@ -31,7 +31,7 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
     private Logger logger = Logger.getLogger(getClass().getName());
 
     public BotSummaryDataProcessor() {
-        super(500);
+        super(500L);
     }
 
     @Override
@@ -42,19 +42,23 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         // generate summarized statistics
         writer.println(
                 Utils.join(',', "Epoch Start Time", "Midnight Relative Start Time",
-                        "Subject ID", "Subject total moves", "Subject current tokens", "Subject total tokens",
-                        "Bot total moves", "Bot total tokens", "Bot harvest probability", "Bot movement probability",
+                        "Subject ID", "Subject precollapse moves", "Subject total moves", "Subject current tokens", "Subject total tokens",
+                        "Bot precollapse moves", "Bot total moves", "Bot total tokens", "Bot harvest probability", "Bot movement probability",
                         "Bot actions per second",
                         "Tokens left", "Time to collapsed resource",
-                        "Average distance to bot (500ms intervals)",
+                        "Average distance to bot precollapse (poll/500ms)",
+                        "Average distance to bot total (poll/500ms)",
                         "Growth rate",
                         "All participant-bot distances (taken at 500ms intervals)"
                 )
         );
         Map<Identifier, Actor> actorMap = dataModel.getActorMap();
-        int clientMovesTaken = 0;
-        int botMovesTaken = 0;
-        assert actorMap.size() == 2;
+        int totalClientMoves = 0;
+        int clientMovesPreCollapse = 0;
+        int totalBotMoves = 0;
+        int botMovesPreCollapse = 0;
+        double averageDistanceToBotPreCollapse = 0;
+        assert actorMap.size() <= 2;
         Pair<Bot, ClientData> pair = getBotAndClient(actorMap.values(), roundConfiguration);
         Bot bot = pair.getFirst();
         ClientData client = pair.getSecond();
@@ -64,8 +68,6 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         long timeToCollapsedResource = -1;
         List<Double> botDistances = new ArrayList<>();
         dataModel.reinitialize(roundConfiguration);
-        logger.info("Current client position: " + client.getPosition());
-        logger.info("Current bot position: " + bot.getPosition());
         PersistableEvent firstEvent = savedRoundData.getActions().first();
         long startTimeRelativeToMidnight = savedRoundData.getElapsedTimeRelativeToMidnight(firstEvent.getCreationTime());
         boolean roundStarted = false;
@@ -79,9 +81,9 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
             Identifier id = event.getId();
             if (event instanceof MovementEvent) {
                 if (id instanceof BotIdentifier) {
-                    botMovesTaken++;
+                    totalBotMoves++;
                 } else if (id instanceof SocketIdentifier) {
-                    clientMovesTaken++;
+                    totalClientMoves++;
                 }
             }
             else if (event instanceof RoundStartedMarkerEvent) {
@@ -98,6 +100,9 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
                 logger.info("resource distribution collapsed via event " + event);
                 assert event instanceof TokenCollectedEvent;
                 timeToCollapsedResource = savedRoundData.getElapsedTime(event);
+                clientMovesPreCollapse = totalClientMoves;
+                botMovesPreCollapse = totalBotMoves;
+                averageDistanceToBotPreCollapse = botDistances.stream().collect(Collectors.averagingDouble(d->d));
                 if (timeToCollapsedResource <= 0) {
                     logger.warning(String.format("Negative time to collapsed resource: %d - %d = %d",
                             event.getCreationTime(), savedRoundData.getRoundStartTime(), timeToCollapsedResource)
@@ -107,17 +112,22 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
 
             }
         }
+        // check if the resource didn't collapse and initialize pre-collapse data to its redundant countingpart
         if (timeToCollapsedResource == -1) {
             timeToCollapsedResource = Integer.MAX_VALUE;
+            averageDistanceToBotPreCollapse = botDistances.stream().collect(Collectors.averagingDouble(d->d));
+            clientMovesPreCollapse = totalClientMoves;
+            botMovesPreCollapse = totalBotMoves;
         }
         // double averageDistanceToBot = botDistances.stream().mapToDouble(i->i).average().orElse(0);
         double averageDistanceToBot = botDistances.stream().collect(Collectors.averagingDouble(d->d));
         writer.println(Utils.join(',',
                 firstEvent.getCreationTime(),
                 startTimeRelativeToMidnight,
-                client.getId().getStationId(), clientMovesTaken, client.getCurrentTokens(), totalClientTokens,
-                botMovesTaken, bot.getCurrentTokens(), bot.getHarvestProbability(), bot.getMovementProbability(), bot.getActionsPerSecond(),
+                client.getId().getStationId(), clientMovesPreCollapse, totalClientMoves, client.getCurrentTokens(), totalClientTokens,
+                botMovesPreCollapse, totalBotMoves, bot.getCurrentTokens(), bot.getHarvestProbability(), bot.getMovementProbability(), bot.getActionsPerSecond(),
                 tokensLeft, timeToCollapsedResource,
+                averageDistanceToBotPreCollapse,
                 averageDistanceToBot,
                 roundConfiguration.getRegrowthRate(),
                 botDistances.toString()
