@@ -64,7 +64,7 @@ public class BotDataProcessor extends SaveFileProcessor.Base {
         Map<Identifier, Actor> actorMap = dataModel.getActorMap();
         int actionsTaken = 0;
         int botActionsTaken = 0;
-        assert actorMap.size() == 2;
+        assert actorMap.size() <= 2;
         Pair<Bot, ClientData> pair = getBotAndClient(actorMap.values(), roundConfiguration);
         Bot bot = pair.getFirst();
         if (bot == null) {
