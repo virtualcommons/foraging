@@ -72,7 +72,7 @@ def main():
                             aggregated_csv.writerow(datarow)
     # at the end of all this let's sort by the timestamp
     sorted_aggregated_csv = pathlib.Path(data_dir, 'sorted.{0}'.format(AGGREGATED_CSV_FILENAME))
-    subprocess.run(['sort', '-n', '-k5', '-t', ',', aggregated_csv_path.name],
+    subprocess.run(['sort', '-n', '-k1,1', '-k5,5', '-t,', aggregated_csv_path.name],
                    cwd=aggregated_csv_path.parent,
                    stdout=sorted_aggregated_csv.open('w'))
 
