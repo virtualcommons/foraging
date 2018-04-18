@@ -14,34 +14,12 @@ public class BotFactory {
         return INSTANCE;
     }
 
-    public Bot create(int botNumber, GroupDataModel groupDataModel, int actionsPerSecond, double movementProbability, double harvestProbability) {
-        Bot bot = new CustomBot(actionsPerSecond, movementProbability, harvestProbability);
-        bot.setBotNumber(botNumber);
-        bot.setGroupDataModel(groupDataModel);
-        return bot;
+    public Bot create(GroupDataModel groupDataModel, int botNumber) {
+        return create(BotType.CUSTOM, groupDataModel, botNumber);
     }
-    
-    public Bot create(BotType botType, int botNumber, GroupDataModel groupDataModel) {
-        Bot bot = null;
-        switch (botType) {
-            case NORMAL:
-            case CUSTOM:
-                bot = new CustomBot();
-                break;
-            case AGGRESSIVE:
-                bot = new AggressiveBot();
-                break;
-            case COOPERATIVE:
-                bot = new CooperativeBot();
-                break;
-            case RANDOM:
-            default:
-                bot = new RandomBot();
-                break;
-        }
-        bot.setBotNumber(botNumber);
-        bot.setGroupDataModel(groupDataModel);
-        return bot;
+
+    public Bot create(BotType botType, GroupDataModel groupDataModel, int botNumber) {
+        return botType.create().setGroupDataModel(groupDataModel).setBotNumber(botNumber);
     }
 
 }

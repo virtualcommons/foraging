@@ -6,9 +6,8 @@ import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.net.Identifier;
 
-import java.awt.Point;
+import java.awt.*;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Random;
@@ -19,7 +18,7 @@ public interface Bot extends Actor {
 
     /**
      * The main entry point into a bot's behavior, invoked by the server every N milliseconds.
-     *
+     * <p>
      * FIXME: consider injecting the model / state of the world for the bot as a parameter
      */
     void act();
@@ -28,20 +27,28 @@ public interface Bot extends Actor {
 
     Identifier getId();
 
-    Point getPosition();
 
     int getCurrentTokens();
 
     void addToken(Point location);
 
-    void setCurrentPosition(Point location);
+    Point getPosition();
+
+    Bot setPosition(Point location);
 
     int getActionsPerSecond();
 
-    void resetActionsTakenPerSecond();
+    Bot setActionsPerSecond(int actionsPerSecond);
+
+    void resetActionsTaken();
 
     double getMovementProbability();
+
+    Bot setMovementProbability(double movementProbability);
+
     double getHarvestProbability();
+
+    Bot setHarvestProbability(double harvestProbability);
 
     Direction getNextMove();
 
@@ -49,15 +56,15 @@ public interface Bot extends Actor {
 
     int getTicksToWait();
 
-    void setTicksToWait(int ticksToWait);
+    Bot setTicksToWait(int ticksToWait);
 
     int getBotNumber();
 
-    void setBotNumber(int botNumber);
+    Bot setBotNumber(int botNumber);
 
-    void setGroupDataModel(GroupDataModel model);
+    Bot setGroupDataModel(GroupDataModel model);
 
-    public final static Bot NULL = new Bot() {
+    Bot NULL = new Bot() {
 
         @Override
         public void act() {
@@ -93,7 +100,8 @@ public interface Bot extends Actor {
         }
 
         @Override
-        public void setCurrentPosition(Point location) {
+        public Bot setPosition(Point location) {
+            return this;
         }
 
         @Override
@@ -102,8 +110,23 @@ public interface Bot extends Actor {
         }
 
         @Override
-        public void resetActionsTakenPerSecond() {
+        public Bot setActionsPerSecond(int actionsPerSecond) {
+            return null;
+        }
 
+        @Override
+        public void resetActionsTaken() {
+
+        }
+
+        @Override
+        public Bot setMovementProbability(double movementProbability) {
+            return this;
+        }
+
+        @Override
+        public Bot setHarvestProbability(double harvestProbability) {
+            return this;
         }
 
         @Override
@@ -132,8 +155,8 @@ public interface Bot extends Actor {
         }
 
         @Override
-        public void setTicksToWait(int ticksToWait) {
-
+        public Bot setTicksToWait(int ticksToWait) {
+            return this;
         }
 
         @Override
@@ -142,19 +165,19 @@ public interface Bot extends Actor {
         }
 
         @Override
-        public void setBotNumber(int botNumber) {
-
+        public Bot setBotNumber(int botNumber) {
+            return this;
         }
 
         @Override
-        public void setGroupDataModel(GroupDataModel model) {
-
+        public Bot setGroupDataModel(GroupDataModel model) {
+            return this;
         }
     };
 
     /**
      * Provides simple default bot state and behavior.
-     *
+     * <p>
      * 1. bots have "energy" (number of actions per second),
      * 2. bots expend one unit of energy to harvest a token or move
      * 3. bots have probabilities (floating point number between 0 and 1) that must be exceeded before they will move
@@ -193,6 +216,10 @@ public interface Bot extends Actor {
             this(DEFAULT_ACTIONS_PER_SECOND, DEFAULT_MOVEMENT_PROBABILITY, DEFAULT_HARVEST_PROBABILITY);
         }
 
+        public SimpleBot(GroupDataModel groupDataModel, int botNumber) {
+            setGroupDataModel(groupDataModel).setBotNumber(botNumber);
+        }
+
         public SimpleBot(int actionsPerSecond, double movementProbability, double harvestProbability) {
             this.actionsPerSecond = actionsPerSecond;
             this.movementProbability = movementProbability;
@@ -201,7 +228,7 @@ public interface Bot extends Actor {
 
         /**
          * Simple algorithm for bot behavior:
-         *
+         * <p>
          * 1. if energy has been expended, return
          * 2. if induced delay (ticksToWait) has been set, decrement and return
          * 3. if the bot is currently on top of a resource, consider whether to harvest it. If harvested, induce delay.
@@ -213,7 +240,7 @@ public interface Bot extends Actor {
             // first, check number of actions taken vs actions per second
             if (numberOfActionsTaken > actionsPerSecond) {
                 logger.info(String.format("Number of actions taken %d exceeds allowable actions per second %d",
-                            numberOfActionsTaken, actionsPerSecond));
+                        numberOfActionsTaken, actionsPerSecond));
                 return;
             }
             // next, check if we have a wait enforced on us
@@ -226,8 +253,7 @@ public interface Bot extends Actor {
             if (model.isResourceAt(getPosition())) {
                 if (random.nextDouble() <= getHarvestProbability()) {
                     model.collectToken(this);
-                }
-                else {
+                } else {
                     // failed our harvest probability check, now for something completely different..
                     setTicksToWait(random.nextInt(DEFAULT_MAX_TICKS_TO_WAIT));
                     this.targetLocation = getRandomTokenLocation();
@@ -251,7 +277,7 @@ public interface Bot extends Actor {
             numberOfActionsTaken++;
         }
 
-        public void resetActionsTakenPerSecond() {
+        public void resetActionsTaken() {
             this.numberOfActionsTaken = 0;
         }
 
@@ -259,8 +285,9 @@ public interface Bot extends Actor {
             return currentPosition;
         }
 
-        public void setCurrentPosition(Point currentPosition) {
-            this.currentPosition = currentPosition;
+        public Bot setPosition(Point location) {
+            this.currentPosition = location;
+            return this;
         }
 
         public Direction getNextMove() {
@@ -298,7 +325,7 @@ public interface Bot extends Actor {
         protected Point getRandomTokenLocation() {
             Set<Point> resourcePositions = model.getResourcePositions();
             int randomIndex = random.nextInt(resourcePositions.size());
-            for (Point point: resourcePositions) {
+            for (Point point : resourcePositions) {
                 if (randomIndex-- == 0) {
                     return point;
                 }
@@ -321,16 +348,19 @@ public interface Bot extends Actor {
             return nearestToken;
         }
 
-        public void setHarvestProbability(double harvestProbability) {
+        public Bot setHarvestProbability(double harvestProbability) {
             this.harvestProbability = harvestProbability;
+            return this;
         }
 
-        public void setMovementProbability(double movementProbability) {
+        public Bot setMovementProbability(double movementProbability) {
             this.movementProbability = movementProbability;
+            return this;
         }
 
-        public void setActionsPerSecond(int actionsPerSecond) {
+        public Bot setActionsPerSecond(int actionsPerSecond) {
             this.actionsPerSecond = actionsPerSecond;
+            return this;
         }
 
         public int getActionsPerSecond() {
@@ -347,7 +377,7 @@ public interface Bot extends Actor {
 
         public void initialize(RoundConfiguration roundConfiguration) {
             setActionsPerSecond(roundConfiguration.getRobotMovesPerSecond());
-            setCurrentPosition(model.getInitialPosition(getBotNumber()));
+            setPosition(model.getInitialPosition(getBotNumber()));
             logger.info("setting current bot position to " + getPosition());
             currentTokens = 0;
         }
@@ -362,18 +392,23 @@ public interface Bot extends Actor {
             return botNumber;
         }
 
-        public void setBotNumber(int botNumber) {
+        public Bot setBotNumber(int botNumber) {
             this.botNumber = botNumber;
+            return this;
         }
 
         public Identifier getId() {
             return identifier;
         }
 
-        public void setGroupDataModel(GroupDataModel groupDataModel) {
+        public Bot setGroupDataModel(GroupDataModel groupDataModel) {
             this.model = groupDataModel;
+            return this;
         }
-        public GroupDataModel getGroupDataModel() { return model; }
+
+        public GroupDataModel getGroupDataModel() {
+            return model;
+        }
 
         public Point getTargetLocation() {
             return targetLocation;
@@ -387,21 +422,17 @@ public interface Bot extends Actor {
             return ticksToWait;
         }
 
-        public void setTicksToWait(int ticksToWait) {
-            this.ticksToWait = ticksToWait;
+        public Bot setTicksToWait(int ticksToWait) {
+            setTicksToWait(ticksToWait);
+            return this;
         }
 
         public int getCurrentTokens() {
             return currentTokens;
         }
 
-        public Point getCurrentPosition() {
-            return currentPosition;
-        }
-
         public void addToken(Point location) {
             this.currentTokens++;
         }
-
     }
 }

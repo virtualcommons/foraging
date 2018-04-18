@@ -36,11 +36,10 @@ import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 
 /**
- * 
  * Represents a collection of Clients and associates them with a token distribution. In the
  * case of a shared resource model where all clients share the same world space, there will
  * be a single group and hence a single token distribution for all clients.
- * 
+ *
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  * @author Deepali Bhagvat
  */
@@ -84,7 +83,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     // Used when assigning clients to zones/teams
     private int nextZone = 0;
-    private int[] currentTeamSize = { 0, 0 };
+    private int[] currentTeamSize = {0, 0};
 
     public GroupDataModel(ServerDataModel serverDataModel) {
         this(serverDataModel, nextGroupId++);
@@ -386,7 +385,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     /**
      * Currently only invoked when replaying a round and stepping backwards.
-     * 
+     *
      * @param position
      */
     public void removeResource(Point position) {
@@ -465,7 +464,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     public boolean move(Bot bot, Direction direction) {
         Point newPosition = direction.apply(bot.getPosition());
         if (serverDataModel.isValidPosition(newPosition) && isCellAvailable(newPosition)) {
-            bot.setCurrentPosition(newPosition);
+            bot.setPosition(newPosition);
             getEventChannel().handle(new MovementEvent(bot.getId(), direction));
             return true;
         }
@@ -473,7 +472,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
 
     public Bot getBot(BotIdentifier id) {
-        for (Bot bot: bots) {
+        for (Bot bot : bots) {
             if (bot.getId().equals(id)) {
                 return bot;
             }
@@ -483,9 +482,8 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
 
     /**
-     *
      * Moves the client corresponding to id in direction d.
-     * 
+     *
      * @param id
      * @param direction
      * @return
@@ -691,7 +689,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     /**
      * Returns true if the resource is in the resource distribution and is not
      * already owned by a different resource owner.
-     * 
+     *
      * @param request a LockResourceRequest containing the local/remote resource
      * @return
      */
@@ -734,7 +732,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     /**
      * Only invoked by the client side.
-     * 
+     *
      * @param event
      */
     public void updateDiffs(ClientPositionUpdateEvent event) {
@@ -926,19 +924,16 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         double movementProbability = configuration.getRobotMovementProbability();
         double harvestProbability = configuration.getRobotHarvestProbability();
         int actionsPerSecond = configuration.getRobotMovesPerSecond();
+        BotFactory botFactory = BotFactory.getInstance();
         synchronized (bots) {
             bots.clear();
             for (int i = 0; i < botsPerGroup; i++) {
                 int botNumber = size + i + 1;
-                Bot bot = null;
-                switch (botType) {
-                    case CUSTOM:
-                        bot = BotFactory.getInstance().create(botNumber, this, actionsPerSecond, movementProbability, harvestProbability);
-                        break;
-                    default:
-                        bot = BotFactory.getInstance().create(botType, size + i + 1, this);
-                }
-                bot.initialize(serverDataModel.getRoundConfiguration());
+                Bot bot = botFactory.create(botType, this, botNumber)
+                        .setMovementProbability(movementProbability)
+                        .setHarvestProbability(harvestProbability)
+                        .setActionsPerSecond(actionsPerSecond);
+                bot.initialize(configuration);
                 bots.add(bot);
             }
         }
@@ -957,14 +952,14 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         for (Bot bot : bots) {
             bot.act();
             if (resetBotActions) {
-                bot.resetActionsTakenPerSecond();
+                bot.resetActionsTaken();
             }
         }
     }
 
     public void clearBotActionsTaken() {
         for (Bot bot : bots) {
-            bot.resetActionsTakenPerSecond();
+            bot.resetActionsTaken();
         }
     }
 
