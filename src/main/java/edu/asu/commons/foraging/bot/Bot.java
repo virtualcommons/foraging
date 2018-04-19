@@ -245,18 +245,25 @@ public interface Bot extends Actor {
             }
             // next, check if we have a wait enforced on us
             else if (ticksToWait > 0) {
-                logger.warning("waiting for " + ticksToWait);
                 ticksToWait--;
                 return;
             }
-            // if neither, check if we are sitting on top of a token
+            // if neither, check if bot is sitting on top of a token and check if it should harvest it.
             if (model.isResourceAt(getPosition())) {
+                // FIXME: more sophistiated algorithm might take into account other factors like density instead
+                // of naive dice roll
                 if (random.nextDouble() <= getHarvestProbability()) {
                     model.collectToken(this);
-                } else {
-                    // failed our harvest probability check, now for something completely different..
-                    setTicksToWait(random.nextInt(DEFAULT_MAX_TICKS_TO_WAIT));
+                }
+                else {
+                    // failed harvest probability check, wait randomly and pick a new target.
+                    setTicksToWait(random.nextInt(getMaxTicksToWait()));
                     this.targetLocation = getRandomTokenLocation();
+                }
+            }
+            else if (model.isResourceDistributionEmpty()) {
+                if (random.nextDouble() < 0.6d) {
+                    setTicksToWait(10);
                 }
             }
             // or figure out our next move and roll the dice to see if we can go.
@@ -312,8 +319,7 @@ public interface Bot extends Actor {
 
         protected void reachedTargetLocation() {
             this.targetLocation = null;
-            // FIXME: parameterize this?
-            this.ticksToWait = random.nextInt(DEFAULT_MAX_TICKS_TO_WAIT);
+            this.ticksToWait = random.nextInt(getMaxTicksToWait());
         }
 
         protected Point getRandomLocation() {
@@ -425,6 +431,10 @@ public interface Bot extends Actor {
         public Bot setTicksToWait(int ticksToWait) {
             this.ticksToWait = ticksToWait;
             return this;
+        }
+
+        public int getMaxTicksToWait() {
+            return DEFAULT_MAX_TICKS_TO_WAIT;
         }
 
         public int getCurrentTokens() {
