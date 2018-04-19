@@ -423,7 +423,7 @@ public interface Bot extends Actor {
         }
 
         public Bot setTicksToWait(int ticksToWait) {
-            setTicksToWait(ticksToWait);
+            this.ticksToWait = ticksToWait;
             return this;
         }
 
