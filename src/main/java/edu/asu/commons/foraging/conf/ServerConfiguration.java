@@ -9,12 +9,9 @@ import edu.asu.commons.conf.ExperimentConfiguration;
 import edu.asu.commons.foraging.model.ClientData;
 
 /**
- * $Id: ServerConfiguration.java,v ec656450a643 2015/03/23 17:41:38 allen $
- * 
- * Contains the know-how for parsing and programmatically accessing the
- * server's configuration file properties. The forager server's config file
- * specifies per-server settings, per-round settings are managed by
- * RoundConfiguration.
+ * Server configuration object for parsing and programmatically accessing the server's configuration file properties
+ * (server.xml). The foraging server's config file specifies experiment-global settings and defaults, per-round settings
+ * are managed by RoundConfiguration.
  *
  * FIXME: Recoverable exceptions that are handled shouldn't spit out their
  * stack trace without some additional info stating that they are mostly
@@ -22,8 +19,6 @@ import edu.asu.commons.foraging.model.ClientData;
  * 
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @see 
- * @version $Revision: ec656450a643 $
  */
 public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConfiguration, RoundConfiguration> {
 
@@ -262,6 +257,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
 
     public boolean isOccupancyEnabled() {
         return getBooleanProperty("occupancy-enabled", true);
+    }
+
+    public int getRobotMovesPerSecond() {
+        return getIntProperty("robot-moves-per-second", 10);
     }
 
     public double getRobotHarvestProbability() {

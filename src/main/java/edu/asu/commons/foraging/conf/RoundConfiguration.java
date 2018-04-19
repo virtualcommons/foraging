@@ -27,15 +27,9 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * At some point this should be persistent database objects in a key-value store..?
- * 
- * Something like:
- * 
- * Parameter name, value, type, instructions
- * 
- * need to deal with i18n at some point as well..
- * 
- * 
+ * Provides round-specific configuration for the foraging experiment. The entry point into Foraging configuration is the
+ * server.xml `server.xml` file which will specify a set of round configuration files (each round corresponding to a
+ * given RoundConfiguration object).
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
  */
@@ -1028,7 +1022,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      * moves per second each player will make.
      */
     public int getRobotMovesPerSecond() {
-        return getIntProperty("robot-moves-per-second", 10);
+        return getIntProperty("robot-moves-per-second", getParentConfiguration().getRobotMovesPerSecond());
     }
 
     /**
