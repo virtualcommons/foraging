@@ -374,6 +374,7 @@
     </copy>
     <java classname="${server.class}" classpathref="project.classpath" fork="yes">
       <jvmarg value="-server"/>
+      <arg value='-i'/>
     </java>
   </target>
   <target name="server-debug" depends="compile,check-configuration">
@@ -391,9 +392,6 @@
       <!-- Enable remote debugging -->
       <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${remote.debug.port}"/>
     </java>
-  </target>
-  <target name='webserver' depends='compile'>
-
   </target>
   <!-- Compile Tests -->
   <target name="compile-tests" depends="compile">
