@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 
 public class BotSummaryDataProcessor extends BotDataProcessor {
 
+    private final static int MAX_TIME_TO_COLLAPSED_RESOURCE = Integer.MAX_VALUE;
+
     private Logger logger = Logger.getLogger(getClass().getName());
 
     public BotSummaryDataProcessor() {
@@ -114,7 +116,7 @@ public class BotSummaryDataProcessor extends BotDataProcessor {
         }
         // check if the resource didn't collapse and initialize pre-collapse data to its redundant countingpart
         if (timeToCollapsedResource == -1) {
-            timeToCollapsedResource = Integer.MAX_VALUE;
+            timeToCollapsedResource = MAX_TIME_TO_COLLAPSED_RESOURCE;
             averageDistanceToBotPreCollapse = botDistances.stream().collect(Collectors.averagingDouble(d->d));
             clientMovesPreCollapse = totalClientMoves;
             botMovesPreCollapse = totalBotMoves;
