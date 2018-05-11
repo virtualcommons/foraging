@@ -17,7 +17,7 @@ vim:sts=2:sw=2
   <url>http://github.com/virtualcommons/foraging</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jetty.version>9.4.8.v20171121</jetty.version>
+    <jetty.version>9.4.10.v20180503</jetty.version>
   </properties>
   <licenses>
     <license>
@@ -109,6 +109,11 @@ vim:sts=2:sw=2
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty.version}</version>
+        <configuration>
+          <supportedPackagings>
+            <supportedPackaging>jar</supportedPackaging>
+          </supportedPackagings>
+        </configuration>
       </plugin>
     </plugins>
   </build>
