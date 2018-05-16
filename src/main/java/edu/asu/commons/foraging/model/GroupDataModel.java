@@ -923,6 +923,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         RoundConfiguration configuration = getRoundConfiguration();
         double movementProbability = configuration.getRobotMovementProbability();
         double harvestProbability = configuration.getRobotHarvestProbability();
+        double tokenProximityScalingFactor = configuration.getTokenProximityScalingFactor();
         int actionsPerSecond = configuration.getRobotMovesPerSecond();
         BotFactory botFactory = BotFactory.getInstance();
         synchronized (bots) {
@@ -932,7 +933,9 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
                 Bot bot = botFactory.create(botType, this, botNumber)
                         .setMovementProbability(movementProbability)
                         .setHarvestProbability(harvestProbability)
-                        .setActionsPerSecond(actionsPerSecond);
+                        .setActionsPerSecond(actionsPerSecond)
+                        .setTokenProximityScalingFactor(tokenProximityScalingFactor);
+
                 bot.initialize(configuration);
                 bots.add(bot);
             }

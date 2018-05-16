@@ -14,7 +14,7 @@ public class AggressiveBot extends Bot.SimpleBot {
 
     public final static double HARVEST_PROBABILITY = 1.0d;
 
-    public final static double BOT_TOKEN_DISTANCE_WEIGHT = 3.0d;
+    public final static double DEFAULT_BOT_TOKEN_DISTANCE_WEIGHT = 0.3d;
 
     public AggressiveBot() {
         super(ACTIONS_PER_SECOND, MOVEMENT_PROBABILITY, HARVEST_PROBABILITY);
@@ -25,7 +25,7 @@ public class AggressiveBot extends Bot.SimpleBot {
     }
 
     @Override
-    public Point getNearestToken() {
+    public Point getTargetToken() {
         // return the Point closest to the participant and the bot
         GroupDataModel model = getGroupDataModel();
         Point participantLocation = model.getClientPositions().values().iterator().next();
@@ -34,16 +34,15 @@ public class AggressiveBot extends Bot.SimpleBot {
         Point targetTokenLocation = null;
         for (Point tokenLocation : model.getResourcePositions()) {
             double measure = participantLocation.distanceSq(tokenLocation) +
-                    (BOT_TOKEN_DISTANCE_WEIGHT * botLocation.distanceSq(tokenLocation));
+                    (getTokenProximityScalingFactor() * botLocation.distanceSq(tokenLocation));
             if (measure <= minimumDistance) {
                 minimumDistance = measure;
                 targetTokenLocation = tokenLocation;
             }
         }
         if (targetTokenLocation == null) {
-            return getRandomLocation();
+            targetTokenLocation = getRandomLocation();
         }
-        logger.info("token closest to bot and player " + targetTokenLocation + " distance: " + minimumDistance);
         return targetTokenLocation;
     }
 

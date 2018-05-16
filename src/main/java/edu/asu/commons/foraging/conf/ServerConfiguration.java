@@ -251,6 +251,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
         return getProperty("bot-type", "AGGRESSIVE");
     }
 
+    public double getTokenProximityScalingFactor() {
+        return getDoubleProperty("robot-token-proximity-sf", 0.3d);
+    }
+
     public int getMaximumOccupancyPerCell() {
         return getIntProperty("max-cell-occupancy", 1);
     }

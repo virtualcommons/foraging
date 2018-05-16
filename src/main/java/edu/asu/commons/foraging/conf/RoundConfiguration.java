@@ -1037,6 +1037,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getDoubleProperty("robot-movement-probability", getParentConfiguration().getRobotMovementProbability());
     }
 
+    public double getTokenProximityScalingFactor() {
+        return getDoubleProperty("robot-token-proximity-sf", getParentConfiguration().getTokenProximityScalingFactor());
+    }
+
     public String getTokenImagePath() {
         return getStringProperty("token-image-path", getParentConfiguration().getTokenImagePath());
     }

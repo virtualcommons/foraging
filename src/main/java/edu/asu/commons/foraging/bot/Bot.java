@@ -50,6 +50,10 @@ public interface Bot extends Actor {
 
     Bot setHarvestProbability(double harvestProbability);
 
+    double getTokenProximityScalingFactor();
+
+    Bot setTokenProximityScalingFactor(double tokenProximityScalingFactor);
+
     Direction getNextMove();
 
     void initialize(RoundConfiguration configuration);
@@ -130,12 +134,22 @@ public interface Bot extends Actor {
         }
 
         @Override
+        public Bot setTokenProximityScalingFactor(double tokenProximityScalingFactor) {
+            return this;
+        }
+
+        @Override
         public double getMovementProbability() {
             return 0;
         }
 
         @Override
         public double getHarvestProbability() {
+            return 0;
+        }
+
+        @Override
+        public double getTokenProximityScalingFactor() {
             return 0;
         }
 
@@ -202,6 +216,7 @@ public interface Bot extends Actor {
 
         private double harvestProbability;
         private double movementProbability;
+        private double tokenProximityScalingFactor;
         private int actionsPerSecond;
         private int botNumber = 0;
         private int numberOfActionsTaken = 0;
@@ -258,7 +273,7 @@ public interface Bot extends Actor {
                 else {
                     // failed harvest probability check, wait randomly and pick a new target.
                     setTicksToWait(random.nextInt(getMaxTicksToWait()));
-                    this.targetLocation = getRandomTokenLocation();
+                    this.targetLocation = getTargetToken();
                 }
             }
             else if (model.isResourceDistributionEmpty()) {
@@ -298,7 +313,7 @@ public interface Bot extends Actor {
         }
 
         public Direction getNextMove() {
-            if (!hasTarget()) {
+            if (!hasTarget() || ! model.isResourceAt(targetLocation)) {
                 setNewTargetLocation();
             }
             Direction nextMove = Direction.towards(getPosition(), getTargetLocation());
@@ -310,7 +325,7 @@ public interface Bot extends Actor {
         }
 
         protected void setNewTargetLocation() {
-            targetLocation = getNearestToken();
+            targetLocation = getTargetToken();
             if (targetLocation == null) {
                 // pick a random location on the board
                 targetLocation = getRandomLocation();
@@ -339,7 +354,7 @@ public interface Bot extends Actor {
             return getRandomLocation();
         }
 
-        protected Point getNearestToken() {
+        protected Point getTargetToken() {
             Point currentLocation = getPosition();
             Point nearestToken = null;
             double nearestTokenDistance = Double.MAX_VALUE;
@@ -364,6 +379,11 @@ public interface Bot extends Actor {
             return this;
         }
 
+        public Bot setTokenProximityScalingFactor(double tokenProximityScalingFactor) {
+            this.tokenProximityScalingFactor = tokenProximityScalingFactor;
+            return this;
+        }
+
         public Bot setActionsPerSecond(int actionsPerSecond) {
             this.actionsPerSecond = actionsPerSecond;
             return this;
@@ -379,6 +399,10 @@ public interface Bot extends Actor {
 
         public double getHarvestProbability() {
             return harvestProbability;
+        }
+
+        public double getTokenProximityScalingFactor() {
+            return tokenProximityScalingFactor;
         }
 
         public void initialize(RoundConfiguration roundConfiguration) {
