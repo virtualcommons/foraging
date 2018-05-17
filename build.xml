@@ -443,6 +443,13 @@
     </antcall>
     <antcall target='deploy' />
   </target>
+  <target name='deploy-fmri-ag' depends='compile,clean-configuration'>
+    <!-- specialized target for fmri aggressive test deployment -->
+    <antcall target='copy-configuration'>
+      <param name='treatment.dir' value='asu/2017/fmri/test-ag' />
+    </antcall>
+    <antcall target='deploy' />
+  </target>
   <target name='deploy-fmri-a' depends='compile,clean-configuration'>
     <!-- specialized target for fmri aggressive bot deployment -->
     <input message="Select localized version"
