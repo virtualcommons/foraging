@@ -147,14 +147,12 @@ public class GameWindow2D implements GameWindow {
      * method, update() after we're done changing state.
      */
     public void update(final long roundTimeLeft) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                informationLabel.setText(getInformationLabelText());
-                timeLeftLabel.setText(getTimeLeftLabelText(roundTimeLeft));
-                // FIXME: subjectView.repaint() causes graphical glitches here
-                // only when we transition from 3D -> 2D experiment. Find out why.
-                getPanel().repaint();
-            }
+        SwingUtilities.invokeLater(() -> {
+            informationLabel.setText(getInformationLabelText());
+            timeLeftLabel.setText(getTimeLeftLabelText(roundTimeLeft));
+            // FIXME: subjectView.repaint() causes graphical glitches here
+            // only when we transition from 3D -> 2D experiment. Find out why.
+            getPanel().repaint();
         });
     }
 
@@ -165,44 +163,52 @@ public class GameWindow2D implements GameWindow {
     public synchronized void init() {
         final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
         singlePlayer = roundConfiguration.isSinglePlayer();
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                if (roundConfiguration.isFirstRound()) {
-                    if (roundConfiguration.getParentConfiguration().shouldAskForSurveyId()) {
-                        add(getSurveyIdPanel());
-                        showPanel(SurveyIdPanel.NAME);
-                    } else {
-                        setInstructions(roundConfiguration.getWelcomeInstructions());
-                    }
+        SwingUtilities.invokeLater(() -> {
+            if (roundConfiguration.isFirstRound()) {
+                if (roundConfiguration.getParentConfiguration().shouldAskForSurveyId()) {
+                    add(getSurveyIdPanel());
+                    showPanel(SurveyIdPanel.NAME);
+                } else {
+                    setInstructions(roundConfiguration.getWelcomeInstructions());
                 }
-                // don't display next round time, instead wait for the
-                // facilitator signal.
-                timeLeftLabel.setText("Waiting for facilitator's signal.");
-                informationLabel.setText("Waiting for facilitator's signal.");
-                // add the next round instructions to the existing debriefing text set by the previous
-                // EndRoundEvent.
             }
+            // don't display next round time, instead wait for the
+            // facilitator signal.
+            timeLeftLabel.setText("Waiting for facilitator's signal.");
+            informationLabel.setText("Waiting for facilitator's signal.");
+            // add the next round instructions to the existing debriefing text set by the previous
+            // EndRoundEvent.
         });
 
     }
 
     private ActionListener createClientReadyListener(final String confirmationMessage) {
+        return event -> {
+            int selectedOption = JOptionPane.showConfirmDialog(getPanel(),
+                    confirmationMessage,
+                    "Continue?", JOptionPane.YES_NO_OPTION);
+            switch (selectedOption) {
+                case JOptionPane.YES_OPTION:
+                    setInstructions(dataModel.getExperimentConfiguration().getWaitingRoomInstructions());
+                    showInstructionsPanel();
+                    client.transmit(new ClientReadyEvent(client.getId(), confirmationMessage));
+                    instructionsEditorPane.setActionListener(null);
+                    break;
+                default:
+                    break;
+            }
+        };
+    }
+
+    private ActionListener createMultiScreenInstructionsListener(final RoundConfiguration configuration) {
         return new ActionListener() {
+            private int screenNumber = 0;
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selectedOption = JOptionPane.showConfirmDialog(getPanel(),
-                        confirmationMessage,
-                        "Continue?", JOptionPane.YES_NO_OPTION);
-                switch (selectedOption) {
-                    case JOptionPane.YES_OPTION:
-                        setInstructions(dataModel.getExperimentConfiguration().getWaitingRoomInstructions());
-                        showInstructionsPanel();
-                        client.transmit(new ClientReadyEvent(client.getId(), confirmationMessage));
-                        instructionsEditorPane.setActionListener(null);
-                        break;
-                    default:
-                        break;
-                }
+                // currently only allow next
+                int maxScreenNumber = configuration.getNumberOfInstructionScreens();
+                screenNumber = Math.min(maxScreenNumber, screenNumber + 1);
+                setInstructions(configuration.getInstructions(screenNumber));
             }
         };
     }
@@ -214,40 +220,42 @@ public class GameWindow2D implements GameWindow {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                HtmlEditorPane.FormActionEvent formEvent = (HtmlEditorPane.FormActionEvent) e;
-                StringBuilder builder = new StringBuilder();
-                if (!submitted) {
-                    Properties actualAnswers = formEvent.getData();
-                    List<String> incorrectQuestionNumbers = new ArrayList<>();
-                    List<String> correctAnswers = new ArrayList<>();
+                if (e instanceof HtmlEditorPane.FormActionEvent) {
+                    HtmlEditorPane.FormActionEvent formEvent = (HtmlEditorPane.FormActionEvent) e;
+                    StringBuilder builder = new StringBuilder();
+                    if (!submitted) {
+                        Properties actualAnswers = formEvent.getData();
+                        List<String> incorrectQuestionNumbers = new ArrayList<>();
+                        List<String> correctAnswers = new ArrayList<>();
 
-                    // iterate through expected answers
-                    Map<String, String> quizAnswers = configuration.getQuizAnswers();
-                    for (Map.Entry<String, String> entry : quizAnswers.entrySet()) {
-                        String questionNumber = entry.getKey();
-                        String expectedAnswer = entry.getValue();
-                        String actualAnswer = actualAnswers.getProperty(questionNumber);
-                        if (actualAnswer == null) {
-                            JOptionPane.showMessageDialog(getPanel(), "Please enter a response for question " + questionNumber.toUpperCase() + ".");
-                            return;
+                        // iterate through expected answers
+                        Map<String, String> quizAnswers = configuration.getQuizAnswers();
+                        for (Map.Entry<String, String> entry : quizAnswers.entrySet()) {
+                            String questionNumber = entry.getKey();
+                            String expectedAnswer = entry.getValue();
+                            String actualAnswer = actualAnswers.getProperty(questionNumber);
+                            if (actualAnswer == null) {
+                                JOptionPane.showMessageDialog(getPanel(), "Please enter a response for question " + questionNumber.toUpperCase() + ".");
+                                return;
+                            }
+                            if (expectedAnswer.equals(actualAnswer)) {
+                                correctAnswers.add(questionNumber);
+                            } else {
+                                // flag the incorrect response
+                                incorrectQuestionNumbers.add(questionNumber);
+                            }
                         }
-                        if (expectedAnswer.equals(actualAnswer)) {
-                            correctAnswers.add(questionNumber);
-                        } else {
-                            // flag the incorrect response
-                            incorrectQuestionNumbers.add(questionNumber);
-                        }
+                        submitted = true;
+                        client.transmit(new QuizResponseEvent(client.getId(), actualAnswers, incorrectQuestionNumbers));
+                        builder.append(configuration.getQuizResults(incorrectQuestionNumbers, actualAnswers));
+                    } else {
+                        client.transmit(new ClientReadyEvent(client.getId(), "Reviewed quiz responses."));
+                        configuration.buildInstructions(builder);
                     }
-                    submitted = true;
-                    client.transmit(new QuizResponseEvent(client.getId(), actualAnswers, incorrectQuestionNumbers));
-                    builder.append(configuration.getQuizResults(incorrectQuestionNumbers, actualAnswers));
-                } else {
-                    client.transmit(new ClientReadyEvent(client.getId(), "Reviewed quiz responses."));
-                    configuration.buildInstructions(builder);
+                    // RoundConfiguration now builds the appropriate quiz results page.
+                    setInstructions(builder.toString());
+                    instructionsEditorPane.setCaretPosition(0);
                 }
-                // RoundConfiguration now builds the appropriate quiz results page.
-                setInstructions(builder.toString());
-                instructionsEditorPane.setCaretPosition(0);
             }
         };
     }
@@ -416,11 +424,7 @@ public class GameWindow2D implements GameWindow {
                 showPanel(currentCardPanel);
             }
         });
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                mainPanel.requestFocusInWindow();
-            }
-        });
+        SwingUtilities.invokeLater(() -> mainPanel.requestFocusInWindow());
     }
 
     /**
@@ -573,28 +577,26 @@ public class GameWindow2D implements GameWindow {
             timer.stop();
             timer = null;
         }
-        Runnable runnable = new Runnable() {
-            public void run() {
-                subjectView.setup(configuration);
-                // reset the amount of time left in the round on food eaten
-                // label to the value from the configuration file.
-                // this is NOT dynamic; once the StartRoundEvent is fired off
-                // by the server no new clients can connect because the round
-                // has begun.
-                update(configuration.getRoundDuration().getTimeLeft());
-                if (configuration.isInRoundChatEnabled()) {
-                    ChatPanel chatPanel = getInRoundChatPanel();
-                    chatPanel.initialize(dataModel);
-                    Dimension chatPanelSize = new Dimension(inRoundChatPanelWidth, getPanel().getSize().height);
-                    chatPanel.setPreferredSize(chatPanelSize);
-                    gamePanel.add(chatPanel, BorderLayout.EAST);
-                }
-                showPanel(GAME_PANEL_NAME);
-
-                // Send a resize event to ensure that the subjectView is sized
-                // to accommodate the in-round chat panel
-                mainPanel.dispatchEvent(new ComponentEvent(mainPanel, ComponentEvent.COMPONENT_RESIZED));
+        Runnable runnable = () -> {
+            subjectView.setup(configuration);
+            // reset the amount of time left in the round on food eaten
+            // label to the value from the configuration file.
+            // this is NOT dynamic; once the StartRoundEvent is fired off
+            // by the server no new clients can connect because the round
+            // has begun.
+            update(configuration.getRoundDuration().getTimeLeft());
+            if (configuration.isInRoundChatEnabled()) {
+                ChatPanel chatPanel = getInRoundChatPanel();
+                chatPanel.initialize(dataModel);
+                Dimension chatPanelSize = new Dimension(inRoundChatPanelWidth, getPanel().getSize().height);
+                chatPanel.setPreferredSize(chatPanelSize);
+                gamePanel.add(chatPanel, BorderLayout.EAST);
             }
+            showPanel(GAME_PANEL_NAME);
+
+            // Send a resize event to ensure that the subjectView is sized
+            // to accommodate the in-round chat panel
+            mainPanel.dispatchEvent(new ComponentEvent(mainPanel, ComponentEvent.COMPONENT_RESIZED));
         };
         SwingUtilities.invokeLater(runnable);
 
@@ -703,36 +705,6 @@ public class GameWindow2D implements GameWindow {
         setInstructions(instructionsBuilder.toString());
     }
 
-    // FIXME: replace with StringTemplate
-    private void postSanctionDebriefingText(final PostRoundSanctionUpdateEvent event) {
-        // instructionsBuilder.delete(0, instructionsBuilder.length());
-        // ClientData clientData = event.getClientData();
-        // // FIXME: split into tokens used to sanction others and tokens taken
-        // // away by other people.
-        // instructionsBuilder.append(
-        // String.format("<h3>Your statistics from the last round have been updated as follows:</h3>" +
-        // "<ul>" +
-        // "<li>Tokens collected last round: %d</li>" +
-        // "<li>Tokens subtracted by other players: %d</li>" +
-        // "<li>Tokens used to subtract tokens from other players: %d</li>" +
-        // "<li>Net earned tokens in the last round: %d</li>" +
-        // "<li>Net income from the last round: $%3.2f</li>" +
-        // "</ul>",
-        // clientData.getTokensCollectedLastRound(),
-        // clientData.getSanctionPenalties(),
-        // clientData.getSanctionCosts(),
-        // clientData.getCurrentTokens(),
-        // getIncome(clientData.getCurrentTokens()))
-        // );
-        // instructionsBuilder.append(String.format("Your <b>total income</b> so far is: $%3.2f<hr>",
-        // getIncome(clientData.getTotalTokens())));
-        // if (event.isLastRound()) {
-        // instructionsBuilder.append(client.getDataModel().getLastRoundDebriefing());
-        // }
-        // setInstructions(instructionsBuilder.toString());
-
-    }
-
     private ChatPanel getChatPanel() {
         if (chatPanel == null) {
             chatPanel = new ChatPanel(client);
@@ -784,51 +756,54 @@ public class GameWindow2D implements GameWindow {
         if (summarized) {
             roundConfiguration.buildSummarizedInstructions(instructionsBuilder);
         }
+        else if (roundConfiguration.isMultiScreenInstructionsEnabled()) {
+            // FIXME: use setActionListener to avoid conflict between listeners if we can't disambiguate the
+            // generated events properly
+            instructionsEditorPane.addActionListener(
+                    createMultiScreenInstructionsListener(roundConfiguration));
+            roundConfiguration.buildInstructions(instructionsBuilder, 0);
+        }
         else {
             roundConfiguration.buildAllInstructions(instructionsBuilder);
         }
+        if (roundConfiguration.isQuizEnabled()) {
+            // FIXME: use setActionListener to avoid conflict between listeners if we can't disambiguate the
+            // generated events properly
+            instructionsEditorPane.addActionListener(createQuizListener(roundConfiguration));
+        }
         // and add the quiz instructions if the quiz is enabled.
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                if (roundConfiguration.isQuizEnabled()) {
-                    instructionsEditorPane.setActionListener(createQuizListener(roundConfiguration));
-                }
-                setInstructions(instructionsBuilder.toString());
-                showInstructionsPanel();
-                instructionsEditorPane.setCaretPosition(0);
-            }
+        SwingUtilities.invokeLater(() -> {
+            setInstructions(instructionsBuilder.toString());
+            showInstructionsPanel();
+            instructionsEditorPane.setCaretPosition(0);
         });
     }
 
     public void showInitialVotingInstructions() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                // instructionsEditorPane.setActionListener(null);
-                // instructionsEditorPane.setActionListener(createClientReadyListener("Are you ready to submit your nominations?"));
-                setInstructions(dataModel.getRoundConfiguration().getInitialVotingInstructions());
-                showInstructionsPanel();
-            }
+        SwingUtilities.invokeLater(() -> {
+            // instructionsEditorPane.setActionListener(null);
+            // instructionsEditorPane.setActionListener(createClientReadyListener("Are you ready to submit your nominations?"));
+            setInstructions(dataModel.getRoundConfiguration().getInitialVotingInstructions());
+            showInstructionsPanel();
         });
     }
 
     public void showVotingScreen() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                if (votingPanel == null) {
-                    votingPanel = new JPanel();
-                    votingPanel.setLayout(new BoxLayout(votingPanel, BoxLayout.Y_AXIS));
-                    votingInstructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
-                    votingInstructionsScrollPane = new JScrollPane(votingInstructionsEditorPane);
-                    RoundConfiguration configuration = client.getCurrentRoundConfiguration();
-                    votingInstructionsEditorPane.setText(configuration.getVotingInstructions());
-                    votingPanel.add(votingInstructionsScrollPane);
-                    votingForm = new VotingForm(client);
-                    votingPanel.add(votingForm);
-                    votingPanel.setName(VotingForm.NAME);
-                    add(votingPanel);
-                }
-                showPanel(VotingForm.NAME);
+        SwingUtilities.invokeLater(() -> {
+            if (votingPanel == null) {
+                votingPanel = new JPanel();
+                votingPanel.setLayout(new BoxLayout(votingPanel, BoxLayout.Y_AXIS));
+                votingInstructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
+                votingInstructionsScrollPane = new JScrollPane(votingInstructionsEditorPane);
+                RoundConfiguration configuration = client.getCurrentRoundConfiguration();
+                votingInstructionsEditorPane.setText(configuration.getVotingInstructions());
+                votingPanel.add(votingInstructionsScrollPane);
+                votingForm = new VotingForm(client);
+                votingPanel.add(votingForm);
+                votingPanel.setName(VotingForm.NAME);
+                add(votingPanel);
             }
+            showPanel(VotingForm.NAME);
         });
     }
 
@@ -846,13 +821,11 @@ public class GameWindow2D implements GameWindow {
     }
 
     public void showSurveyInstructions() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                instructionsEditorPane.setActionListener(null);
-                instructionsEditorPane.setActionListener(createClientReadyListener(dataModel.getRoundConfiguration().getSurveyConfirmationMessage()));
-                setInstructions(dataModel.getRoundConfiguration().getSurveyInstructions(dataModel.getId()));
-                showInstructionsPanel();
-            }
+        SwingUtilities.invokeLater(() -> {
+            instructionsEditorPane.setActionListener(null);
+            instructionsEditorPane.setActionListener(createClientReadyListener(dataModel.getRoundConfiguration().getSurveyConfirmationMessage()));
+            setInstructions(dataModel.getRoundConfiguration().getSurveyInstructions(dataModel.getId()));
+            showInstructionsPanel();
         });
     }
 
@@ -869,11 +842,8 @@ public class GameWindow2D implements GameWindow {
     }
 
     public void updateDebriefing(final PostRoundSanctionUpdateEvent event) {
-        Runnable runnable = new Runnable() {
-            public void run() {
-                postSanctionDebriefingText(event);
-                showInstructionsPanel();
-            }
+        Runnable runnable = () -> {
+            showInstructionsPanel();
         };
         SwingUtilities.invokeLater(runnable);
     }
@@ -888,26 +858,24 @@ public class GameWindow2D implements GameWindow {
             robotWorker.cancel(true);
             robotWorker = null;
         }
-        Runnable runnable = new Runnable() {
-            public void run() {
-                if (inRoundChatPanel != null) {
-                    gamePanel.remove(inRoundChatPanel);
-                    gamePanel.revalidate();
-                    gamePanel.repaint();
-                }
-                RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
-                if (roundConfiguration.isPostRoundSanctioningEnabled()) {
-                    // add sanctioning text and slap the PostRoundSanctioningPanel in
-                    PostRoundSanctioningPanel panel = new PostRoundSanctioningPanel(event, roundConfiguration, client);
-                    panel.setName(POST_ROUND_SANCTIONING_PANEL_NAME);
-                    add(panel);
-                    showPanel(POST_ROUND_SANCTIONING_PANEL_NAME);
-                } else {
-                    instructionsEditorPane.setText("Waiting for updated round totals from the server...");
-                    showInstructionsPanel();
-                }
-                showDebriefing(event.getClientData(), false);
+        Runnable runnable = () -> {
+            if (inRoundChatPanel != null) {
+                gamePanel.remove(inRoundChatPanel);
+                gamePanel.revalidate();
+                gamePanel.repaint();
             }
+            RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
+            if (roundConfiguration.isPostRoundSanctioningEnabled()) {
+                // add sanctioning text and slap the PostRoundSanctioningPanel in
+                PostRoundSanctioningPanel panel = new PostRoundSanctioningPanel(event, roundConfiguration, client);
+                panel.setName(POST_ROUND_SANCTIONING_PANEL_NAME);
+                add(panel);
+                showPanel(POST_ROUND_SANCTIONING_PANEL_NAME);
+            } else {
+                instructionsEditorPane.setText("Waiting for updated round totals from the server...");
+                showInstructionsPanel();
+            }
+            showDebriefing(event.getClientData(), false);
         };
         try {
             SwingUtilities.invokeAndWait(runnable);

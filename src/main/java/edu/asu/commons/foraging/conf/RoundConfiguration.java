@@ -51,6 +51,23 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     private List<Strategy> selectedRules;
     private transient NumberFormat currencyFormat;
 
+    public boolean isMultiScreenInstructionsEnabled() {
+        return getBooleanProperty("multi-screen-instructions-enabled", false);
+    }
+
+    /**
+     * Returns the number of instructions screens to cycle through. Indexes are 0-based, so if this returns 5,
+     * we expect to be able to access instructions-0, instructions-1, instructions-2, instructions-3, and
+     * instructions-4 properties.
+     * @return the number of instructions-n available, where the maximum n is this number - 1
+     */
+    public int getNumberOfInstructionScreens() {
+        if (! isMultiScreenInstructionsEnabled()) {
+            throw new RuntimeException("This should only be accessible if multi page instructions are enabled.");
+        }
+        return getIntProperty("number-of-instruction-screens");
+    }
+
 
     public enum SanctionType {
         REAL_TIME, POST_ROUND, NONE;
@@ -343,6 +360,12 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         // to reference them
         template.add("dollarsPerToken", toCurrencyString(getDollarsPerToken()));
         template.add("initialDistribution", NumberFormat.getPercentInstance().format(getInitialDistribution()));
+        return template.render();
+    }
+
+    public String getInstructions(int screenNumber) {
+        String instructionsTemplate = getProperty("instructions-" + screenNumber);
+        ST template = createStringTemplate(instructionsTemplate);
         return template.render();
     }
 
@@ -752,6 +775,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
             return addAllSpecialInstructions(instructionsBuilder);
         }
         return instructionsBuilder;
+    }
+
+    public StringBuilder buildInstructions(StringBuilder instructionsBuilder, int screenNumber) {
+       return instructionsBuilder.append(getInstructions(screenNumber)) ;
     }
 
     /**
