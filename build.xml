@@ -234,6 +234,21 @@
       </sequential>
     </parallel>
   </target>
+  <target name='uol' depends='check-configuration,configure' if='${configuration.exists}'>
+    <parallel>
+      <daemons>
+        <antcall target='server' />
+      </daemons>
+      <sequential>
+        <sleep seconds='5'/>
+        <antcall target='fac'/>
+      </sequential>
+      <sequential>
+        <sleep seconds='5'/>
+        <antcall target='client'/>
+      </sequential>
+    </parallel>
+  </target>
   <target name="deploy" depends="check-configuration,configure" if="${configuration.exists}">
     <antcall target="deploy-to">
       <param name="deploy.dir" value="${web.dir}"/>

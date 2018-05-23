@@ -206,7 +206,17 @@ public class GameWindow2D implements GameWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // currently only allow next / continue
-                screenNumber++;
+                HtmlEditorPane.FormActionEvent event = (HtmlEditorPane.FormActionEvent) e;
+                Properties formData = event.getData();
+                String action = formData.getProperty("submit", "Continue");
+                switch (action) {
+                    case "Continue":
+                        screenNumber++;
+                        break;
+                    case "Previous":
+                        screenNumber--;
+                        break;
+                }
                 setInstructions(configuration.getInstructions(screenNumber));
             }
         };
@@ -303,7 +313,8 @@ public class GameWindow2D implements GameWindow {
                     if (!dataModel.getRoundConfiguration().isFieldOfVisionEnabled()) {
                         formatString = " [%d : %d] ";
                         builder.append(String.format(formatString, dataModel.getAssignedNumber(id), dataModel.getCurrentTokens(id)));
-                    } else {
+                    }
+                    else {
                         double radius = dataModel.getRoundConfiguration().getViewSubjectsRadius();
                         Circle fieldOfVision = new Circle(clientPosition, radius);
                         if (fieldOfVision.contains(dataModel.getClientPosition(id))) {
@@ -337,7 +348,6 @@ public class GameWindow2D implements GameWindow {
     }
 
     private void initGuiComponents() {
-        // FIXME: replace with CardLayout for easier switching between panels
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
         // default sized subject view
@@ -346,14 +356,17 @@ public class GameWindow2D implements GameWindow {
 
         // add instructions panel card
         instructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane(false, 26);
+        String liStyle = "li { margin: 10px 0 10px 0; padding: 10px 0 10px 0;}";
+        String btnStyle = ".btn { font-weight: 400; font-size: 1rem; line-height: 1.5; text-align: center; }";
+        UserInterfaceUtils.addCss(instructionsEditorPane, liStyle, btnStyle);
         instructionsScrollPane = new JScrollPane(instructionsEditorPane);
         instructionsScrollPane.setDoubleBuffered(true);
         instructionsScrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
         instructionsScrollPane.setName(INSTRUCTIONS_PANEL_NAME);
         add(instructionsScrollPane);
 
-        // FIXME: use a more flexible LayoutManager so that in-round chat isn't squeezed all the way on the right
-        // side of the screen.
+        // FIXME: use a more flexible LayoutManager for game panel so in-round chat isn't squeezed all the way on the
+        // right side of the screen.
         gamePanel = new JPanel(new BorderLayout(6, 6));
         gamePanel.setBackground(UserInterfaceUtils.OFF_WHITE);
         gamePanel.setName(GAME_PANEL_NAME);

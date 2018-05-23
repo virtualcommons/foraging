@@ -346,7 +346,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getInstructions(int requestedScreenNumber) {
-        int screenNumber = Math.min(getNumberOfInstructionScreens() - 1, requestedScreenNumber);
+        // clamp between 0 and getNumberOfInstructionScreens() - 1
+        int screenNumber = Math.max(0, Math.min(getNumberOfInstructionScreens() - 1, requestedScreenNumber));
         String instructionsTemplate = getProperty("instructions-" + screenNumber);
         ST template = createStringTemplate(instructionsTemplate);
         return template.render();
