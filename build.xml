@@ -303,6 +303,7 @@
     <delete file="server.jar"/>
     <delete file="client.jar"/>
     <delete file="facilitator.jar"/>
+    <delete file='${keystore.file}'/>
   </target>
   <!-- remove all files in src/main/resources/configuration directory -->
   <target name='clean-configuration'>
