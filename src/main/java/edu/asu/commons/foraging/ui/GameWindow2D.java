@@ -205,9 +205,8 @@ public class GameWindow2D implements GameWindow {
             private int screenNumber = 0;
             @Override
             public void actionPerformed(ActionEvent e) {
-                // currently only allow next
-                int maxScreenNumber = configuration.getNumberOfInstructionScreens();
-                screenNumber = Math.min(maxScreenNumber, screenNumber + 1);
+                // currently only allow next / continue
+                screenNumber++;
                 setInstructions(configuration.getInstructions(screenNumber));
             }
         };
@@ -759,7 +758,7 @@ public class GameWindow2D implements GameWindow {
         else if (roundConfiguration.isMultiScreenInstructionsEnabled()) {
             // FIXME: use setActionListener to avoid conflict between listeners if we can't disambiguate the
             // generated events properly
-            instructionsEditorPane.addActionListener(
+            instructionsEditorPane.setActionListener(
                     createMultiScreenInstructionsListener(roundConfiguration));
             roundConfiguration.buildInstructions(instructionsBuilder, 0);
         }
@@ -769,9 +768,8 @@ public class GameWindow2D implements GameWindow {
         if (roundConfiguration.isQuizEnabled()) {
             // FIXME: use setActionListener to avoid conflict between listeners if we can't disambiguate the
             // generated events properly
-            instructionsEditorPane.addActionListener(createQuizListener(roundConfiguration));
+            instructionsEditorPane.setActionListener(createQuizListener(roundConfiguration));
         }
-        // and add the quiz instructions if the quiz is enabled.
         SwingUtilities.invokeLater(() -> {
             setInstructions(instructionsBuilder.toString());
             showInstructionsPanel();
