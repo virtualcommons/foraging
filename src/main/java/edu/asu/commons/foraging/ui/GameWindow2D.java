@@ -356,7 +356,7 @@ public class GameWindow2D implements GameWindow {
 
         // add instructions panel card
         instructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane(false, 26);
-        String liStyle = "li { margin: 10px 0 10px 0; padding: 10px 0 10px 0;}";
+        String liStyle = "li { padding: 8px 0 8px 0;}";
         String btnStyle = ".btn { font-weight: 400; font-size: 1rem; line-height: 1.5; text-align: center; }";
         UserInterfaceUtils.addCss(instructionsEditorPane, liStyle, btnStyle);
         instructionsScrollPane = new JScrollPane(instructionsEditorPane);
