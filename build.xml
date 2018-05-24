@@ -115,7 +115,7 @@
     <available file='${keystore.file}' property='keystore.present'/>
   </target>
   <target name='generate-keystore' depends='check-keystore' unless='keystore.present'>
-    <genkey alias='${keystore.alias}' verbose='true' storepass='${keystore.storepass}'
+    <genkey alias='${keystore.alias}' verbose='true' storetype='pkcs12' storepass='${keystore.storepass}'
       validity='1825' keystore='${keystore.file}'>
       <dname>
         <param name='CN' value='commons.asu.edu'/>
