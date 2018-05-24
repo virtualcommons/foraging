@@ -116,7 +116,7 @@
   </target>
   <target name='generate-keystore' depends='check-keystore' unless='keystore.present'>
     <genkey alias='${keystore.alias}' verbose='true' storepass='${keystore.storepass}'
-      validity='365' keystore='${keystore.file}'>
+      validity='1825' keystore='${keystore.file}'>
       <dname>
         <param name='CN' value='commons.asu.edu'/>
         <param name='O' value='Arizona State University'/>
@@ -318,7 +318,6 @@
     <delete file="server.jar"/>
     <delete file="client.jar"/>
     <delete file="facilitator.jar"/>
-    <delete file='${keystore.file}'/>
   </target>
   <!-- remove all files in src/main/resources/configuration directory -->
   <target name='clean-configuration'>
