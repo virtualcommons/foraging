@@ -145,7 +145,7 @@ public class ChatPanel extends JPanel {
             chatLabel = new JLabel("Chat: ", SwingConstants.RIGHT);
             chatLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
             chatField = new JTextField();
-            chatField.setFont(UserInterfaceUtils.DEFAULT_PLAIN_FONT);
+            chatField.setFont(UserInterfaceUtils.getDefaultFont(24.0f));
             chatField.addKeyListener(new KeyAdapter() {
                 public void keyPressed(KeyEvent event) {
                     if (event.getKeyCode() == KeyEvent.VK_ENTER) {

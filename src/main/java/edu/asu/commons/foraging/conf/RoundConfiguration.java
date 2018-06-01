@@ -755,7 +755,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         if (isQuizEnabled()) {
             // first show quiz instructions only
             return instructionsBuilder.append(getQuizInstructions());
-        } else {
+        } 
+        else {
             return buildInstructions(instructionsBuilder);
         }
     }

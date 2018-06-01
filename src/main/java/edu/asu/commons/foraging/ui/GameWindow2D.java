@@ -771,18 +771,30 @@ public class GameWindow2D implements GameWindow {
         else if (roundConfiguration.isMultiScreenInstructionsEnabled()) {
             // FIXME: use setActionListener to avoid conflict between listeners if we can't disambiguate the
             // generated events properly
-            instructionsEditorPane.setActionListener(
-                    createMultiScreenInstructionsListener(roundConfiguration));
+            // instructionsEditorPane.setActionListener(createMultiScreenInstructionsListener(roundConfiguration));
             roundConfiguration.buildInstructions(instructionsBuilder, 0);
         }
         else {
             roundConfiguration.buildAllInstructions(instructionsBuilder);
         }
         if (roundConfiguration.isQuizEnabled()) {
-            // FIXME: use setActionListener to avoid conflict between listeners if we can't disambiguate the
-            // generated events properly
             instructionsEditorPane.setActionListener(createQuizListener(roundConfiguration));
         }
+        showInstructions();
+    }
+
+    public void showInstructions(int screenNumber) {
+        final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
+        if (roundConfiguration.isMultiScreenInstructionsEnabled()) {
+            roundConfiguration.buildInstructions(instructionsBuilder, screenNumber);
+        }
+        showInstructions();
+    }
+
+    /**
+     * Displays the current state of the instructionsBuilder instance on the instructionsEditorPane.
+     */
+    public void showInstructions() {
         SwingUtilities.invokeLater(() -> {
             setInstructions(instructionsBuilder.toString());
             showInstructionsPanel();
@@ -833,7 +845,6 @@ public class GameWindow2D implements GameWindow {
 
     public void showSurveyInstructions() {
         SwingUtilities.invokeLater(() -> {
-            instructionsEditorPane.setActionListener(null);
             instructionsEditorPane.setActionListener(createClientReadyListener(dataModel.getRoundConfiguration().getSurveyConfirmationMessage()));
             setInstructions(dataModel.getRoundConfiguration().getSurveyInstructions(dataModel.getId()));
             showInstructionsPanel();
