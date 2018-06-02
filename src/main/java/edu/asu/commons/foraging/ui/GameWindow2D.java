@@ -24,19 +24,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.JViewport;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import javax.swing.Timer;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -76,10 +64,10 @@ public class GameWindow2D implements GameWindow {
     private final static String TRUST_GAME_PANEL_NAME = "trust game panel";
     private final static String CHAT_PANEL_NAME = "standalone chat panel";
     private final static String POST_ROUND_SANCTIONING_PANEL_NAME = "post round sanctioning panel";
-    private final static String SURVEY_ID_PANEL_NAME = "survey id panel";
-    private final static int inRoundChatPanelWidth = 250;
-    private String currentCardPanel = INSTRUCTIONS_PANEL_NAME;
 
+    private final static int IN_ROUND_CHAT_PANEL_WIDTH = 400;
+
+    private String currentCardPanel = INSTRUCTIONS_PANEL_NAME;
     private final StringBuilder instructionsBuilder = new StringBuilder();
     private final ClientDataModel dataModel;
     private EventChannel channel;
@@ -124,7 +112,9 @@ public class GameWindow2D implements GameWindow {
     // SwingWorker for generating robot keypresses
     private SwingWorker robotWorker;
 
-    private boolean singlePlayer = false;
+    private boolean singlePlayer;
+
+    private int screenNumber = 0;
 
     private final static Logger logger = Logger.getLogger(GameWindow2D.class.getName());
 
@@ -157,8 +147,7 @@ public class GameWindow2D implements GameWindow {
     }
 
     /**
-     * In certain cases, init() _can_ be called before endRound() is finished. Need to lock
-     * access!
+     * Access to init() and endRound() must be synchronized.
      */
     public synchronized void init() {
         final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
@@ -367,10 +356,15 @@ public class GameWindow2D implements GameWindow {
 
         // FIXME: use a more flexible LayoutManager for game panel so in-round chat isn't squeezed all the way on the
         // right side of the screen.
-        gamePanel = new JPanel(new BorderLayout(6, 6));
+        gamePanel = new JPanel();
+        // GroupLayout groupLayout = new GroupLayout(gamePanel);
+        // gamePanel.setLayout(groupLayout);
+        // groupLayout.setAutoCreateGaps(true);
+        // groupLayout.setAutoCreateContainerGaps(true);
+
         gamePanel.setBackground(UserInterfaceUtils.OFF_WHITE);
+
         gamePanel.setName(GAME_PANEL_NAME);
-        gamePanel.add(subjectView, BorderLayout.CENTER);
         // add labels to game panel
         // FIXME: replace with progress bar.
         timeLeftLabel = new JLabel("Connecting ...");
@@ -387,12 +381,13 @@ public class GameWindow2D implements GameWindow {
         labelPanel.add(timeLeftLabel);
         labelPanel.add(Box.createHorizontalGlue());
         labelPanel.add(informationLabel);
-        gamePanel.add(labelPanel, BorderLayout.NORTH);
+
+
 
         // add message window.
         messagePanel = new JPanel(new BorderLayout());
         // messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
-        messagePanel.add(new JLabel("Messages"), BorderLayout.NORTH);
+        messagePanel.add(new JLabel("Messages"), BorderLayout.PAGE_START);
         // FIXME: setFont doesn't work here the way we want it to.
         messageTextPane = new JTextPane();
         messageTextPane.setEditable(false);
@@ -405,7 +400,25 @@ public class GameWindow2D implements GameWindow {
         messageScrollPane.setPreferredSize(scrollPaneSize);
         messageScrollPane.setMaximumSize(scrollPaneSize);
         messagePanel.add(messageScrollPane, BorderLayout.CENTER);
-        gamePanel.add(messagePanel, BorderLayout.SOUTH);
+        /*
+        groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addComponent(labelPanel)
+                .addComponent(subjectView)
+                .addComponent(messagePanel)
+        );
+
+        groupLayout.setVerticalGroup(
+                groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(labelPanel)
+                        .addComponent(subjectView)
+                        .addComponent(messagePanel)
+
+        );
+        */
+        gamePanel.add(labelPanel, BorderLayout.PAGE_START);
+        gamePanel.add(subjectView, BorderLayout.CENTER);
+        gamePanel.add(messagePanel, BorderLayout.PAGE_END);
+
 
         add(gamePanel);
 
@@ -427,7 +440,7 @@ public class GameWindow2D implements GameWindow {
                 int width = component.getWidth();
                 if (configuration.isInRoundChatEnabled()) {
                     // Prevent the chat panel from cutting off part of the subjectView
-                    width -= inRoundChatPanelWidth;
+                    width -= IN_ROUND_CHAT_PANEL_WIDTH;
                 }
                 Dimension screenSize = new Dimension(width, (int) (component.getHeight() * 0.85d));
                 subjectView.setScreenSize(screenSize);
@@ -585,6 +598,7 @@ public class GameWindow2D implements GameWindow {
 
     public synchronized void startRound() {
         final RoundConfiguration configuration = dataModel.getRoundConfiguration();
+        screenNumber = 0;
         if (timer != null) {
             timer.stop();
             timer = null;
@@ -600,9 +614,28 @@ public class GameWindow2D implements GameWindow {
             if (configuration.isInRoundChatEnabled()) {
                 ChatPanel chatPanel = getInRoundChatPanel();
                 chatPanel.initialize(dataModel);
-                Dimension chatPanelSize = new Dimension(inRoundChatPanelWidth, getPanel().getSize().height);
+                Dimension chatPanelSize = new Dimension(IN_ROUND_CHAT_PANEL_WIDTH, getPanel().getSize().height);
                 chatPanel.setPreferredSize(chatPanelSize);
-                gamePanel.add(chatPanel, BorderLayout.EAST);
+                gamePanel.add(chatPanel, BorderLayout.LINE_END);
+                /*
+                GroupLayout layout = (GroupLayout) gamePanel.getLayout();
+                layout.setHorizontalGroup(
+                        layout.createParallelGroup()
+                                .addComponent(labelPanel)
+                                .addGroup(layout.createSequentialGroup()
+                                        .addComponent(subjectView)
+                                        .addComponent(chatPanel)
+                                )
+                );
+                layout.setVerticalGroup(
+                        layout.createSequentialGroup()
+                                .addComponent(labelPanel)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(subjectView)
+                                        .addComponent(chatPanel))
+                                .addComponent(messagePanel)
+                );
+                */
             }
             showPanel(GAME_PANEL_NAME);
 
@@ -786,6 +819,7 @@ public class GameWindow2D implements GameWindow {
     public void showInstructions(int screenNumber) {
         final RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
         if (roundConfiguration.isMultiScreenInstructionsEnabled()) {
+            instructionsBuilder.delete(0, instructionsBuilder.length());
             roundConfiguration.buildInstructions(instructionsBuilder, screenNumber);
         }
         showInstructions();
@@ -880,27 +914,26 @@ public class GameWindow2D implements GameWindow {
             robotWorker.cancel(true);
             robotWorker = null;
         }
-        Runnable runnable = () -> {
-            if (inRoundChatPanel != null) {
-                gamePanel.remove(inRoundChatPanel);
-                gamePanel.revalidate();
-                gamePanel.repaint();
-            }
-            RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
-            if (roundConfiguration.isPostRoundSanctioningEnabled()) {
-                // add sanctioning text and slap the PostRoundSanctioningPanel in
-                PostRoundSanctioningPanel panel = new PostRoundSanctioningPanel(event, roundConfiguration, client);
-                panel.setName(POST_ROUND_SANCTIONING_PANEL_NAME);
-                add(panel);
-                showPanel(POST_ROUND_SANCTIONING_PANEL_NAME);
-            } else {
-                instructionsEditorPane.setText("Waiting for updated round totals from the server...");
-                showInstructionsPanel();
-            }
-            showDebriefing(event.getClientData(), false);
-        };
         try {
-            SwingUtilities.invokeAndWait(runnable);
+            SwingUtilities.invokeAndWait(() -> {
+                if (inRoundChatPanel != null) {
+                    gamePanel.remove(inRoundChatPanel);
+                    gamePanel.revalidate();
+                    gamePanel.repaint();
+                }
+                RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
+                if (roundConfiguration.isPostRoundSanctioningEnabled()) {
+                    // add sanctioning text and slap the PostRoundSanctioningPanel in
+                    PostRoundSanctioningPanel panel = new PostRoundSanctioningPanel(event, roundConfiguration, client);
+                    panel.setName(POST_ROUND_SANCTIONING_PANEL_NAME);
+                    add(panel);
+                    showPanel(POST_ROUND_SANCTIONING_PANEL_NAME);
+                } else {
+                    instructionsEditorPane.setText("Waiting for updated round totals from the server...");
+                    showInstructionsPanel();
+                }
+                showDebriefing(event.getClientData(), false);
+            });
         } catch (InterruptedException ignored) {
             ignored.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -957,4 +990,8 @@ public class GameWindow2D implements GameWindow {
         showInstructionsPanel();
     }
 
+    public void showNextInstructions() {
+        screenNumber++;
+        showInstructions(screenNumber);
+    }
 }

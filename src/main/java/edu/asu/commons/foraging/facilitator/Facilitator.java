@@ -19,18 +19,7 @@ import edu.asu.commons.event.ShowInstructionsRequest;
 import edu.asu.commons.facilitator.BaseFacilitator;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
-import edu.asu.commons.foraging.event.BeginChatRoundRequest;
-import edu.asu.commons.foraging.event.FacilitatorEndRoundEvent;
-import edu.asu.commons.foraging.event.FacilitatorSanctionUpdateEvent;
-import edu.asu.commons.foraging.event.FacilitatorUpdateEvent;
-import edu.asu.commons.foraging.event.ImposeStrategyEvent;
-import edu.asu.commons.foraging.event.QuizCompletedEvent;
-import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
-import edu.asu.commons.foraging.event.ShowTrustGameRequest;
-import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
-import edu.asu.commons.foraging.event.ShowVotingInstructionsRequest;
-import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
-import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
+import edu.asu.commons.foraging.event.*;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.rules.Strategy;
 
@@ -113,7 +102,6 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
                 facilitatorWindow.trustGameSubmitted(event);
             }
         });
-
     }
 
     /*
@@ -129,6 +117,10 @@ public class Facilitator extends BaseFacilitator<ServerConfiguration, RoundConfi
      */
     public void sendShowInstructionsRequest() {
         transmit(new ShowInstructionsRequest(getId()));
+    }
+
+    public void sendShowNextInstructionScreenRequest() {
+        transmit(new ShowNextInstructionScreenRequest(getId()));
     }
 
     public void sendShowTrustGameRequest() {

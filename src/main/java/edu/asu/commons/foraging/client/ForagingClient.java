@@ -23,30 +23,7 @@ import edu.asu.commons.event.ShowInstructionsRequest;
 import edu.asu.commons.event.SocketIdentifierUpdateRequest;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
-import edu.asu.commons.foraging.event.AgentInfoRequest;
-import edu.asu.commons.foraging.event.BeginChatRoundRequest;
-import edu.asu.commons.foraging.event.ClientMovementRequest;
-import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
-import edu.asu.commons.foraging.event.CollectTokenRequest;
-import edu.asu.commons.foraging.event.EndRoundEvent;
-import edu.asu.commons.foraging.event.MovementEvent;
-import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
-import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
-import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
-import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
-import edu.asu.commons.foraging.event.RoundStartedEvent;
-import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
-import edu.asu.commons.foraging.event.RuleVoteRequest;
-import edu.asu.commons.foraging.event.SetImposedStrategyEvent;
-import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
-import edu.asu.commons.foraging.event.ShowTrustGameRequest;
-import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
-import edu.asu.commons.foraging.event.ShowVotingInstructionsRequest;
-import edu.asu.commons.foraging.event.SinglePlayerClientUpdateEvent;
-import edu.asu.commons.foraging.event.SinglePlayerUpdateRequest;
-import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
-import edu.asu.commons.foraging.event.SynchronizeClientEvent;
-import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
+import edu.asu.commons.foraging.event.*;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.server.ForagingServer;
@@ -181,6 +158,12 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
             public void handle(ShowSurveyInstructionsRequest request) {
                 getGameWindow2D().showSurveyInstructions();
             }
+        });
+        addEventProcessor(new EventTypeProcessor<ShowNextInstructionScreenRequest>(ShowNextInstructionScreenRequest.class) {
+            public void handle(ShowNextInstructionScreenRequest request) {
+                getGameWindow2D().showNextInstructions();
+            }
+
         });
         addEventProcessor(new EventTypeProcessor<RoundStartedEvent>(RoundStartedEvent.class) {
             public void handle(RoundStartedEvent event) {

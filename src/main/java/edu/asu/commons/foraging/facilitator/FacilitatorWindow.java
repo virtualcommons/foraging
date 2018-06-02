@@ -67,6 +67,7 @@ public class FacilitatorWindow extends JPanel {
 
     private JMenuItem startChatMenuItem;
     private JMenuItem showTrustGameMenuItem;
+    private JMenuItem showNextInstructionScreenMenuItem;
     private JMenuItem showVotingInstructionsMenuItem;
     private JMenuItem showVoteScreenMenuItem;
     private JMenuItem showSurveyInstructionsMenuItem;
@@ -110,6 +111,7 @@ public class FacilitatorWindow extends JPanel {
     public void displayGame() {
         startChatMenuItem.setEnabled(false);
         showInstructionsMenuItem.setEnabled(false);
+        showNextInstructionScreenMenuItem.setEnabled(false);
         startRoundMenuItem.setEnabled(false);
         stopRoundMenuItem.setEnabled(true);
     }
@@ -122,33 +124,23 @@ public class FacilitatorWindow extends JPanel {
 
         showInstructionsMenuItem = new JMenuItem("Show instructions");
         showInstructionsMenuItem.setMnemonic(KeyEvent.VK_I);
-        showInstructionsMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendShowInstructionsRequest();
-                addMessage("Instructions have been shown.");
-                startRoundMenuItem.setEnabled(true);
-            }
+        showInstructionsMenuItem.addActionListener(e -> {
+            facilitator.sendShowInstructionsRequest();
+            addMessage("Instructions have been shown.");
+            startRoundMenuItem.setEnabled(true);
         });
         menu.add(showInstructionsMenuItem);
-
+        showNextInstructionScreenMenuItem = createMenuItem(menu, "Show next instruction screen", e -> facilitator.sendShowNextInstructionScreenRequest());
         startRoundMenuItem = new JMenuItem("Start");
         startRoundMenuItem.setMnemonic(KeyEvent.VK_T);
         startRoundMenuItem.setEnabled(false);
-        startRoundMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendBeginRoundRequest();
-            }
-        });
+        startRoundMenuItem.addActionListener(e -> facilitator.sendBeginRoundRequest());
         menu.add(startRoundMenuItem);
 
         stopRoundMenuItem = new JMenuItem("Stop");
         stopRoundMenuItem.setMnemonic(KeyEvent.VK_P);
         stopRoundMenuItem.setEnabled(false);
-        stopRoundMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendEndRoundRequest();
-            }
-        });
+        stopRoundMenuItem.addActionListener(e -> facilitator.sendEndRoundRequest());
         menu.add(stopRoundMenuItem);
 
         boolean hasTrustGame = false;
@@ -164,84 +156,55 @@ public class FacilitatorWindow extends JPanel {
 
         startChatMenuItem = new JMenuItem("Start chat");
         startChatMenuItem.setEnabled(hasDedicatedChatRound);
-        startChatMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendBeginChatRoundRequest();
-            }
-        });
+        startChatMenuItem.addActionListener(e -> facilitator.sendBeginChatRoundRequest());
         menu.add(startChatMenuItem);
 
         showTrustGameMenuItem = new JMenuItem("Show trust game");
         showTrustGameMenuItem.setEnabled(hasTrustGame);
-        showTrustGameMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendShowTrustGameRequest();
-            }
-        });
+        showTrustGameMenuItem.addActionListener(e -> facilitator.sendShowTrustGameRequest());
         menu.add(showTrustGameMenuItem);
 
         menuBar.add(menu);
 
-        showExitInstructionsMenuItem = createMenuItem(menu, "Show exit instructions", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendShowExitInstructionsRequest();
-            }
-        });
+        showExitInstructionsMenuItem = createMenuItem(menu,
+                "Show exit instructions",
+                e -> facilitator.sendShowExitInstructionsRequest()
+        );
 
 
         // voting menu
         menu = new JMenu("Voting");
 
-        showVotingInstructionsMenuItem = createMenuItem(menu, "Show voting instructions", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendShowVotingInstructionsRequest();
+        showVotingInstructionsMenuItem = createMenuItem(menu, "Show voting instructions", e -> facilitator.sendShowVotingInstructionsRequest());
+        showVoteScreenMenuItem = createMenuItem(menu, "Show voting screen", e -> facilitator.sendShowVoteScreenRequest());
+
+        imposeStrategyMenuItem = createMenuItem(menu, "Add imposed strategy", e -> {
+            ForagingStrategy selection = (ForagingStrategy) JOptionPane.showInputDialog(FacilitatorWindow.this, "Select the strategy to impose:\n",
+                    "Impose Strategy",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    ForagingStrategy.values(),
+                    ForagingStrategy.NONE
+                    );
+            if (selection == null)
+                return;
+            Integer distribution = imposedStrategies.get(selection);
+            if (distribution == null) {
+                distribution = 0;
             }
+            imposedStrategies.put(selection, distribution + 1);
+            addMessage("Current strategy distribution: " + imposedStrategies);
         });
-        showVoteScreenMenuItem = createMenuItem(menu, "Show voting screen", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendShowVoteScreenRequest();
-            }
+        createMenuItem(menu, "Clear imposed strategies", e -> {
+            imposedStrategies.clear();
+            addMessage("Cleared strategy distribution: " + imposedStrategies);
         });
-        imposeStrategyMenuItem = createMenuItem(menu, "Add imposed strategy", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ForagingStrategy selection = (ForagingStrategy) JOptionPane.showInputDialog(FacilitatorWindow.this, "Select the strategy to impose:\n",
-                        "Impose Strategy",
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        ForagingStrategy.values(),
-                        ForagingStrategy.NONE
-                        );
-                if (selection == null)
-                    return;
-                Integer distribution = imposedStrategies.get(selection);
-                if (distribution == null) {
-                    distribution = Integer.valueOf(0);
-                }
-                imposedStrategies.put(selection, Integer.valueOf(distribution + 1));
-                addMessage("Current strategy distribution: " + imposedStrategies);
-            }
-        });
-        createMenuItem(menu, "Clear imposed strategies", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                imposedStrategies.clear();
-                addMessage("Cleared strategy distribution: " + imposedStrategies);
-            }
-        });
-        createMenuItem(menu, "Send imposed strategy distribution", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendImposeStrategyEvent(imposedStrategies);
-            }
-        });
+        createMenuItem(menu, "Send imposed strategy distribution", e -> facilitator.sendImposeStrategyEvent(imposedStrategies));
         menuBar.add(menu);
 
         // survey menu
         menu = new JMenu("Survey");
-        showSurveyInstructionsMenuItem = createMenuItem(menu, "Show survey instructions", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                facilitator.sendShowSurveyInstructionsRequest();
-            }
-        });
+        showSurveyInstructionsMenuItem = createMenuItem(menu, "Show survey instructions", e -> facilitator.sendShowSurveyInstructionsRequest());
         menuBar.add(menu);
 
         // Configuration menu
@@ -250,42 +213,32 @@ public class FacilitatorWindow extends JPanel {
 
         JMenuItem menuItem = new JMenuItem("Load");
         menuItem.setMnemonic(KeyEvent.VK_L);
-        menuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new ConfigurationDialog(facilitator, (facilitator.isExperimentRunning() || facilitator.isReplaying()));
-            }
+        menuItem.addActionListener(e -> {
+            new ConfigurationDialog(facilitator, (facilitator.isExperimentRunning() || facilitator.isReplaying()));
         });
         menu.add(menuItem);
 
-        createMenuItem(menu, "Reconnect", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                facilitator.connect();
-            }
-        });
+        createMenuItem(menu, "Reconnect", e -> facilitator.connect());
 
         // create copy to clipboard menu item
-        createMenuItem(menu, "Copy to clipboard", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String text = informationEditorPane.getSelectedText();
+        createMenuItem(menu, "Copy to clipboard", e -> {
+            String text = informationEditorPane.getSelectedText();
+            if (text == null || text.trim().isEmpty()) {
+                addMessage("No text selected, copying all text in the editor pane to the clipboard.");
+                text = informationEditorPane.getText();
                 if (text == null || text.trim().isEmpty()) {
-                    addMessage("No text selected, copying all text in the editor pane to the clipboard.");
-                    text = informationEditorPane.getText();
-                    if (text == null || text.trim().isEmpty()) {
-                        // if text is still empty, give up
-                        JOptionPane.showMessageDialog(FacilitatorWindow.this, "Unable to find any text to copy to the clipboard.");
-                        return;
-                    }
+                    // if text is still empty, give up
+                    JOptionPane.showMessageDialog(FacilitatorWindow.this, "Unable to find any text to copy to the clipboard.");
+                    return;
                 }
-                ClipboardService service = UserInterfaceUtils.getClipboardService();
-                if (service != null) {
-                    HtmlSelection selection = new HtmlSelection(text);
-                    service.setContents(selection);
-                }
-                else {
-                    addMessage("Clipboard service is only available when run as a WebStart application.");
-                }
+            }
+            ClipboardService service = UserInterfaceUtils.getClipboardService();
+            if (service != null) {
+                HtmlSelection selection = new HtmlSelection(text);
+                service.setContents(selection);
+            }
+            else {
+                addMessage("Clipboard service is only available when run as a WebStart application.");
             }
         });
 
@@ -365,6 +318,7 @@ public class FacilitatorWindow extends JPanel {
         else {
 // FIXME: this doesn't work with repeating rounds. Perhaps the server needs to pass in upcoming RoundConfiguration
             RoundConfiguration upcomingRound = roundConfiguration.nextRound();
+            showNextInstructionScreenMenuItem.setEnabled(upcomingRound.isMultiScreenInstructionsEnabled());
             System.err.println("Upcoming round: " + upcomingRound.getRoundIndexLabel());
             boolean showInstructionsNext = true;
             if (upcomingRound.isTrustGameEnabled()) {

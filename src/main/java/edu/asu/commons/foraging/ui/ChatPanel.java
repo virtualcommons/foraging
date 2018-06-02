@@ -141,9 +141,6 @@ public class ChatPanel extends JPanel {
 
         public TextEntryPanel(ForagingClient client, boolean isInRoundChat) {
             setLayout(new BorderLayout(5, 5));
-            JPanel gridPanel = new JPanel(new GridLayout(1, 2, 2, 5));
-            chatLabel = new JLabel("Chat: ", SwingConstants.RIGHT);
-            chatLabel.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
             chatField = new JTextField();
             chatField.setFont(UserInterfaceUtils.getDefaultFont(24.0f));
             chatField.addKeyListener(new KeyAdapter() {
@@ -162,9 +159,7 @@ public class ChatPanel extends JPanel {
                 headerPanel.add(timeRemainingLabel);
                 add(headerPanel, BorderLayout.NORTH);
             }
-            gridPanel.add(chatLabel);
-            gridPanel.add(chatField);
-            add(gridPanel, BorderLayout.CENTER);
+            add(chatField, BorderLayout.CENTER);
         }
 
         private void updateTimeRemaining(int timeRemaining) {
