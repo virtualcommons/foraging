@@ -13,18 +13,15 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -356,11 +353,13 @@ public class GameWindow2D implements GameWindow {
 
         // FIXME: use a more flexible LayoutManager for game panel so in-round chat isn't squeezed all the way on the
         // right side of the screen.
-        gamePanel = new JPanel();
-        // GroupLayout groupLayout = new GroupLayout(gamePanel);
-        // gamePanel.setLayout(groupLayout);
-        // groupLayout.setAutoCreateGaps(true);
-        // groupLayout.setAutoCreateContainerGaps(true);
+        gamePanel = new JPanel(new BorderLayout());
+        /*
+        GroupLayout groupLayout = new GroupLayout(gamePanel);
+        gamePanel.setLayout(groupLayout);
+        groupLayout.setAutoCreateGaps(true);
+        groupLayout.setAutoCreateContainerGaps(true);
+        */
 
         gamePanel.setBackground(UserInterfaceUtils.OFF_WHITE);
 
@@ -381,8 +380,6 @@ public class GameWindow2D implements GameWindow {
         labelPanel.add(timeLeftLabel);
         labelPanel.add(Box.createHorizontalGlue());
         labelPanel.add(informationLabel);
-
-
 
         // add message window.
         messagePanel = new JPanel(new BorderLayout());
@@ -415,19 +412,25 @@ public class GameWindow2D implements GameWindow {
 
         );
         */
-        gamePanel.add(labelPanel, BorderLayout.PAGE_START);
         gamePanel.add(subjectView, BorderLayout.CENTER);
+        gamePanel.add(labelPanel, BorderLayout.PAGE_START);
         gamePanel.add(messagePanel, BorderLayout.PAGE_END);
 
 
         add(gamePanel);
 
-        mainPanel.addKeyListener(createGameWindowKeyListener());
+        setupKeyBindings(mainPanel);
+        SwingUtilities.invokeLater(() -> mainPanel.requestFocusInWindow());
+        logger.info("Key bindings settled");
+
+        // mainPanel.addKeyListener(createGameWindowKeyListener());
+        /*
         mainPanel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 mainPanel.requestFocusInWindow();
             }
         });
+        */
 
         // resize listener
         mainPanel.addComponentListener(new ComponentAdapter() {
@@ -450,6 +453,133 @@ public class GameWindow2D implements GameWindow {
             }
         });
         SwingUtilities.invokeLater(() -> mainPanel.requestFocusInWindow());
+    }
+
+    private Action createMovementAction(Direction direction) {
+        return new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Event event;
+                if (singlePlayer) {
+                    dataModel.moveClient(direction);
+                    event = new MovementEvent(client.getId(), direction);
+                    subjectView.repaint();
+                }
+                else {
+                    event = new ClientMovementRequest(client.getId(), direction);
+                }
+                channel.handle(event);
+            }
+        };
+    }
+
+    private Action createSanctionAction(Integer key) {
+        return new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!dataModel.isSanctioningAllowed()) {
+                    // FIXME: get rid of magic constants
+                    displayErrorMessage("You may not reduce other participants tokens at this time.");
+                    return;
+                }
+                // if (client.canPerformRealTimeSanction()) {
+                // Perform the same check as above, except don't check number of available tokens
+                // - let the server handle that and send an appropriate error message.
+                if (dataModel.isMonitor() || dataModel.isSanctioningAllowed()) {
+                    int assignedNumber = key.intValue();
+                    Identifier sanctionee = dataModel.getClientId(assignedNumber);
+                    System.err.println("Sanctioning : " + sanctionee);
+                    if (sanctionee == null || sanctionee.equals(dataModel.getId())) {
+                        // don't allow self-flagellation :-).
+                        return;
+                    }
+                    // only allow sanctions for subjects within this subject's field of vision
+                    Point subjectPosition = dataModel.getClientPosition(sanctionee);
+                    if (dataModel.getClientData().isSubjectInFieldOfVision(subjectPosition)) {
+                        channel.handle(new RealTimeSanctionRequest(dataModel.getId(), sanctionee));
+                    } else {
+                        displayErrorMessage("The participant is out of range.");
+                        return;
+                    }
+                }
+            }
+        };
+    }
+
+    private void setupKeyBindings(JPanel panel) {
+        for (String upKeyStroke: List.of("UP", "W", "I")) {
+            panel.getInputMap().put(KeyStroke.getKeyStroke(upKeyStroke), "up");
+        }
+        panel.getActionMap().put("up", createMovementAction(Direction.UP));
+
+        for (String rightKeyStroke: List.of("RIGHT", "D", "L")) {
+            panel.getInputMap().put(KeyStroke.getKeyStroke(rightKeyStroke), "right");
+        }
+        panel.getActionMap().put("right", createMovementAction(Direction.RIGHT));
+
+        for (String leftKeyStroke: List.of("LEFT", "A", "J")) {
+            panel.getInputMap().put(KeyStroke.getKeyStroke(leftKeyStroke), "left");
+        }
+        panel.getActionMap().put("left", createMovementAction(Direction.LEFT));
+
+        for (String downKeyStroke: List.of("DOWN", "S", "K")) {
+            panel.getInputMap().put(KeyStroke.getKeyStroke(downKeyStroke), "down");
+        }
+        panel.getActionMap().put("down", createMovementAction(Direction.DOWN));
+
+        panel.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "collect");
+        panel.getActionMap().put("collect", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (dataModel.isHarvestingAllowed()) {
+                        channel.handle(new CollectTokenRequest(client.getId(),
+                                singlePlayer ? dataModel.getCurrentPosition() : null));
+                    }
+                    else {
+                        displayErrorMessage("You cannot harvest at this time.");
+                    }
+                } catch (RuntimeException exception) {
+                    displayErrorMessage("You cannot harvest at this time");
+                }
+            }
+        });
+        for (Integer numericKey: IntStream.range(0, 10).boxed().collect(Collectors.toList())) {
+            String key = String.valueOf(numericKey);
+            panel.getInputMap().put(KeyStroke.getKeyStroke(key), key);
+            panel.getActionMap().put(key, createSanctionAction(numericKey));
+        }
+
+        panel.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "focusChat");
+        panel.getActionMap().put("focusChat", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if (dataModel.getRoundConfiguration().isInRoundChatEnabled()) {
+                    getInRoundChatPanel().setTextFieldFocus();
+                }
+            }
+        });
+
+        panel.getInputMap().put(KeyStroke.getKeyStroke("R"), "resetTokens");
+        panel.getActionMap().put("resetTokens", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                logger.info("Resetting token distribution");
+                if (canResetTokenDistribution()) {
+                    channel.handle(new ResetTokenDistributionRequest(client.getId()));
+                }
+            }
+        });
+
+        panel.getInputMap().put(KeyStroke.getKeyStroke("M"), "toggleExplicitCollection");
+        panel.getActionMap().put("toggleExplicitCollection", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                // M toggles explicit collection mode if enabled
+                if (!dataModel.getRoundConfiguration().isAlwaysInExplicitCollectionMode()) {
+                    dataModel.toggleExplicitCollectionMode();
+                }
+            }
+        });
+
+
     }
 
     /**
