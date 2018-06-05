@@ -24,8 +24,7 @@ import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id$
- * 
+ *
  * Generates aggregate distributions of the number of neighboring tokens for a collected token in two situations:
  * 1. without regard to visibility
  * 2. only when other subjects are visible.   
@@ -66,6 +65,7 @@ public class AggregateCollectedTokenNeighborProcessor extends SaveFileProcessor.
         // populate the ordered identifiers, try directly from the participant tokens map that
         // is persisted in later versions of the experiment.
         ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
+        serverDataModel.reinitialize((RoundConfiguration) savedRoundData.getRoundParameters());
         TreeSet<Identifier> orderedIdentifiers = new TreeSet<>(serverDataModel.getClientDataMap().keySet());
         // write out header for collected tokens statistics.  
         // second token header is the distribution for token harvests when other subjects are in the field of view.
@@ -102,7 +102,6 @@ public class AggregateCollectedTokenNeighborProcessor extends SaveFileProcessor.
     		}
     		else if (event instanceof ResourcesAddedEvent) {
     			ResourcesAddedEvent rae = (ResourcesAddedEvent) event;
-    			assert serverDataModel.getGroup(rae.getId()).equals(rae.getGroup());
     			rae.getGroup().addResources(rae.getResources());
     		}
     		else if (event instanceof TokenCollectedEvent) {
