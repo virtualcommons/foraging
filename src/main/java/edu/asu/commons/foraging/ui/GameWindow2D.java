@@ -507,22 +507,22 @@ public class GameWindow2D implements GameWindow {
     }
 
     private void setupKeyBindings(JPanel panel) {
-        for (String upKeyStroke: List.of("UP", "W", "I")) {
+        for (String upKeyStroke: Arrays.asList("UP", "W", "I")) {
             panel.getInputMap().put(KeyStroke.getKeyStroke(upKeyStroke), "up");
         }
         panel.getActionMap().put("up", createMovementAction(Direction.UP));
 
-        for (String rightKeyStroke: List.of("RIGHT", "D", "L")) {
+        for (String rightKeyStroke: Arrays.asList("RIGHT", "D", "L")) {
             panel.getInputMap().put(KeyStroke.getKeyStroke(rightKeyStroke), "right");
         }
         panel.getActionMap().put("right", createMovementAction(Direction.RIGHT));
 
-        for (String leftKeyStroke: List.of("LEFT", "A", "J")) {
+        for (String leftKeyStroke: Arrays.asList("LEFT", "A", "J")) {
             panel.getInputMap().put(KeyStroke.getKeyStroke(leftKeyStroke), "left");
         }
         panel.getActionMap().put("left", createMovementAction(Direction.LEFT));
 
-        for (String downKeyStroke: List.of("DOWN", "S", "K")) {
+        for (String downKeyStroke: Arrays.asList("DOWN", "S", "K")) {
             panel.getInputMap().put(KeyStroke.getKeyStroke(downKeyStroke), "down");
         }
         panel.getActionMap().put("down", createMovementAction(Direction.DOWN));
