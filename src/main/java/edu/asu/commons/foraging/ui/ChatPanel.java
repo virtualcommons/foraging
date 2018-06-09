@@ -79,6 +79,7 @@ public class ChatPanel extends JPanel {
             JScrollPane instructionsScrollPane = new JScrollPane(instructionsEditorPane);
             RoundConfiguration roundConfiguration = client.getCurrentRoundConfiguration();
             instructionsEditorPane.setText(roundConfiguration.getChatInstructions());
+            instructionsEditorPane.setCaretPosition(0);
             gridPanel.add(instructionsScrollPane);
             gridPanel.add(messageScrollPane);
             add(gridPanel, BorderLayout.CENTER);
