@@ -330,6 +330,7 @@
     <echo message="Removing ${user.home}/.ant/cache"/>
     <delete dir="${user.home}/.ant/cache"/>
     <delete dir="${user.home}/.m2/repository/edu/asu/commons"/>
+    <delete file='${keystore.file}'/>
   </target>
   <!-- fails if requisite build.properties or src/main/resources/configuration/server.xml do not exist -->
   <target name="check-configuration">
