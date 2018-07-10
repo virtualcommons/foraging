@@ -33,10 +33,10 @@ public class AggressiveBot extends Bot.SimpleBot {
         double minimumDistance = Double.MAX_VALUE;
         Point targetTokenLocation = null;
         for (Point tokenLocation : model.getResourcePositions()) {
-            double measure = participantLocation.distanceSq(tokenLocation) +
+            double distanceMeasure = participantLocation.distanceSq(tokenLocation) +
                     (getTokenProximityScalingFactor() * botLocation.distanceSq(tokenLocation));
-            if (measure <= minimumDistance) {
-                minimumDistance = measure;
+            if (distanceMeasure <= minimumDistance) {
+                minimumDistance = distanceMeasure;
                 targetTokenLocation = tokenLocation;
             }
         }
