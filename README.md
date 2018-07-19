@@ -68,6 +68,6 @@ Archives of the [configuration files used](https://github.com/virtualcommons/for
 
 ## status
 [![Build Status](https://travis-ci.org/virtualcommons/foraging.svg?branch=master)](https://travis-ci.org/virtualcommons/foraging)
-[![DOI](https://zenodo.org/badge/19807336.svg)](https://zenodo.org/badge/latestdoi/19807336)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.597807.svg)](https://doi.org/10.5281/zenodo.597807)
 
 If you'd like to add new features or find any bugs, please [let us know](http://vcweb.asu.edu/contact).
