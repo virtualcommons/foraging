@@ -265,24 +265,12 @@ public interface Bot extends Actor {
             }
             // if neither, check if bot is sitting on top of a token and check if it should harvest it.
             Point botLocation = getPosition();
-            if (model.isResourceAt(botLocation)) {
+            if (model.isResourceAt(botLocation) && random.nextDouble() <= getHarvestProbability()) {
                 // FIXME: more sophistiated algorithm might take into account other factors like density instead
                 // of naive dice roll
-                if (random.nextDouble() <= getHarvestProbability()) {
-                    model.collectToken(this);
-                }
-                else {
-                    // failed harvest probability check, wait randomly and pick a new target.
-                    setTicksToWait(random.nextInt(getMaxTicksToWait()));
-                    Point nextTargetLocation = getTargetToken();
-                    // Don't sit at the same location, try something new.
-                    if (nextTargetLocation.equals(botLocation)) {
-                        nextTargetLocation = getRandomTokenLocation();
-                    }
-                    this.targetLocation = nextTargetLocation;
-                }
+                model.collectToken(this);
             }
-            // or figure out our next move and roll the dice to see if we can go.
+            // figure out our next move and roll the dice to see if we can go.
             else {
                 Direction nextMove = getNextMove();
                 if (random.nextDouble() <= getMovementProbability()) {
