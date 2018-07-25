@@ -105,15 +105,35 @@ public class ChatPanel extends JPanel {
         participants.clear();
     }
 
+    public void enableChat() {
+        textEntryPanel.enableChat();
+
+    }
+
+    public void disableChat() {
+        textEntryPanel.disableChat();
+
+    }
+
     public void displayMessage(String message) {
         try {
             Document document = messagesEditorPane.getDocument();
-            document.insertString(0, String.format("%s\n", message), null);
+            if (! message.endsWith("\n")) {
+                message += "\n";
+            }
+            document.insertString(0, message, null);
             messagesEditorPane.setCaretPosition(0);
         } catch (BadLocationException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    public void displayMessage(String message, Color color) {
+        Color originalForeground = messagesEditorPane.getForeground();
+        messagesEditorPane.setForeground(color);
+        displayMessage(message);
+        messagesEditorPane.setForeground(originalForeground);
     }
 
     private void displayMessage(Identifier identifier, String message) {
@@ -135,6 +155,7 @@ public class ChatPanel extends JPanel {
                 getTextEntryPanel().updateTimeRemaining(chatDuration.getTimeLeftInSeconds());
             }
         }, 0, 1, TimeUnit.SECONDS);
+        enableChat();
     }
 
     private class TextEntryPanel extends JPanel {
@@ -149,9 +170,9 @@ public class ChatPanel extends JPanel {
         public TextEntryPanel(ForagingClient client, boolean isInRoundChat) {
             setBorder(new EmptyBorder(10, 10, 10, 10));
             setLayout(new BorderLayout(5, 5));
+            chatLabel = new JLabel("Chat ");
             IconFontSwing.register(FontAwesome.getIconFont());
             Icon icon = IconFontSwing.buildIcon(FontAwesome.COMMENTS_O, 24);
-            chatLabel = new JLabel("Chat ");
             chatLabel.setIcon(icon);
             Font defaultFont = UserInterfaceUtils.getDefaultFont((24.0f));
             chatLabel.setFont(defaultFont);
@@ -177,6 +198,18 @@ public class ChatPanel extends JPanel {
             }
             add(chatLabel, BorderLayout.LINE_START);
             add(chatField, BorderLayout.CENTER);
+        }
+
+        private void enableChat() {
+            chatField.setEditable(true);
+            chatField.setEnabled(true);
+            chatLabel.setText("Chat ");
+        }
+
+        private void disableChat() {
+            chatField.setEditable(false);
+            chatField.setEnabled(false);
+            chatLabel.setText("Chat disabled");
         }
 
         private void updateTimeRemaining(int timeRemaining) {

@@ -1,13 +1,7 @@
 package edu.asu.commons.foraging.ui;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.lang.reflect.InvocationTargetException;
 import java.text.NumberFormat;
 import java.util.*;
@@ -71,10 +65,6 @@ public class GameWindow2D implements GameWindow {
     // instructions components.
     private JScrollPane instructionsScrollPane;
     private HtmlEditorPane instructionsEditorPane;
-
-    private JPanel messagePanel;
-    private JScrollPane messageScrollPane;
-    private JTextPane messageTextPane;
 
     private JPanel labelPanel;
 
@@ -374,61 +364,21 @@ public class GameWindow2D implements GameWindow {
         labelPanel.add(Box.createHorizontalGlue());
         labelPanel.add(informationLabel);
 
-        // add message window.
-        messagePanel = new JPanel(new BorderLayout());
-        // messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
-        messagePanel.add(new JLabel("Messages"), BorderLayout.PAGE_START);
-        // FIXME: setFont doesn't work here the way we want it to.
-        messageTextPane = new JTextPane();
-        messageTextPane.setEditable(false);
-        messageTextPane.setFont(UserInterfaceUtils.DEFAULT_BOLD_FONT);
-        messageTextPane.setBackground(UserInterfaceUtils.OFF_WHITE);
-        addStyles(messageTextPane.getStyledDocument());
-        messageScrollPane = new JScrollPane(messageTextPane);
-        Dimension scrollPaneSize = new Dimension(getPanel().getPreferredSize().width, 60);
-        messageScrollPane.setMinimumSize(scrollPaneSize);
-        messageScrollPane.setPreferredSize(scrollPaneSize);
-        messageScrollPane.setMaximumSize(scrollPaneSize);
-        messagePanel.add(messageScrollPane, BorderLayout.CENTER);
-        /*
-        groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(labelPanel)
-                .addComponent(subjectView)
-                .addComponent(messagePanel)
-        );
-
-        groupLayout.setVerticalGroup(
-                groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(labelPanel)
-                        .addComponent(subjectView)
-                        .addComponent(messagePanel)
-
-        );
-        */
         subjectPanel = new JPanel();
         subjectPanel.setLayout(new GridLayout(1, 2));
         subjectPanel.add(subjectView);
-
-        gamePanel.add(subjectPanel, BorderLayout.CENTER);
-        gamePanel.add(labelPanel, BorderLayout.PAGE_START);
-        gamePanel.add(messagePanel, BorderLayout.PAGE_END);
-
-
-        add(gamePanel);
-
-        setupKeyBindings(mainPanel);
-        SwingUtilities.invokeLater(() -> mainPanel.requestFocusInWindow());
-        logger.info("Key bindings settled");
-
-        // mainPanel.addKeyListener(createGameWindowKeyListener());
-        /*
-        mainPanel.addMouseListener(new MouseAdapter() {
+        subjectPanel.add(getInRoundChatPanel());
+        subjectView.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
-                mainPanel.requestFocusInWindow();
+                requestFocusInWindow();
             }
         });
-        */
+        gamePanel.add(subjectPanel, BorderLayout.CENTER);
+        gamePanel.add(labelPanel, BorderLayout.PAGE_START);
 
+        add(gamePanel);
+        setupKeyBindings(mainPanel);
         // resize listener
         mainPanel.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent event) {
@@ -437,11 +387,7 @@ public class GameWindow2D implements GameWindow {
                     return;
                 }
                 Component component = event.getComponent();
-                int width = component.getWidth();
-                if (configuration.isInRoundChatEnabled()) {
-                    // Prevent the chat panel from cutting off part of the subjectView
-                    width -= IN_ROUND_CHAT_PANEL_WIDTH;
-                }
+                int width = component.getWidth() / 2;
                 Dimension screenSize = new Dimension(width, (int) (component.getHeight() * 0.85d));
                 subjectView.setScreenSize(screenSize);
                 subjectView.setImageSizes();
@@ -449,7 +395,7 @@ public class GameWindow2D implements GameWindow {
                 showPanel(currentCardPanel);
             }
         });
-        SwingUtilities.invokeLater(() -> mainPanel.requestFocusInWindow());
+        SwingUtilities.invokeLater(() -> requestFocusInWindow());
     }
 
     private Action createMovementAction(Direction direction) {
@@ -575,8 +521,6 @@ public class GameWindow2D implements GameWindow {
                 }
             }
         });
-
-
     }
 
     /**
@@ -711,18 +655,6 @@ public class GameWindow2D implements GameWindow {
         return configuration.isPracticeRound() && configuration.isPrivateProperty();
     }
 
-    // public void addCenterComponent(Component newCenterComponent) {
-    // if (currentCenterComponent != null) {
-    // currentCenterComponent.setVisible(false);
-    // getPanel().remove(currentCenterComponent);
-    // getPanel().add(newCenterComponent, BorderLayout.CENTER);
-    // newCenterComponent.setVisible(true);
-    // }
-    // currentCenterComponent = newCenterComponent;
-    // getPanel().revalidate();
-    // getPanel().repaint();
-    // }
-
     public synchronized void startRound() {
         final RoundConfiguration configuration = dataModel.getRoundConfiguration();
         screenNumber = 0;
@@ -741,7 +673,6 @@ public class GameWindow2D implements GameWindow {
             if (configuration.isInRoundChatEnabled()) {
                 ChatPanel chatPanel = getInRoundChatPanel();
                 chatPanel.initialize(dataModel);
-                subjectPanel.add(chatPanel);
             }
             showPanel(GAME_PANEL_NAME);
 
@@ -821,29 +752,8 @@ public class GameWindow2D implements GameWindow {
         displayMessage(message, Color.BLACK);
     }
 
-    public void displayMessage(String errorMessage, Color color) {
-        messageTextPane.setForeground(color);
-        StyledDocument document = messageTextPane.getStyledDocument();
-        try {
-            document.insertString(document.getLength(), errorMessage + "\n", document.getStyle("bold"));
-            messageTextPane.setCaretPosition(document.getLength());
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-    // FIXME: add to some common GUI package?
-    private void addStyles(StyledDocument styledDocument) {
-        // and why not have something like... StyleContext.getDefaultStyle() to
-        // replace this junk
-        Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(
-                StyleContext.DEFAULT_STYLE);
-        StyleConstants.setFontFamily(defaultStyle, "Helvetica");
-        StyleConstants.setBold(styledDocument.addStyle("bold", defaultStyle),
-                true);
-        StyleConstants.setItalic(styledDocument
-                .addStyle("italic", defaultStyle), true);
+    public void displayMessage(String message, Color color) {
+        getInRoundChatPanel().displayMessage("System: " + message);
     }
 
     private double getIncome(int numTokens) {
@@ -868,6 +778,7 @@ public class GameWindow2D implements GameWindow {
     private ChatPanel getInRoundChatPanel() {
         if (inRoundChatPanel == null) {
             inRoundChatPanel = new ChatPanel(client, true);
+            inRoundChatPanel.disableChat();
         }
         return inRoundChatPanel;
     }
@@ -1000,7 +911,7 @@ public class GameWindow2D implements GameWindow {
         JPanel panel = getPanel();
         cardLayout.show(panel, panelName);
         panel.repaint();
-        mainPanel.requestFocusInWindow();
+        requestFocusInWindow();
     }
 
     public void updateDebriefing(final PostRoundSanctionUpdateEvent event) {
@@ -1023,9 +934,7 @@ public class GameWindow2D implements GameWindow {
         try {
             SwingUtilities.invokeAndWait(() -> {
                 if (inRoundChatPanel != null) {
-                    subjectPanel.remove(inRoundChatPanel);
-                    subjectPanel.revalidate();
-                    subjectPanel.repaint();
+                    inRoundChatPanel.disableChat();
                 }
                 RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
                 if (roundConfiguration.isPostRoundSanctioningEnabled()) {
@@ -1054,7 +963,7 @@ public class GameWindow2D implements GameWindow {
             ChatPanel chatPanel = getChatPanel();
             chatPanel.initialize(dataModel);
             showPanel(CHAT_PANEL_NAME);
-            startChatTimer();
+            // startChatTimer();
         });
     }
 
