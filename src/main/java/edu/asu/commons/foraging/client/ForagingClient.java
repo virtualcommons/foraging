@@ -1,17 +1,5 @@
 package edu.asu.commons.foraging.client;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.logging.Logger;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import edu.asu.commons.client.BaseClient;
 import edu.asu.commons.event.ClientMessageEvent;
 import edu.asu.commons.event.Event;
@@ -23,7 +11,31 @@ import edu.asu.commons.event.ShowInstructionsRequest;
 import edu.asu.commons.event.SocketIdentifierUpdateRequest;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
-import edu.asu.commons.foraging.event.*;
+import edu.asu.commons.foraging.event.AgentInfoRequest;
+import edu.asu.commons.foraging.event.BeginChatRoundRequest;
+import edu.asu.commons.foraging.event.ClientMovementRequest;
+import edu.asu.commons.foraging.event.ClientPositionUpdateEvent;
+import edu.asu.commons.foraging.event.CollectTokenRequest;
+import edu.asu.commons.foraging.event.EndRoundEvent;
+import edu.asu.commons.foraging.event.MovementEvent;
+import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
+import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
+import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
+import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
+import edu.asu.commons.foraging.event.RoundStartedEvent;
+import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
+import edu.asu.commons.foraging.event.RuleVoteRequest;
+import edu.asu.commons.foraging.event.SetImposedStrategyEvent;
+import edu.asu.commons.foraging.event.ShowNextInstructionScreenRequest;
+import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
+import edu.asu.commons.foraging.event.ShowTrustGameRequest;
+import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
+import edu.asu.commons.foraging.event.ShowVotingInstructionsRequest;
+import edu.asu.commons.foraging.event.SinglePlayerClientUpdateEvent;
+import edu.asu.commons.foraging.event.SinglePlayerUpdateRequest;
+import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
+import edu.asu.commons.foraging.event.SynchronizeClientEvent;
+import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.foraging.server.ForagingServer;
@@ -34,6 +46,17 @@ import edu.asu.commons.net.SocketIdentifier;
 import edu.asu.commons.ui.UserInterfaceUtils;
 import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.Utils;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.logging.Logger;
 
 /**
  * Foraging experiment client, for 2D / 3D experiments (3D now defunct, need to refactor out)
@@ -402,12 +425,10 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
     public static void main(String[] args) {
         SwingUtilities.invokeLater(
                 () -> {
-                    // System.out.println("inside client");
-                    // Dimension defaultDimension = new Dimension(600, 600);
                     try {
                         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                         System.err.println("Couldn't set native look and feel: " + e);
                     }
