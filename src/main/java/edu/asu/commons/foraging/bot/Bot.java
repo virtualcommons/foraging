@@ -282,11 +282,6 @@ public interface Bot extends Actor {
                     this.targetLocation = nextTargetLocation;
                 }
             }
-            else if (model.isResourceDistributionEmpty()) {
-                if (random.nextDouble() < 0.6d) {
-                    setTicksToWait(10);
-                }
-            }
             // or figure out our next move and roll the dice to see if we can go.
             else {
                 Direction nextMove = getNextMove();

@@ -1,11 +1,6 @@
 package edu.asu.commons.foraging.ui;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -16,12 +11,14 @@ import java.awt.event.KeyListener;
 import java.lang.reflect.InvocationTargetException;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -63,6 +60,7 @@ public class GameWindow2D implements GameWindow {
     private final static String POST_ROUND_SANCTIONING_PANEL_NAME = "post round sanctioning panel";
 
     private final static int IN_ROUND_CHAT_PANEL_WIDTH = 400;
+    public static final int BORDER_PADDING = 10;
 
     private String currentCardPanel = INSTRUCTIONS_PANEL_NAME;
     private final StringBuilder instructionsBuilder = new StringBuilder();
@@ -92,6 +90,7 @@ public class GameWindow2D implements GameWindow {
 
     private ForagingClient client;
 
+    private JPanel subjectPanel;
     private SubjectView subjectView;
 
     private CardLayout cardLayout;
@@ -353,14 +352,8 @@ public class GameWindow2D implements GameWindow {
 
         // FIXME: use a more flexible LayoutManager for game panel so in-round chat isn't squeezed all the way on the
         // right side of the screen.
-        gamePanel = new JPanel(new BorderLayout());
-        /*
-        GroupLayout groupLayout = new GroupLayout(gamePanel);
-        gamePanel.setLayout(groupLayout);
-        groupLayout.setAutoCreateGaps(true);
-        groupLayout.setAutoCreateContainerGaps(true);
-        */
-
+        gamePanel = new JPanel(new BorderLayout(6, 6));
+        gamePanel.setBorder(new EmptyBorder(BORDER_PADDING, BORDER_PADDING, BORDER_PADDING, BORDER_PADDING));
         gamePanel.setBackground(UserInterfaceUtils.OFF_WHITE);
 
         gamePanel.setName(GAME_PANEL_NAME);
@@ -412,7 +405,11 @@ public class GameWindow2D implements GameWindow {
 
         );
         */
-        gamePanel.add(subjectView, BorderLayout.CENTER);
+        subjectPanel = new JPanel();
+        subjectPanel.setLayout(new GridLayout(1, 2));
+        subjectPanel.add(subjectView);
+
+        gamePanel.add(subjectPanel, BorderLayout.CENTER);
         gamePanel.add(labelPanel, BorderLayout.PAGE_START);
         gamePanel.add(messagePanel, BorderLayout.PAGE_END);
 
@@ -744,28 +741,7 @@ public class GameWindow2D implements GameWindow {
             if (configuration.isInRoundChatEnabled()) {
                 ChatPanel chatPanel = getInRoundChatPanel();
                 chatPanel.initialize(dataModel);
-                Dimension chatPanelSize = new Dimension(IN_ROUND_CHAT_PANEL_WIDTH, getPanel().getSize().height);
-                chatPanel.setPreferredSize(chatPanelSize);
-                gamePanel.add(chatPanel, BorderLayout.LINE_END);
-                /*
-                GroupLayout layout = (GroupLayout) gamePanel.getLayout();
-                layout.setHorizontalGroup(
-                        layout.createParallelGroup()
-                                .addComponent(labelPanel)
-                                .addGroup(layout.createSequentialGroup()
-                                        .addComponent(subjectView)
-                                        .addComponent(chatPanel)
-                                )
-                );
-                layout.setVerticalGroup(
-                        layout.createSequentialGroup()
-                                .addComponent(labelPanel)
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(subjectView)
-                                        .addComponent(chatPanel))
-                                .addComponent(messagePanel)
-                );
-                */
+                subjectPanel.add(chatPanel);
             }
             showPanel(GAME_PANEL_NAME);
 
@@ -1047,9 +1023,9 @@ public class GameWindow2D implements GameWindow {
         try {
             SwingUtilities.invokeAndWait(() -> {
                 if (inRoundChatPanel != null) {
-                    gamePanel.remove(inRoundChatPanel);
-                    gamePanel.revalidate();
-                    gamePanel.repaint();
+                    subjectPanel.remove(inRoundChatPanel);
+                    subjectPanel.revalidate();
+                    subjectPanel.repaint();
                 }
                 RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
                 if (roundConfiguration.isPostRoundSanctioningEnabled()) {
