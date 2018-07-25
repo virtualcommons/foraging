@@ -52,6 +52,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         RUNNING
     };
 
+
     private ClientState state = ClientState.UNCONNECTED;
 
     private GameWindow gameWindow;
@@ -66,11 +67,12 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
     public ForagingClient(ServerConfiguration configuration) {
         super(configuration);
         dataModel = new ClientDataModel(this);
+    }
+
+    public void initGuiComponents() {
         clientPanel.setLayout(new BorderLayout());
-        if (configuration.shouldInitialize2D()) {
+        if (getConfiguration().shouldInitialize2D()) {
             gameWindow = new GameWindow2D(this);
-        } else if (configuration.shouldInitialize3D()) {
-            gameWindow = new GameWindow3D(this);
         }
         clientPanel.add(gameWindow.getPanel(), BorderLayout.CENTER);
     }
@@ -398,26 +400,26 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
     }
 
     public static void main(String[] args) {
-        Runnable createGuiRunnable = new Runnable() {
-            public void run() {
-                // System.out.println("inside client");
-                // Dimension defaultDimension = new Dimension(600, 600);
-                try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        SwingUtilities.invokeLater(
+                () -> {
+                    // System.out.println("inside client");
+                    // Dimension defaultDimension = new Dimension(600, 600);
+                    try {
+                        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.err.println("Couldn't set native look and feel: " + e);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.err.println("Couldn't set native look and feel: " + e);
+                    }
+                    JFrame frame = new JFrame();
+                    ForagingClient client = new ForagingClient(new ServerConfiguration());
+                    client.initGuiComponents();
+                    client.connect();
+                    frame.setTitle("Foraging Client: " + client.getId());
+                    frame.add(client.clientPanel);
+                    UserInterfaceUtils.maximize(frame);
                 }
-                JFrame frame = new JFrame();
-                ForagingClient client = new ForagingClient(new ServerConfiguration());
-                client.connect();
-                frame.setTitle("Client Window: " + client.getId());
-                frame.add(client.clientPanel);
-                UserInterfaceUtils.maximize(frame);
-            }
-        };
-        SwingUtilities.invokeLater(createGuiRunnable);
+        );
     }
 
     public void sendTrustGameSubmissionRequest(double playerOneAmountToKeep, double[] playerTwoAmountsToKeep) {
@@ -442,4 +444,5 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
     public boolean isRoundInProgress() {
         return state == ClientState.RUNNING;
     }
+
 }

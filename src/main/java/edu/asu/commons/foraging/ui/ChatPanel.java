@@ -1,8 +1,6 @@
 package edu.asu.commons.foraging.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -19,6 +17,7 @@ import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.EventTypeProcessor;
 import edu.asu.commons.experiment.DataModel;
 import edu.asu.commons.foraging.client.ForagingClient;
+import edu.asu.commons.foraging.client.MockForagingClient;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.event.FacilitatorCensoredChatRequest;
@@ -142,8 +141,13 @@ public class ChatPanel extends JPanel {
 
         public TextEntryPanel(ForagingClient client, boolean isInRoundChat) {
             setLayout(new BorderLayout(5, 5));
+            chatLabel = new JLabel("Chat");
+            Font defaultFont = UserInterfaceUtils.getDefaultFont((24.0f));
+            chatLabel.setFont(defaultFont);
             chatField = new JTextField();
-            chatField.setFont(UserInterfaceUtils.getDefaultFont(24.0f));
+            chatField.setFont(defaultFont);
+            // FIXME: consider switching to keybinding style
+            // https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
             chatField.addKeyListener(new KeyAdapter() {
                 public void keyPressed(KeyEvent event) {
                     if (event.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -160,6 +164,7 @@ public class ChatPanel extends JPanel {
                 headerPanel.add(timeRemainingLabel);
                 add(headerPanel, BorderLayout.NORTH);
             }
+            add(chatLabel, BorderLayout.LINE_START);
             add(chatField, BorderLayout.CENTER);
         }
 
@@ -170,9 +175,12 @@ public class ChatPanel extends JPanel {
         private void sendMessage() {
             String message = chatField.getText();
             System.err.println("sending message: " + message);
-            if (message == null || "".equals(message) || targetIdentifier == null) {
+            if (message.isEmpty() || targetIdentifier == null) {
                 return;
             }
+            // FIXME: consider pushing logic into client.sendChatMessage e.g.,
+            // client.sendChatMessage(message, targetIdentifier);
+            // somewhat complicated by special casing for in round chat focus request after sending the message
             RoundConfiguration configuration = client.getCurrentRoundConfiguration();
             ChatRequest request = new ChatRequest(client.getId(), message, targetIdentifier);
             if (configuration.isCensoredChat()) {
@@ -181,7 +189,7 @@ public class ChatPanel extends JPanel {
             else {
                 client.transmit(request);
             }
-            // special case for in round chat
+            // FIXME: special case for in round chat
             if (isInRoundChat) {
                 client.getGameWindow().requestFocusInWindow();
             }
@@ -190,7 +198,12 @@ public class ChatPanel extends JPanel {
             }
             chatField.setText("");
         }
+    }
 
+    public static void main(String[] args) {
+        JFrame frame = new JFrame();
+        frame.add(new ChatPanel(new MockForagingClient(), true));
+        UserInterfaceUtils.maximize(frame);
     }
 
 }
