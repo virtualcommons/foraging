@@ -17,7 +17,7 @@ vim:sts=2:sw=2
   <url>http://github.com/virtualcommons/foraging</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jetty.version>9.4.10.v20180503</jetty.version>
+    <jetty.version>9.4.12.RC0</jetty.version>
   </properties>
   <licenses>
     <license>
@@ -81,6 +81,16 @@ vim:sts=2:sw=2
       <groupId>javax.media</groupId>
       <artifactId>jmf</artifactId>
       <version>2.1.1e</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.jiconfont</groupId>
+      <artifactId>jiconfont-font_awesome</artifactId>
+      <version>4.7.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.jiconfont</groupId>
+      <artifactId>jiconfont-swing</artifactId>
+      <version>1.0.0</version>
     </dependency>
   </dependencies>
   <build>

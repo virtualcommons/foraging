@@ -9,6 +9,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
@@ -24,6 +26,8 @@ import edu.asu.commons.foraging.event.FacilitatorCensoredChatRequest;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.UserInterfaceUtils;
 import edu.asu.commons.util.Duration;
+import jiconfont.icons.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 
 /**
  * Chat panel used to communicate with other players.
@@ -101,17 +105,21 @@ public class ChatPanel extends JPanel {
         participants.clear();
     }
 
-    private void displayMessage(Identifier identifier, String message) {
+    public void displayMessage(String message) {
         try {
             Document document = messagesEditorPane.getDocument();
-            String source = String.format("%s :  ", identifier.getChatHandle());
-            document.insertString(0, source, null);
-            document.insertString(source.length(), String.format("%s\n", message), null);
+            document.insertString(0, String.format("%s\n", message), null);
             messagesEditorPane.setCaretPosition(0);
         } catch (BadLocationException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    private void displayMessage(Identifier identifier, String message) {
+        // FIXME: pick a better chat handle <-> message delimiter
+        String fullMessage = String.format("%s: %s", identifier.getChatHandle(), message);
+        displayMessage(fullMessage);
     }
 
     public void initialize(DataModel<ServerConfiguration, RoundConfiguration> dataModel) {
@@ -136,12 +144,15 @@ public class ChatPanel extends JPanel {
         private Identifier targetIdentifier = Identifier.ALL;
         private JLabel chatLabel;
         private JTextField chatField;
-        private int timeRemaining;
         private JLabel timeRemainingLabel = new JLabel("");
 
         public TextEntryPanel(ForagingClient client, boolean isInRoundChat) {
+            setBorder(new EmptyBorder(10, 10, 10, 10));
             setLayout(new BorderLayout(5, 5));
-            chatLabel = new JLabel("Chat");
+            IconFontSwing.register(FontAwesome.getIconFont());
+            Icon icon = IconFontSwing.buildIcon(FontAwesome.COMMENTS_O, 24);
+            chatLabel = new JLabel("Chat ");
+            chatLabel.setIcon(icon);
             Font defaultFont = UserInterfaceUtils.getDefaultFont((24.0f));
             chatLabel.setFont(defaultFont);
             chatField = new JTextField();
