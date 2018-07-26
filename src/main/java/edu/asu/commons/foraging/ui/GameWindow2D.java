@@ -778,7 +778,7 @@ public class GameWindow2D implements GameWindow {
     }
 
     public void displayMessage(String message, Color color) {
-        getInRoundChatPanel().displayMessage("System: " + message);
+        getInRoundChatPanel().displayMessage(message, color);
     }
 
     private double getIncome(int numTokens) {
