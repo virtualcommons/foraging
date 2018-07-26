@@ -31,4 +31,4 @@ codebase.url=http://${server.address}:8080
 server.port=16001
 
 # SESEF framework version: https://github.com/virtualcommons/sesef 
-sesef.version=0.9.6
+sesef.version=0.9.7

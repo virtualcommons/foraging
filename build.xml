@@ -20,7 +20,6 @@
   <condition property="ivy.home" value="${env.IVY_HOME}">
 	<isset property="env.IVY_HOME" />
   </condition>
-  <property name='data.dir' value='experiment-data' />
   <property name="ivy.home" value="${user.home}/.ant" />
   <property name="ivy.jar.dir" value="${ivy.home}/lib" />
   <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
@@ -48,7 +47,9 @@
   <!-- default compilation properties -->
   <property name="src.dir" value="src/main/java"/>
   <property name="build.dir" value="target/classes"/>
+  <property name='data.dir' value='experiment-data' />
   <!-- default web & deployment properties -->
+  <property name='sesef.version' value='0.9.7' />
   <property name="web.dir" value="src/main/webapp"/>
   <property name="server.port" value="16001"/>
   <property name="server.xml" value="server.xml"/>
