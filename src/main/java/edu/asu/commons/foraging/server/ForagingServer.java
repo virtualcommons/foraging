@@ -195,7 +195,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private ServerState serverState;
         private final Duration secondTick = Duration.create(1000L);
         // bots tick every 100 ms
-        private final Duration botTick = Duration.create(100L);
+        private final Duration botTick = Duration.create(60L);
         private volatile boolean groupsInitialized;
 
         /**
@@ -954,9 +954,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             // activate bots
             botTick.onTick((duration) -> {
-                // botTick duration runs every 100ms, so duration.isModulo(10) will return true every 1s to reset
-                // bot actions every second.
-                serverDataModel.getGroups().forEach((group) -> group.activateBots(duration.isModulo(10))); 
+                // botTick duration triggers this block every 60ms, so duration.isModulo(16) will return true ~1s to
+                // reset bot actions every second.
+                serverDataModel.getGroups().forEach((group) -> group.activateBots(duration.isModulo(17))); 
             });
             // update client with bot positions and updated resource totals
             for (GroupDataModel group : serverDataModel.getGroups()) {
