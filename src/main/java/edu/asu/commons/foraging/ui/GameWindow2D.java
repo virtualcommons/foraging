@@ -43,7 +43,9 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -389,10 +391,20 @@ public class GameWindow2D implements GameWindow {
         labelPanel.add(Box.createHorizontalGlue());
         labelPanel.add(informationLabel);
 
-        subjectPanel = new JPanel();
-        subjectPanel.setLayout(new GridLayout(1, 2));
-        subjectPanel.add(subjectView);
-        subjectPanel.add(getInRoundChatPanel());
+        subjectPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.insets = new Insets(3, 3, 3, 3);
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.weightx = 1.0;
+        constraints.weighty = 1.0;
+        constraints.gridwidth = 3;
+        constraints.anchor = GridBagConstraints.CENTER;
+        subjectPanel.add(subjectView, constraints);
+        constraints.gridx = 3;
+        constraints.gridwidth = 1;
+        subjectPanel.add(getInRoundChatPanel(), constraints);
         subjectView.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -412,8 +424,8 @@ public class GameWindow2D implements GameWindow {
                     return;
                 }
                 Component component = event.getComponent();
-                int width = component.getWidth() / 2;
-                Dimension screenSize = new Dimension(width, (int) (component.getHeight() * 0.85d));
+                int width = (int) (component.getWidth() * 0.75d);
+                Dimension screenSize = new Dimension(width, (int) (component.getHeight() * 0.90d));
                 subjectView.setScreenSize(screenSize);
                 subjectView.setImageSizes();
                 getPanel().revalidate();
