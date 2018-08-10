@@ -75,7 +75,6 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
         RUNNING
     };
 
-
     private ClientState state = ClientState.UNCONNECTED;
 
     private GameWindow gameWindow;
