@@ -210,13 +210,15 @@ public class ChatPanel extends JPanel {
         private void enableChat() {
             chatField.setEditable(true);
             chatField.setEnabled(true);
-            chatLabel.setText("Chat ");
+            chatField.setVisible(true);
+            chatLabel.setVisible(true);
         }
 
         private void disableChat() {
             chatField.setEditable(false);
             chatField.setEnabled(false);
-            chatLabel.setText("Chat disabled");
+            chatField.setVisible(false);
+            chatLabel.setVisible(false);
         }
 
         private void updateTimeRemaining(int timeRemaining) {

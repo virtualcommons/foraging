@@ -383,11 +383,13 @@ public class GameWindow2D implements GameWindow {
             constraints.gridx = 0;
             constraints.gridy = 0;
             constraints.fill = GridBagConstraints.BOTH;
-            constraints.weightx = 1.0;
-            constraints.weighty = 1.0;
+            constraints.weightx = 0.5;
+            constraints.weighty = 0.5;
             constraints.gridwidth = 3;
             constraints.anchor = GridBagConstraints.CENTER;
             subjectPanel.add(subjectView, constraints);
+            constraints.weightx = 0.5;
+            constraints.weighty = 0.5;
             constraints.gridx = 3;
             constraints.gridwidth = 1;
             subjectPanel.add(getInRoundChatPanel(), constraints);
@@ -404,7 +406,7 @@ public class GameWindow2D implements GameWindow {
                     return;
                 }
                 Component component = event.getComponent();
-                int width = (int) (component.getWidth() * 0.75d);
+                int width = (int) (component.getWidth() * 0.7d);
                 Dimension screenSize = new Dimension(width, (int) (component.getHeight() * 0.90d));
                 subjectView.setScreenSize(screenSize);
                 subjectView.setImageSizes();
