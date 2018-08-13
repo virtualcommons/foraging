@@ -113,13 +113,12 @@ public class ChatPanel extends JPanel {
     }
 
     public void enableChat() {
-        textEntryPanel.enableChat();
-
+        textEntryPanel.setVisible(true);
     }
 
     public void disableChat() {
-        textEntryPanel.disableChat();
-
+        textEntryPanel.setVisible(false);
+        messagesEditorPane.setText("");
     }
 
     public void displayMessage(String message) {
@@ -207,19 +206,17 @@ public class ChatPanel extends JPanel {
             add(chatField, BorderLayout.CENTER);
         }
 
+        /*
         private void enableChat() {
-            chatField.setEditable(true);
-            chatField.setEnabled(true);
             chatField.setVisible(true);
             chatLabel.setVisible(true);
         }
 
         private void disableChat() {
-            chatField.setEditable(false);
-            chatField.setEnabled(false);
             chatField.setVisible(false);
             chatLabel.setVisible(false);
         }
+        */
 
         private void updateTimeRemaining(int timeRemaining) {
             timeRemainingLabel.setText(String.valueOf(timeRemaining) + "s");

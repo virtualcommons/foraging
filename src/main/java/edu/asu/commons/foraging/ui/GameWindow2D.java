@@ -20,7 +20,6 @@ import edu.asu.commons.foraging.rules.Strategy;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.HtmlEditorPane;
 import edu.asu.commons.ui.UserInterfaceUtils;
-import edu.asu.commons.util.Duration;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -51,7 +50,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -107,6 +105,8 @@ public class GameWindow2D implements GameWindow {
 
     private ForagingClient client;
 
+    // FIXME: only used in multiplayer experiments, in single player mode subjectView is directly added.
+    private JPanel subjectPanel;
     private SubjectView subjectView;
 
     private CardLayout cardLayout;
@@ -377,20 +377,20 @@ public class GameWindow2D implements GameWindow {
             gamePanel.add(subjectView, BorderLayout.CENTER);
         }
         else {
-            JPanel subjectPanel = new JPanel(new GridBagLayout());
+            subjectPanel = new JPanel(new GridBagLayout());
             GridBagConstraints constraints = new GridBagConstraints();
             constraints.insets = new Insets(3, 3, 3, 3);
             constraints.gridx = 0;
             constraints.gridy = 0;
             constraints.fill = GridBagConstraints.BOTH;
-            constraints.weightx = 0.5;
-            constraints.weighty = 0.5;
+            constraints.weightx = 0.75;
+            constraints.weighty = 0.75;
             constraints.gridwidth = 3;
             constraints.anchor = GridBagConstraints.CENTER;
             subjectPanel.add(subjectView, constraints);
-            constraints.weightx = 0.5;
-            constraints.weighty = 0.5;
-            constraints.gridx = 3;
+            constraints.weightx = 0.25;
+            constraints.weighty = 0.25;
+            constraints.gridx = GridBagConstraints.RELATIVE;
             constraints.gridwidth = 1;
             subjectPanel.add(getInRoundChatPanel(), constraints);
             gamePanel.add(subjectPanel, BorderLayout.CENTER);
@@ -406,10 +406,20 @@ public class GameWindow2D implements GameWindow {
                     return;
                 }
                 Component component = event.getComponent();
-                int width = (int) (component.getWidth() * 0.7d);
-                Dimension screenSize = new Dimension(width, (int) (component.getHeight() * 0.90d));
+                int fullWidth = component.getWidth();
+                int fullHeight = component.getHeight();
+                int subjectViewWidth = (int) (fullWidth * 0.75d);
+                int height = (int) (fullHeight * 0.9d);
+                Dimension screenSize = new Dimension(subjectViewWidth, height);
                 subjectView.setScreenSize(screenSize);
                 subjectView.setImageSizes();
+                if (configuration.isInRoundChatEnabled()) {
+                    // resize chat panel as well
+                    subjectPanel.setPreferredSize(new Dimension(fullWidth, height));
+                    getInRoundChatPanel().setPreferredSize(
+                            new Dimension(fullWidth - subjectViewWidth, height)
+                    );
+                }
                 getPanel().revalidate();
                 showPanel(currentCardPanel);
             }
@@ -441,7 +451,7 @@ public class GameWindow2D implements GameWindow {
             public void actionPerformed(ActionEvent e) {
                 if (!dataModel.isSanctioningAllowed()) {
                     // FIXME: get rid of magic constants
-                    displayErrorMessage("You may not reduce other participants tokens at this time.");
+                    displayErrorMessage("Sorry, that doesn't do anything right now.");
                     return;
                 }
                 // if (client.canPerformRealTimeSanction()) {
@@ -460,7 +470,7 @@ public class GameWindow2D implements GameWindow {
                     if (dataModel.getClientData().isSubjectInFieldOfVision(subjectPosition)) {
                         channel.handle(new RealTimeSanctionRequest(dataModel.getId(), sanctionee));
                     } else {
-                        displayErrorMessage("The participant is out of range.");
+                        displayErrorMessage("Participant " + assignedNumber + " is out of range.");
                         return;
                     }
                 }
@@ -567,7 +577,6 @@ public class GameWindow2D implements GameWindow {
                 chatPanel.initialize(dataModel);
             }
             showPanel(GAME_PANEL_NAME);
-
             // Send a resize event to ensure that the subjectView is sized
             // to accommodate the in-round chat panel
             mainPanel.dispatchEvent(new ComponentEvent(mainPanel, ComponentEvent.COMPONENT_RESIZED));

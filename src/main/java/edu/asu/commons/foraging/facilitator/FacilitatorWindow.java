@@ -347,7 +347,7 @@ public class FacilitatorWindow extends JPanel {
     }
 
     public void configureForReplay() {
-        // Enable the replay menus
+        // Enable replay menus
         loadExperimentMenuItem.setEnabled(true);
         // Disable all other menus
         startRoundMenuItem.setEnabled(false);
