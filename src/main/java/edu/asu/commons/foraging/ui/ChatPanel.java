@@ -83,7 +83,7 @@ public class ChatPanel extends JPanel {
             add(messageScrollPane, BorderLayout.CENTER);
         }
         else {
-            // not in round chat, include chat instructions on the side
+            // dedicated chat round, include chat instructions via two column GridLayout
             JEditorPane instructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
             JPanel gridPanel = new JPanel(new GridLayout(1, 2, 5, 5));
             JScrollPane instructionsScrollPane = new JScrollPane(instructionsEditorPane);
@@ -205,18 +205,6 @@ public class ChatPanel extends JPanel {
             add(chatLabel, BorderLayout.LINE_START);
             add(chatField, BorderLayout.CENTER);
         }
-
-        /*
-        private void enableChat() {
-            chatField.setVisible(true);
-            chatLabel.setVisible(true);
-        }
-
-        private void disableChat() {
-            chatField.setVisible(false);
-            chatLabel.setVisible(false);
-        }
-        */
 
         private void updateTimeRemaining(int timeRemaining) {
             timeRemainingLabel.setText(String.valueOf(timeRemaining) + "s");

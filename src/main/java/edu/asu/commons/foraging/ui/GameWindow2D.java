@@ -262,7 +262,6 @@ public class GameWindow2D implements GameWindow {
                     }
                     // RoundConfiguration now builds the appropriate quiz results page.
                     setInstructions(builder.toString());
-                    instructionsEditorPane.setCaretPosition(0);
                 }
             }
         };
@@ -325,8 +324,7 @@ public class GameWindow2D implements GameWindow {
     private void setInstructions(String s) {
         // System.err.println("Setting instructions to " + s);
         instructionsEditorPane.setText(s);
-        instructionsEditorPane.repaint();
-        getPanel().repaint();
+        instructionsEditorPane.setCaretPosition(0);
     }
 
     private void initGuiComponents() {
@@ -708,9 +706,11 @@ public class GameWindow2D implements GameWindow {
 
     public void trustGameSubmitted() {
         // FIXME: replace HTML strings with configuration template
-        instructionsBuilder.append("<h3>Submission successful</h3><hr><p>Please wait while the rest of the submissions are gathered.</p>");
-        setInstructions(instructionsBuilder.toString());
-        showInstructionsPanel();
+        SwingUtilities.invokeLater(() -> {
+            instructionsBuilder.append("<h3>Submission successful</h3><hr><p>Please wait while the rest of the submissions are gathered.</p>");
+            setInstructions(instructionsBuilder.toString());
+            showInstructionsPanel();
+        });
     }
 
     public void showInstructions(boolean summarized) {
@@ -750,7 +750,6 @@ public class GameWindow2D implements GameWindow {
         SwingUtilities.invokeLater(() -> {
             setInstructions(instructionsBuilder.toString());
             showInstructionsPanel();
-            instructionsEditorPane.setCaretPosition(0);
         });
     }
 
