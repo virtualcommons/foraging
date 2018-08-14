@@ -15,6 +15,9 @@
     <jar href="client.jar"/>
     <jar href='ST4-4.0.8.jar'/>
     <jar href='antlr-runtime-3.5.2.jar'/>
+    <jar href='jiconfont-1.0.0.jar'/>
+    <jar href='jiconfont-font_awesome-4.7.0.0.jar'/>
+    <jar href='jiconfont-swing-1.0.0.jar'/>
     <jar href='@FRAMEWORK_JAR@'/>
     <!--
     <property name="sun.java2d.noddraw" value="true"/> 
