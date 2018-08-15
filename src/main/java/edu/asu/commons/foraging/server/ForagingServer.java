@@ -807,8 +807,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             // Get the server's version of the source Identifier.
             // The Identifier returned by request.getSource() comes from the client and may not have the correct chat handle.
             Identifier source = clients.get(request.getSource()).getId();
-
-            sendFacilitatorMessage(String.format("%s->%s : [%s]", source, identifiers, request));
+            sendFacilitatorMessage(String.format("%s->(%s): [%s]", source, identifiers, request));
             for (Identifier targetId : identifiers) {
                 ChatEvent chatEvent = new ChatEvent(targetId, request.toString(), source, true);
                 transmitAndStore(chatEvent);
@@ -845,6 +844,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     setupRound();
                     initializeGroups();
                     sendFacilitatorMessage("Ready to show instructions and start next round.");
+                    if (getCurrentRoundConfiguration().isMultiScreenInstructionsEnabled()) {
+                        sendFacilitatorMessage("NOTE: this round has multiple instruction screens: "
+                                + getCurrentRoundConfiguration().getNumberOfInstructionScreens());
+                    }
                     if (getCurrentRoundConfiguration().isQuizEnabled()) {
                         getLogger().info("Waiting for all quizzes to be submitted.");
                         Utils.waitOn(quizSignal);
@@ -854,12 +857,18 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     startRound();
                     break;
                 case WAITING_FOR_CONNECTIONS:
+                    // FIXME: only difference between this and IN_BETWEEN_ROUNDS logic is the timing of
+                    // initializeGroups(), refactor
                     // while waiting for connections we must defer group initialization till all clients
                     // are connected (which is unknown, we allow clients to connect until the experiment has started)
                     setupRound();
                     sendFacilitatorMessage("Ready to show instructions and start next round.");
+                    if (getCurrentRoundConfiguration().isMultiScreenInstructionsEnabled()) {
+                        sendFacilitatorMessage("NOTE: this round has multiple instruction screens: "
+                                + getCurrentRoundConfiguration().getNumberOfInstructionScreens());
+                    }
                     if (getCurrentRoundConfiguration().isQuizEnabled()) {
-                        getLogger().info("Waiting for all quizzes to be submitted.");
+                        sendFacilitatorMessage("Waiting for all quizzes to be submitted.");
                         Utils.waitOn(quizSignal);
                     }
                     // then wait for the signal from the facilitator to actually start the round (a chat session might occur or a voting session).
