@@ -5,10 +5,10 @@
 <entry key="hostname">@SERVER_ADDRESS@</entry>
 <entry key="port">@PORT_NUMBER@</entry>
 <entry key="number-of-rounds">4</entry>
-<entry key="round0">round0.xml</entry>
-<entry key="round1">round1a.xml</entry>
-<entry key="round2">round2a.xml</entry>
-<entry key="round3">round3a.xml</entry>
+<entry key="round0">aggressive-chase.xml</entry>
+<entry key="round1">aggressive-nochase.xml</entry>
+<entry key="round2">coop-chase.xml</entry>
+<entry key="round3">coop-nochase.xml</entry>
 <entry key='quiz-correct-answer-reward'>5</entry>
 <entry key='clients-per-group'>2</entry>
 <entry key='bot-groups-enabled'>true</entry>
