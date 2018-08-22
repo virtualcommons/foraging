@@ -28,7 +28,7 @@ public class AggressiveBot extends Bot.SimpleBot {
     public Point getTargetToken() {
         // return the Point closest to the participant and the bot
         GroupDataModel model = getGroupDataModel();
-        Point participantLocation = model.getClientPositions().values().iterator().next();
+        Point participantLocation = getParticipantPosition();
         Point botLocation = getPosition();
         double minimumDistance = Double.MAX_VALUE;
         Point targetTokenLocation = null;

@@ -6,7 +6,7 @@ import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.net.Identifier;
 
-import java.awt.*;
+import java.awt.Point;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -26,7 +26,6 @@ public interface Bot extends Actor {
     BotType getBotType();
 
     Identifier getId();
-
 
     int getCurrentTokens();
 
@@ -198,6 +197,17 @@ public interface Bot extends Actor {
      * or harvest a token if they are currently on top of a token.
      * 4. randomized behavior if harvest probability fails or movement is unsuccessful (due to player blockage).
      */
+    enum EmptyBoardBehavior {
+        FOLLOW_PLAYER, RANDOM_WALKS, EDGES;
+        private final static Random random = new Random();
+        public static EmptyBoardBehavior random() {
+            EmptyBoardBehavior[] values = EmptyBoardBehavior.values();
+            int index = random.nextInt(values.length);
+            return values[index];
+        }
+    }
+
+
     abstract class SimpleBot implements Bot, Serializable {
 
         private static final long serialVersionUID = 2437093153712520070L;
@@ -221,7 +231,10 @@ public interface Bot extends Actor {
         private int botNumber = 0;
         private int numberOfActionsTaken = 0;
         private GroupDataModel model;
+        private Identifier participantId;
+        private EmptyBoardBehavior emptyBoardBehavior;
         private int ticksToWait;
+        private int edge = 0;
 
         private transient Random random = new Random();
 
@@ -266,8 +279,8 @@ public interface Bot extends Actor {
             // if neither, check if bot is sitting on top of a token and check if it should harvest it.
             Point botLocation = getPosition();
             if (model.isResourceAt(botLocation) && random.nextDouble() <= getHarvestProbability()) {
-                // FIXME: more sophistiated algorithm might take into account other factors like density instead
-                // of naive dice roll
+                // FIXME: more sophisticated algorithm should look at density / proximity to participant instead of naive
+                // dice roll
                 model.collectToken(this);
             }
             // figure out our next move and roll the dice to see if we can go.
@@ -278,10 +291,7 @@ public interface Bot extends Actor {
                     // max cell occupancy and blockage so the bot can move around a player if they are directly
                     // in their way
                     boolean successfulMove = model.move(this, nextMove);
-                    if (!successfulMove) {
-                        setTicksToWait(random.nextInt(2));
-                        this.targetLocation = getRandomTokenLocation();
-                    }
+                    // logger.info("move " + nextMove + " was successful? " + successfulMove);
                 }
                 setTicksToWait(1);
             }
@@ -302,8 +312,31 @@ public interface Bot extends Actor {
         }
 
         public Direction getNextMove() {
-            if (!hasTarget() || ! model.isResourceAt(targetLocation)) {
-                setNewTargetLocation();
+            if (! hasTarget()) {
+                if (model.isResourceDistributionEmpty()) {
+                    // FIXME: might be better modeled as object dispatch also
+                    switch (emptyBoardBehavior) {
+                        case FOLLOW_PLAYER:
+                            targetLocation = getParticipantPosition();
+                            break;
+                        case RANDOM_WALKS:
+                            // pick a corner
+                            if (random.nextBoolean()) {
+                                targetLocation = getRandomCorner();
+                            }
+                            else {
+                                targetLocation = getRandomLocation();
+                            }
+                            break;
+                        default:
+                            targetLocation = getRandomLocation();
+                            break;
+                    }
+                    logger.info("Set bot target location on empty board to: " + targetLocation);
+                }
+                else if (! model.isResourceAt(targetLocation)) {
+                    setNewTargetLocation();
+                }
             }
             Direction nextMove = Direction.towards(getPosition(), getTargetLocation());
             if (nextMove == Direction.NONE) {
@@ -311,6 +344,19 @@ public interface Bot extends Actor {
                 reachedTargetLocation();
             }
             return nextMove;
+        }
+
+        protected Point getRandomCorner() {
+            int x = 0;
+            int y = 0;
+            RoundConfiguration configuration = model.getRoundConfiguration();
+            if (random.nextBoolean()) {
+                x = configuration.getResourceWidth() - 1;
+            }
+            if (random.nextBoolean()) {
+                y = configuration.getResourceDepth() - 1;
+            }
+            return new Point(x, y);
         }
 
         protected void setNewTargetLocation() {
@@ -327,15 +373,16 @@ public interface Bot extends Actor {
         }
 
         protected Point getRandomLocation() {
-            int x = random.nextInt(model.getRoundConfiguration().getResourceWidth());
-            int y = random.nextInt(model.getRoundConfiguration().getResourceDepth());
+            RoundConfiguration configuration = model.getRoundConfiguration();
+            int x = random.nextInt(configuration.getResourceWidth());
+            int y = random.nextInt(configuration.getResourceDepth());
             return new Point(x, y);
         }
 
         protected Point getRandomTokenLocation() {
             Set<Point> resourcePositions = model.getResourcePositions();
             int randomIndex = random.nextInt(resourcePositions.size());
-            for (Point point : resourcePositions) {
+            for (Point point: resourcePositions) {
                 if (randomIndex-- == 0) {
                     return point;
                 }
@@ -397,6 +444,7 @@ public interface Bot extends Actor {
         public void initialize(RoundConfiguration roundConfiguration) {
             setActionsPerSecond(roundConfiguration.getRobotMovesPerSecond());
             setPosition(model.getInitialPosition(getBotNumber()));
+            this.emptyBoardBehavior = EmptyBoardBehavior.random();
             logger.info("setting current bot position to " + getPosition());
             currentTokens = 0;
         }
@@ -420,8 +468,13 @@ public interface Bot extends Actor {
             return identifier;
         }
 
+        public Point getParticipantPosition() {
+            return model.getClientPosition(participantId);
+        }
+
         public Bot setGroupDataModel(GroupDataModel groupDataModel) {
             this.model = groupDataModel;
+            this.participantId = groupDataModel.getClientIdentifiers().iterator().next();
             return this;
         }
 
