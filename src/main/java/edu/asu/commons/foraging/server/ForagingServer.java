@@ -1,24 +1,19 @@
 package edu.asu.commons.foraging.server;
 
-import java.awt.Point;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-
-import edu.asu.commons.event.*;
+import edu.asu.commons.event.BeginRoundRequest;
+import edu.asu.commons.event.ChatEvent;
+import edu.asu.commons.event.ChatRequest;
+import edu.asu.commons.event.ClientMessageEvent;
+import edu.asu.commons.event.ClientReadyEvent;
+import edu.asu.commons.event.EndRoundRequest;
+import edu.asu.commons.event.EventTypeProcessor;
+import edu.asu.commons.event.FacilitatorRegistrationRequest;
+import edu.asu.commons.event.RoundStartedMarkerEvent;
+import edu.asu.commons.event.SetConfigurationEvent;
+import edu.asu.commons.event.ShowExitInstructionsRequest;
+import edu.asu.commons.event.ShowInstructionsRequest;
+import edu.asu.commons.event.ShowRequest;
+import edu.asu.commons.event.SocketIdentifierUpdateRequest;
 import edu.asu.commons.experiment.AbstractExperiment;
 import edu.asu.commons.experiment.IPersister;
 import edu.asu.commons.experiment.Persister;
@@ -82,6 +77,24 @@ import edu.asu.commons.net.event.DisconnectionRequest;
 import edu.asu.commons.util.Duration;
 import edu.asu.commons.util.Utils;
 
+import java.awt.Point;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+
 /**
  * Main experiment server class for foraging / costly sanctioning 2D experiment.
  * 
@@ -95,7 +108,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
     public final static int SYNCHRONIZATION_FREQUENCY = 60;
     public final static int SERVER_SLEEP_INTERVAL = 75;
 
-    // FIXME: investigate using java.util.concurrent constructs instead, e.g., CountDownLatch / CyclicBarrier
+    // FIXME: consider java.util.concurrent constructs instead, e.g., CountDownLatch / CyclicBarrier
     private final Object roundSignal = new Object();
     private final Object quizSignal = new Object();
     private final Object facilitatorSignal = new Object();
@@ -177,6 +190,11 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
 
     enum ServerState {
         WAITING_FOR_CONNECTIONS, IN_BETWEEN_ROUNDS, ROUND_IN_PROGRESS;
+
+        public boolean isRoundInProgress() {
+            return this == ROUND_IN_PROGRESS;
+        }
+
         public boolean isWaiting() {
             switch (this) {
                 case WAITING_FOR_CONNECTIONS:
@@ -343,11 +361,11 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<ClientMovementRequest>(ClientMovementRequest.class) {
                 public void handle(ClientMovementRequest event) {
-                    if (serverState == ServerState.IN_BETWEEN_ROUNDS)
-                        return;
-                    Identifier id = event.getId();
-                    Direction direction = event.getDirection();
-                    serverDataModel.moveClient(id, direction);
+                    if (serverState.isRoundInProgress()) {
+                        Identifier id = event.getId();
+                        Direction direction = event.getDirection();
+                        serverDataModel.moveClient(id, direction);
+                    }
                 }
             });
 
@@ -388,7 +406,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             addEventProcessor(new EventTypeProcessor<RealTimeSanctionRequest>(RealTimeSanctionRequest.class) {
                 @Override
                 public void handleInExperimentThread(final RealTimeSanctionRequest request) {
-                    handleRealTimeSanctionRequest(request);
+                    if (serverState.isRoundInProgress()) {
+                        handleRealTimeSanctionRequest(request);
+                    }
                 }
             });
         }
@@ -433,8 +453,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<ClientPoseUpdate>(ClientPoseUpdate.class) {
                 public void handleInExperimentThread(ClientPoseUpdate event) {
-                    if (serverState == ServerState.IN_BETWEEN_ROUNDS)
+                    if (serverState.isWaiting()) {
                         return;
+                    }
                     ClientData client = clients.get(event.getId());
                     client.setPosition(event.getPosition());
                     client.setHeading(event.getHeading());
@@ -444,30 +465,34 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             });
             addEventProcessor(new EventTypeProcessor<LockResourceRequest>(LockResourceRequest.class) {
                 public void handleInExperimentThread(LockResourceRequest event) {
-                    if (serverState == ServerState.IN_BETWEEN_ROUNDS)
+                    if (serverState.isWaiting()) {
                         return;
+                    }
                     boolean successfullyLocked = serverDataModel.lockResource(event);
                     transmit(new LockResourceEvent(event.getId(), event.getResource(), successfullyLocked));
                 }
             });
             addEventProcessor(new EventTypeProcessor<UnlockResourceRequest>(UnlockResourceRequest.class) {
                 public void handleInExperimentThread(UnlockResourceRequest event) {
-                    if (serverState == ServerState.IN_BETWEEN_ROUNDS)
+                    if (serverState.isWaiting()) {
                         return;
+                    }
                     serverDataModel.unlockResource(event);
                 }
             });
             addEventProcessor(new EventTypeProcessor<HarvestResourceRequest>(HarvestResourceRequest.class) {
                 public void handleInExperimentThread(HarvestResourceRequest event) {
-                    if (serverState == ServerState.IN_BETWEEN_ROUNDS)
+                    if (serverState.isWaiting()) {
                         return;
+                    }
                     serverDataModel.harvestResource(event);
                 }
             });
             addEventProcessor(new EventTypeProcessor<HarvestFruitRequest>(HarvestFruitRequest.class) {
                 public void handleInExperimentThread(HarvestFruitRequest event) {
-                    if (serverState == ServerState.IN_BETWEEN_ROUNDS)
+                    if (serverState.isWaiting()) {
                         return;
+                    }
                     serverDataModel.harvestFruits(event);
                 }
             });
@@ -545,7 +570,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             }
 
             if (!validSanctionRequest) {
-                getLogger().warning("Ignoring token reduction request, sending new client error message event to : " + sourceClient.getId());
+                sendFacilitatorMessage("Ignoring token reduction request, sending new client error message event to : " + sourceClient.getId());
                 transmit(new ClientMessageEvent(sourceClient.getId(), "Ignoring token reduction request: " + errorMessage));
                 return;
             }
@@ -710,10 +735,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         int chatDuration = currentRoundConfiguration.getChatDuration();
                         executor.schedule(() -> {
                             for (Identifier id : clients.keySet()) {
-                                // FIXME: https://github.com/virtualcommons/foraging/issues/34
                                 transmit(new ShowInstructionsRequest(id, true));
                             }
-                            sendFacilitatorMessage("SYSTEM NOTICE: Dedicated chat round ended, ready to start the next round (Round -> Start)");
+                            sendFacilitatorMessage("IMPORTANT: Dedicated chat round ended, ready to start the next round (Round -> Start)");
                             executor.shutdown();
                         }, chatDuration, TimeUnit.SECONDS);
 
@@ -775,7 +799,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             if (Identifier.ALL.equals(target)) {
                 // relay to all clients in this client's group.
                 // check for field of vision
-                if (serverState == ServerState.ROUND_IN_PROGRESS && currentConfiguration.isFieldOfVisionEnabled()) {
+                if (serverState.isRoundInProgress() && currentConfiguration.isFieldOfVisionEnabled()) {
                     // FIXME: replace with clientData.getFieldOfVision?
                     Circle circle = new Circle(clientData.getPosition(), currentConfiguration.getViewSubjectsRadius());
                     // Send the message to all allowed recipients within field of vision
@@ -844,27 +868,34 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     setupRound();
                     initializeGroups();
                     sendFacilitatorMessage("Ready to show instructions and start next round.");
-                    if (getCurrentRoundConfiguration().isMultiScreenInstructionsEnabled()) {
-                        sendFacilitatorMessage("NOTE: this round has multiple instruction screens: "
+                    RoundConfiguration roundConfiguration = getCurrentRoundConfiguration();
+                    if (roundConfiguration.isMultiScreenInstructionsEnabled()) {
+                        sendFacilitatorMessage("IMPORTANT: this round has multiple instruction screens: "
                                 + getCurrentRoundConfiguration().getNumberOfInstructionScreens());
                     }
-                    if (getCurrentRoundConfiguration().isQuizEnabled()) {
-                        getLogger().info("Waiting for all quizzes to be submitted.");
+                    if (roundConfiguration.isQuizEnabled()) {
+                        sendFacilitatorMessage("Waiting for all quizzes to be submitted.");
                         Utils.waitOn(quizSignal);
+                    }
+                    if (roundConfiguration.isExternalSurveyEnabled()) {
+                        sendFacilitatorMessage("IMPORTANT: There is a survey configured this round, please click Survey -> Show Survey Instructions");
                     }
                     // then wait for the signal from the facilitator to actually start the round (a chat session might occur or a voting session).
                     Utils.waitOn(roundSignal);
                     startRound();
                     break;
                 case WAITING_FOR_CONNECTIONS:
-                    // FIXME: only difference between this and IN_BETWEEN_ROUNDS logic is the timing of
-                    // initializeGroups(), refactor
                     // while waiting for connections we must defer group initialization till all clients
-                    // are connected (which is unknown, we allow clients to connect until the experiment has started)
+                    // are connected (which is unknown, clients can connect until the experiment has started)
+                    //
+                    // FIXME: only difference between this and IN_BETWEEN_ROUNDS logic is the timing of
+                    // initializeGroups(), consider unifying both to always initialize groups after the round signal is
+                    // received. A slight performance con: deferred group initialization will occur after the round
+                    // starts which will delay the start of game processing.
                     setupRound();
                     sendFacilitatorMessage("Ready to show instructions and start next round.");
                     if (getCurrentRoundConfiguration().isMultiScreenInstructionsEnabled()) {
-                        sendFacilitatorMessage("NOTE: this round has multiple instruction screens: "
+                        sendFacilitatorMessage("IMPORTANT: this round has multiple instruction screens: "
                                 + getCurrentRoundConfiguration().getNumberOfInstructionScreens());
                     }
                     if (getCurrentRoundConfiguration().isQuizEnabled()) {
