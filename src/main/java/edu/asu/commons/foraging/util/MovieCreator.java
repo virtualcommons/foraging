@@ -277,17 +277,17 @@ public class MovieCreator implements ControllerListener, DataSinkListener {
                 i++;
                 if (i >= args.length)
                     usage();
-                width = new Integer(args[i]).intValue();
+                width = Integer.valueOf(args[i]).intValue();
             } else if (args[i].equals("-h")) {
                 i++;
                 if (i >= args.length)
                     usage();
-                height = new Integer(args[i]).intValue();
+                height = Integer.valueOf(args[i]).intValue();
             } else if (args[i].equals("-f")) {
                 i++;
                 if (i >= args.length)
                     usage();
-                frameRate = new Integer(args[i]).intValue();
+                frameRate = Integer.valueOf(args[i]).intValue();
             } else if (args[i].equals("-o")) {
                 i++;
                 if (i >= args.length)

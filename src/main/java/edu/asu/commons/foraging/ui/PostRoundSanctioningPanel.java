@@ -323,8 +323,8 @@ public class PostRoundSanctioningPanel extends JPanel {
         public IntegerEditor(int min, int max) {
             super(new JFormattedTextField());
             ftf = (JFormattedTextField)getComponent();
-            minimum = new Integer(min);
-            maximum = new Integer(max);
+            minimum = Integer.valueOf(min);
+            maximum = Integer.valueOf(max);
 
             //Set up the editor for the integer cells.
             integerFormat = NumberFormat.getIntegerInstance();
@@ -388,7 +388,7 @@ public class PostRoundSanctioningPanel extends JPanel {
             if (o instanceof Integer) {
                 return o;
             } else if (o instanceof Number) {
-                return new Integer(((Number)o).intValue());
+                return Integer.valueOf(((Number)o).intValue());
             } else {
                 if (DEBUG) {
                     System.out.println("getCellEditorValue: o isn't a Number");

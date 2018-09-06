@@ -294,7 +294,7 @@ public class FractalTerrain extends GraphicsObject{
 		Vector3D normal = (Vector3D)normalGrid.getNode(rowIndex, colIndex);
 		if (normal == null) {
 			normalGrid.insertNode(rowIndex, colIndex, faceNormal);
-			vertexOccurance.insertNode(rowIndex, colIndex, new Integer(1));
+			vertexOccurance.insertNode(rowIndex, colIndex, Integer.valueOf(1));
 		}
 		else {
 			normalGrid.setNode(rowIndex, colIndex, normal.add(faceNormal));
