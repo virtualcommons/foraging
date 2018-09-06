@@ -248,6 +248,10 @@
         <sleep seconds='5'/>
         <antcall target='client'/>
       </sequential>
+      <sequential>
+        <sleep seconds='5'/>
+        <antcall target='client'/>
+      </sequential>
     </parallel>
   </target>
   <target name="deploy" depends="check-configuration,configure" if="${configuration.exists}">
