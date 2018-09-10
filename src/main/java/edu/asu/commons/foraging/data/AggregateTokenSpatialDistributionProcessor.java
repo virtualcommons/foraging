@@ -18,9 +18,7 @@ import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id$
- * 
- * 
+ *
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
  * @version $Rev: 526 $
  */

@@ -28,9 +28,7 @@ import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id$
- * 
- * Generates aggregate statistics 
+ * Generates average token probabilities that a token should appear at a given location over defined time intervals.
  * 
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
  * @version $Rev: 526 $
@@ -69,7 +67,7 @@ public class AggregateTimeIntervalProcessor extends SaveFileProcessor.Base {
             tokenProbabilityGroupNumberHeader.add(groupNumber + " avg token P");
             tokensLeftGroupNumberHeader.add(groupNumber + " tokens left");
             
-            List<Identifier> ids = new ArrayList<Identifier>(group.getOrderedClientIdentifiers());
+            List<Identifier> ids = new ArrayList<>(group.getOrderedClientIdentifiers());
             for (int i = 0; i < ids.size();  i++) {
                 Identifier id = ids.get(i);
                 for (int j = i+1; j < ids.size(); j++) {
@@ -153,8 +151,8 @@ public class AggregateTimeIntervalProcessor extends SaveFileProcessor.Base {
             List<GroupDataModel> groups) {
         List<Double> expectedTokenProbabilities = getExpectedTokenProbabilities(serverDataModel);
         // report summary stats and reset
-        List<Integer> movesTaken = new ArrayList<Integer>();
-        List<Integer> harvestedTokens = new ArrayList<Integer>();
+        List<Integer> movesTaken = new ArrayList<>();
+        List<Integer> harvestedTokens = new ArrayList<>();
         List<Integer> tokensLeft = getTokensLeft(groups);
         List<Double> distances = getClientDistances(groups);
         for (Identifier id : orderedIdentifiers) {
@@ -175,9 +173,9 @@ public class AggregateTimeIntervalProcessor extends SaveFileProcessor.Base {
     }
 
     private List<Double> getClientDistances(List<GroupDataModel> groups) {
-        List<Double> distances = new ArrayList<Double>();
+        List<Double> distances = new ArrayList<>();
         for (GroupDataModel group: groups) {
-            List<Identifier> ids = new ArrayList<Identifier>(group.getOrderedClientIdentifiers());
+            List<Identifier> ids = new ArrayList<>(group.getOrderedClientIdentifiers());
             for (int i = 0; i < ids.size();  i++) {
                 Identifier id = ids.get(i);
                 for (int j = i+1; j < ids.size(); j++) {
@@ -209,7 +207,7 @@ public class AggregateTimeIntervalProcessor extends SaveFileProcessor.Base {
     }
 
     private List<Integer> getTokensLeft(Collection<GroupDataModel> groups) {
-        List<Integer> tokensLeft = new ArrayList<Integer>();
+        List<Integer> tokensLeft = new ArrayList<>();
         for (GroupDataModel group: groups) {
             tokensLeft.add(group.getResourceDistributionSize());
         }

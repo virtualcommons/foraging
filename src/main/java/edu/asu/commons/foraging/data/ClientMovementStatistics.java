@@ -5,9 +5,7 @@ import edu.asu.commons.foraging.model.Direction;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id$
- * 
- * Helper class to keep track of client movements. 
+ * Helper class to keep track of client movements.
  * 
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
  * @version $Rev: 526 $
@@ -15,7 +13,10 @@ import edu.asu.commons.net.Identifier;
 class ClientMovementStatistics {
     private final Identifier id;
     private Direction lastDirection;
-    // distribution of moves, each entry in the array represents the number of times they've moved.
+    // distribution of moves in a straight line
+    // the index represents the number of moves, and the stored int represents the frequency of those moves
+    // e.g, a value of 7 at index 3 means the player moved 3 times in a straight line a total of 7 times during the
+    // entire experiment
     private int[] movementDistribution;
     private int currentMoveCount = 0;
     private int allMoves;
@@ -26,7 +27,7 @@ class ClientMovementStatistics {
         movementDistribution = new int[maximumNumberOfMoves];
     }
 
-    void incrementMovementDistribution() {
+    void updateMovementDistribution() {
         int movementDistributionIndex = Math.min(currentMoveCount, movementDistribution.length-1);
         if (movementDistributionIndex > 0) {
             movementDistribution[movementDistributionIndex-1]++;
@@ -47,7 +48,7 @@ class ClientMovementStatistics {
         }
         else {
             lastDirection = direction;
-            incrementMovementDistribution();
+            updateMovementDistribution();
         }
     }
 

@@ -19,9 +19,8 @@ import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id$
- * 
- * 
+ * Provides movement distribution summary statistics for each participant:
+ *
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
  * @version $Rev: 526 $
  */
@@ -74,7 +73,7 @@ class MovementStatisticsProcessor extends SaveFileProcessor.Base {
         // tally their very last movement counts 
         // (since ClientMovementStatistics only adds to the movement distribution when they change direction)
         for (ClientMovementStatistics summary: clientStatisticsMap.values()) {
-            summary.incrementMovementDistribution();
+            summary.updateMovementDistribution();
         }
         int maximumMoves = Math.max(serverDataModel.getBoardHeight(), serverDataModel.getBoardWidth());
         final Integer[] movementHeader = new Integer[maximumMoves];
