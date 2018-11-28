@@ -248,7 +248,7 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
      * @return
      */
     public String getBotType() {
-        return getProperty("bot-type", "AGGRESSIVE");
+        return getProperty("bot-type", "CHASE_PLAYER");
     }
 
     public double getTokenProximityScalingFactor() {

@@ -13,7 +13,7 @@ public class CooperativeBot extends Bot.SimpleBot {
 
     @Override
     public BotType getBotType() {
-        return BotType.COOPERATIVE;
+        return BotType.IGNORE_PLAYER;
     }
 
 }

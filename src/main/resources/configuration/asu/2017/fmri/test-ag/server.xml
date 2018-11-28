@@ -19,7 +19,7 @@
 <entry key='use-lab-dollars'>false</entry>
 <entry key='occupancy-enabled'>false</entry>
 <entry key='robot-token-proximity-sf'>0.05</entry>
-<entry key='bot-type'>AGGRESSIVE</entry>
+<entry key='bot-type'>CHASE_PLAYER</entry>
 <entry key="use-token-image">true</entry>
 <entry key='token-image-path'>images/green-diamond.png</entry>
 <entry key="use-avatar-image">false</entry>

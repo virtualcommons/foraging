@@ -4,7 +4,7 @@ import edu.asu.commons.foraging.model.GroupDataModel;
 
 import java.awt.Point;
 
-public class AggressiveBot extends Bot.SimpleBot {
+public class ChasePlayerBot extends Bot.SimpleBot {
 
     private static final long serialVersionUID = 6342394422312674232L;
 
@@ -16,12 +16,12 @@ public class AggressiveBot extends Bot.SimpleBot {
 
     public final static double DEFAULT_BOT_TOKEN_DISTANCE_WEIGHT = 0.3d;
 
-    public AggressiveBot() {
+    public ChasePlayerBot() {
         super(ACTIONS_PER_SECOND, MOVEMENT_PROBABILITY, HARVEST_PROBABILITY);
     }
 
     public BotType getBotType() {
-        return BotType.AGGRESSIVE;
+        return BotType.CHASE_PLAYER;
     }
 
     @Override

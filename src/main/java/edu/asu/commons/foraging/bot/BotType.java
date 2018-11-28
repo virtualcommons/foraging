@@ -1,13 +1,13 @@
 package edu.asu.commons.foraging.bot;
 
 public enum BotType {
-    AGGRESSIVE, COOPERATIVE, RANDOM, CUSTOM;
+    CHASE_PLAYER, IGNORE_PLAYER, RANDOM, CUSTOM;
 
     public Bot create() {
         switch (this) {
-            case AGGRESSIVE:
-                return new AggressiveBot();
-            case COOPERATIVE:
+            case CHASE_PLAYER:
+                return new ChasePlayerBot();
+            case IGNORE_PLAYER:
                 return new CooperativeBot();
             case RANDOM:
                 return new RandomBot();
