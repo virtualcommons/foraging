@@ -128,6 +128,10 @@
       </dname>
     </genkey>
   </target>
+  <target name='clean-sign-deploy'>
+    <delete file='${keystore.file}'/>
+    <antcall target='deploy' />
+  </target>
   <target name='sign-jars' depends='generate-keystore'>
     <signjar destDir='${dist.dir}' alias='${keystore.alias}' keystore='${keystore.file}' lazy='true' storepass='${keystore.storepass}' tsaurl='${tsa.url}'>
       <path>
