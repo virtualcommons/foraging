@@ -10,6 +10,7 @@
 <entry key='robot-movement-probability'>0.7</entry>
 <entry key='robot-moves-per-second'>10</entry>
 <entry key='regrowth-rate'>0.15</entry>
+<entry key='bot-type'>CHASE_PLAYER</entry>
 <entry key='repeat'>4</entry>
 <entry key='instructions'>
 <![CDATA[
