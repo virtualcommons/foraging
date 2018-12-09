@@ -468,10 +468,10 @@
     </antcall>
     <antcall target='deploy' />
   </target>
-  <target name='deploy-fmri-ag' depends='compile,clean-configuration'>
+  <target name='deploy-sc-treatment-test' depends='compile,clean-configuration'>
     <!-- specialized target for fmri aggressive test deployment -->
     <antcall target='copy-configuration'>
-      <param name='treatment.dir' value='asu/2017/fmri/test-ag' />
+      <param name='treatment.dir' value='asu/2019/spring-skin-conductance-pretest' />
     </antcall>
     <antcall target='deploy' />
   </target>
