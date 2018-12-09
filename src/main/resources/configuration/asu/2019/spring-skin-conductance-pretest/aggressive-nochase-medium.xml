@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>BENN-Biopac Round 1-20 configuration</comment>
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+<entry key='clients-per-group'>2</entry>
+<entry key="resource-depth">8</entry>
+<entry key="resource-width">8</entry>
+<entry key='robot-harvest-probability'>1</entry>
+<entry key='robot-movement-probability'>0.7</entry>
+<entry key='robot-moves-per-second'>10</entry>
+<entry key='bot-type'>CUSTOM</entry>
+<entry key='regrowth-rate'>0.10</entry>
+<entry key='repeat'>2</entry>
+<entry key="instructions">
+<![CDATA[
+<hr>	   
+<h1>AGGRESSIVE NOCHASE: Instructions for Stage {self.roundIndexLabel}</h1>
+<hr>
+<p>
+    Stage {self.roundIndexLabel} consists of {self.repeat} rounds. The
+    length of each of the following {self.repeat} rounds in this 
+    stage is {self.duration} seconds. As in the practice round you
+    can collect green tokens. However, this time you will earn
+    <b>{dollarsPerToken}</b>  for each token collected. You
+    <b>cannot</b> reset the distribution of green tokens.   
+</p>
+<p>
+    Also, there will be <b> another player collecting tokens </b> in the
+    same grid as you.  
+</p>
+<p>
+    On the top right corner of the screen you can see how many tokens
+    you have collected. On the top left corner of the 
+    screen you can see the amount of time remaining in the round.
+</p>
+]]>
+</entry>
+</properties>

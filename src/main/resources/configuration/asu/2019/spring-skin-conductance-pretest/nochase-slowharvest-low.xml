@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>BENN-Biopac Round 41-60 configuration</comment>
+<entry key='always-explicit'>true</entry>
+<entry key='max-cell-occupancy'>1</entry>
+<entry key='clients-per-group'>2</entry>
+<entry key="resource-depth">8</entry>
+<entry key="resource-width">8</entry>
+<entry key='robot-harvest-probability'>0.3</entry>
+<entry key='robot-movement-probability'>0.7</entry>
+<entry key='robot-moves-per-second'>10</entry>
+<entry key='bot-type'>IGNORE_PLAYER</entry>
+<entry key='regrowth-rate'>0.05</entry>
+<entry key='repeat'>2</entry>
+<entry key="instructions">
+<![CDATA[
+<h1>COOPERATIVE NOCHASE: Instructions for Stage {self.roundIndexLabel}</h1>
+<p>
+Stage {self.roundIndexLabel} consists of {self.repeat} rounds.  As in
+the previous stage, you will collect green tokens and you will earn
+<b>{dollarsPerToken}</b> for each token collected. However, note that
+in this stage, the growth rate of the resource is different than in
+the previous stage. The length of each of the following {self.repeat}
+rounds in this stage is {self.duration} seconds.
+</p>
+<hr>
+]]>
+</entry>
+</properties>
