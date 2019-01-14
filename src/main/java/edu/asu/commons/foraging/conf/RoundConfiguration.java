@@ -325,16 +325,18 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getDoubleProperty("dollars-per-token", getParentConfiguration().getDollarsPerToken());
     }
 
+    public String getSameAsPreviousRoundInstructions() {
+        return getProperty("same-as-previous-round-instructions",
+                getParentConfiguration().getSameAsPreviousRoundInstructions());
+    }
+
     /**
      * Returns the instructions for this round. If undefined at the round level it uses default instructions at the parent ServerConfiguration level.
      */
     public String getInstructions() {
-        String instructionsTemplate = getParentConfiguration().getSameAsPreviousRoundInstructions();
+        String instructionsTemplate = getSameAsPreviousRoundInstructions();
         if (! isRepeatingRound() || isFirstRepeatingRound()) {
             instructionsTemplate = getProperty("instructions", instructionsTemplate);
-        }
-        else {
-            instructionsTemplate = getParentConfiguration().getSameAsPreviousRoundInstructions();
         }
         ST template = createStringTemplate(instructionsTemplate);
         // FIXME: consider lifting these to RoundConfiguration and use 
