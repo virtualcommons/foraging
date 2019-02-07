@@ -60,7 +60,7 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                         event.getCreationTime(),
                         savedRoundData.toSecondString(event),
                         savedRoundData.getElapsedTimeRelativeToMidnight(event),
-                        actor.getId(),
+                        actor.getId().getUUID(),
                         group.getGroupId(),
                         client.moves,
                         actor.getPosition().x,
@@ -81,7 +81,7 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                         event.getCreationTime(),
                         savedRoundData.toSecondString(event),
                         savedRoundData.getElapsedTimeRelativeToMidnight(event),
-                        actor.getId(),
+                        actor.getId().getUUID(),
                         location.x,
                         location.y,
                         group.getGroupId(),
@@ -130,7 +130,7 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                         event.getCreationTime(),
                         savedRoundData.toSecondString(event),
                         savedRoundData.getElapsedTimeRelativeToMidnight(event),
-                        sourceId,
+                        sourceId.getUUID(),
                         targetStringBuilder.toString(),
                         message);
                 writer.println(line);
@@ -143,14 +143,14 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                         event.getCreationTime(),
                         savedRoundData.toSecondString(event),
                         savedRoundData.getElapsedTimeRelativeToMidnight(event),
-                        source, target, request.toString());
+                        source.getUUID(), target.getUUID(), request.toString());
                 writer.println(line);
             }
             else if (event instanceof SanctionAppliedEvent) {
                 SanctionAppliedEvent sanctionAppliedEvent = (SanctionAppliedEvent) event;
                 Identifier source = sanctionAppliedEvent.getId();
                 Identifier target = sanctionAppliedEvent.getTarget();
-                String line = String.format("%s, %s, %s, %s", savedRoundData.toSecondString(event), source, target, sanctionAppliedEvent.toString());
+                String line = String.format("%s, %s, %s, %s", savedRoundData.toSecondString(event), source.getUUID(), target.getUUID(), sanctionAppliedEvent.toString());
                 writer.println(line);
             }
             else if (event instanceof QuizResponseEvent) {

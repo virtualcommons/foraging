@@ -90,17 +90,17 @@ class SummaryProcessor extends SaveFileProcessor.Base {
             }
         }
         writer.println("=========================================");
-        writer.println("Time, Participant, Token Collected?, Chat");
+        writer.println("Time, Participant UUID, Token Collected?, Chat");
         Map<Identifier, RuleVoteRequest> ruleVoteRequests = new HashMap<>();
         ArrayList<RuleSelectedUpdateEvent> ruleSelectedEvents = new ArrayList<>();
         for (PersistableEvent action: savedRoundData.getActions()) {
             if (action instanceof ChatRequest) {
                 writer.println(String.format("%s, %s, %s, %s", 
-                        savedRoundData.toSecondString(action), action.getId(), 0, action.toString()));
+                        savedRoundData.toSecondString(action), action.getId().getUUID(), 0, action.toString()));
             }
             else if (action instanceof TokenCollectedEvent) {
                 writer.println(String.format("%s, %s, %s", 
-                        savedRoundData.toSecondString(action), action.getId(), "token collected"));
+                        savedRoundData.toSecondString(action), action.getId().getUUID(), "token collected"));
             }
             else if (action instanceof RuleVoteRequest) {
                 ruleVoteRequests.put(action.getId(), (RuleVoteRequest) action);
