@@ -35,7 +35,7 @@ import edu.asu.commons.util.Utils;
  */
 public class AggregateTimeIntervalProcessor extends SaveFileProcessor.Base {
     public AggregateTimeIntervalProcessor() {
-        setSecondsPerInterval(ForagingSaveFileConverter.DEFAULT_AGGREGATE_TIME_INTERVAL);
+        setIntervalDelta(ForagingSaveFileConverter.DEFAULT_AGGREGATE_TIME_INTERVAL);
     }
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
         // populate the ordered identifiers, try directly from the participant tokens map that

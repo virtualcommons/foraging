@@ -17,16 +17,14 @@ import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.util.Utils;
 
 /**
- * $Id$
- * 
- * Generates a simple resource over time data file.
+ * Generates a resource over time data file in 1s intervals
  * 
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
  * @version $Rev: 526 $
  */
 public class ResourceOverTimeProcessor extends SaveFileProcessor.Base {
     public ResourceOverTimeProcessor() {
-        setSecondsPerInterval(1);
+        setIntervalDelta(1);
     }
 
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {

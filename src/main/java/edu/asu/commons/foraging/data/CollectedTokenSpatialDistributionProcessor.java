@@ -18,13 +18,10 @@ import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id$
- * 
- * Generates spatial distribution statistics.
+ * Generates group level spatial distribution statistics
  * 
  * 
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
- * @version $Rev: 526 $
  */
 class CollectedTokenSpatialDistributionProcessor extends SaveFileProcessor.Base {
         @Override

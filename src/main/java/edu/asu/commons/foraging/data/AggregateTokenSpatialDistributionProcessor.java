@@ -20,11 +20,10 @@ import edu.asu.commons.net.Identifier;
 /**
  *
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
- * @version $Rev: 526 $
  */
 class AggregateTokenSpatialDistributionProcessor extends SaveFileProcessor.Base {
         public AggregateTokenSpatialDistributionProcessor() {
-            setSecondsPerInterval(ForagingSaveFileConverter.DEFAULT_AGGREGATE_TIME_INTERVAL);
+            setIntervalDelta(ForagingSaveFileConverter.DEFAULT_AGGREGATE_TIME_INTERVAL);
         }
         @Override
         public void process(SavedRoundData savedRoundData, PrintWriter writer) {

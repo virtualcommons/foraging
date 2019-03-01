@@ -39,7 +39,7 @@ public class AggregateCollectedTokenNeighborProcessor extends SaveFileProcessor.
 	};
 	
     public AggregateCollectedTokenNeighborProcessor() {
-		setSecondsPerInterval(ForagingSaveFileConverter.DEFAULT_AGGREGATE_TIME_INTERVAL);
+		setIntervalDelta(ForagingSaveFileConverter.DEFAULT_AGGREGATE_TIME_INTERVAL);
 	}
     
     private boolean hasOtherSubjectsInView(Identifier id, Point location, GroupDataModel group) {
