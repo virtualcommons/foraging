@@ -3,6 +3,7 @@ package edu.asu.commons.foraging.data;
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
+import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.MovementEvent;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.model.ClientData;
@@ -50,13 +51,14 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
 
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
-        this.serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
+        RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
+        serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
+        serverDataModel.reinitialize(roundConfiguration);
         SortedSet<PersistableEvent> actions = savedRoundData.getActions();
         Map<Identifier, ClientStatistics> statistics = new HashMap<>();
         for (Identifier id : serverDataModel.getActorMap().keySet()) {
             statistics.put(id, new ClientStatistics(id));
         }
-
         for (PersistableEvent event : actions) {
             long elapsedTime = savedRoundData.getElapsedTimeInSeconds(event);
             if (isIntervalElapsed(elapsedTime)) {
@@ -64,12 +66,13 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
             } else {
                 Identifier id = event.getId();
                 ClientStatistics clientStats = statistics.get(id);
-                GroupDataModel group = serverDataModel.getGroup(id);
-                ClientData client = group.getClientData(id);
                 if (event instanceof MovementEvent) {
+                    GroupDataModel group = serverDataModel.getGroup(id);
+                    ClientData client = group.getClientData(id);
                     clientStats.handleMovementEvent((MovementEvent) event, group, client);
-                } else if (event instanceof TokenCollectedEvent) {
-                    clientStats.handleTokenCollectedEvent((TokenCollectedEvent) event, group, client)
+                }
+                else if (event instanceof TokenCollectedEvent) {
+                    clientStats.handleTokenCollectedEvent((TokenCollectedEvent) event);
                 }
                 serverDataModel.apply(event);
             }
@@ -78,19 +81,16 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
     }
 
     private void writeData(PrintWriter writer, SavedRoundData data, Map<Identifier, ClientStatistics> statistics) {
-        // write out data for each client, then clear all their stats
         writer.println("Seconds, Player ID, Number of moves, Tokens collected, Skipped tokens, Straight moves, Quadrant, Quadrant Tokens Collected");
+        // write out data for each client, then clear all their stats
         for (ClientStatistics clientStats: statistics.values()) {
             for (Quadrant quadrant: Quadrant.values()) {
-                String line = Utils.join(',', getIntervalEnd(), clientStats.id.getUUID(),
-                        clientStats.numberOfMoves, clientStats.tokensCollected, clientStats.skippedTokens,
-                        quadrant.getValue(), clientStats.getQuadrantTokensCollected(quadrant));
+                String line = Utils.join(',', getIntervalEnd(), clientStats.toCsvString(quadrant)) ;
                 writer.println(line);
             }
-            // clear all stats
+            // clear interval stats
             clientStats.init();
         }
-
     }
 
     @Override
@@ -193,7 +193,7 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
             return quadrantTokensCollected[quadrant.getOrdinal()];
         }
 
-        public void handleTokenCollectedEvent(TokenCollectedEvent event, GroupDataModel group, ClientData client) {
+        public void handleTokenCollectedEvent(TokenCollectedEvent event) {
             this.tokensCollected++;
             int quadrant = getQuadrant(event.getLocation()).getOrdinal();
             quadrantTokensCollected[quadrant]++;
@@ -208,6 +208,11 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
                 this.maxStraightMoves++;
             }
             previousDirection = event.getDirection();
+        }
+
+        public String toCsvString(Quadrant quadrant) {
+            return Utils.join(',', id.getUUID(), numberOfMoves, tokensCollected, skippedTokens,
+                    quadrant.name(), getQuadrantTokensCollected(quadrant));
         }
 
     }
