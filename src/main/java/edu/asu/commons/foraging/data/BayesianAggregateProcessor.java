@@ -59,6 +59,7 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
         for (Identifier id : serverDataModel.getActorMap().keySet()) {
             statistics.put(id, new ClientStatistics(id));
         }
+        writer.println("Seconds, Player ID, Number of moves, Tokens collected, Skipped tokens, Straight moves, Quadrant, Quadrant Tokens Collected");
         for (PersistableEvent event : actions) {
             long elapsedTime = savedRoundData.getElapsedTimeInSeconds(event);
             if (isIntervalElapsed(elapsedTime)) {
@@ -81,7 +82,6 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
     }
 
     private void writeData(PrintWriter writer, SavedRoundData data, Map<Identifier, ClientStatistics> statistics) {
-        writer.println("Seconds, Player ID, Number of moves, Tokens collected, Skipped tokens, Straight moves, Quadrant, Quadrant Tokens Collected");
         // write out data for each client, then clear all their stats
         for (ClientStatistics clientStats: statistics.values()) {
             for (Quadrant quadrant: Quadrant.values()) {
