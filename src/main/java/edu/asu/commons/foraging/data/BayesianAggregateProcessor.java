@@ -41,14 +41,6 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
         setIntervalDelta(ForagingSaveFileConverter.DEFAULT_AGGREGATE_TIME_INTERVAL);
     }
 
-    public int getBoardHeight() {
-        return serverDataModel.getBoardHeight();
-    }
-
-    public int getBoardWidth() {
-        return serverDataModel.getBoardWidth();
-    }
-
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
         RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
@@ -73,7 +65,8 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
                     clientStats.handleMovementEvent((MovementEvent) event, group, client);
                 }
                 else if (event instanceof TokenCollectedEvent) {
-                    clientStats.handleTokenCollectedEvent((TokenCollectedEvent) event);
+                    TokenCollectedEvent tce = (TokenCollectedEvent) event;
+                    clientStats.handleTokenCollectedEvent(tce, Quadrant.forPoint(tce.getLocation(), roundConfiguration.getBoardSize()));
                 }
                 serverDataModel.apply(event);
             }
@@ -115,7 +108,7 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
          * Returns an array index
          * @return
          */
-        public int getOrdinal() {
+        public int getArrayIndex() {
             return value - 1;
         }
 
@@ -130,9 +123,36 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
                 case 4:
                     return BOTTOM_RIGHT;
                 default:
-                    throw new RuntimeException("Invalid ordinal: " + value);
+                    throw new RuntimeException("Invalid value: " + value);
             }
         }
+               /**
+         * Returns a integer representing the quadrant (1 = top right, 2 = top left, 3 = bottom left, 4 = bottom right)
+         * @param location
+         * @return
+         */
+        public static Quadrant forPoint(Point location, Dimension dimension) {
+            int boardHeight = dimension.height;
+            int boardWidth = dimension.width;
+            int midpointX = boardWidth / 2;
+            int midpointY = boardHeight / 2;
+            if (location.x <= midpointX && location.y <= midpointY) {
+                return Quadrant.TOP_LEFT;
+            }
+            else if (location.x <= midpointX && location.y > midpointY) {
+                return Quadrant.BOTTOM_LEFT;
+            }
+            else if (location.x > midpointX && location.y <= midpointY) {
+                return Quadrant.TOP_RIGHT;
+            }
+            else if (location.x > midpointX && location.y > midpointY) {
+                return Quadrant.BOTTOM_RIGHT;
+            }
+            else {
+                throw new RuntimeException("location not assignable to any quadrant: " + location);
+            }
+        }
+
     }
 
     private class ClientStatistics {
@@ -162,41 +182,14 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
             Arrays.fill(quadrantTokensCollected, 0);
         }
 
-        /**
-         * Returns a integer representing the quadrant (1 = top right, 2 = top left, 3 = bottom left, 4 = bottom right)
-         * @param location
-         * @return
-         */
-        public Quadrant getQuadrant(Point location) {
-            int boardHeight = BayesianAggregateProcessor.this.getBoardHeight();
-            int boardWidth = BayesianAggregateProcessor.this.getBoardWidth();
-            int midpointX = boardWidth / 2;
-            int midpointY = boardHeight / 2;
-            if (location.x < midpointX && location.y < midpointY) {
-                return Quadrant.TOP_LEFT;
-            }
-            else if (location.x < midpointX && location.y >= midpointY) {
-                return Quadrant.BOTTOM_LEFT;
-            }
-            else if (location.x >= midpointX && location.y < midpointY) {
-                return Quadrant.TOP_RIGHT;
-            }
-            else if (location.x >= midpointX && location.y >= midpointY) {
-                return Quadrant.BOTTOM_RIGHT;
-            }
-            else {
-                throw new RuntimeException("location not assignable to any quadrant: " + location);
-            }
-        }
 
         public int getQuadrantTokensCollected(Quadrant quadrant) {
-            return quadrantTokensCollected[quadrant.getOrdinal()];
+            return quadrantTokensCollected[quadrant.getArrayIndex()];
         }
 
-        public void handleTokenCollectedEvent(TokenCollectedEvent event) {
+        public void handleTokenCollectedEvent(TokenCollectedEvent event, Quadrant quadrant) {
             this.tokensCollected++;
-            int quadrant = getQuadrant(event.getLocation()).getOrdinal();
-            quadrantTokensCollected[quadrant]++;
+            quadrantTokensCollected[quadrant.getArrayIndex()]++;
         }
 
         public void handleMovementEvent(MovementEvent event, GroupDataModel group, ClientData client) {
