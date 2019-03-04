@@ -75,7 +75,8 @@ public class ForagingSaveFileConverter {
                                 new AggregateTokenSpatialDistributionProcessor(),
                                 new CollectedTokenSpatialDistributionProcessor(),
                                 new MovementStatisticsProcessor(),
-                                new BayesianAggregateProcessor(),
+                                new ClientSummaryIntervalProcessor(),
+                                new GroupResourceSummaryIntervalProcessor(),
                                 // new MovieCreatorProcessor(),
                                 new ForagingRuleProcessor(),
                                 new AggregateCollectedTokenNeighborProcessor()

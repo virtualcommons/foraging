@@ -33,11 +33,11 @@ import java.util.SortedSet;
  *
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
  */
-class BayesianAggregateProcessor extends SaveFileProcessor.Base {
+class ClientSummaryIntervalProcessor extends SaveFileProcessor.Base {
 
     private ServerDataModel serverDataModel;
 
-    public BayesianAggregateProcessor() {
+    public ClientSummaryIntervalProcessor() {
         setIntervalDelta(ForagingSaveFileConverter.DEFAULT_AGGREGATE_TIME_INTERVAL);
     }
 
