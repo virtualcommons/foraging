@@ -70,7 +70,6 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
                 }
                 serverDataModel.apply(event);
             }
-
         }
     }
 
@@ -82,7 +81,7 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
                 writer.println(line);
             }
             // clear interval stats
-            clientStats.init();
+            clientStats.clear();
         }
     }
 
@@ -168,10 +167,10 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
 
         public ClientStatistics(Identifier id) {
             this.id = id;
-            init();
+            clear();
         }
 
-        public void init() {
+        public void clear() {
             this.numberOfMoves = 0;
             this.tokensCollected = 0;
             this.skippedTokens = 0;
@@ -205,7 +204,7 @@ class BayesianAggregateProcessor extends SaveFileProcessor.Base {
 
         public String toCsvString(Quadrant quadrant) {
             return Utils.join(',', id.getUUID(), numberOfMoves, tokensCollected, skippedTokens,
-                    quadrant.name(), getQuadrantTokensCollected(quadrant));
+                    maxStraightMoves, quadrant.name(), getQuadrantTokensCollected(quadrant));
         }
 
     }
