@@ -461,6 +461,35 @@
            -->
     </java>
   </target>
+  <target name='convert-uol' depends='compile'>
+    <antcall target='convert' />
+    <exec executable='rsync'>
+      <arg value='-avzP' />
+      <arg value='${data.dir}/' />
+      <arg value='processed/' />
+      <arg value='--exclude' />
+      <arg value='*.save' />
+      <arg value='--exclude' />
+      <arg value='*.xml' />
+    </exec>
+    <antcall target='aggregate-uol' />
+  </target>
+
+  <target name='aggregate-uol'>
+    <exec executable='src/main/python/aggregate.py'>
+      <arg value='-d' />
+      <arg value='processed' />
+    </exec>
+    <exec executable='src/main/python/aggregate.py'>
+      <arg value='-d' />
+      <arg value='processed' />
+      <arg value='-m' />
+      <arg value='*-group-resource-summary.txt' />
+      <arg value='-o' />
+      <arg value='aggregated-group-resource.csv' />
+    </exec>
+  </target>
+
   <!-- Custom Deployment Targets -->
   <target name='deploy-uol' depends='compile,clean-configuration'>
     <antcall target='copy-configuration'>
