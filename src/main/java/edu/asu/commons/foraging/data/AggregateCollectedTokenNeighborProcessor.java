@@ -83,10 +83,6 @@ public class AggregateCollectedTokenNeighborProcessor extends SaveFileProcessor.
         	collectedTokenNeighbors.put(id, neighbors);
         	collectedTokenNeighborsWithOtherSubjectsInView.put(id, neighborsWithOtherSubjectsInView);
         }
-        // initialize client positions
-        for (ClientData clientData: serverDataModel.getClientDataMap().values()) {
-            clientData.initializePosition();
-        }
         for (PersistableEvent event: savedRoundData.getActions()) {
         	if (event.getId() instanceof BotIdentifier) {
         	    continue;

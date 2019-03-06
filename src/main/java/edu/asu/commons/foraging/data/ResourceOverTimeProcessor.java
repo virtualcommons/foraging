@@ -43,35 +43,20 @@ public class ResourceOverTimeProcessor extends SaveFileProcessor.Base {
             // accumulated stats
             if (isIntervalElapsed(secondsElapsed)) {
                 // generate group expected token counts
-                for (GroupDataModel group : groups) {
-                    writer.println(Utils.join(',', group.toString(), secondsElapsed, group.getResourceDistributionSize()));
-                }
+                writeGroupData(writer, groups);
+                serverDataModel.setDirty(false);
             }
             // next, process the current persistable event
-            if (event instanceof MovementEvent) {
-                MovementEvent movementEvent = (MovementEvent) event;
-                serverDataModel.moveClient(movementEvent.getId(), movementEvent.getDirection());
-            }
-            else if (event instanceof ClientPoseUpdate) {
-                ClientPoseUpdate clientPoseUpdate = (ClientPoseUpdate) event;
-                serverDataModel.getClientDataMap().get(event.getId()).setPosition(clientPoseUpdate.getPosition());
-            }
-            else if (event instanceof TokenCollectedEvent) {
-                TokenCollectedEvent tokenCollectedEvent = (TokenCollectedEvent) event;
-                GroupDataModel group = serverDataModel.getGroup(tokenCollectedEvent.getId());
-                assert serverDataModel.getGroups().contains(group);
-                group.removeResource(tokenCollectedEvent.getLocation());
-            }
-            else if (event instanceof ResourceAddedEvent) {
-                ResourceAddedEvent resourceAddedEvent = (ResourceAddedEvent) event;
-                assert serverDataModel.getGroups().contains(resourceAddedEvent.getGroup());
-                resourceAddedEvent.getGroup().addResource(resourceAddedEvent.getPosition());
-            }
-            else if (event instanceof ResourcesAddedEvent) {
-                ResourcesAddedEvent resourcesAddedEvent = (ResourcesAddedEvent) event;
-                assert serverDataModel.getGroups().contains(resourcesAddedEvent.getGroup());
-                resourcesAddedEvent.getGroup().addResources(resourcesAddedEvent.getResources());
-            }
+            serverDataModel.apply(event);
+        }
+        if (serverDataModel.isDirty()) {
+            writeGroupData(writer, groups);
+        }
+    }
+
+    private void writeGroupData(PrintWriter writer, List<GroupDataModel> groups) {
+        for (GroupDataModel group : groups) {
+            writer.println(Utils.join(',', group.toString(), getIntervalEnd(), group.getResourceDistributionSize()));
         }
     }
 

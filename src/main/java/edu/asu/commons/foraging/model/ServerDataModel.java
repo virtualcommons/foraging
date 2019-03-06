@@ -127,7 +127,7 @@ public class ServerDataModel extends ForagingDataModel {
             Identifier id = event.getId();
             Actor actor = getActorMap().get(id);
             actor.addToken(tokenCollectedEvent.getLocation());
-            getGroup(event.getId()).removeResource(tokenCollectedEvent.getLocation());
+            getGroup(id).removeResource(tokenCollectedEvent.getLocation());
             setDirty(true);
         }
         else if (event instanceof ExplicitCollectionModeRequest) {
@@ -266,11 +266,11 @@ public class ServerDataModel extends ForagingDataModel {
     }
 
     public Set<GroupDataModel> getGroups() {
-        return new LinkedHashSet<GroupDataModel>(clientsToGroups.values());
+        return new LinkedHashSet<>(clientsToGroups.values());
     }
     
     public List<GroupDataModel> getOrderedGroups() {
-        return new ArrayList<GroupDataModel>(new TreeSet<GroupDataModel>(clientsToGroups.values()));
+        return new ArrayList<>(new TreeSet<>(clientsToGroups.values()));
     }
 
     public ClientData getClientData(Identifier id) {

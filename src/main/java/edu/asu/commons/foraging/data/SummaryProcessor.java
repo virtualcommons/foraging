@@ -14,6 +14,7 @@ import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
+import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
 import edu.asu.commons.foraging.event.RuleVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
@@ -31,6 +32,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
         ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
+        serverDataModel.reinitialize((RoundConfiguration) savedRoundData.getRoundParameters());
         List<GroupDataModel> groups = serverDataModel.getOrderedGroups();
         for (PersistableEvent event: savedRoundData.getActions()) {
             if (event instanceof SanctionAppliedEvent) {

@@ -9,6 +9,7 @@ import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.util.Utils;
 
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.SortedSet;
 
 public class GroupResourceSummaryIntervalProcessor extends SaveFileProcessor.Base {
@@ -25,15 +26,23 @@ public class GroupResourceSummaryIntervalProcessor extends SaveFileProcessor.Bas
         serverDataModel.reinitialize(roundConfiguration);
         SortedSet<PersistableEvent> actions = savedRoundData.getActions();
         writer.println("Seconds, Group ID, Resources");
+        List<GroupDataModel> groups = serverDataModel.getOrderedGroups();
         for (PersistableEvent event : actions) {
             long elapsedTime = savedRoundData.getElapsedTimeInSeconds(event);
             if (isIntervalElapsed(elapsedTime)) {
-                for (GroupDataModel group: serverDataModel.getOrderedGroups()) {
-                    writer.println(Utils.join(',', getIntervalEnd(), group.toString(), group.getResourceDistributionSize()));
-                }
-            } else {
-                serverDataModel.apply(event);
+                writeGroupData(writer, groups);
+                serverDataModel.setDirty(false);
             }
+            serverDataModel.apply(event);
+        }
+        if (serverDataModel.isDirty()) {
+            writeGroupData(writer, groups);
+        }
+    }
+
+    private void writeGroupData(PrintWriter writer, List<GroupDataModel> groups) {
+        for (GroupDataModel group : groups) {
+            writer.println(Utils.join(',', getIntervalEnd(), group.toString(), group.getResourceDistributionSize()));
         }
     }
 

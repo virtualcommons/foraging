@@ -31,7 +31,6 @@ class AggregateTokenSpatialDistributionProcessor extends SaveFileProcessor.Base 
             SortedSet<PersistableEvent> actions = savedRoundData.getActions();
             Map<Identifier, ClientSpatialDistribution> clientSpatialDistributionMap = new HashMap<>();
             Dimension boardSize = serverDataModel.getRoundConfiguration().getBoardSize();
-            System.err.println("board size: " + boardSize);
             for (Identifier id: serverDataModel.getActorMap().keySet()) {
                 clientSpatialDistributionMap.put(id, new ClientSpatialDistribution(boardSize));
             }

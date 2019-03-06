@@ -41,11 +41,9 @@ public class AggregateTimeIntervalProcessor extends SaveFileProcessor.Base {
         // populate the ordered identifiers, try directly from the participant tokens map that
         // is persisted in later versions of the experiment.
         ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
-        Map<Identifier, ClientMovementTokenCount> clientStatistics = ClientMovementTokenCount.createMap(serverDataModel);
-        for (ClientData clientData: serverDataModel.getClientDataMap().values()) {
-            clientData.initializePosition();
-        }
         RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
+        serverDataModel.reinitialize(roundConfiguration);
+        Map<Identifier, ClientMovementTokenCount> clientStatistics = ClientMovementTokenCount.createMap(serverDataModel);
         TreeSet<Identifier> orderedIdentifiers = new TreeSet<>(serverDataModel.getClientDataMap().keySet());
         List<GroupDataModel> groups = serverDataModel.getOrderedGroups();
         

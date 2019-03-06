@@ -55,25 +55,28 @@ class ClientSummaryIntervalProcessor extends SaveFileProcessor.Base {
         for (PersistableEvent event : actions) {
             long elapsedTime = savedRoundData.getElapsedTimeInSeconds(event);
             if (isIntervalElapsed(elapsedTime)) {
-                writeData(writer, savedRoundData, statistics);
-            } else {
-                Identifier id = event.getId();
-                ClientStatistics clientStats = statistics.get(id);
-                if (event instanceof MovementEvent) {
-                    GroupDataModel group = serverDataModel.getGroup(id);
-                    ClientData client = group.getClientData(id);
-                    clientStats.handleMovementEvent((MovementEvent) event, group, client);
-                }
-                else if (event instanceof TokenCollectedEvent) {
-                    TokenCollectedEvent tce = (TokenCollectedEvent) event;
-                    clientStats.handleTokenCollectedEvent(tce, Quadrant.forPoint(tce.getLocation(), roundConfiguration.getBoardSize()));
-                }
-                serverDataModel.apply(event);
+                writeData(writer, statistics);
+                serverDataModel.setDirty(false);
             }
+            Identifier id = event.getId();
+            ClientStatistics clientStats = statistics.get(id);
+            if (event instanceof MovementEvent) {
+                GroupDataModel group = serverDataModel.getGroup(id);
+                ClientData client = group.getClientData(id);
+                clientStats.handleMovementEvent((MovementEvent) event, group, client);
+            }
+            else if (event instanceof TokenCollectedEvent) {
+                TokenCollectedEvent tce = (TokenCollectedEvent) event;
+                clientStats.handleTokenCollectedEvent(tce, Quadrant.forPoint(tce.getLocation(), roundConfiguration.getBoardSize()));
+            }
+            serverDataModel.apply(event);
+        }
+        if (serverDataModel.isDirty()) {
+            writeData(writer, statistics);
         }
     }
 
-    private void writeData(PrintWriter writer, SavedRoundData data, Map<Identifier, ClientStatistics> statistics) {
+    private void writeData(PrintWriter writer, Map<Identifier, ClientStatistics> statistics) {
         // write out data for each client, then clear all their stats
         for (ClientStatistics clientStats: statistics.values()) {
             for (Quadrant quadrant: Quadrant.values()) {
