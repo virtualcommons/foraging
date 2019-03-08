@@ -68,7 +68,7 @@ class AggregateTokenSpatialDistributionProcessor extends SaveFileProcessor.Base 
                     ClientSpatialDistribution spatialDistribution = clientSpatialDistributionMap.get(id);
                     spatialDistribution.calculateStandardDeviation();
                     groupWeightedSpatialMetric += spatialDistribution.weightedSpatialMetric;
-                    writer.println(String.format("%d, %s, %s, %s, %s, %s", getIntervalEnd(), id, groupLabel, spatialDistribution.tokens, spatialDistribution.rowStandardDeviation, spatialDistribution.columnStandardDeviation));
+                    writer.println(String.format("%d, %s, %s, %s, %s, %s", getIntervalEnd(), id.getUUID(), groupLabel, spatialDistribution.tokens, spatialDistribution.rowStandardDeviation, spatialDistribution.columnStandardDeviation));
                     totalTokens += spatialDistribution.tokens;
                 }
                 groupWeightedSpatialMetric /= totalTokens;

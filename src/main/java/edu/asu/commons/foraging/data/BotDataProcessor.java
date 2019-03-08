@@ -84,7 +84,7 @@ public class BotDataProcessor extends SaveFileProcessor.Base {
                         Utils.join(',',
                                 getIntervalEnd(),
                                 elapsedTimeRelativeToMidnightOffset + getIntervalEnd(),
-                                client.getId().getStationId(),
+                                client.getId().getUUID(),
                                 clientPosition.x,
                                 clientPosition.y,
                                 client.getCurrentTokens(),

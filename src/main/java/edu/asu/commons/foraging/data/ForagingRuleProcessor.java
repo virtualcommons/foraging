@@ -158,7 +158,7 @@ public class ForagingRuleProcessor extends SaveFileProcessor.Base {
         for (Map.Entry<ClientData, RuleData> entry: dataMap.entrySet()) {
             RuleData data = entry.getValue();
             String line = String.format("%s, %3.2f, %3.2f, %3.2f, %d, %d, %d, %d",
-                    entry.getKey(),
+                    entry.getKey().getUUID(),
                     data.getRuleOneBreaking(),
                     data.getRuleThreeBreaking(),
                     data.getRuleFourBreaking(),

@@ -4,7 +4,10 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
@@ -76,18 +79,15 @@ class MovementStatisticsProcessor extends SaveFileProcessor.Base {
             summary.updateMovementDistribution();
         }
         int maximumMoves = Math.max(serverDataModel.getBoardHeight(), serverDataModel.getBoardWidth());
-        final Integer[] movementHeader = new Integer[maximumMoves];
-        for (int iotaIndex = 0; iotaIndex < maximumMoves; iotaIndex++) {
-            movementHeader[iotaIndex] = iotaIndex + 1;
-        }
-
+        List<String> movementHeader = IntStream.range(1, maximumMoves).boxed().map(i -> i + " move(s)").collect(Collectors.toList());
         // write out the header line.
-        writer.println(Utils.join(',', "Identifier", Utils.join(',', Arrays.asList(movementHeader))));
+        writer.println(Utils.join(',', "Identifier", Utils.join(',', movementHeader)));
 
         // and then write out each Identifier's movement distribution.
         for (Map.Entry<Identifier, ClientMovementStatistics> entry : clientStatisticsMap.entrySet()) {
-            writer.println(Utils.join(',', entry.getKey(), Utils.join(',', 
-                    Arrays.asList(entry.getValue().getMovementDistribution()))));   
+            writer.println(Utils.join(',', entry.getKey().getUUID(),
+                    Utils.join(',',
+                            Arrays.asList(entry.getValue().getMovementDistribution()))));
         }
     }
 

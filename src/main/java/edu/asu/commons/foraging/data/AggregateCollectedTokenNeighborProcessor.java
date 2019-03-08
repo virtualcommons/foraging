@@ -128,7 +128,7 @@ public class AggregateCollectedTokenNeighborProcessor extends SaveFileProcessor.
         	Identifier id = entry.getKey();
         	Integer[] neighboringTokens = entry.getValue();
         	Integer[] neighboringTokensWithOtherSubjectsInView = collectedTokenNeighborsWithOtherSubjectsInView.get(id);
-        	writer.println(Utils.join(',', getIntervalEnd(), id, 
+        	writer.println(Utils.join(',', getIntervalEnd(), id.getUUID(),
         			Utils.join(',', Arrays.asList(neighboringTokens)),
         			Utils.join(',', Arrays.asList(neighboringTokensWithOtherSubjectsInView))));
             // clear old neighboring tokens 
