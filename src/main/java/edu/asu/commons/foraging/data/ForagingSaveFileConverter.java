@@ -72,6 +72,7 @@ public class ForagingSaveFileConverter {
                                 new ResourceOverTimeProcessor(),
                                 new AggregateTimeIntervalProcessor(),
                                 new SummaryProcessor(),
+                                new ChatDataProcessor(),
                                 new AggregateTokenSpatialDistributionProcessor(),
                                 new CollectedTokenSpatialDistributionProcessor(),
                                 new MovementStatisticsProcessor(),

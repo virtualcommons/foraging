@@ -488,6 +488,14 @@
       <arg value='-o' />
       <arg value='aggregated-group-resource.csv' />
     </exec>
+    <exec executable='src/main/python/aggregate.py'>
+      <arg value='-d' />
+      <arg value='processed' />
+      <arg value='-m' />
+      <arg value='*-chat.csv' />
+      <arg value='-o' />
+      <arg value='aggregated-chats.csv' />
+    </exec>
   </target>
 
   <!-- Custom Deployment Targets -->

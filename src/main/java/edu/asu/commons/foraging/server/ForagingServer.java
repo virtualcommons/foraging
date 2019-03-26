@@ -751,9 +751,9 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
          * Performs a random pairing of every member in the group to generate trust game payment results.
          */
         protected void processTrustGame() {
-            List<TrustGameResult> allTrustGameResults = new ArrayList<TrustGameResult>();
+            List<TrustGameResult> allTrustGameResults = new ArrayList<>();
             for (GroupDataModel group : serverDataModel.getGroups()) {
-                LinkedList<ClientData> clientList = new LinkedList<ClientData>(group.getClientDataMap().values());
+                LinkedList<ClientData> clientList = new LinkedList<>(group.getClientDataMap().values());
                 Collections.shuffle(clientList);
                 getLogger().info("TRUST GAME shuffled client list: " + clientList);
                 ClientData first = clientList.getFirst();
@@ -794,7 +794,7 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
             Identifier source = request.getSource();
             Identifier target = request.getTarget();
             ClientData clientData = clients.get(source);
-            ArrayList<Identifier> targets = new ArrayList<Identifier>();
+            ArrayList<Identifier> targets = new ArrayList<>();
             RoundConfiguration currentConfiguration = getCurrentRoundConfiguration();
             if (Identifier.ALL.equals(target)) {
                 // relay to all clients in this client's group.
