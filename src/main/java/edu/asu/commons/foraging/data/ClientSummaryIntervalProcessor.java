@@ -51,7 +51,8 @@ class ClientSummaryIntervalProcessor extends SaveFileProcessor.Base {
         for (Identifier id : serverDataModel.getActorMap().keySet()) {
             statistics.put(id, new ClientStatistics(id));
         }
-        writer.println("Seconds, Player ID, Number of moves, Tokens collected, Skipped tokens, Straight moves, Quadrant, Quadrant Tokens Collected");
+        String header = "Seconds, ID, Number of moves, Tokens collected, Skipped tokens, Straight moves, Quadrant, Quadrant Tokens Collected, Resources Left";
+        writer.println(header);
         for (PersistableEvent event : actions) {
             long elapsedTime = savedRoundData.getElapsedTimeInSeconds(event);
             if (isIntervalElapsed(elapsedTime)) {
@@ -74,6 +75,10 @@ class ClientSummaryIntervalProcessor extends SaveFileProcessor.Base {
         if (serverDataModel.isDirty()) {
             writeData(writer, statistics);
         }
+    }
+
+    private int getResourceDistributionSize(Identifier id) {
+        return serverDataModel.getGroup(id).getResourceDistributionSize();
     }
 
     private void writeData(PrintWriter writer, Map<Identifier, ClientStatistics> statistics) {
@@ -207,7 +212,8 @@ class ClientSummaryIntervalProcessor extends SaveFileProcessor.Base {
 
         public String toCsvString(Quadrant quadrant) {
             return Utils.join(',', id.getUUID(), numberOfMoves, tokensCollected, skippedTokens,
-                    maxStraightMoves, quadrant.name(), getQuadrantTokensCollected(quadrant));
+                    maxStraightMoves, quadrant.name(), getQuadrantTokensCollected(quadrant),
+                    ClientSummaryIntervalProcessor.this.getResourceDistributionSize(id));
         }
 
     }
