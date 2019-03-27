@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -63,6 +64,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     private transient ServerDataModel serverDataModel;
 
     private final long groupId;
+    private UUID uuid;
     private volatile static long nextGroupId = 0;
 
     private volatile int receivedEnforcementRankings = 0;
@@ -77,7 +79,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     private ClientData activeMonitor;
 
-    private ArrayList<RegulationData> submittedRegulations = new ArrayList<RegulationData>();
+    private ArrayList<RegulationData> submittedRegulations = new ArrayList<>();
 
     private ArrayList<Strategy> selectedRules;
 
@@ -239,7 +241,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         logger.info("Active enforcement mechanism: " + activeEnforcementMechanism + " with rank " + maxRankingValue);
         if (activeEnforcementMechanism.hasMonitor()) {
             // pick a random person from the clients
-            ArrayList<ClientData> clientDataList = new ArrayList<ClientData>(clients.values());
+            ArrayList<ClientData> clientDataList = new ArrayList<>(clients.values());
             Collections.shuffle(clientDataList);
             // pick the first client from the shuffled list and set their role to MONITOR
             activeMonitor = clientDataList.remove(0);
@@ -637,7 +639,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
 
     public Map<Identifier, ClientData> getClientDataMap() {
-        return new HashMap<Identifier, ClientData>(clients);
+        return new HashMap<>(clients);
     }
 
     public void resetSanctionCounts() {
@@ -828,9 +830,9 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             logger.severe("active monitor: " + activeMonitor + " already received tax.");
             return;
         }
-        ArrayList<ClientData> clientDataList = new ArrayList<ClientData>(clients.values());
+        ArrayList<ClientData> clientDataList = new ArrayList<>(clients.values());
         clientDataList.remove(activeMonitor);
-        Map<Identifier, Integer> monitorTaxes = new HashMap<Identifier, Integer>();
+        Map<Identifier, Integer> monitorTaxes = new HashMap<>();
         int totalTax = 0;
         for (ClientData clientData : clientDataList) {
             int monitorTax = clientData.applyMonitorTax();
@@ -846,7 +848,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
 
     @Override
     public List<Identifier> getAllClientIdentifiers() {
-        return new ArrayList<Identifier>(clients.keySet());
+        return new ArrayList<>(clients.keySet());
     }
 
     @Override
@@ -859,8 +861,8 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
     }
 
     public Map<Strategy, Integer> generateVotingResults(boolean imposedStrategyEnabled) {
-        Map<Strategy, Integer> tallyMap = new HashMap<Strategy, Integer>();
-        selectedRules = new ArrayList<Strategy>();
+        Map<Strategy, Integer> tallyMap = new HashMap<>();
+        selectedRules = new ArrayList<>();
         if (imposedStrategyEnabled) {
             // short circuits to use the imposed strategy
             tallyMap.put(getImposedStrategy(), 1);
@@ -970,4 +972,14 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         return bots.stream().collect(Collectors.toMap(Bot::getId, Bot::getPosition));
     }
 
+    public void generateUUID() {
+        uuid = UUID.randomUUID();
+    }
+
+    public synchronized UUID getUUID() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
+        return uuid;
+    }
 }

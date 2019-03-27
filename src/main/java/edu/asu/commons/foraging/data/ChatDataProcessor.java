@@ -22,6 +22,9 @@ public class ChatDataProcessor extends SaveFileProcessor.Base {
         dataModel.reinitialize(roundConfiguration);
         String header = "Timestamp, Group ID, Participant UUID, Player Number, Message";
         printWriter.println(header);
+        for (GroupDataModel group: dataModel.getGroups()) {
+            group.generateUUID();
+        }
         for (PersistableEvent event: actions) {
             // log ChatRequests since there are ChatEvents generated for each message broadcast to a participant
             // e.g., 4 ChatEvents for a broadcast message from player A to players B, C, D, and E
@@ -32,7 +35,7 @@ public class ChatDataProcessor extends SaveFileProcessor.Base {
                 printWriter.println(
                         Utils.join(',',
                                 savedRoundData.toSecondString(event),
-                                group.toString(),
+                                group.getUUID(),
                                 sourceId.getUUID(),
                                 sourceId.getChatHandle(),
                                 request.getMessage())
