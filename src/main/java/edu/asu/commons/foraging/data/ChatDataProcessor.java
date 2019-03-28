@@ -11,6 +11,8 @@ import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Utils;
 
 import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.SortedSet;
 
 public class ChatDataProcessor extends SaveFileProcessor.Base {
@@ -22,8 +24,10 @@ public class ChatDataProcessor extends SaveFileProcessor.Base {
         dataModel.reinitialize(roundConfiguration);
         String header = "Timestamp, Group ID, Participant UUID, Player Number, Message";
         printWriter.println(header);
+        Path saveFilePath = Paths.get(savedRoundData.getSaveFilePath());
+        Path experimentRunPath = saveFilePath.getParent();
         for (GroupDataModel group: dataModel.getGroups()) {
-            group.generateUUID();
+            group.generateNameUUID(experimentRunPath.toString());
         }
         for (PersistableEvent event: actions) {
             // log ChatRequests since there are ChatEvents generated for each message broadcast to a participant
@@ -38,7 +42,7 @@ public class ChatDataProcessor extends SaveFileProcessor.Base {
                                 group.getUUID(),
                                 sourceId.getUUID(),
                                 sourceId.getChatHandle(),
-                                request.getMessage())
+                                '"' + request.getMessage() + '"')
                 );
             }
         }

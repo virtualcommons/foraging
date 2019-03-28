@@ -972,8 +972,9 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         return bots.stream().collect(Collectors.toMap(Bot::getId, Bot::getPosition));
     }
 
-    public void generateUUID() {
-        uuid = UUID.randomUUID();
+    public void generateNameUUID(String name) {
+        final String groupName = name + groupId;
+        uuid = UUID.nameUUIDFromBytes(groupName.getBytes());
     }
 
     public synchronized UUID getUUID() {
