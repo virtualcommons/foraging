@@ -15,8 +15,9 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_DATA_GLOB = '*-raw-aggr-bayesian-analysis.txt'
 
+DEFAULT_TREATMENT_IDENTIFIER = 't1'
 DEFAULT_AGGREGATED_CSV_OUTPUT_FILENAME = "aggregated.csv"
-AGGREGATED_CSV_HEADER = ['Date', 'Stage', 'Round']
+AGGREGATED_CSV_HEADER = ['Treatment ID', 'Date', 'Stage', 'Round']
 
 __author__ = "Allen Lee"
 __version__ = "0.0.1"
@@ -39,11 +40,13 @@ def main():
     parser.add_argument("-d", "--directory", help="Input data directory with directories of round data files to aggregate.")
     parser.add_argument("-m", "--match", help="Glob to match relevant savefiles to aggregate", default=DEFAULT_DATA_GLOB)
     parser.add_argument("-o", "--output", help="Output file", default=DEFAULT_AGGREGATED_CSV_OUTPUT_FILENAME)
+    parser.add_argument("-t", "--treatment", help="Treatment identifier", default=DEFAULT_TREATMENT_IDENTIFIER)
 # data directory should have a filesystem format like
 # <root.data_dir>/<mm-dd-yyyy>/<hh.mm.ss>/<round-<dotted round number>.save
     args = parser.parse_args()
     filematch_glob = args.match
     output_filename = args.output
+    treatment_id = args.treatment
     data_dir = pathlib.Path(args.directory)
 
     assert data_dir.is_dir()
@@ -73,7 +76,7 @@ def main():
                             aggregated_csv_header.extend(savefile_csv_header)
                             aggregated_csv.writerow(aggregated_csv_header)
                         for row in savefile_csv:
-                            datarow = [combined_date_time, round_number, repeated_round_index] + row
+                            datarow = [treatment_id, combined_date_time, round_number, repeated_round_index] + row
                             logger.debug("datarow: %s", datarow)
                             aggregated_csv.writerow(datarow)
     # at the end sort by the timestamp

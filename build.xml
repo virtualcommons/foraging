@@ -48,6 +48,7 @@
   <property name="src.dir" value="src/main/java"/>
   <property name="build.dir" value="target/classes"/>
   <property name='data.dir' value='experiment-data' />
+  <property name='treatment.id' value='t1' />
   <!-- default web & deployment properties -->
   <property name='sesef.version' value='0.9.7' />
   <property name="web.dir" value="src/main/webapp"/>
@@ -479,6 +480,8 @@
     <exec executable='src/main/python/aggregate.py'>
       <arg value='-d' />
       <arg value='processed' />
+      <arg value='-t' />
+      <arg value='${treatment.id}' />
     </exec>
     <exec executable='src/main/python/aggregate.py'>
       <arg value='-d' />
@@ -487,6 +490,8 @@
       <arg value='*-group-resource-summary.txt' />
       <arg value='-o' />
       <arg value='aggregated-group-resource.csv' />
+      <arg value='-t' />
+      <arg value='${treatment.id}' />
     </exec>
     <exec executable='src/main/python/aggregate.py'>
       <arg value='-d' />
@@ -495,6 +500,8 @@
       <arg value='*-chat.csv' />
       <arg value='-o' />
       <arg value='aggregated-chats.csv' />
+      <arg value='-t' />
+      <arg value='${treatment.id}' />
     </exec>
   </target>
 
