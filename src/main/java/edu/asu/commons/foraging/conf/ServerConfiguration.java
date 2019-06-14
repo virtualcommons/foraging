@@ -86,6 +86,10 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
         return getDoubleProperty("quiz-correct-answer-reward", DEFAULT_QUIZ_CORRECT_ANSWER_REWARD);
     }
 
+    public String getTreatmentId() {
+        return getStringProperty("treatment-id", "unspecified");
+    }
+
     public String getWelcomeInstructions() {
         return getStringProperty("welcome-instructions", "Please wait quietly and do not open or close any programs on this computer.");
     }
