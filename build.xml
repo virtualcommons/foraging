@@ -48,7 +48,7 @@
   <property name="src.dir" value="src/main/java"/>
   <property name="build.dir" value="target/classes"/>
   <property name='data.dir' value='experiment-data' />
-  <property name='treatment.id' value='t1' />
+  <property name='treatment.id' value='' />
   <!-- default web & deployment properties -->
   <property name='sesef.version' value='0.9.7' />
   <property name="web.dir" value="src/main/webapp"/>

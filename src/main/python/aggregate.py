@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_DATA_GLOB = '*-raw-aggr-bayesian-analysis.txt'
 
-DEFAULT_TREATMENT_IDENTIFIER = 't1'
+DEFAULT_TREATMENT_IDENTIFIER = None
 DEFAULT_AGGREGATED_CSV_OUTPUT_FILENAME = "aggregated.csv"
 AGGREGATED_CSV_HEADER = ['Treatment ID', 'Date', 'Stage', 'Round']
 
@@ -47,6 +47,8 @@ def main():
     filematch_glob = args.match
     output_filename = args.output
     treatment_id = args.treatment
+    if treatment_id:
+        logger.warning("manually adding treatment id to all datarows: %s", treatment_id)
     data_dir = pathlib.Path(args.directory)
 
     assert data_dir.is_dir()
@@ -76,7 +78,9 @@ def main():
                             aggregated_csv_header.extend(savefile_csv_header)
                             aggregated_csv.writerow(aggregated_csv_header)
                         for row in savefile_csv:
-                            datarow = [treatment_id, combined_date_time, round_number, repeated_round_index] + row
+                            datarow = [combined_date_time, round_number, repeated_round_index] + row
+                            if treatment_id:
+                                datarow.insert(0, treatment_id)
                             logger.debug("datarow: %s", datarow)
                             aggregated_csv.writerow(datarow)
     # at the end sort by the timestamp
