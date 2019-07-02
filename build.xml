@@ -467,7 +467,7 @@
     <exec executable='rsync'>
       <arg value='-avzP' />
       <arg value='${data.dir}/' />
-      <arg value='processed/' />
+      <arg value='processed/${treatment.id}/' />
       <arg value='--exclude' />
       <arg value='*.save' />
       <arg value='--exclude' />
@@ -479,13 +479,13 @@
   <target name='aggregate-uol'>
     <exec executable='src/main/python/aggregate.py'>
       <arg value='-d' />
-      <arg value='processed' />
+      <arg value='processed/${treatment.id}' />
       <arg value='-t' />
       <arg value='${treatment.id}' />
     </exec>
     <exec executable='src/main/python/aggregate.py'>
       <arg value='-d' />
-      <arg value='processed' />
+      <arg value='processed/${treatment.id}' />
       <arg value='-m' />
       <arg value='*-group-resource-summary.txt' />
       <arg value='-o' />
@@ -495,7 +495,7 @@
     </exec>
     <exec executable='src/main/python/aggregate.py'>
       <arg value='-d' />
-      <arg value='processed' />
+      <arg value='processed/${treatment.id}' />
       <arg value='-m' />
       <arg value='*-chat.csv' />
       <arg value='-o' />
