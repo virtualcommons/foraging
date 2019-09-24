@@ -32,4 +32,4 @@ server.port=16001
 
 # SESEF framework version: https://github.com/virtualcommons/sesef 
 # uncomment and customize if legacy versions are needed, build.xml should track the appropriate default value 
-# sesef.version=0.9.7
+# sesef.version=0.9.8
