@@ -59,7 +59,7 @@ vim:sts=2:sw=2
     <dependency>
       <groupId>com.opencsv</groupId>
       <artifactId>opencsv</artifactId>
-      <version>4.5</version>
+      <version>5.0</version>
     </dependency>
     <dependency>
       <groupId>commons-cli</groupId>
