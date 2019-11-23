@@ -23,13 +23,10 @@ import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.util.ResourceLoader;
 
 /**
- * $Id$
- * 
+ * Superclass for experimenter and subject views of the simulation world.
+ *
  * @author Allen Lee
- * @version $Revision$
- * 
- *          Superclass for experimenter and subject views of the simulation
- *          world.
+ *
  */
 @SuppressWarnings("serial")
 public abstract class GridView extends JPanel {
@@ -230,6 +227,7 @@ public abstract class GridView extends JPanel {
     }
 
     protected void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // FIXME: can be made more efficient.

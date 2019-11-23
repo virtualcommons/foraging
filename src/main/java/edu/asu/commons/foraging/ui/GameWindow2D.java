@@ -433,7 +433,7 @@ public class GameWindow2D implements GameWindow {
                 if (singlePlayer) {
                     dataModel.moveClient(direction);
                     event = new MovementEvent(client.getId(), direction);
-                    subjectView.repaint();
+                    getPanel().repaint();
                 }
                 else {
                     event = new ClientMovementRequest(client.getId(), direction);

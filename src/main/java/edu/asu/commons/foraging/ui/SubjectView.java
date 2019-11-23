@@ -24,19 +24,13 @@ import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 
 /**
- * $Id$
- * <p>
  * This class encapsulates the client's view of the game board. Used by the
  * ForagerGameWindow to render the current state of the game.
  * 
- * <br/>
  * FIXME: refactor field of vision
- * </p>
- * 
- * 
+ *
  * @author Allen Lee
- * @version $Revision$
- * 
+ *
  */
 public class SubjectView extends GridView {
 
