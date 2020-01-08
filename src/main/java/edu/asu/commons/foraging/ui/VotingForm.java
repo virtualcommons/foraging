@@ -1,13 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * VotingForm.java
- *
- * Created on Sep 29, 2011, 3:52:52 AM
- */
 package edu.asu.commons.foraging.ui;
 
 import java.awt.BorderLayout;
@@ -37,10 +27,7 @@ import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
 import edu.asu.commons.ui.UserInterfaceUtils;
 
 /**
- * $Id$
- * 
- * Interface nominate a given ForagingStrategy
- * 
+ * UI for nominating a given ForagingStrategy
  * @author Allen Lee
  */
 public class VotingForm extends JPanel {

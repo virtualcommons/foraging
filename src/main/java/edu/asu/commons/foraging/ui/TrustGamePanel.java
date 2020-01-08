@@ -18,9 +18,7 @@ import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 
 /**
- * $Id:$
- * 
- * @author alllee
+ * Provides a UI to run a mini trust game between two players in between rounds
  */
 public class TrustGamePanel extends JPanel {
 

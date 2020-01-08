@@ -3,8 +3,7 @@ package edu.asu.commons.foraging.rules.iu;
 import edu.asu.commons.foraging.rules.Strategy;
 
 /**
- * $Id$
- * 
+ *
  * Strategies that participants can nominate (but not enforce) for Indiana experiments run by Daniel DeCaro in 2011/2012.
  * 
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>

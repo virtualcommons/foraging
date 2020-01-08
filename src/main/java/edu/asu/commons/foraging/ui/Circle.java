@@ -4,13 +4,11 @@ import java.awt.Point;
 import java.io.Serializable;
 
 /**
- * $Id$
- * 
- * Simple Circle class given a Point center and radius and providing methods to detect
- * if a point is within the circle.
+ *
+ * Simple Circle geometry data class given a Point center and radius.
+ * Provides method to detect if a point is within the circle.
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Revision$
  */
 public class Circle implements Serializable {
 	

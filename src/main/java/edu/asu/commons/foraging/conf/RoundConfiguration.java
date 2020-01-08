@@ -676,16 +676,28 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     /**
-     * Returns true if voting is enabled before the beginning of this round.
+     * Returns true if voting for a Strategy is enabled before the beginning of this round.
      * 
      * @return
      */
-    public boolean isVotingEnabled() {
+    public boolean isVotingStrategyEnabled() {
         return getBooleanProperty("voting-enabled");
     }
 
     public boolean isImposedStrategyEnabled() {
         return getBooleanProperty("imposed-strategy-enabled");
+    }
+
+    /**
+     * Returns true if voting for enforcement (costly sanctioning)
+     * @return
+     */
+    public boolean isVotingEnforcementEnabled() {
+        return getBooleanProperty("voting-enforcement-enabled");
+    }
+
+    public boolean isImposedEnforcementEnabled() {
+        return getBooleanProperty("imposed-enforcement-enabled");
     }
 
     public String getVotingInstructions() {
