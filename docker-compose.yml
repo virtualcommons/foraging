@@ -23,7 +23,7 @@ services:
     links:
       - web
   web:
-    image: nginx:1-alpine
+    image: nginx:latest
     volumes:
       - ./docker/shared/html:/usr/share/nginx/html
     ports:
