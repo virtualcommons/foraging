@@ -768,7 +768,8 @@ public class GameWindow2D implements GameWindow {
                 votingInstructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
                 votingInstructionsScrollPane = new JScrollPane(votingInstructionsEditorPane);
                 RoundConfiguration configuration = client.getCurrentRoundConfiguration();
-                votingInstructionsEditorPane.setText(configuration.getVotingInstructions());
+                // FIXME: needs to distinguish between voting strategy or enforcement instructions
+                votingInstructionsEditorPane.setText(configuration.getVotingStrategyInstructions());
                 votingPanel.add(votingInstructionsScrollPane);
                 votingForm = new VotingForm(client);
                 votingPanel.add(votingForm);
