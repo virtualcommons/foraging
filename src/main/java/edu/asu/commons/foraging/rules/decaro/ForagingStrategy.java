@@ -1,4 +1,4 @@
-package edu.asu.commons.foraging.rules.iu;
+package edu.asu.commons.foraging.rules.decaro;
 
 import edu.asu.commons.foraging.rules.Strategy;
 
@@ -7,7 +7,6 @@ import edu.asu.commons.foraging.rules.Strategy;
  * Strategies that participants can nominate (but not enforce) for Indiana experiments run by Daniel DeCaro in 2011/2012.
  * 
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
- * @version $Rev$
  */
 public enum ForagingStrategy implements Strategy {
     // FIXME: hard coded for 4 minute rounds, but templatizing this text is a bit of overkill at the moment 

@@ -23,8 +23,8 @@ import edu.asu.commons.foraging.event.PostRoundSanctionUpdateEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
-import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
-import edu.asu.commons.foraging.event.RuleVoteRequest;
+import edu.asu.commons.foraging.event.StrategySelectedUpdateEvent;
+import edu.asu.commons.foraging.event.StrategyVoteRequest;
 import edu.asu.commons.foraging.event.SetImposedStrategyEvent;
 import edu.asu.commons.foraging.event.ShowNextInstructionScreenRequest;
 import edu.asu.commons.foraging.event.ShowSurveyInstructionsRequest;
@@ -37,7 +37,7 @@ import edu.asu.commons.foraging.event.SurveyIdSubmissionRequest;
 import edu.asu.commons.foraging.event.SynchronizeClientEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionRequest;
 import edu.asu.commons.foraging.model.GroupDataModel;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
+import edu.asu.commons.foraging.rules.decaro.ForagingStrategy;
 import edu.asu.commons.foraging.server.ForagingServer;
 import edu.asu.commons.foraging.ui.GameWindow;
 import edu.asu.commons.foraging.ui.GameWindow2D;
@@ -166,9 +166,9 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
                 getGameWindow2D().showInitialVotingInstructions();
             }
         });
-        addEventProcessor(new EventTypeProcessor<RuleSelectedUpdateEvent>(RuleSelectedUpdateEvent.class) {
+        addEventProcessor(new EventTypeProcessor<StrategySelectedUpdateEvent>(StrategySelectedUpdateEvent.class) {
             @Override
-            public void handle(RuleSelectedUpdateEvent event) {
+            public void handle(StrategySelectedUpdateEvent event) {
                 dataModel.setSelectedStrategies(event.getSelectedStrategies());
                 getGameWindow2D().showVotingResults(event.getSelectedStrategies(), event.getVotingResults());
             }
@@ -456,7 +456,7 @@ public class ForagingClient extends BaseClient<ServerConfiguration, RoundConfigu
 
     public void sendRuleVoteRequest(ForagingStrategy selectedRule) {
         if (selectedRule != null) {
-            transmit(new RuleVoteRequest(getId(), selectedRule));
+            transmit(new StrategyVoteRequest(getId(), selectedRule));
         }
         getGameWindow2D().strategyNominationSubmitted();
     }

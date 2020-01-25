@@ -46,8 +46,8 @@ import edu.asu.commons.foraging.event.QuizResponseEvent;
 import edu.asu.commons.foraging.event.RealTimeSanctionRequest;
 import edu.asu.commons.foraging.event.ResetTokenDistributionRequest;
 import edu.asu.commons.foraging.event.RoundStartedEvent;
-import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
-import edu.asu.commons.foraging.event.RuleVoteRequest;
+import edu.asu.commons.foraging.event.StrategySelectedUpdateEvent;
+import edu.asu.commons.foraging.event.StrategyVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.SetImposedStrategyEvent;
 import edu.asu.commons.foraging.event.ShowVoteScreenRequest;
@@ -389,11 +389,11 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                     resourceDispenser.resetTokenDistribution(event);
                 }
             });
-            addEventProcessor(new EventTypeProcessor<RuleVoteRequest>(RuleVoteRequest.class) {
+            addEventProcessor(new EventTypeProcessor<StrategyVoteRequest>(StrategyVoteRequest.class) {
                 int votesReceived = 0;
 
                 @Override
-                public void handle(RuleVoteRequest request) {
+                public void handle(StrategyVoteRequest request) {
                     sendFacilitatorMessage("Received vote rule request: " + request);
                     ClientData client = clients.get(request.getId());
                     client.setVotedRule(request.getRule());
@@ -424,10 +424,10 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
                         group, selectedRules, votingResults, imposedStrategyEnabled));
                 if (!imposedStrategyEnabled) {
                     for (Identifier id : group.getClientIdentifiers()) {
-                        transmit(new RuleSelectedUpdateEvent(id, group, selectedRules, votingResults));
+                        transmit(new StrategySelectedUpdateEvent(id, group, selectedRules, votingResults));
                     }
                 }
-                store(new RuleSelectedUpdateEvent(getFacilitatorId(), group, selectedRules, votingResults));
+                store(new StrategySelectedUpdateEvent(getFacilitatorId(), group, selectedRules, votingResults));
             }
         }
 

@@ -4,7 +4,6 @@ import edu.asu.commons.event.ChatRequest;
 import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
-import edu.asu.commons.foraging.bot.Bot;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.event.*;
 import edu.asu.commons.foraging.model.Actor;
@@ -163,13 +162,13 @@ class AllDataProcessor extends SaveFileProcessor.Base {
                 String line = String.format("%s, %s, %s", event.getCreationTime(), savedRoundData.toSecondString(event), request.toString());
                 writer.println(line);
             }
-            else if (event instanceof RuleVoteRequest) {
-                RuleVoteRequest request = (RuleVoteRequest) event;
+            else if (event instanceof StrategyVoteRequest) {
+                StrategyVoteRequest request = (StrategyVoteRequest) event;
                 String line = String.format("%s, %s, %s, %s, Rule Vote Request", event.getCreationTime(), savedRoundData.toSecondString(event), request.getId(), request.getRule());
                 writer.println(line);
             }
-            else if (event instanceof RuleSelectedUpdateEvent) {
-                RuleSelectedUpdateEvent update = (RuleSelectedUpdateEvent) event;
+            else if (event instanceof StrategySelectedUpdateEvent) {
+                StrategySelectedUpdateEvent update = (StrategySelectedUpdateEvent) event;
                 String line = String.format("%s, %s, %s, \"%s\", \"%s\", Rule selected", 
                         event.getCreationTime(),  savedRoundData.toSecondString(event),
                         update.getGroup(), update.getSelectedStrategies(), update.getVotingResults());

@@ -3,7 +3,6 @@ package edu.asu.commons.foraging.data;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +14,8 @@ import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
-import edu.asu.commons.foraging.event.RuleSelectedUpdateEvent;
-import edu.asu.commons.foraging.event.RuleVoteRequest;
+import edu.asu.commons.foraging.event.StrategySelectedUpdateEvent;
+import edu.asu.commons.foraging.event.StrategyVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.model.ClientData;
@@ -93,8 +92,8 @@ class SummaryProcessor extends SaveFileProcessor.Base {
         }
         writer.println("=========================================");
         writer.println("Time, Participant UUID, Token Collected?, Chat");
-        Map<Identifier, RuleVoteRequest> ruleVoteRequests = new HashMap<>();
-        ArrayList<RuleSelectedUpdateEvent> ruleSelectedEvents = new ArrayList<>();
+        Map<Identifier, StrategyVoteRequest> ruleVoteRequests = new HashMap<>();
+        ArrayList<StrategySelectedUpdateEvent> ruleSelectedEvents = new ArrayList<>();
         for (PersistableEvent action: savedRoundData.getActions()) {
             if (action instanceof ChatRequest) {
                 writer.println(String.format("%s, %s, %s, %s", 
@@ -104,16 +103,16 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                 writer.println(String.format("%s, %s, %s", 
                         savedRoundData.toSecondString(action), action.getId().getUUID(), "token collected"));
             }
-            else if (action instanceof RuleVoteRequest) {
-                ruleVoteRequests.put(action.getId(), (RuleVoteRequest) action);
+            else if (action instanceof StrategyVoteRequest) {
+                ruleVoteRequests.put(action.getId(), (StrategyVoteRequest) action);
             }
-            else if (action instanceof RuleSelectedUpdateEvent) {
-                ruleSelectedEvents.add((RuleSelectedUpdateEvent) action);
+            else if (action instanceof StrategySelectedUpdateEvent) {
+                ruleSelectedEvents.add((StrategySelectedUpdateEvent) action);
             }
         }
         if (! ruleVoteRequests.isEmpty()) {
             writer.println("=== Selected rules ===");
-            for (RuleSelectedUpdateEvent event: ruleSelectedEvents) {
+            for (StrategySelectedUpdateEvent event: ruleSelectedEvents) {
                 writer.println(event.toString());
             }
             for (GroupDataModel group: groups) {
@@ -124,7 +123,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                 
                 writer.println("=== Voting results for " + group.toString() + "===");
                 for (ClientData data: clientDataList) {
-                    RuleVoteRequest request = ruleVoteRequests.get(data.getId());
+                    StrategyVoteRequest request = ruleVoteRequests.get(data.getId());
                     writer.println(String.format("%s, %s", data.getId(), request.getRule()));
                 }
                 

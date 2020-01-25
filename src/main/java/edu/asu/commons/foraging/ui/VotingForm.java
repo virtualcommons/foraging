@@ -23,7 +23,7 @@ import javax.swing.WindowConstants;
 
 import edu.asu.commons.foraging.client.ForagingClient;
 import edu.asu.commons.foraging.rules.Strategy;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
+import edu.asu.commons.foraging.rules.decaro.ForagingStrategy;
 import edu.asu.commons.ui.UserInterfaceUtils;
 
 /**

@@ -17,7 +17,7 @@ import org.junit.Test;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
 import edu.asu.commons.foraging.conf.ServerConfiguration;
 import edu.asu.commons.foraging.rules.Strategy;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
+import edu.asu.commons.foraging.rules.decaro.ForagingStrategy;
 import edu.asu.commons.net.Identifier;
 
 

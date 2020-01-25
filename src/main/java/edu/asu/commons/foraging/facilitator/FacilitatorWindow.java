@@ -2,7 +2,6 @@ package edu.asu.commons.foraging.facilitator;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
@@ -28,7 +27,7 @@ import edu.asu.commons.foraging.event.TrustGameResultsFacilitatorEvent;
 import edu.asu.commons.foraging.event.TrustGameSubmissionEvent;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.rules.Strategy;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
+import edu.asu.commons.foraging.rules.decaro.ForagingStrategy;
 import edu.asu.commons.ui.HtmlEditorPane;
 import edu.asu.commons.ui.HtmlSelection;
 import edu.asu.commons.ui.UserInterfaceUtils;

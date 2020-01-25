@@ -7,8 +7,8 @@ import edu.asu.commons.foraging.model.EnforcementMechanism;
 import edu.asu.commons.foraging.model.ResourceDispenser;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.foraging.rules.Strategy;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategyNomination;
+import edu.asu.commons.foraging.rules.decaro.ForagingStrategy;
+import edu.asu.commons.foraging.rules.decaro.ForagingStrategyNomination;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Duration;
 import org.stringtemplate.v4.ST;
@@ -700,8 +700,12 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getBooleanProperty("imposed-enforcement-enabled");
     }
 
-    public String getVotingInstructions() {
-        return render(getProperty("voting-instructions"));
+    public String getVotingStrategyInstructions() {
+        return render(getProperty("voting-strategy-instructions"));
+    }
+
+    public String getVotingEnforcementInstructions() {
+        return render(getProperty("voting-enforcement-instructions"));
     }
 
     public String getInitialVotingInstructions() {

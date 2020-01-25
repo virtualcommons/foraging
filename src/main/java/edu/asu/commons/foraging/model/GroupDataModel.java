@@ -32,7 +32,7 @@ import edu.asu.commons.foraging.event.PostRoundSanctionRequest;
 import edu.asu.commons.foraging.event.TokenCollectedEvent;
 import edu.asu.commons.foraging.event.UnlockResourceRequest;
 import edu.asu.commons.foraging.rules.Strategy;
-import edu.asu.commons.foraging.rules.iu.ForagingStrategy;
+import edu.asu.commons.foraging.rules.decaro.ForagingStrategy;
 import edu.asu.commons.foraging.ui.Circle;
 import edu.asu.commons.net.Identifier;
 

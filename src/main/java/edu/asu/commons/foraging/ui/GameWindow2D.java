@@ -755,8 +755,6 @@ public class GameWindow2D implements GameWindow {
 
     public void showInitialVotingInstructions() {
         SwingUtilities.invokeLater(() -> {
-            // instructionsEditorPane.setActionListener(null);
-            // instructionsEditorPane.setActionListener(createClientReadyListener("Are you ready to submit your nominations?"));
             setInstructions(dataModel.getRoundConfiguration().getInitialVotingInstructions());
             showInstructionsPanel();
         });
