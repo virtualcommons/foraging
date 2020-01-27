@@ -682,7 +682,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     /**
-     * Returns true if voting for a Strategy is enabled before the beginning of this round.
+     * Returns true if each group can vote for a Strategy before the beginning of this round.
      * 
      * @return
      */
@@ -690,32 +690,45 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getBooleanProperty("voting-strategy-enabled");
     }
 
+    /**
+     * Returns true if a strategy will be displayed as "imposed" on this group during the instructions phase before the
+     * round.
+     */
     public boolean isImposedStrategyEnabled() {
         return getBooleanProperty("imposed-strategy-enabled");
     }
 
     /**
-     * Returns true if voting for enforcement (costly sanctioning)
+     * Returns true if each group can vote to enable/disable enforcement (costly sanctioning / monetary penalties)
+     * before the beginning of this round. Voting on enforcement always follows voting on strategy (or information
+     * displayed on an imposed strategy).
      * @return
      */
     public boolean isVotingEnforcementEnabled() {
         return getBooleanProperty("voting-enforcement-enabled");
     }
 
+    /**
+     * Returns true if a specific enforcement mechanism is being imposed on each group in this round.
+     */
     public boolean isImposedEnforcementEnabled() {
         return getBooleanProperty("imposed-enforcement-enabled");
     }
 
-    public String getVotingStrategyInstructions() {
-        return render(getProperty("voting-strategy-instructions"));
+    public String getStrategyInstructions() {
+        return render(getProperty("strategy-instructions"));
     }
 
-    public String getVotingEnforcementInstructions() {
-        return render(getProperty("voting-enforcement-instructions"));
+    public String getEnforcementInstructions() {
+        return render(getProperty("enforcement-instructions"));
     }
 
-    public String getInitialVotingInstructions() {
-        return createStringTemplate(getProperty("initial-voting-instructions")).render();
+    public String getInitialVotingStrategyInstructions() {
+        return createStringTemplate(getProperty("initial-voting-strategy-instructions")).render();
+    }
+
+    public String getInitialVotingEnforcementInstructions() {
+        return createStringTemplate(getProperty("initial-voting-enforcement-instructions")).render();
     }
 
     public boolean isVotingAndRegulationEnabled() {

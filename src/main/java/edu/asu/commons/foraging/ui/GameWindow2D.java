@@ -755,7 +755,7 @@ public class GameWindow2D implements GameWindow {
 
     public void showInitialVotingInstructions() {
         SwingUtilities.invokeLater(() -> {
-            setInstructions(dataModel.getRoundConfiguration().getInitialVotingInstructions());
+            setInstructions(dataModel.getRoundConfiguration().getInitialVotingStrategyInstructions());
             showInstructionsPanel();
         });
     }
@@ -768,8 +768,7 @@ public class GameWindow2D implements GameWindow {
                 votingInstructionsEditorPane = UserInterfaceUtils.createInstructionsEditorPane();
                 votingInstructionsScrollPane = new JScrollPane(votingInstructionsEditorPane);
                 RoundConfiguration configuration = client.getCurrentRoundConfiguration();
-                // FIXME: needs to distinguish between voting strategy or enforcement instructions
-                votingInstructionsEditorPane.setText(configuration.getVotingStrategyInstructions());
+                votingInstructionsEditorPane.setText(configuration.getStrategyInstructions());
                 votingPanel.add(votingInstructionsScrollPane);
                 votingForm = new VotingForm(client);
                 votingPanel.add(votingForm);
