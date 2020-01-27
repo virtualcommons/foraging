@@ -50,6 +50,4 @@ public enum EnforcementMechanism {
 //        throw new IllegalArgumentException("No enforcement mechanism for index: " + index);
     }
     
-    
-    
 }

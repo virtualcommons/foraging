@@ -282,7 +282,8 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public int getSanctionPenalty() {
-        return getSanctionCost() * getSanctionMultiplier();
+        // if there is no explicit sanction-penalty property, default to the sanction cost * the sanction multiplier
+        return getIntProperty("sanction-penalty", getSanctionCost() * getSanctionMultiplier());
     }
 
     public SanctionType getSanctionType() {
@@ -299,6 +300,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public boolean isSanctioningEnabled() {
         return isRealTimeSanctioningEnabled() || isPostRoundSanctioningEnabled();
+    }
+
+    public boolean isEmptyResourceSanctioningEnabled() {
+        return getBooleanProperty("empty-resource-sanctioning-enabled",
+                getParentConfiguration().isEmptyResourceSanctioningEnabled());
     }
 
     /**

@@ -548,35 +548,42 @@ public class ForagingServer extends AbstractExperiment<ServerConfiguration, Roun
         private void handleRealTimeSanctionRequest(RealTimeSanctionRequest request) {
             ClientData sourceClient = clients.get(request.getSource());
             ClientData targetClient = clients.get(request.getTarget());
+            RoundConfiguration currentRoundConfiguration = getCurrentRoundConfiguration();
 
             // FIXME:Added a new test condition to check for the simplified version of sanctioning
 
             // validate request
             boolean validSanctionRequest = false;
             String errorMessage = "";
-            if (!getCurrentRoundConfiguration().isRealTimeSanctioningEnabled()) {
-                errorMessage = "Punishment is not allowed in this round.";
-            } else if (!getCurrentRoundConfiguration().isSanctioningAllowed(sourceClient.getZone(), targetClient.getZone())) {
-                errorMessage = String.format("You cannot punish members of %s team.",
+            if (!currentRoundConfiguration.isRealTimeSanctioningEnabled()) {
+                errorMessage = "Monetary penalties are not allowed in this round.";
+            }
+            else if (!currentRoundConfiguration.isSanctioningAllowed(sourceClient.getZone(), targetClient.getZone())) {
+                errorMessage = String.format("You cannot apply monetary penalties to members of %s team.",
                         sourceClient.getZone() == targetClient.getZone() ? "your" : "the other");
-            } else if (sourceClient.getCurrentTokens() == 0) {
-                errorMessage = "You do not have enough tokens.";
-            } else if (targetClient.getCurrentTokens() == 0) {
+            }
+            else if (sourceClient.getCurrentTokens() == 0) {
+                errorMessage = "You do not have enough tokens to apply monetary penalties.";
+            }
+            else if (targetClient.getCurrentTokens() == 0) {
                 errorMessage = String.format("Player %d does not have any tokens to reduce.", targetClient.getAssignedNumber());
-            } else if (sourceClient.getGroupDataModel().isResourceDistributionEmpty()) {
-                errorMessage = "No punishment if there are no tokens on the screen.";
-            } else {
+            }
+            else if (currentRoundConfiguration.isEmptyResourceSanctioningEnabled() && sourceClient.getGroupDataModel().isResourceDistributionEmpty()) {
+                errorMessage = "You cannot apply monetary penalties when there are no tokens on the screen.";
+            }
+            else {
                 validSanctionRequest = true;
             }
 
             if (!validSanctionRequest) {
-                sendFacilitatorMessage("Ignoring token reduction request, sending new client error message event to : " + sourceClient.getId());
+                sendFacilitatorMessage(
+                        String.format("Ignoring token reduction request, sending error message [%s] to: [%s]", errorMessage, sourceClient.getId())
+                        );
                 transmit(new ClientMessageEvent(sourceClient.getId(), "Ignoring token reduction request: " + errorMessage));
                 return;
             }
-
             sourceClient.sanctionCost();
-            int sanctionCost = getCurrentRoundConfiguration().getSanctionCost();
+            int sanctionCost = currentRoundConfiguration.getSanctionCost();
             int subtractedTokens = targetClient.sanctionPenalty();
             // generate sanction applied event
             SanctionAppliedEvent sanctionAppliedEvent = new SanctionAppliedEvent(sourceClient.getId());

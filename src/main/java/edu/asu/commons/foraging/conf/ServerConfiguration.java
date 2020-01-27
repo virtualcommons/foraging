@@ -290,4 +290,13 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
     public boolean isGroupTokenDisplayEnabled() {
         return getBooleanProperty("display-group-tokens");
     }
+
+    /**
+     * Returns true if sanctioning on an empty resource should be allowed. The default mode is to disallow sanctioning
+     * when the resource is all gone to prevent sanction wars down to 0.
+     */
+    public boolean isEmptyResourceSanctioningEnabled() {
+        return getBooleanProperty("empty-resource-sanctioning-enabled", false);
+    }
+
 }
