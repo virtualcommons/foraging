@@ -422,7 +422,9 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
 
     public String toCurrencyString(double amount) {
         if (isLabDollarsEnabled()) {
-            return String.format("%.2f lab dollars", amount);
+            // test if amount is an integer value and truncate decimals if so
+            String formatString = (amount % 1) == 0 ? "%.0f" : "%.2f";
+            return String.format(formatString, amount);
         }
         return getCurrencyFormat().format(amount);
     }
