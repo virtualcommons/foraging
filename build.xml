@@ -54,7 +54,7 @@
   <property name="web.dir" value="src/main/webapp"/>
   <property name="server.port" value="16001"/>
   <property name="server.xml" value="server.xml"/>
-  <property name="codebase.url" value="http://${server.address}/${ant.project.name}"/>
+  <property name="codebase.url" value="https://${server.address}/${ant.project.name}"/>
   <property name="client.class" value="edu.asu.commons.foraging.client.ForagingClient"/>
   <property name="facilitator.class" value="edu.asu.commons.foraging.facilitator.Facilitator"/>
   <property name="server.class" value="edu.asu.commons.foraging.server.ForagingServer"/>
