@@ -5,12 +5,12 @@ vim:sts=2:sw=2:
 <ivy-module version="2.0">
   <info organisation="edu.asu.commons" module="foraging"/>
   <dependencies>
-    <dependency org="edu.asu.commons" name="sesef" rev="0.9.8" changing="true"/>
+    <dependency org="edu.asu.commons" name="sesef" rev="0.9.9" changing="true"/>
     <dependency org="net.java.dev.jogl" name="jogl" rev="1.1.1-rc6"/>
     <dependency org="javax.media" name="jmf" rev="2.1.1e"/>
     <dependency org='junit' name='junit' rev='4.12'/>
-    <dependency org='com.github.jiconfont' name='jiconfont-font_awesome' rev='4.7.0.0'/>
-    <dependency org='com.github.jiconfont' name='jiconfont-swing' rev='1.0.0'/>
+    <dependency org='com.github.jiconfont' name='jiconfont-font_awesome' rev='4.7.0.1'/>
+    <dependency org='com.github.jiconfont' name='jiconfont-swing' rev='1.0.1'/>
     <dependency org='commons-cli' name='commons-cli' rev='1.4'/>
     <dependency org='com.opencsv' name='opencsv' rev='4.5'/>
     <exclude org="org.eclipse.jetty" />

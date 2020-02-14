@@ -12,7 +12,7 @@ import edu.asu.commons.foraging.event.FacilitatorCensoredChatRequest;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.ui.UserInterfaceUtils;
 import edu.asu.commons.util.Duration;
-import jiconfont.icons.FontAwesome;
+import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 
 import javax.swing.Icon;
