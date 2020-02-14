@@ -277,7 +277,8 @@ public class GameWindow2D implements GameWindow {
     }
 
     private String getInformationLabelText() {
-        if (dataModel.getRoundConfiguration().isGroupTokenDisplayEnabled()) {
+        RoundConfiguration roundConfiguration = dataModel.getRoundConfiguration();
+        if (roundConfiguration.isGroupTokenDisplayEnabled()) {
             StringBuilder builder = new StringBuilder("Tokens collected:");
             // XXX: use this method so that we get the proper ordering of client ids/assigned numbers..
             // Map<Identifier, ClientData> clientDataMap = dataModel.getClientDataMap();
@@ -291,12 +292,12 @@ public class GameWindow2D implements GameWindow {
                     formatString = " [%d (you) : %d] ";
                     builder.append(String.format(formatString, dataModel.getAssignedNumber(id), dataModel.getCurrentTokens(id)));
                 } else {
-                    if (!dataModel.getRoundConfiguration().isFieldOfVisionEnabled()) {
+                    if (!roundConfiguration.isFieldOfVisionEnabled()) {
                         formatString = " [%d : %d] ";
                         builder.append(String.format(formatString, dataModel.getAssignedNumber(id), dataModel.getCurrentTokens(id)));
                     }
                     else {
-                        double radius = dataModel.getRoundConfiguration().getViewSubjectsRadius();
+                        double radius = roundConfiguration.getViewSubjectsRadius();
                         Circle fieldOfVision = new Circle(clientPosition, radius);
                         if (fieldOfVision.contains(dataModel.getClientPosition(id))) {
                             formatString = " [%d : %d] ";
@@ -309,10 +310,11 @@ public class GameWindow2D implements GameWindow {
                 }
             }
             return builder.toString();
-        } else {
+        }
+        else {
             int tokensConsumed = dataModel.getCurrentTokens();
             return String.format("Income: %s  |  Tokens collected: %d     ",
-                    NumberFormat.getCurrencyInstance().format(getIncome(tokensConsumed)),
+                    roundConfiguration.toCurrencyString(getIncome(tokensConsumed)),
                     tokensConsumed);
         }
     }
