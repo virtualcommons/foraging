@@ -932,12 +932,14 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
             bots.clear();
             for (int i = 0; i < botsPerGroup; i++) {
                 int botNumber = size + i + 1;
-                Bot bot = botFactory.create(botType, this, botNumber)
-                        .setMovementProbability(movementProbability)
-                        .setHarvestProbability(harvestProbability)
-                        .setActionsPerSecond(actionsPerSecond)
-                        .setTokenProximityScalingFactor(tokenProximityScalingFactor);
-
+                Bot bot = botFactory.create(botType, this, botNumber);
+                if (configuration.shouldOverrideBotConfiguration()) {
+                    bot.setMovementProbability(movementProbability)
+                       .setHarvestProbability(harvestProbability)
+                       .setActionsPerSecond(actionsPerSecond)
+                       .setTokenProximityScalingFactor(tokenProximityScalingFactor);
+                }
+                // FIXME: clean this up
                 bot.initialize(configuration);
                 bots.add(bot);
             }

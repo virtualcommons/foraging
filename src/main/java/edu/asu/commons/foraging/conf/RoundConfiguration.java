@@ -345,9 +345,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
             instructionsTemplate = getProperty("instructions", instructionsTemplate);
         }
         ST template = createStringTemplate(instructionsTemplate);
-        // FIXME: consider lifting these to RoundConfiguration and use 
-        // self.durationInMinutes or self.dollarsPerTokenCurrencyString 
-        // to reference them
         template.add("dollarsPerToken", toCurrencyString(getDollarsPerToken()));
         template.add("initialDistribution", NumberFormat.getPercentInstance().format(getInitialDistribution()));
         return template.render();
@@ -423,8 +420,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String toCurrencyString(double amount) {
         if (isLabDollarsEnabled()) {
             // test if amount is an integer value and truncate decimals if so
-            String formatString = (amount % 1) == 0 ? "%.0f" : "%.2f";
-            return String.format(formatString, amount);
+            if ((amount % 1) == 0) {
+                return String.valueOf((int) amount);
+            }
+            return String.format("%.2f", amount);
         }
         return getCurrencyFormat().format(amount);
     }
@@ -1115,6 +1114,11 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     public String getTokenImagePath() {
         return getStringProperty("token-image-path", getParentConfiguration().getTokenImagePath());
     }
+
+    public boolean shouldOverrideBotConfiguration() {
+        return getBooleanProperty("override-bot-configuration", false);
+    }
+
 
     public boolean isBotGroupsEnabled() {
         return !isPrivateProperty() && getBooleanProperty("bot-groups-enabled", getParentConfiguration().isBotGroupsEnabled());

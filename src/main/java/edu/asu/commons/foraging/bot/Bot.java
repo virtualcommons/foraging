@@ -442,7 +442,6 @@ public interface Bot extends Actor {
         }
 
         public void initialize(RoundConfiguration roundConfiguration) {
-            setActionsPerSecond(roundConfiguration.getRobotMovesPerSecond());
             setPosition(model.getInitialPosition(getBotNumber()));
             this.emptyBoardBehavior = EmptyBoardBehavior.random();
             logger.info("setting current bot position to " + getPosition());
