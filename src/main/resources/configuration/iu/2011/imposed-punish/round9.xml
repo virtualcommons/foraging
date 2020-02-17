@@ -16,7 +16,7 @@
 
 <entry key='external-survey-enabled'>true</entry>
 <entry key='survey-url'>
-    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_e8rPe7yyhue5OVm&pid={participant_id}]]>
+    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_e8rPe7yyhue5OVm&pid={participantId}]]>
 </entry>
 
 <entry key='survey-instructions'>

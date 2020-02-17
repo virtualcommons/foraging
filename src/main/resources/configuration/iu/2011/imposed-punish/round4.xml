@@ -65,7 +65,7 @@ participants' number key from 1 to {self.clientsPerGroup}.
 </entry>
 <entry key='external-survey-enabled'>true</entry>
 <entry key='survey-url'>
-    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_3jHrnndEZSM9cqM&pid={participant_id}]]>
+    <![CDATA[https://qtrial.qualtrics.com/SE/?SID=SV_3jHrnndEZSM9cqM&pid={participantId}]]>
 </entry>
 
 <entry key='sanction-type'>real-time</entry>
