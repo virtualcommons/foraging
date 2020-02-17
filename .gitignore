@@ -3,6 +3,7 @@ src/main/webapp/facilitator.jnlp
 src/main/webapp/client.jnlp
 src/main/webapp/images/*
 docker/data
+docker/shared
 .idea
 *.iml
 *~
@@ -36,3 +37,7 @@ lib
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# data processing directories
+incoming
+processed
