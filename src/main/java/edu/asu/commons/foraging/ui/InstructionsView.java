@@ -14,8 +14,7 @@ import edu.asu.commons.ui.UserInterfaceUtils;
 
 
 /**
- * $Id$
- * 
+ * Defunct 3D instructions view
  * @author <a href='Allen.Lee@asu.edu'>Allen Lee</a>, Deepali Bhagvat
  * @version $Revision$
  */

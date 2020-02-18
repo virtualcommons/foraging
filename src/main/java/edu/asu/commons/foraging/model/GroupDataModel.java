@@ -554,7 +554,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
      */
     public Point getInitialPosition(int assignedNumber) {
         RoundConfiguration roundConfiguration = getRoundConfiguration();
-        int clientsPerGroup = roundConfiguration.getClientsPerGroup();
+        int clientsPerGroup = roundConfiguration.getClientsPerGroup() + roundConfiguration.getBotsPerGroup();
         double cellWidth = roundConfiguration.getResourceWidth() / (double) clientsPerGroup;
         int x = (int) ((cellWidth / 2) + (cellWidth * (assignedNumber - 1)));
         int y = roundConfiguration.getResourceDepth() / 2;
@@ -593,7 +593,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         }
     }
 
-    public void addClient(ClientData clientData) {
+    public synchronized void addClient(ClientData clientData) {
         // Assign the client to a zone/team, if this round has zone assignment
         if (getRoundConfiguration().areZonesAssigned()) {
             int thisZone = nextZone;
@@ -920,7 +920,7 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         this.imposedStrategy = imposedStrategy;
     }
 
-    public void addBots(int botsPerGroup, BotType botType) {
+    public synchronized void addBots(int botsPerGroup, BotType botType) {
         int size = clients.size();
         RoundConfiguration configuration = getRoundConfiguration();
         double movementProbability = configuration.getRobotMovementProbability();
@@ -928,21 +928,19 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         double tokenProximityScalingFactor = configuration.getTokenProximityScalingFactor();
         int actionsPerSecond = configuration.getRobotMovesPerSecond();
         BotFactory botFactory = BotFactory.getInstance();
-        synchronized (bots) {
-            bots.clear();
-            for (int i = 0; i < botsPerGroup; i++) {
-                int botNumber = size + i + 1;
-                Bot bot = botFactory.create(botType, this, botNumber);
-                if (configuration.shouldOverrideBotConfiguration()) {
-                    bot.setMovementProbability(movementProbability)
-                       .setHarvestProbability(harvestProbability)
-                       .setActionsPerSecond(actionsPerSecond)
-                       .setTokenProximityScalingFactor(tokenProximityScalingFactor);
-                }
-                // FIXME: clean this up
-                bot.initialize(configuration);
-                bots.add(bot);
+        bots.clear();
+        for (int i = 0; i < botsPerGroup; i++) {
+            int botNumber = size + i + 1;
+            Bot bot = botFactory.create(botType, this, botNumber);
+            if (configuration.shouldOverrideBotConfiguration()) {
+                bot.setMovementProbability(movementProbability)
+                    .setHarvestProbability(harvestProbability)
+                    .setActionsPerSecond(actionsPerSecond)
+                    .setTokenProximityScalingFactor(tokenProximityScalingFactor);
             }
+            logger.info("adding bot " + bot);
+            bot.initialize(configuration);
+            bots.add(bot);
         }
     }
 

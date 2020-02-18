@@ -509,5 +509,10 @@ public interface Bot extends Actor {
         public void addToken(Point location) {
             this.currentTokens++;
         }
+
+        public String toString() {
+            return String.format("%s: %d", getBotType(), getBotNumber());
+        }
+
     }
 }
