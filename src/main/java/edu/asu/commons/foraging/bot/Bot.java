@@ -224,6 +224,7 @@ public interface Bot extends Actor {
 
         private Point targetLocation;
 
+        private boolean failedHarvestCheck;
         private double harvestProbability;
         private double movementProbability;
         private double tokenProximityScalingFactor;
@@ -282,9 +283,11 @@ public interface Bot extends Actor {
                 // FIXME: more sophisticated algorithm should look at density / proximity to participant instead of naive
                 // dice roll
                 model.collectToken(this);
+                failedHarvestCheck = false;
             }
             // figure out our next move and roll the dice to see if we can go.
             else {
+                failedHarvestCheck = true;
                 Direction nextMove = getNextMove();
                 if (random.nextDouble() <= getMovementProbability()) {
                     // FIXME: need a more sophisticated pathfinding algorithm if we want to enable 

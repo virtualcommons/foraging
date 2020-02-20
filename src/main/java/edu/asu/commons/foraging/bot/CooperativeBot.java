@@ -1,5 +1,7 @@
 package edu.asu.commons.foraging.bot;
 
+import java.awt.Point;
+
 public class CooperativeBot extends Bot.SimpleBot {
 
     private static final long serialVersionUID = 4732276788271013068L;
@@ -14,6 +16,11 @@ public class CooperativeBot extends Bot.SimpleBot {
     @Override
     public BotType getBotType() {
         return BotType.IGNORE_PLAYER;
+    }
+
+    @Override
+    protected Point getTargetToken() {
+        return super.getRandomTokenLocation();
     }
 
 }
