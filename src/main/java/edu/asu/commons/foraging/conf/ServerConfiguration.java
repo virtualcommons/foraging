@@ -31,6 +31,8 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
     private static final double DEFAULT_DOLLARS_PER_TOKEN = .02d;
     private static final int DEFAULT_CLIENTS_PER_GROUP = 5;
 
+    private transient NumberFormat currencyFormat;
+
     public ServerConfiguration() {
         super();
     }
@@ -97,10 +99,30 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
     public String getGeneralInstructions() {
         ST st = createStringTemplate(getStringProperty("general-instructions"));
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
-        st.add("showUpPayment", formatter.format(getShowUpPayment()));
-        st.add("dollarsPerToken", formatter.format(getDollarsPerToken()));
+        st.add("showUpPayment", toCurrencyString(getShowUpPayment()));
+        st.add("dollarsPerToken", toCurrencyString(getDollarsPerToken()));
         st.add("duration", getDurationInMinutes());
         return st.render();
+    }
+
+    public String toCurrencyString(double amount) {
+        if (isLabDollarsEnabled()) {
+            // test if amount is an integer value and truncate decimals if so
+            if ((amount % 1) == 0) {
+                return String.valueOf((int) amount);
+            }
+            return String.format("%.2f", amount);
+        }
+        return getCurrencyFormat().format(amount);
+    }
+
+    public NumberFormat getCurrencyFormat() {
+        if (currencyFormat == null) {
+            currencyFormat = NumberFormat.getCurrencyInstance();
+            currencyFormat.setMaximumFractionDigits(2);
+            currencyFormat.setMinimumFractionDigits(2);
+        }
+        return currencyFormat;
     }
 
     public String getSameAsPreviousRoundInstructions() {
@@ -244,7 +266,7 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
     }
 
     public boolean isLabDollarsEnabled() {
-        return getBooleanProperty("use-lab-dollars");
+        return getBooleanProperty("use-lab-dollars", false);
     }
     
     /**

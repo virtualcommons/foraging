@@ -49,7 +49,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     private static final double DEFAULT_TOKEN_BIRTH_PROBABILITY = 0.01d;
 
     private List<Strategy> selectedRules;
-    private transient NumberFormat currencyFormat;
 
     public enum SanctionType {
         REAL_TIME, POST_ROUND, NONE;
@@ -413,29 +412,6 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return template.render();
     }
 
-    public boolean isLabDollarsEnabled() {
-        return getBooleanProperty("use-lab-dollars", getParentConfiguration().isLabDollarsEnabled());
-    }
-
-    public String toCurrencyString(double amount) {
-        if (isLabDollarsEnabled()) {
-            // test if amount is an integer value and truncate decimals if so
-            if ((amount % 1) == 0) {
-                return String.valueOf((int) amount);
-            }
-            return String.format("%.2f", amount);
-        }
-        return getCurrencyFormat().format(amount);
-    }
-
-    public NumberFormat getCurrencyFormat() {
-        if (currencyFormat == null) {
-            currencyFormat = NumberFormat.getCurrencyInstance();
-            currencyFormat.setMaximumFractionDigits(2);
-            currencyFormat.setMinimumFractionDigits(2);
-        }
-        return currencyFormat;
-    }
 
     /**
      * Returns quiz questions mapped to their corresponding answers. Quiz questions must be numbered in the
@@ -665,9 +641,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public String getGeneralInstructions() {
-        ST template = createStringTemplate(getParentConfiguration().getGeneralInstructions());
-        template.add("showUpPayment", toCurrencyString(getParentConfiguration().getShowUpPayment()));
-        return template.render();
+        return createStringTemplate(getParentConfiguration().getGeneralInstructions()).render();
     }
 
     public String getFieldOfVisionInstructions() {
@@ -976,6 +950,10 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
             }
         }
         return template.render();
+    }
+
+    public String toCurrencyString(double amount) {
+        return getParentConfiguration().toCurrencyString(amount);
     }
 
     public List<Strategy> getSelectedRules() {
