@@ -13,16 +13,12 @@
   <resources> 
     <j2se version="1.8+"/>
     <jar href="client.jar"/>
-    <jar href='ST4-4.0.8.jar'/>
+    <jar href='ST4-4.3.jar'/>
     <jar href='antlr-runtime-3.5.2.jar'/>
     <jar href='jiconfont-1.0.0.jar'/>
-    <jar href='jiconfont-font_awesome-4.7.0.0.jar'/>
-    <jar href='jiconfont-swing-1.0.0.jar'/>
+    <jar href='jiconfont-font_awesome-4.7.0.1.jar'/>
+    <jar href='jiconfont-swing-1.0.1.jar'/>
     <jar href='@FRAMEWORK_JAR@'/>
-    <!--
-    <property name="sun.java2d.noddraw" value="true"/> 
-    <extension name="jogl" href="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp"/>
-    -->
   </resources>
   <application-desc name='Foraging client' main-class="@MAIN_CLASS@"/> 
 </jnlp>
