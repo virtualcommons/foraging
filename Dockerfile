@@ -7,6 +7,7 @@ COPY docker/services/experiment.sh /etc/service/foraging/run
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-pip \
         python3-setuptools \
+        rsync \
         && chmod a+rx -R /etc/service/foraging
 COPY src /code/src
 COPY build.properties *.xml /code/
