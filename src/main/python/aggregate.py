@@ -62,7 +62,7 @@ def main():
                 logger.debug("Invalid date dir entry: %s", date_dir)
                 continue
             for hour_dir in date_dir.iterdir():
-                combined_date_time = '{0} {1}'.format(date_dir.name, hour_dir.name)
+                combined_date_time = f'{date_dir.name} {hour_dir.name}'
                 savefiles = hour_dir.glob(filematch_glob)
                 for savefile in savefiles:
                     round_number, repeated_round_index = extract_round_number(savefile.name)
@@ -84,10 +84,11 @@ def main():
                             logger.debug("datarow: %s", datarow)
                             aggregated_csv.writerow(datarow)
     # at the end sort by the timestamp
-    sorted_aggregated_csv = pathlib.Path(data_dir, 'sorted.{0}'.format(output_filename))
-    subprocess.run(['sort', '-b', '-k2,2', '-k5,5', '-t,', aggregated_csv_path.name],
-                   cwd=aggregated_csv_path.parent,
-                   stdout=sorted_aggregated_csv.open('w'))
+    sorted_aggregated_csv = pathlib.Path(data_dir, f'sorted.{output_filename}')
+    with sorted_aggregated_csv.open('w') as sorted_output:
+        subprocess.run(['sort', '-b', '-k2,2', '-k5,5', '-t,', aggregated_csv_path.name],
+                       cwd=aggregated_csv_path.parent,
+                       stdout=sorted_output)
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ services:
     command: ant convert
     volumes:
       - ./docker/data:/code/experiment-data
+      - ./docker/processed:/code/processed
       - ./docker/shared/build:/code/target
       - ./docker/shared/lib:/code/lib
   experiment:
