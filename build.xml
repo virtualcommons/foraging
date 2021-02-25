@@ -477,12 +477,14 @@
   </target>
 
   <target name='aggregate-uol'>
+    <!-- default aggregation over ClientSummaryIntervalProcessor stats -->
     <exec executable='src/main/python/aggregate.py'>
       <arg value='-d' />
       <arg value='processed/${treatment.id}' />
       <arg value='-t' />
       <arg value='${treatment.id}' />
     </exec>
+    <!-- aggregation of group resource summary stats -->
     <exec executable='src/main/python/aggregate.py'>
       <arg value='-d' />
       <arg value='processed/${treatment.id}' />
@@ -493,6 +495,7 @@
       <arg value='-t' />
       <arg value='${treatment.id}' />
     </exec>
+    <!-- aggregation chats for a given treatment -->
     <exec executable='src/main/python/aggregate.py'>
       <arg value='-d' />
       <arg value='processed/${treatment.id}' />

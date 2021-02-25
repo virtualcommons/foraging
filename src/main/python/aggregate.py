@@ -6,7 +6,6 @@ import logging
 import os
 import pathlib
 import re
-import subprocess
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname) -8s %(message)s',
                     filename='foraging-savefile-aggregator.log', filemode='w')
@@ -20,11 +19,11 @@ DEFAULT_AGGREGATED_CSV_OUTPUT_FILENAME = "aggregated.csv"
 AGGREGATED_CSV_HEADER = ['Treatment ID', 'Date', 'Stage', 'Round']
 
 __author__ = "Allen Lee"
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 __license__ = "MIT"
 
 """
-Aggregates all data files discovered in the parameterized directory into a single CSV.
+Aggregates data files discovered in the parameterized directory into a single CSV.
 
 """
 
@@ -43,6 +42,7 @@ def main():
     parser.add_argument("-t", "--treatment", help="Treatment identifier", default=DEFAULT_TREATMENT_IDENTIFIER)
 # data directory should have a filesystem format like
 # <root.data_dir>/<mm-dd-yyyy>/<hh.mm.ss>/<round-<dotted round number>.save
+# FIXME: pull treatment id from directory name e.g., <root.data_dir>/<treatment.id>/<<mm-dd-yyyy>/...
     args = parser.parse_args()
     filematch_glob = args.match
     output_filename = args.output
@@ -83,12 +83,14 @@ def main():
                                 datarow.insert(0, treatment_id)
                             logger.debug("datarow: %s", datarow)
                             aggregated_csv.writerow(datarow)
-    # at the end sort by the timestamp
+    """
+    disabled sorting routine
     sorted_aggregated_csv = pathlib.Path(data_dir, f'sorted.{output_filename}')
     with sorted_aggregated_csv.open('w') as sorted_output:
         subprocess.run(['sort', '-b', '-k2,2', '-k5,5', '-t,', aggregated_csv_path.name],
                        cwd=aggregated_csv_path.parent,
                        stdout=sorted_output)
+    """
 
 
 if __name__ == "__main__":
