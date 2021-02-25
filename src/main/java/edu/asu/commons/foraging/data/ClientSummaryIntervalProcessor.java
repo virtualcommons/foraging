@@ -49,9 +49,9 @@ class ClientSummaryIntervalProcessor extends SaveFileProcessor.Base {
         SortedSet<PersistableEvent> actions = savedRoundData.getActions();
         Map<Identifier, ClientStatistics> statistics = new HashMap<>();
         for (Identifier id : serverDataModel.getActorMap().keySet()) {
-            statistics.put(id, new ClientStatistics(id));
+            statistics.put(id, new ClientStatistics(id, serverDataModel.getGroup(id)));
         }
-        String header = "Seconds, ID, Number of moves, Tokens collected, Skipped tokens, Straight moves, Quadrant, Quadrant Tokens Collected, Resources Left";
+        String header = "Seconds, Participant UUID, Group ID, Number of moves, Tokens collected, Skipped tokens, Straight moves, Quadrant, Quadrant Tokens Collected, Resources Left";
         writer.println(header);
         for (PersistableEvent event : actions) {
             long elapsedTime = savedRoundData.getElapsedTimeInSeconds(event);
@@ -164,6 +164,8 @@ class ClientSummaryIntervalProcessor extends SaveFileProcessor.Base {
 
     private class ClientStatistics {
         private final Identifier id;
+        private final GroupDataModel group;
+
         private int numberOfMoves;
         private int tokensCollected;
         private int[] quadrantTokensCollected = new int[4];
@@ -173,8 +175,9 @@ class ClientSummaryIntervalProcessor extends SaveFileProcessor.Base {
         private int numberOfTimesSanctioning;
         private Direction previousDirection = Direction.NONE;
 
-        public ClientStatistics(Identifier id) {
+        public ClientStatistics(Identifier id, GroupDataModel group) {
             this.id = id;
+            this.group = group;
             clear();
         }
 
@@ -211,7 +214,7 @@ class ClientSummaryIntervalProcessor extends SaveFileProcessor.Base {
         }
 
         public String toCsvString(Quadrant quadrant) {
-            return Utils.join(',', id.getUUID(), numberOfMoves, tokensCollected, skippedTokens,
+            return Utils.join(',', id.getUUID(), group.getGroupId(), numberOfMoves, tokensCollected, skippedTokens,
                     maxStraightMoves, quadrant.name(), getQuadrantTokensCollected(quadrant),
                     ClientSummaryIntervalProcessor.this.getResourceDistributionSize(id));
         }
