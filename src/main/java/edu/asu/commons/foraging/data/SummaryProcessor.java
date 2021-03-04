@@ -2,7 +2,7 @@ package edu.asu.commons.foraging.data;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,19 +47,17 @@ class SummaryProcessor extends SaveFileProcessor.Base {
             }
         }
 
-        writer.println("Participant UUID, Assigned Number, Group, Total Cumulative Tokens, Sanction costs, Sanction penalties");
+        writer.println("Group ID, Participant UUID, Assigned Number, Total Cumulative Tokens, Sanction costs, Sanction penalties");
         for (GroupDataModel group: groups) {
             int totalTokensHarvested = 0;
             ArrayList<ClientData> clientDataList = new ArrayList<>(group.getClientDataMap().values());
-            Collections.sort(clientDataList, (a, b) ->
-                    Integer.valueOf(a.getAssignedNumber()).compareTo(b.getAssignedNumber())
-            );
+            clientDataList.sort(Comparator.comparingInt(ClientData::getAssignedNumber));
             String groupId = "Group " + group.getGroupId();
             for (ClientData data : clientDataList) {
                 writer.println(String.format("%s, %s, %s, %s, %s, %s",
+                        groupId,
                         data.getId().getUUID(),
                         data.getAssignedNumber(),
-                        groupId,
                         data.getTotalTokens(), data.getSanctionCosts(), data.getSanctionPenalties()));
                 totalTokensHarvested += data.getTotalTokens();
             }
@@ -68,6 +66,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
         Map<GroupDataModel, SortedSet<ChatRequest>> chatRequestMap = new HashMap<>();
         SortedSet<ChatRequest> allChatRequests = savedRoundData.getChatRequests();
         if (! allChatRequests.isEmpty()) {
+            writer.println("=== GROUP CHATS ===");
             ChatRequest first = allChatRequests.first();
             for (ChatRequest request: savedRoundData.getChatRequests()) {
                 GroupDataModel group = serverDataModel.getGroup(request.getSource());
@@ -85,7 +84,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                 if (chatRequests != null) {
                     writer.println(group.toString());
                     for (ChatRequest request: chatRequests) {
-                        writer.println(String.format("%s: %s (%s)", request.getSource(), request.toString(), (request.getCreationTime() - first.getCreationTime())/1000L));
+                        writer.println(String.format("%s: %s (%s s)", request.getSource(), request.toString(), (request.getCreationTime() - first.getCreationTime())/1000L));
                     }
                 }
             }
@@ -117,9 +116,7 @@ class SummaryProcessor extends SaveFileProcessor.Base {
             }
             for (GroupDataModel group: groups) {
                 ArrayList<ClientData> clientDataList = new ArrayList<>(group.getClientDataMap().values());
-                Collections.sort(clientDataList, (a, b) -> {
-                    return Integer.valueOf(a.getAssignedNumber()).compareTo(b.getAssignedNumber());
-                });
+                clientDataList.sort(Comparator.comparingInt(ClientData::getAssignedNumber));
                 
                 writer.println("=== Voting results for " + group.toString() + "===");
                 for (ClientData data: clientDataList) {

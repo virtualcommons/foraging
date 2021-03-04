@@ -21,9 +21,9 @@ public class ForagingSaveFileConverter {
 
     static final int DEFAULT_AGGREGATE_TIME_INTERVAL = 5;
 
-    private Options options = new Options();
-    private CommandLineParser parser = new DefaultParser();
-    private HelpFormatter formatter = new HelpFormatter();
+    private final Options options = new Options();
+    private final CommandLineParser parser = new DefaultParser();
+    private final HelpFormatter formatter = new HelpFormatter();
 
     public ForagingSaveFileConverter() {
         options.addOption("x", "xml", false, "convert XStream XML files instead of serialized .save files");
@@ -72,6 +72,7 @@ public class ForagingSaveFileConverter {
                                 new ResourceOverTimeProcessor(),
                                 new AggregateTimeIntervalProcessor(),
                                 new SummaryProcessor(),
+                                new ResourceSummaryProcessor(),
                                 new ChatDataProcessor(),
                                 new AggregateTokenSpatialDistributionProcessor(),
                                 new CollectedTokenSpatialDistributionProcessor(),
