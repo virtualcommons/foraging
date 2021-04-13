@@ -607,9 +607,10 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         } else {
             clientData.setZone(0);
         }
-
-        clients.put(clientData.getId(), clientData);
-        clientData.setAssignedNumber(clients.size());
+        ClientData previousMapping = clients.put(clientData.getId(), clientData);
+        if (previousMapping == null) {
+            clientData.setAssignedNumber(clients.size());
+        }
         clientData.setGroupDataModel(this);
         clientData.initializePosition();
     }

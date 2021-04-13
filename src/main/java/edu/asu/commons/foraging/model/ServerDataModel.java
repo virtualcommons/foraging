@@ -94,7 +94,9 @@ public class ServerDataModel extends ForagingDataModel {
             ClientData clientData = addClientEvent.getClientData();
             GroupDataModel group = addClientEvent.getGroup();
             group.setServerDataModel(this);
+            logger.info("adding client " + clientData.getId() + " and setting assigned number from: " + clientData.getAssignedNumber());
             addClientToGroup(clientData, group);
+            logger.info("new assigned number: " + clientData.getAssignedNumber());
             // XXX: this must occur after we add the client to the group because addClientToGroup() sets
             // the position according to the spacing algorithm.
             clientData.setPosition(addClientEvent.getPosition());
