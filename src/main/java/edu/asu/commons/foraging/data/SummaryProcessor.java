@@ -24,7 +24,7 @@ import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.net.Identifier;
 
 /**
- * Provides summary information for a given given round.
+ * Extracts summary information for a given round for display purposes, should not be used for analysis.
  * @author <a href='mailto:allen.lee@asu.edu'>Allen Lee</a>
  */
 class SummaryProcessor extends SaveFileProcessor.Base {
@@ -34,6 +34,9 @@ class SummaryProcessor extends SaveFileProcessor.Base {
         serverDataModel.reinitialize((RoundConfiguration) savedRoundData.getRoundParameters());
         List<GroupDataModel> groups = serverDataModel.getOrderedGroups();
         for (PersistableEvent event: savedRoundData.getActions()) {
+            // no need to apply() events to the ServerDataModel and replay them if we only want summary statistics
+            // from the ServerDataModel and GroupDataModel as they existed at the end of the round and
+            // serialized
             if (event instanceof SanctionAppliedEvent) {
                 SanctionAppliedEvent sanctionEvent = (SanctionAppliedEvent) event;
                 Identifier id = sanctionEvent.getId();
@@ -52,13 +55,15 @@ class SummaryProcessor extends SaveFileProcessor.Base {
             int totalTokensHarvested = 0;
             ArrayList<ClientData> clientDataList = new ArrayList<>(group.getClientDataMap().values());
             clientDataList.sort(Comparator.comparingInt(ClientData::getAssignedNumber));
-            String groupId = "Group " + group.getGroupId();
+            String groupId = group.toString();
             for (ClientData data : clientDataList) {
                 writer.println(String.format("%s, %s, %s, %s, %s, %s",
                         groupId,
                         data.getId().getUUID(),
                         data.getAssignedNumber(),
-                        data.getTotalTokens(), data.getSanctionCosts(), data.getSanctionPenalties()));
+                        data.getTotalTokens(),
+                        data.getSanctionCosts(),
+                        data.getSanctionPenalties()));
                 totalTokensHarvested += data.getTotalTokens();
             }
             writer.println(String.format("%s, %s, %s", groupId, group.getResourceDistributionSize(), totalTokensHarvested));

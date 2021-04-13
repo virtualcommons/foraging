@@ -485,7 +485,7 @@
       <arg value='-t' />
       <arg value='${treatment.id}' />
     </exec>
-    <!-- aggregate group resource summary stats -->
+    <!-- aggregate GroupResourceSummaryIntervalProcessor stats -->
     <exec executable='src/main/python/aggregate.py'>
       <arg value='-d' />
       <arg value='processed/${treatment.id}' />
@@ -507,7 +507,7 @@
       <arg value='-t' />
       <arg value='${treatment.id}' />
     </exec>
-    <!-- aggregate participant harvest summaries -->
+    <!-- aggregate ResourceSummaryProcessor files -->
     <exec executable='src/main/python/aggregate.py'>
       <arg value='-d' />
       <arg value='processed/${treatment.id}' />

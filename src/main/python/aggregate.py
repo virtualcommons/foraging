@@ -12,7 +12,8 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname) -8s %(
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DATA_GLOB = '*-raw-aggr-bayesian-analysis.txt'
+# changed from "*-raw-aggr-bayesian-analysis.txt" after 611f704ed32f879fb6c556039e3b070414070072
+DEFAULT_DATA_GLOB = '*-client-summary-interval.txt'
 
 DEFAULT_TREATMENT_IDENTIFIER = None
 DEFAULT_AGGREGATED_CSV_OUTPUT_FILENAME = "aggregated.csv"

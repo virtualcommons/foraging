@@ -95,7 +95,7 @@ class ClientSummaryIntervalProcessor extends SaveFileProcessor.Base {
 
     @Override
     public String getOutputFileExtension() {
-        return "-raw-aggr-bayesian-analysis.txt";
+        return "-client-summary-interval.txt";
     }
 
     enum Quadrant {

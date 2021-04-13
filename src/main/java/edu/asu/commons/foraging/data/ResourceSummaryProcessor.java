@@ -22,11 +22,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * FIXME: Duplicates a fair amount of SummaryProcessor
- *
- *
+ * Provides an analysis-friendly player resource summary CSV for a given experiment round with number of tokens
+ * collected this round for each participant, number of movement actions taken, and sanction costs and penalties
  */
 public class ResourceSummaryProcessor extends SaveFileProcessor.Base {
+
+    @Override
+    public String getOutputFileExtension() {
+        return "-player-resource-summary.txt";
+    }
 
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter writer) {
@@ -44,37 +48,31 @@ public class ResourceSummaryProcessor extends SaveFileProcessor.Base {
                 target.addSanctionPenalties(sanctionEvent.getSanctionPenalty());
             }
             else if (event instanceof MovementEvent) {
-                MovementEvent movementEvent = (MovementEvent) event;
-                serverDataModel.apply(movementEvent);
                 ClientMovementTokenCount client = clientMovementTokenCounts.get(event.getId());
                 client.moves++;
             }
             else if (event instanceof TokenCollectedEvent) {
-                TokenCollectedEvent tokenCollectedEvent = (TokenCollectedEvent) event;
                 ClientMovementTokenCount client = clientMovementTokenCounts.get(event.getId());
                 client.tokens++;
             }
         }
 
-        writer.println("Group ID, Group UUID, Participant UUID, Assigned Number, Current Tokens, Moves, Sanction costs, Sanction penalties, Group Resources Left");
+        writer.println("Group ID, Participant UUID, Assigned Number, Current Tokens, Moves, Sanction costs, Sanction penalties");
         String dateTimeString = extractDateTime(savedRoundData.getSaveFilePath());
         for (GroupDataModel group: groups) {
             ArrayList<ClientData> clientDataList = new ArrayList<>(group.getClientDataMap().values());
             clientDataList.sort(Comparator.comparingInt(ClientData::getAssignedNumber));
             String groupId = String.format("group-%s_%s", group.getGroupId(), dateTimeString);
-            int resourcesLeft = group.getResourceDistributionSize();
             for (ClientData data : clientDataList) {
                 ClientMovementTokenCount cmt = clientMovementTokenCounts.get(data.getId());
                 writer.println(Utils.join(',',
                         groupId,
-                        group.getUUID(),
                         data.getId().getUUID(),
                         data.getAssignedNumber(),
                         cmt.tokens,
                         cmt.moves,
                         data.getSanctionCosts(),
-                        data.getSanctionPenalties(),
-                        resourcesLeft
+                        data.getSanctionPenalties()
                         )
                 );
             }
@@ -92,11 +90,9 @@ public class ResourceSummaryProcessor extends SaveFileProcessor.Base {
     public String extractDateTime(String saveFilePath) {
         Path path = Paths.get(saveFilePath);
         int numberOfElements = path.getNameCount();
+        // always assumes a path with date time information encoded in the parent
+        // directories, above the actual binary save file e.g., ../01-24-2019/17.21.54/round-X.save
         return String.format("%s-%s", path.getName(numberOfElements-3), path.getName(numberOfElements-2));
     }
 
-    @Override
-    public String getOutputFileExtension() {
-        return "-player-resource-summary.txt";
-    }
 }
