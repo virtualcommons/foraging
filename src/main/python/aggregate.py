@@ -24,8 +24,7 @@ __version__ = "0.1.0"
 __license__ = "MIT"
 
 """
-Aggregates data files discovered in the parameterized directory into a single CSV.
-
+Aggregates multiple round data files discovered in the parameterized treatment directory into a single CSV.
 """
 
 ROUND_SAVEFILE_REGEX = re.compile(r'^round-(?P<round_number>\d+)\.?(?P<repeated_round_index>\d+)?.save-*')
@@ -37,7 +36,7 @@ def extract_round_number(savefile_name):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--directory", help="Input data directory with directories of round data files to aggregate.")
+    parser.add_argument("-d", "--directory", help="Input data directory with subdirectories of round data files to aggregate.")
     parser.add_argument("-m", "--match", help="Glob to match relevant savefiles to aggregate", default=DEFAULT_DATA_GLOB)
     parser.add_argument("-o", "--output", help="Output file", default=DEFAULT_AGGREGATED_CSV_OUTPUT_FILENAME)
     parser.add_argument("-t", "--treatment", help="Treatment identifier", default=DEFAULT_TREATMENT_IDENTIFIER)
