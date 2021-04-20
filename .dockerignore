@@ -1,7 +1,12 @@
 Dockerfile
 docker-compose.yml
+.git
+.gitignore
+docker/
 *data*
 target
 lib
 *.class
 *.jar
+*.zip
+*.gz
