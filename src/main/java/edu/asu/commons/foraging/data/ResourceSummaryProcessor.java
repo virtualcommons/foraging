@@ -62,7 +62,7 @@ public class ResourceSummaryProcessor extends SaveFileProcessor.Base {
         for (GroupDataModel group: groups) {
             ArrayList<ClientData> clientDataList = new ArrayList<>(group.getClientDataMap().values());
             clientDataList.sort(Comparator.comparingInt(ClientData::getAssignedNumber));
-            String groupId = String.format("group-%s_%s", group.getGroupId(), dateTimeString);
+            String groupId = getDateTimeGroupId(group, dateTimeString);
             for (ClientData data : clientDataList) {
                 ClientMovementTokenCount cmt = clientMovementTokenCounts.get(data.getId());
                 writer.println(Utils.join(',',
@@ -77,6 +77,10 @@ public class ResourceSummaryProcessor extends SaveFileProcessor.Base {
                 );
             }
         }
+    }
+
+    public String getDateTimeGroupId(GroupDataModel group, String dateTimeString) {
+        return String.format("group-%s_%s", group.getGroupId(), dateTimeString);
     }
 
     /**

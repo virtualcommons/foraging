@@ -9,6 +9,7 @@ import edu.asu.commons.foraging.model.GroupDataModel;
 import edu.asu.commons.foraging.model.ServerDataModel;
 import edu.asu.commons.net.Identifier;
 import edu.asu.commons.util.Utils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.io.PrintWriter;
 import java.nio.file.Path;
@@ -29,6 +30,7 @@ public class ChatDataProcessor extends SaveFileProcessor.Base {
         for (GroupDataModel group: dataModel.getGroups()) {
             group.generateNameUUID(experimentRunPath.toString());
         }
+        String dateTimeString = extractDateTime(savedRoundData.getSaveFilePath());
         for (PersistableEvent event: actions) {
             // log ChatRequests since there are ChatEvents generated for each message broadcast to a participant
             // e.g., 4 ChatEvents for a broadcast message from player A to players B, C, D, and E
@@ -36,13 +38,16 @@ public class ChatDataProcessor extends SaveFileProcessor.Base {
                 ChatRequest request = (ChatRequest) event;
                 Identifier sourceId = request.getSource();
                 GroupDataModel group = dataModel.getGroup(sourceId);
+                String groupId = getDateTimeGroupId(group, dateTimeString);
                 printWriter.println(
                         Utils.join(',',
                                 savedRoundData.toSecondString(event),
-                                group.getUUID(),
+                                groupId,
                                 sourceId.getUUID(),
                                 sourceId.getChatHandle(),
-                                '"' + request.getMessage() + '"')
+                                StringEscapeUtils.escapeCsv(request.getMessage()
+                                )
+                        )
                 );
             }
         }
@@ -51,5 +56,25 @@ public class ChatDataProcessor extends SaveFileProcessor.Base {
     @Override
     public String getOutputFileExtension() {
         return "-chat.csv";
+    }
+
+    public String getDateTimeGroupId(GroupDataModel group, String dateTimeString) {
+        return String.format("group-%s_%s", group.getGroupId(), dateTimeString);
+    }
+
+    /**
+     * Given a save file path like `/code/experiment-data/t1/01-24-2019/17.21.54/round-9.save`
+     * return "01-24-2019-17.21.54"
+     *
+     * FIXME: push into sesef SavedRoundData
+     * @param saveFilePath
+     * @return
+     */
+    public String extractDateTime(String saveFilePath) {
+        Path path = Paths.get(saveFilePath);
+        int numberOfElements = path.getNameCount();
+        // always assumes a path with date time information encoded in the parent
+        // directories, above the actual binary save file e.g., ../01-24-2019/17.21.54/round-X.save
+        return String.format("%s-%s", path.getName(numberOfElements-3), path.getName(numberOfElements-2));
     }
 }
