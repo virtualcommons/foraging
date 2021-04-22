@@ -452,7 +452,7 @@
   <target name="convert" depends="compile">
     <java classname="${savefile.converter.class}" classpathref="project.classpath" fork="yes">
       <jvmarg value="-ea"/>
-      <arg value="${data.dir}"/>
+      <arg value="${data.dir}/${treatment.id}"/>
       <arg value='--xml' if:set='xml.enabled'/>
       <arg value='--bots' if:set='bots.enabled' />
       <!-- 
@@ -466,7 +466,7 @@
     <antcall target='convert' />
     <exec executable='rsync'>
       <arg value='-avzP' />
-      <arg value='${data.dir}/' />
+      <arg value='${data.dir}/${treatment.id}/' />
       <arg value='processed/${treatment.id}/' />
       <arg value='--exclude' />
       <arg value='*.save' />
@@ -474,6 +474,15 @@
       <arg value='*.xml' />
     </exec>
     <antcall target='aggregate-uol' />
+  </target>
+
+  <target name='merge-chats'>
+    <exec executable='src/main/python/merge.py'>
+      <arg value='-d' />
+      <arg value='processed' />
+      <arg value='-o' />
+      <arg value='merged-chats.csv' />
+    </exec>
   </target>
 
   <target name='aggregate-uol'>

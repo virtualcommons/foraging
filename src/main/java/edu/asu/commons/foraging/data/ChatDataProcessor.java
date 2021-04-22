@@ -17,19 +17,15 @@ import java.nio.file.Paths;
 import java.util.SortedSet;
 
 public class ChatDataProcessor extends SaveFileProcessor.Base {
+
     @Override
     public void process(SavedRoundData savedRoundData, PrintWriter printWriter) {
         RoundConfiguration roundConfiguration = (RoundConfiguration) savedRoundData.getRoundParameters();
         SortedSet<PersistableEvent> actions = savedRoundData.getActions();
         ServerDataModel dataModel = (ServerDataModel) savedRoundData.getDataModel();
         dataModel.reinitialize(roundConfiguration);
-        String header = "Timestamp, Group ID, Participant UUID, Player Number, Message";
+        String header = "Timestamp, Group ID, Participant UUID, Assigned Number, Message";
         printWriter.println(header);
-        Path saveFilePath = Paths.get(savedRoundData.getSaveFilePath());
-        Path experimentRunPath = saveFilePath.getParent();
-        for (GroupDataModel group: dataModel.getGroups()) {
-            group.generateNameUUID(experimentRunPath.toString());
-        }
         String dateTimeString = extractDateTime(savedRoundData.getSaveFilePath());
         for (PersistableEvent event: actions) {
             // log ChatRequests since there are ChatEvents generated for each message broadcast to a participant
@@ -39,14 +35,14 @@ public class ChatDataProcessor extends SaveFileProcessor.Base {
                 Identifier sourceId = request.getSource();
                 GroupDataModel group = dataModel.getGroup(sourceId);
                 String groupId = getDateTimeGroupId(group, dateTimeString);
+                String chatMessage = StringEscapeUtils.escapeCsv(request.getMessage());
                 printWriter.println(
                         Utils.join(',',
                                 savedRoundData.toSecondString(event),
                                 groupId,
                                 sourceId.getUUID(),
                                 sourceId.getChatHandle(),
-                                StringEscapeUtils.escapeCsv(request.getMessage()
-                                )
+                                chatMessage
                         )
                 );
             }
