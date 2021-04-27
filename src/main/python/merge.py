@@ -28,12 +28,15 @@ def main():
     parser.add_argument("-d", "--directory", help="Input data directory with subdirectories of round data files to aggregate.")
     parser.add_argument("-m", "--match", help="Glob to match relevant savefiles to aggregate", default=DEFAULT_DATA_GLOB)
     parser.add_argument("-o", "--output", help="Output file", default=DEFAULT_MERGED_CSV_OUTPUT_FILENAME)
-    parser.add_argument("-s", "--sortcols", help="Sort output by column names", nargs='*')
+    parser.add_argument("-c", "--sortcols", help="Sort output by column names", nargs='*')
+    parser.add_argument('--disable-sort', action='store_false', dest='sort_output', default=True)
+
 
     args = parser.parse_args()
     filematch_glob = args.match
     output_filename = args.output
     sort_columns = args.sortcols
+    should_sort_output = args.sort_output
 
     logger.debug("sort columns are %s", sort_columns)
 
@@ -47,10 +50,11 @@ def main():
 
     merged_csv = pd.concat([pd.read_csv(path, engine='python') for path in paths])
     merged_csv.columns = merged_csv.columns.str.strip()
-    if not sort_columns:
-        sort_columns = DEFAULT_SORT_COLUMNS
     # check if sort columns exists in the data frame
-    merged_csv.sort_values(by=sort_columns, inplace=True)
+    if should_sort_output:
+        if not sort_columns:
+            sort_columns = DEFAULT_SORT_COLUMNS
+        merged_csv.sort_values(by=sort_columns, inplace=True)
     merged_csv.to_csv(output_filename, index=False, encoding='utf-8-sig')
 
 

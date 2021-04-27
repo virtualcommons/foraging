@@ -482,6 +482,7 @@
       <arg value='processed' />
       <arg value='-o' />
       <arg value='merged-chats.csv' />
+      <arg value='--disable-sort' />
     </exec>
   </target>
 
