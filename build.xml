@@ -484,6 +484,16 @@
       <arg value='merged-chats.csv' />
       <arg value='--disable-sort' />
     </exec>
+    <exec executable='src/main/python/merge.py'>
+      <arg value='-d' />
+      <arg value='processed' />
+      <arg value='-m' />
+      <arg value='aggregated-quiz-responses.csv' />
+      <arg value='-o' />
+      <arg value='merged-quiz-responses.csv' />
+      <arg value='--disable-sort' />
+    </exec>
+
   </target>
 
   <target name='aggregate-uol'>
@@ -525,6 +535,17 @@
       <arg value='*-player-resource-summary.txt' />
       <arg value='-o' />
       <arg value='aggregated-participant-harvest.csv' />
+      <arg value='-t' />
+      <arg value='${treatment.id}' />
+    </exec>
+    <!-- aggregate quiz responses -->
+    <exec executable='src/main/python/aggregate.py'>
+      <arg value='-d' />
+      <arg value='processed/${treatment.id}' />
+      <arg value='-m' />
+      <arg value='round-0.save-quiz-responses.txt' />
+      <arg value='-o' />
+      <arg value='aggregated-quiz-responses.csv' />
       <arg value='-t' />
       <arg value='${treatment.id}' />
     </exec>
