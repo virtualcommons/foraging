@@ -8,13 +8,10 @@ import edu.asu.commons.event.ClientRequest;
 import edu.asu.commons.net.Identifier;
 
 /**
- * $Id$
- * 
  * A client's quiz responses for a given quiz page.
  * 
  * 
  * @author <a href='mailto:Allen.Lee@asu.edu'>Allen Lee</a>
- * @version $Rev: 522 $
  */
 public class QuizResponseEvent extends AbstractPersistableEvent implements ClientRequest {
 

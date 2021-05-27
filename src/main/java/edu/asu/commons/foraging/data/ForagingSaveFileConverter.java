@@ -69,6 +69,7 @@ public class ForagingSaveFileConverter {
                 processors.addAll(
                         Arrays.asList(
                                 new AllDataProcessor(),
+                                new QuizProcessor(),
                                 new ResourceOverTimeProcessor(),
                                 new AggregateTimeIntervalProcessor(),
                                 new SummaryProcessor(),

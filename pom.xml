@@ -18,6 +18,7 @@ vim:sts=2:sw=2
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jetty.version>9.4.26.v20200117</jetty.version>
+    <sesef.version>v2021.04</sesef.version>
   </properties>
   <licenses>
     <license>
@@ -69,7 +70,7 @@ vim:sts=2:sw=2
     <dependency>
       <groupId>edu.asu.commons</groupId>
       <artifactId>sesef</artifactId>
-      <version>0.9.9</version>
+      <version>${sesef.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.eclipse.jetty</groupId>
