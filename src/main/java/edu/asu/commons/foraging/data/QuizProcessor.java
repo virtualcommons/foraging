@@ -61,8 +61,8 @@ public class QuizProcessor extends SaveFileProcessor.Base {
                     String correctAnswer = entry.getValue();
                     writer.println(Utils.join(',',
                             groupId,
-                            data.getId().getUUID(),
                             data.getAssignedNumber(),
+                            data.getId().getUUID(),
                             entry.getKey(),
                             clientResponse,
                             correctAnswer,
