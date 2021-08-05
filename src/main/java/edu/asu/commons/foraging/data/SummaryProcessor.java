@@ -71,9 +71,9 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                 writer.println(String.format("%s, %s, %s, %s, %s, %s, %s",
                         groupId,
                         data.getId().getUUID(),
+                        data.getAssignedNumber(),
                         cmt.tokens,
                         cmt.moves,
-                        data.getAssignedNumber(),
                         data.getSanctionCosts(),
                         data.getSanctionPenalties()));
                 totalTokensHarvested += cmt.tokens;
