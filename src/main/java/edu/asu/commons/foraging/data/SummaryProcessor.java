@@ -14,6 +14,7 @@ import edu.asu.commons.event.PersistableEvent;
 import edu.asu.commons.experiment.SaveFileProcessor;
 import edu.asu.commons.experiment.SavedRoundData;
 import edu.asu.commons.foraging.conf.RoundConfiguration;
+import edu.asu.commons.foraging.event.MovementEvent;
 import edu.asu.commons.foraging.event.StrategySelectedUpdateEvent;
 import edu.asu.commons.foraging.event.StrategyVoteRequest;
 import edu.asu.commons.foraging.event.SanctionAppliedEvent;
@@ -33,10 +34,11 @@ class SummaryProcessor extends SaveFileProcessor.Base {
         ServerDataModel serverDataModel = (ServerDataModel) savedRoundData.getDataModel();
         serverDataModel.reinitialize((RoundConfiguration) savedRoundData.getRoundParameters());
         List<GroupDataModel> groups = serverDataModel.getOrderedGroups();
+        Map<Identifier, ClientMovementTokenCount> clientMovementTokenCounts = ClientMovementTokenCount.createMap(serverDataModel);
         for (PersistableEvent event: savedRoundData.getActions()) {
             // no need to apply() events to the ServerDataModel and replay them if we only want summary statistics
             // from the ServerDataModel and GroupDataModel as they existed at the end of the round and
-            // serialized
+            // are serialized
             if (event instanceof SanctionAppliedEvent) {
                 SanctionAppliedEvent sanctionEvent = (SanctionAppliedEvent) event;
                 Identifier id = sanctionEvent.getId();
@@ -48,25 +50,35 @@ class SummaryProcessor extends SaveFileProcessor.Base {
                 target.addSanctionPenalties(sanctionEvent.getSanctionPenalty());
                 System.err.println("penalties on client data are now " + target.getSanctionPenalties());
             }
+            else if (event instanceof MovementEvent) {
+                ClientMovementTokenCount client = clientMovementTokenCounts.get(event.getId());
+                client.moves++;
+            }
+            else if (event instanceof TokenCollectedEvent) {
+                ClientMovementTokenCount client = clientMovementTokenCounts.get(event.getId());
+                client.tokens++;
+            }
         }
 
-        writer.println("Group ID, Participant UUID, Assigned Number, Total Cumulative Tokens, Sanction costs, Sanction penalties");
+        writer.println("Group ID, Participant UUID, Assigned Number, Tokens Collected, Moves, Sanction costs, Sanction penalties");
         for (GroupDataModel group: groups) {
             int totalTokensHarvested = 0;
             ArrayList<ClientData> clientDataList = new ArrayList<>(group.getClientDataMap().values());
             clientDataList.sort(Comparator.comparingInt(ClientData::getAssignedNumber));
             String groupId = group.toString();
             for (ClientData data : clientDataList) {
-                writer.println(String.format("%s, %s, %s, %s, %s, %s",
+                ClientMovementTokenCount cmt = clientMovementTokenCounts.get(data.getId());
+                writer.println(String.format("%s, %s, %s, %s, %s, %s, %s",
                         groupId,
                         data.getId().getUUID(),
+                        cmt.tokens,
+                        cmt.moves,
                         data.getAssignedNumber(),
-                        data.getTotalTokens(),
                         data.getSanctionCosts(),
                         data.getSanctionPenalties()));
-                totalTokensHarvested += data.getTotalTokens();
+                totalTokensHarvested += cmt.tokens;
             }
-            writer.println(String.format("%s, %s, %s", groupId, group.getResourceDistributionSize(), totalTokensHarvested));
+            writer.println(String.format("%s, resources left: %s, total resources harvested: %s", groupId, group.getResourceDistributionSize(), totalTokensHarvested));
         }
         Map<GroupDataModel, SortedSet<ChatRequest>> chatRequestMap = new HashMap<>();
         SortedSet<ChatRequest> allChatRequests = savedRoundData.getChatRequests();
