@@ -37,8 +37,8 @@ If you install [Docker](https://docs.docker.com/engine/installation/) and [docke
 
 _NOTE_: The docker build currently binds to port 80 instead of port 8080 - if you want to change this, modify the port mapping in docker-compose.yml for the nginx web service.
 
-* run `docker-compose up` to build the foraging Docker image and start an experiment
-  server listening on port 16001 and an nginx webserver listening on port 8080 to deliver the foraging client and
+* run `docker-compose build --pull` to build the foraging Docker image
+* run `docker-compose up -d` to start an experiment server listening on port 16001 and an nginx webserver listening on port 8080 to deliver the foraging client and
   facilitator applications via Java WebStart. The relevant URLs are `http://<server.address>` to start a WebStart client and `http://<server.address>/facilitator.jnlp` to start a WebStart facilitator where `<server.address>` is as defined in your `build.properties` file.
 * *Back up your data:* when you are done running an experiment make sure you back up the binary data saved in `docker/data`. 
 * Convert binary data stored in `DATA_DIR` to a variety of plaintext files via `docker-compose run data` or customize the statistics you see by writing a custom `SaveFileProcessor` and adding it to the list in [ForagingSaveFileConverter](https://github.com/virtualcommons/foraging/blob/master/src/main/java/edu/asu/commons/foraging/data/ForagingSaveFileConverter.java). You can select the data directory with the `DATA_DIR` environment variable and convert XML XStream savefiles by setting `XML=xml` as an environment variable, e.g., `docker-compose run -e DATA_DIR=<data-directory> -eXML=xml data`.
