@@ -13,7 +13,7 @@
   <resources> 
     <j2se version="1.8+"/>
     <jar href="client.jar"/>
-    <jar href='ST4-4.3.jar'/>
+    <jar href='ST4-4.3.1.jar'/>
     <jar href='antlr-runtime-3.5.2.jar'/>
     <jar href='jiconfont-1.0.0.jar'/>
     <jar href='jiconfont-font_awesome-4.7.0.1.jar'/>
