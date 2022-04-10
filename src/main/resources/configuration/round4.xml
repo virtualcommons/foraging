@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>First group round, chat enabled</comment>
+    <entry key="display-group-tokens">true</entry>
+    <entry key="clients-per-group">5</entry>
+    <entry key="duration">240</entry>
+    <entry key="resource-depth">29</entry>
+    <entry key="resource-width">29</entry>
+    <entry key='always-explicit'>true</entry>
+    <entry key='max-cell-occupancy'>1</entry>
+    <entry key="initial-distribution">.25</entry>
+    <entry key="regrowth-rate">0.01</entry>
+    <!-- before this round begins, we have a chat session -->
+    <entry key="chat-enabled">true</entry>
+    <entry key="chat-duration">240</entry>
+    <entry key="sanction-type">real-time</entry>
+    <entry key="sanction-cost">1</entry>
+    <entry key="sanction-multiplier">2</entry>
+    <entry key='repeat'>3</entry>
+    <entry key="instructions">
+        <![CDATA[
+        <h1>Instructions for Rounds 1-{self.repeat}</h1>
+        <hr>
+        <p>
+            The length of each of the following {self.repeat} rounds is {self.duration} seconds. As in the practice
+            round you can collect green tokens but there are two important differences. You will earn
+            <b>{dollarsPerToken}</b> for each token collected and you <b>cannot reset</b> the distribution of
+            green tokens. 
+        </p>
+        <p>
+            In this round the renewable resource will become five times bigger. You
+            will share this larger environment with other players in this room.
+            Each of you has been randomly assigned to one of several equal-sized
+            {self.clientsPerGroup}-person groups.  Each of the groups is collecting tokens from an identical, but
+            separate resource. 
+        </p>
+        <p>
+            Each of you has been assigned a number from 1 to {self.clientsPerGroup}.  The other members of your
+            group will appear on the screen as blue circles <img src="@CODEBASE_URL@/images/blue-circle.png"> with a
+            white number in the middle of the circle.  On the top right corner of the screen you can see how many tokens
+            each player has collected.
+        </p>
+        <h3>Anonymity</h3>
+        <hr>
+        <p>
+            Because group membership was randomly assigned by the computer, neither you nor
+            the experimenter will be able to identify which person in the room has been
+            assigned to a particular group or number within a group.  Your anonymity is
+            guaranteed.
+        </p>
+        <p>
+            Before the next round starts you can anonymously communicate via text messages
+            for four minutes with the other participants in your group. You can use this
+            opportunity to discuss the experiment and coordinate your actions to improve
+            your earnings. You may not promise them side-payments after the experiment is
+            completed or make any threats. You are also not allowed to reveal your real
+            identity. We will be monitoring the chat traffic while you chat.
+        </p>
+        <p>
+            You also have the option to reduce the earnings of another participant at a cost to your own earnings. If
+            you press the numeric key 1-5 corresponding to another participant, you will reduce the number of tokens
+            they have collected in this round by two tokens. This will also reduce your own token amount by one token.
+            The decision whether or when to use this option is up to you. 
+        </p>
+        <p>
+            When you reduce the number of tokens of another participant, they will receive a message stating that you
+            have reduced their tokens. Likewise, if another participant reduces your number of tokens, you will also
+            receive a message. These messages will be displayed on the bottom of your screen. 
+        </p>
+        <p>If your tokens are being reduced or you are reducing another participant's tokens, you will receive some
+            visual cues.  When your tokens are being reduced your yellow dot will turn red briefly with a blue
+            background.  The participant currently reducing your tokens will turn purple with a white background.
+        </p>
+        <p>You may reduce the earnings of other participants as long as there are tokens remaining on the screen and
+            while both you and the other participant have a positive number of tokens collected during the round.
+            <b>Each time</b> you press the numeric key corresponding to another participant your token amount is reduced
+            by <b>{self.sanctionCost}</b>, and their token amount is reduced by <b>{self.sanctionPenalty}</b>. 
+        </p>
+        <p>
+            If you have any questions please raise your hand.  <b>Do you have any questions so far?</b>
+        </p>
+        ]]>
+    </entry>
+</properties>
