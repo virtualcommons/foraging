@@ -969,6 +969,10 @@ public class GroupDataModel implements Comparable<GroupDataModel>, DataModel<Ser
         }
     }
 
+    public long getGroupIDFixed(){
+       return groupId/2;
+    }
+
     public Map<Identifier, Point> getBotPositions() {
         return bots.stream().collect(Collectors.toMap(Bot::getId, Bot::getPosition));
     }

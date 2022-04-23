@@ -338,7 +338,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     /**
      * Returns the instructions for this round. If undefined at the round level it uses default instructions at the parent ServerConfiguration level.
      */
-    public String getInstructions() {
+    public String getInstructions(ClientData clientData) {
         String instructionsTemplate = getSameAsPreviousRoundInstructions();
         if (! isRepeatingRound() || isFirstRepeatingRound()) {
             instructionsTemplate = getProperty("instructions", instructionsTemplate);
@@ -346,6 +346,28 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         ST template = createStringTemplate(instructionsTemplate);
         template.add("dollarsPerToken", toCurrencyString(getDollarsPerToken()));
         template.add("initialDistribution", NumberFormat.getPercentInstance().format(getInitialDistribution()));
+        template.add("groupID", clientData.getGroupDataModel().getGroupId());
+        template.add("groupIDFixed", clientData.getGroupDataModel().getGroupIDFixed());
+        boolean baselineTreatment = false;
+        boolean rangeTreatment = false;
+        boolean divergenceTreatment = false;
+        switch ((int) clientData.getGroupDataModel().getGroupIDFixed()) {
+            case 0:
+                baselineTreatment = true;
+                break;
+            case 1:
+                rangeTreatment = true;
+                break;
+            case 2:
+                divergenceTreatment = true;
+                break;
+        }
+
+        template.add("baselineTreatment", baselineTreatment);
+        template.add("rangeTreatment", rangeTreatment);
+        template.add("divergenceTreatment", divergenceTreatment);
+
+        //template.add("firstGroupID", clientData.getGroupDataModel().getGroupId() == 0);
         return template.render();
     }
 
@@ -640,9 +662,16 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return getParentConfiguration().getWelcomeInstructions();
     }
 
-    public String getGeneralInstructions() {
-        return createStringTemplate(getParentConfiguration().getGeneralInstructions()).render();
+    public String getGeneralInstructions(ClientData data) {
+        return createStringTemplate(getParentConfiguration().getGeneralInstructions(data)).render();
     }
+
+
+    // public String getGeneralInstructions() {
+    //     return createStringTemplate(getParentConfiguration().getGeneralInstructions()).render();
+    // }
+
+
 
     public String getFieldOfVisionInstructions() {
         return getParentConfiguration().getFieldOfVisionInstructions();
@@ -743,7 +772,7 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
     }
 
     public StringBuilder getCurrentRoundInstructions() {
-        return buildAllInstructions(new StringBuilder());
+        return buildAllInstructions(new StringBuilder(),null);
     }
 
     /**
@@ -760,16 +789,16 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
      * @param instructionsBuilder
      * @return
      */
-    public StringBuilder buildAllInstructions(StringBuilder instructionsBuilder) {
+    public StringBuilder buildAllInstructions(StringBuilder instructionsBuilder, ClientData clientData) {
         if (isFirstRound()) {
-            instructionsBuilder.append(getGeneralInstructions());
+            instructionsBuilder.append(getGeneralInstructions(clientData));
         }
         if (isQuizEnabled()) {
             // first show quiz instructions only
             return instructionsBuilder.append(getQuizInstructions());
         } 
         else {
-            return buildInstructions(instructionsBuilder);
+            return buildInstructions(instructionsBuilder,clientData);
         }
     }
 
@@ -782,12 +811,12 @@ public class RoundConfiguration extends ExperimentRoundParameters.Base<ServerCon
         return instructionsBuilder.append(st.render());
     }
 
-    public StringBuilder buildInstructions() {
-        return buildInstructions(new StringBuilder());
-    }
+//    public StringBuilder buildInstructions() {
+//        return buildInstructions(new StringBuilder());
+//    }
 
-    public StringBuilder buildInstructions(StringBuilder instructionsBuilder) {
-        instructionsBuilder.append(getInstructions());
+    public StringBuilder buildInstructions(StringBuilder instructionsBuilder, ClientData clientData) {
+        instructionsBuilder.append(getInstructions(clientData));
         if (isSpecialInstructionsEnabled()) {
             return addAllSpecialInstructions(instructionsBuilder);
         }

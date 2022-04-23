@@ -258,7 +258,7 @@ public class GameWindow2D implements GameWindow {
                         builder.append(configuration.getQuizResults(incorrectQuestionNumbers, actualAnswers));
                     } else {
                         client.transmit(new ClientReadyEvent(client.getId(), "Reviewed quiz responses."));
-                        configuration.buildInstructions(builder);
+                        configuration.buildInstructions(builder,client.getDataModel().getClientData());
                     }
                     // RoundConfiguration now builds the appropriate quiz results page.
                     setInstructions(builder.toString());
@@ -728,7 +728,7 @@ public class GameWindow2D implements GameWindow {
             roundConfiguration.buildInstructions(instructionsBuilder, 0);
         }
         else {
-            roundConfiguration.buildAllInstructions(instructionsBuilder);
+            roundConfiguration.buildAllInstructions(instructionsBuilder,dataModel.getClientData());
         }
         if (roundConfiguration.isQuizEnabled()) {
             instructionsEditorPane.setActionListener(createQuizListener(roundConfiguration));

@@ -41,7 +41,7 @@
         <p>
 
 
-            Welcome to the Groundwater Harvesting Game. You have completed the consent form, and you are now ready to participate. Please give your best effort. You will receive academic credit for participating. In addition, based on your performance, you can also earn real money. The amount of money you earn depends on your decisions as well as the decisions of other people during multiple rounds of the game.
+            Welcome to the Groundwater Harvesting Game. You have completed the consent form, and you are now ready to participate. Please give your best effort. You will receive academic credit for participating. In addition, based on your performance, you can also earn real money. The amount of money you earn depends on your decisions as well as the decisions of other people during multiple rounds of the game. GROUP : {clientData.groupDataModel.groupId}
             <br><br>
 
 The game will take 40 minutes. In Part I, you will read instructions and play a practice round. In part II, you will play a groundwater harvesting game. In Part III, you will complete a few questions on an exit survey. Thank you for your participation.
@@ -63,7 +63,7 @@ No questions from participants are allowed during the experiment to minimize fac
 <![CDATA[
 <h1>General Instructions</h1>
 <hr>
-<h2>How to participate</h2>
+<h2>How to participate, groupId : {clientData.groupDataModel.groupId} </h2>
 <hr>
 <p>
 You will appear on the screen as a yellow circle <img width='23' height='23' src="@CODEBASE_URL@/images/yellow-circle.png"></img>. 
@@ -180,7 +180,7 @@ room.
 </ul>
 {if (self.practiceRound)}
 <p>
-This was a practice round so the tokens you collected do not contribute to your earnings.
+This was a practice round so the tokens you collected do not contribute to your earnings. GROUP: {clientData.groupDataModel.groupId}
 </p>
 {endif}
 {if (showExitInstructions && !clientData.trustGameLog.empty) }

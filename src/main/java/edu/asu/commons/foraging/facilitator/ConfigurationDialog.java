@@ -141,7 +141,7 @@ public class ConfigurationDialog {
 		panel.setLayout(boxLayout);
 		
 		panel.add(new JLabel("Instructions"), null);
-		panel.add(new JTextArea(configuration.getGeneralInstructions()), null);
+		panel.add(new JTextArea(configuration.getGeneralInstructions(null)), null);
 				
 		return new JScrollPane(panel);
 	}

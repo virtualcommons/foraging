@@ -96,14 +96,26 @@ public class ServerConfiguration extends ExperimentConfiguration.Base<ServerConf
         return getStringProperty("welcome-instructions", "Please wait quietly and do not open or close any programs on this computer.");
     }
 
-    public String getGeneralInstructions() {
+    public String getGeneralInstructions(ClientData data) {
         ST st = createStringTemplate(getStringProperty("general-instructions"));
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         st.add("showUpPayment", toCurrencyString(getShowUpPayment()));
         st.add("dollarsPerToken", toCurrencyString(getDollarsPerToken()));
         st.add("duration", getDurationInMinutes());
+        st.add("clientData", data);
         return st.render();
     }
+
+
+    // public String getGeneralInstructions() {
+    //     ST st = createStringTemplate(getStringProperty("general-instructions"));
+    //     NumberFormat formatter = NumberFormat.getCurrencyInstance();
+    //     st.add("showUpPayment", toCurrencyString(getShowUpPayment()));
+    //     st.add("dollarsPerToken", toCurrencyString(getDollarsPerToken()));
+    //     st.add("duration", getDurationInMinutes());
+    //     //st.add("clientData", data);
+    //     return st.render();
+    // }
 
     public String toCurrencyString(double amount) {
         if (isLabDollarsEnabled()) {

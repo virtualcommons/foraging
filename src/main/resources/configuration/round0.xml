@@ -92,6 +92,9 @@ D. To collect a token you need to press the space bar while your yellow dot <img
     </b>
     <br>
 <img src="@CODEBASE_URL@/images/question2.jpg"></img><br>
+
+<input type="submit" name="submit" value="Next page"><br>
+
 </form>
     ]]>
 </entry>
