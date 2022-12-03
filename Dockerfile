@@ -1,4 +1,4 @@
-FROM comses/ant:2021.02
+FROM comses/ant:1.10.12
 
 LABEL maintainer="Allen Lee <allen.lee@asu.edu>, Center for Behavior, Institutions and the Environment <https://cbie.asu.edu>"
 
