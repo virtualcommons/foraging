@@ -14,5 +14,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: copy docker build properties
+      run: cp build.properties.docker build.properties
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag virtualcommons/foraging:latest
