@@ -17,7 +17,7 @@ vim:sts=2:sw=2
   <url>http://github.com/virtualcommons/foraging</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jetty.version>11.0.23</jetty.version>
+    <jetty.version>11.0.24</jetty.version>
     <sesef.version>v2021.04</sesef.version>
   </properties>
   <licenses>
